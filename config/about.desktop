@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=About
+Exec=yad --about
+Icon=/home/zen/.config/quickemu/vms-icons/cereus.svg
+Categories=System;Virtualization;Settings;

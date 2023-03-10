@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=manjaro
+releases=xfce gnome kde budgie cinnamon i3 mate
+replace='"!"'
+Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --separator=" " --field="Release:CB" "xfce"!"gnome"!"kde"!"budgie"!"cinnamon"!"i3"!"mate" | xargs -I{} sakura -e "quickget manjaro {}"'
+Icon=/home/zen/.config/quickemu/vms_icons/manjaro.svg
+Categories=System;Virtualization;

@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=cereus
+Exec=quickemu -vm "cereus.conf"
+Icon=/home/zen/.config/quickemu/vms_icons/cereus.svg
+Categories=System;Virtualization;

@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=agarimos
+Exec=quickemu -vm "agarimos.conf"
+Icon=/home/zen/.config/quickemu/vms_icons/agarimos.png
+Categories=System;Virtualization;

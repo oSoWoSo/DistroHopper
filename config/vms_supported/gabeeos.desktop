@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=gabeeos
+releases=latest
+replace='"!"'
+Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --separator=" " --field="Release:CB" "latest" | xargs -I{} sakura -e "quickget gabeeos {}"'
+Icon=/home/zen/.config/quickemu/vms_icons/gabeeos.svg
+Categories=System;Virtualization;

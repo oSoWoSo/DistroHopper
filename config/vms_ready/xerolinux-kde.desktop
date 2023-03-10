@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=xerolinux-kde
+Exec=quickemu -vm "xerolinux-kde.conf"
+Icon=/home/zen/.config/quickemu/vms_icons/xerolinux.png
+Categories=System;Virtualization;

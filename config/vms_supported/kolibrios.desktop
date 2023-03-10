@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=kolibrios
+releases=latest
+replace='"!"'
+Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --separator=" " --field="Release:CB" "latest" | xargs -I{} sakura -e "quickget kolibrios {}"'
+Icon=/home/zen/.config/quickemu/vms_icons/kolibrios.svg
+Categories=System;Virtualization;

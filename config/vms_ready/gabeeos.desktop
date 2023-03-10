@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=gabeeos
+Exec=quickemu -vm "gabeeos.conf"
+Icon=/home/zen/.config/quickemu/vms_icons/gabeeos.svg
+Categories=System;Virtualization;

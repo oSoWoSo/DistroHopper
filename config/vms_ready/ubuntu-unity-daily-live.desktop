@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=ubuntu-unity-daily-live
+Exec=quickemu -vm "ubuntu-unity-daily-live.conf"
+Icon=/home/zen/.config/quickemu/vms_icons/ubuntu-unity.png
+Categories=System;Virtualization;

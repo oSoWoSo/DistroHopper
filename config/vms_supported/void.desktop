@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=void
+releases=current 20221001 20210316 20210930 20210218 20191109 20190526 20190217 20181111 20171007 20170825 20170220
+editions=base base-musl cinnamon cinnamon-musl enlightenment enlightenment-musl gnome gnome-musl lxde lxde-musl lxqt lxqt-musl mate mate-musl xfce xfce-musl
+replace="!"
+Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --separator=" " --field="Release:CB" "current"!"20221001"!"20210316"!"20210930"!"20210218"!"20191109"!"20190526"!"20190217"!"20181111"!"20171007"!"20170825"!"20170220" --field="Edition:CB" "base"!"base-musl"!"cinnamon"!"cinnamon-musl"!"enlightenment"!"enlightenment-musl"!"gnome"!"gnome-musl"!"lxde"!"lxde-musl"!"lxqt"!"lxqt-musl"!"mate"!"mate-musl"!"xfce"!"xfce-musl" | xargs -I{} sakura -e "quickget void {}"'
+Icon=/home/zen/.config/quickemu/vms_icons/void.svg
+Categories=System;Virtualization;

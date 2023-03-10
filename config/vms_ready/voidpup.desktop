@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=voidpup
+Exec=quickemu -vm "voidpup.conf"
+Icon=/home/zen/.config/quickemu/vms_icons/voidpup.png
+Categories=System;Virtualization;

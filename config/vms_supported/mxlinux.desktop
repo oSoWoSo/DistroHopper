@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=mxlinux
+releases=21.3
+editions=Xfce KDE Fluxbox
+replace="!"
+Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --separator=" " --field="Release:CB" "21.3" --field="Edition:CB" "Xfce"!"KDE"!"Fluxbox" | xargs -I{} sakura -e "quickget mxlinux {}"'
+Icon=/home/zen/.config/quickemu/vms_icons/mxlinux.svg
+Categories=System;Virtualization;

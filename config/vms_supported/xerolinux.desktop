@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=xerolinux
+releases=kde
+replace='"!"'
+Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --separator=" " --field="Release:CB" "kde" | xargs -I{} sakura -e "quickget xerolinux {}"'
+Icon=/home/zen/.config/quickemu/vms_icons/xerolinux.png
+Categories=System;Virtualization;

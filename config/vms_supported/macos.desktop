@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=macos
+releases=high-sierra mojave catalina big-sur monterey ventura
+replace='"!"'
+Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --separator=" " --field="Release:CB" "high-sierra"!"mojave"!"catalina"!"big-sur"!"monterey"!"ventura" | xargs -I{} sakura -e "quickget macos {}"'
+Icon=/home/zen/.config/quickemu/vms_icons/macos.svg
+Categories=System;Virtualization;

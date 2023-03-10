@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=tails
+releases=stable
+replace='"!"'
+Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --separator=" " --field="Release:CB" "stable" | xargs -I{} sakura -e "quickget tails {}"'
+Icon=/home/zen/.config/quickemu/vms_icons/tails.svg
+Categories=System;Virtualization;

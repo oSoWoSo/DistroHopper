@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=archcraft-latest
+Exec=quickemu -vm "archcraft-latest.conf"
+Icon=/home/zen/.config/quickemu/vms_icons/archcraft.svg
+Categories=System;Virtualization;
