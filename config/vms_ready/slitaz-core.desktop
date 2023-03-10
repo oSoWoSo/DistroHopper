@@ -1,6 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=slitaz-core
-Exec=quickemu -vm "slitaz-core.conf"
-Icon=/home/zen/.config/quickemu/vms_icons/slitaz.png
-Categories=System;Virtualization;

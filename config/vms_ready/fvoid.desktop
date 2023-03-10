@@ -1,6 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=fvoid
-Exec=quickemu -vm "fvoid.conf"
-Icon=/home/zen/.config/quickemu/vms_icons/tux.svg
-Categories=System;Virtualization;

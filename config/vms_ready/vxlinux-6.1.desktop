@@ -1,6 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=vxlinux-6.1
-Exec=quickemu -vm "vxlinux-6.1.conf"
-Icon=/home/zen/.config/quickemu/vms_icons/vxlinux.svg
-Categories=System;Virtualization;

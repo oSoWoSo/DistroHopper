@@ -1,6 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=haiku-r1beta4-x86_64
-Exec=quickemu -vm "haiku-r1beta4-x86_64.conf"
-Icon=/home/zen/.config/quickemu/vms_icons/haiku.png
-Categories=System;Virtualization;

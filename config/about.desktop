@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
-Name=About
+Name=About yad
 Exec=yad --about
-Icon=/home/zen/.config/quickemu/vms-icons/cereus.svg
+Icon=/home/zen/.config/quickemu/vms_icons/cereus.svg
 Categories=System;Virtualization;Settings;

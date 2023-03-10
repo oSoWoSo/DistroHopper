@@ -1,6 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=alpine-3.15
-Exec=quickemu -vm "alpine-3.15.conf"
-Icon=/home/zen/.config/quickemu/vms_icons/alpine.svg
-Categories=System;Virtualization;

@@ -1,6 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=Renew supported VMs
-Exec=renew.sh
-Icon=/home/zen/.config/quickemu/vms-icons/tux.svg
-Categories=System;Virtualization;Settings;

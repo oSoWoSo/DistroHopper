@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
-Name=About
-Exec=yad --about
-Icon=/home/zen/.config/quickemu/vms-icons/cereus.svg
+Name=Add new distro
+Exec=sakura -h -e /home/zen/.config/quickemu/add_distro.sh
+Icon=/home/zen/.config/quickemu/vms_icons/cereus.svg
 Categories=System;Virtualization;Settings;

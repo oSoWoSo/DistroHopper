@@ -1,6 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=ubuntustudio-dvd
-Exec=quickemu -vm "ubuntustudio-dvd.conf"
-Icon=/home/zen/.config/quickemu/vms_icons/ubuntustudio.svg
-Categories=System;Virtualization;

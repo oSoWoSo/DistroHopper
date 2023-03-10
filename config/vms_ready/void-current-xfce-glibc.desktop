@@ -1,6 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=void-current-xfce-glibc
-Exec=quickemu -vm "void-current-xfce-glibc.conf"
-Icon=/home/zen/.config/quickemu/vms_icons/void.svg
-Categories=System;Virtualization;
