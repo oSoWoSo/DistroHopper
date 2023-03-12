@@ -1,11 +1,13 @@
 #!/bin/bash
 
+version="0.1"
 # DEBUG mod
 #bash -x quickyad 2>&1 | tee output.log
 
 # YAD gui script using Forked excellent quickemu
 #TODO Download Icons
 #TODO Add homepages to right click
+#TODO solve yad output (null)
 
 echo "Running..."
 # dependencies checks
@@ -59,7 +61,7 @@ done
 # remove desktop files (supported VMs)
 rm "$CONFIG_DIR"/vms_supported/*
 # get supported VMs
-quickget | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' > "$CONFIG_DIR/supported.txt"
+quickget | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' > "$CONFIG_DIR/supported.md"
 while read -r get_name; do
     vm_desktop_file=$(echo "$get_name" | tr ' ' '_')
     releases=$(quickget "$vm_desktop_file" | grep 'Releases' | cut -d':' -f2 | sed 's/^ //')
@@ -97,12 +99,12 @@ Icon=$icon_file
 Categories=System;Virtualization;"
         echo "$desktop_file_content" > "$CONFIG_DIR"/vms_supported/"$vm_desktop_file".desktop
     fi
-done < "$CONFIG_DIR"/supported.txt
+done < "$CONFIG_DIR"/supported.md
 
 # show YAD notebook
 yad --plug="$key" --tabnum=1 --icons --listen --read-dir="$CONFIG_DIR"/vms_ready --sort-by-name --no-buttons --borders=0 --icon-size=48 --item-width=76 &
 yad --plug="$key" --tabnum=2 --icons --listen --read-dir="$CONFIG_DIR"/vms_supported --sort-by-name --no-buttons --borders=0 --icon-size=48 --item-width=76 &
 yad --plug="$key" --tabnum=3 --icons --listen --read-dir="$CONFIG_DIR" --sort-by-name --no-buttons --borders=0 --icon-size=48 --item-width=76 &
-yad --dynamic --notebook --key="$key" --width=900 --height=800 --title="GUI for Quickemu" --listen --no-buttons --tab="run VM" --tab="download and run VM" --tab="settings"
+yad --dynamic --notebook --key="$key" --width=900 --height=800 --title="DistroHopper $version" --listen --no-buttons --tab="run VM" --tab="download VM" --tab="settings"
 # exit peacfully
 exit 0
