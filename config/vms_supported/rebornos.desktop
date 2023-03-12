@@ -2,7 +2,8 @@
 Type=Application
 Name=rebornos
 releases=latest
+editions=
 replace='"!"'
-Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --separator=" " --field="Release:CB" "latest" | xargs -I{} sakura -e "quickget rebornos {}"'
+Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --field="Release:CB" "latest" --field="Edition:CB" "" | xargs -I{} sakura -h -e "quickget rebornos {}"'
 Icon=/home/zen/.config/quickemu/vms_icons/rebornos.svg
 Categories=System;Virtualization;

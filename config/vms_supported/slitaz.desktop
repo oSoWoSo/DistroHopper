@@ -2,7 +2,8 @@
 Type=Application
 Name=slitaz
 releases=preferred core core64 loram core-5in1 preinit
+editions=
 replace='"!"'
-Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --separator=" " --field="Release:CB" "preferred"!"core"!"core64"!"loram"!"core-5in1"!"preinit" | xargs -I{} sakura -e "quickget slitaz {}"'
+Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --field="Release:CB" "preferred"!"core"!"core64"!"loram"!"core-5in1"!"preinit" --field="Edition:CB" "" | xargs -I{} sakura -h -e "quickget slitaz {}"'
 Icon=/home/zen/.config/quickemu/vms_icons/slitaz.png
 Categories=System;Virtualization;

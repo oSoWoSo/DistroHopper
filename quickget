@@ -208,6 +208,7 @@ function os_support() {
     rebornos \
     rockylinux \
     slackware \
+    siduction \
     slitaz \
     solus \
     steamos \
@@ -518,6 +519,14 @@ function editions_rockylinux() {
 
 function releases_slackware() {
     echo 14.2 15.0
+}
+
+function releases_siduction() {
+    echo latest
+}
+
+function editions_siduction() {
+    echo kde lxqt nox xfce xorg
 }
 
 function releases_slitaz() {
@@ -1438,7 +1447,18 @@ function get_slackware() {
     local HASH=""
     local ISO="slackware64-${RELEASE}-install-dvd.iso"
     local URL="https://slackware.nl/slackware/slackware-iso/slackware64-${RELEASE}-iso"
-    HASH=$(wget -q -O- "${URL}/${ISO}.md5" |  cut -d' ' -f1)
+    HASH=$(wget -q -O- "${URL}/${ISO}.md5" | cut -d' ' -f1)
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+function get_siduction() {
+    local HASH=""
+    local DATE=""
+    local ISO=""
+    local URL="https://mirrors.dotsrc.org/siduction/iso/Masters_of_War/${EDITION}"
+    DATE=$(wget -q -O- "${URL}"| grep .iso.md5 | cut -d'-' -f6 | cut -d'.' -f1)
+    HASH=$(wget -q -O- "${URL}/${ISO}.md5" | cut -d' ' -f1)
+    ISO="siduction-22.1.1-Masters_of_War-${EDITION}-amd64-${DATE}.iso"
     echo "${URL}/${ISO} ${HASH}"
 }
 
@@ -1450,7 +1470,7 @@ function get_slitaz() {
       preferred) ISO="slitaz-rolling";;
       *)   ISO="slitaz-rolling-${RELEASE}";;
     esac
-    HASH=$(wget -q -O- "${URL}/${ISO}.md5" |  cut -d' ' -f1)
+    HASH=$(wget -q -O- "${URL}/${ISO}.md5" | cut -d' ' -f1)
     echo "${URL}/${ISO}.iso ${HASH}"
 }
 

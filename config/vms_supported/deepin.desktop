@@ -2,7 +2,8 @@
 Type=Application
 Name=deepin
 releases=20 20.1 20.2 20.2.1 20.2.2 20.2.3 20.2.4 20.3 20.4 20.5 20.6 20.7
+editions=
 replace='"!"'
-Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --separator=" " --field="Release:CB" "20"!"20.1"!"20.2"!"20.2.1"!"20.2.2"!"20.2.3"!"20.2.4"!"20.3"!"20.4"!"20.5"!"20.6"!"20.7" | xargs -I{} sakura -e "quickget deepin {}"'
+Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --field="Release:CB" "20"!"20.1"!"20.2"!"20.2.1"!"20.2.2"!"20.2.3"!"20.2.4"!"20.3"!"20.4"!"20.5"!"20.6"!"20.7" --field="Edition:CB" "" | xargs -I{} sakura -h -e "quickget deepin {}"'
 Icon=/home/zen/.config/quickemu/vms_icons/deepin.svg
 Categories=System;Virtualization;

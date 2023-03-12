@@ -2,7 +2,7 @@ Welcome to
 
 ### [yadEmu](https://github.com/oSoWoSo/yadEmu)
 ### Still Testing version!
-![yadEmu](yadEmu.png)
+![quickgui](quickgui.png)
 
 
 quickly create and run VMs

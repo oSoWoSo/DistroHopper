@@ -2,7 +2,8 @@
 Type=Application
 Name=openbsd
 releases=6.8 6.9 7.0 7.1 7.2
+editions=
 replace='"!"'
-Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --separator=" " --field="Release:CB" "6.8"!"6.9"!"7.0"!"7.1"!"7.2" | xargs -I{} sakura -e "quickget openbsd {}"'
+Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --field="Release:CB" "6.8"!"6.9"!"7.0"!"7.1"!"7.2" --field="Edition:CB" "" | xargs -I{} sakura -h -e "quickget openbsd {}"'
 Icon=/home/zen/.config/quickemu/vms_icons/openbsd.svg
 Categories=System;Virtualization;

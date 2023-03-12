@@ -2,7 +2,8 @@
 Type=Application
 Name=ubuntu-budgie
 releases=18.04 20.04 22.04 22.10 jammy-daily daily-live daily-canary                                                                       
+editions=
 replace='"!"'
-Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --separator=" " --field="Release:CB" "18.04"!"20.04"!"22.04"!"22.10"!"jammy-daily"!"daily-live"!"daily-canary"!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!"" | xargs -I{} sakura -e "quickget ubuntu-budgie {}"'
+Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --field="Release:CB" "18.04"!"20.04"!"22.04"!"22.10"!"jammy-daily"!"daily-live"!"daily-canary"!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!"" --field="Edition:CB" "" | xargs -I{} sakura -h -e "quickget ubuntu-budgie {}"'
 Icon=/home/zen/.config/quickemu/vms_icons/ubuntu-budgie.svg
 Categories=System;Virtualization;

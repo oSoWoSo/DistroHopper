@@ -3,7 +3,7 @@ Type=Application
 Name=haiku
 releases=r1beta3 r1beta4
 editions=x86_64 x86_gcc2h
-replace="!"
-Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --separator=" " --field="Release:CB" "r1beta3"!"r1beta4" --field="Edition:CB" "x86_64"!"x86_gcc2h" | xargs -I{} sakura -e "quickget haiku {}"'
+replace='"!"'
+Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --field="Release:CB" "r1beta3"!"r1beta4" --field="Edition:CB" "x86_64"!"x86_gcc2h" | xargs -I{} sakura -h -e "quickget haiku {}"'
 Icon=/home/zen/.config/quickemu/vms_icons/haiku.png
 Categories=System;Virtualization;

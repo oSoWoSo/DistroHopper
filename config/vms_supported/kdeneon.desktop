@@ -2,7 +2,8 @@
 Type=Application
 Name=kdeneon
 releases=user testing unstable developer
+editions=
 replace='"!"'
-Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --separator=" " --field="Release:CB" "user"!"testing"!"unstable"!"developer" | xargs -I{} sakura -e "quickget kdeneon {}"'
+Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --field="Release:CB" "user"!"testing"!"unstable"!"developer" --field="Edition:CB" "" | xargs -I{} sakura -h -e "quickget kdeneon {}"'
 Icon=/home/zen/.config/quickemu/vms_icons/kdeneon.svg
 Categories=System;Virtualization;

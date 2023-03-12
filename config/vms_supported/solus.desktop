@@ -3,7 +3,7 @@ Type=Application
 Name=solus
 releases=4.3
 editions=Budgie GNOME MATE Plasma
-replace="!"
-Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --separator=" " --field="Release:CB" "4.3" --field="Edition:CB" "Budgie"!"GNOME"!"MATE"!"Plasma" | xargs -I{} sakura -e "quickget solus {}"'
+replace='"!"'
+Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --field="Release:CB" "4.3" --field="Edition:CB" "Budgie"!"GNOME"!"MATE"!"Plasma" | xargs -I{} sakura -h -e "quickget solus {}"'
 Icon=/home/zen/.config/quickemu/vms_icons/solus.svg
 Categories=System;Virtualization;

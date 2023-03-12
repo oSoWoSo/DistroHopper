@@ -46,6 +46,7 @@ popos
 reactos
 rebornos
 rockylinux
+siduction
 slackware
 slitaz
 solus
