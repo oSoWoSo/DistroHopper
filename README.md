@@ -7,10 +7,12 @@ Welcome to
 
 quickly create and run VMs
 
- As a base fork of excellent [quickemu](https://github.com/quickemu-project/quickemu)
+ As a base my FOSS fork of excellent [quickemu](https://github.com/quickemu-project/quickemu)
 
 Removed:
+  
   Windows support (Currently not intended)
+  
   MacoOS support (Currently not intended)
 
 I added:
@@ -42,13 +44,85 @@ See it in action on youtube...
 
 [![quicktui](https://img.youtube.com/vi/gJ5hqYEskOw/0.jpg)](https://www.youtube.com/watch?v=gJ5hqYEskOw)
 
+# Currently supported Distribution:
+
+agarimos
+alma
+alpine
+android
+archlinux
+archcraft
+arcolinux
+batocera
+blendos
+cachyos
+centos-stream
+cereus
+debian
+deepin
+devuan
+dietpi
+dragonflybsd
+elementary
+endeavouros
+endless
+fedora
+freebsd
+freedos
+fvoid
+gabeeos
+garuda
+gentoo
+ghostbsd
+haiku
+kali
+kdeneon
+kolibrios
+kubuntu
+linuxmint
+lmde
+mageia
+manjaro
+mxlinux
+netboot
+netbsd
+nixos
+lubuntu
+openbsd
+opensuse
+oraclelinux
+popos
+reactos
+rebornos
+rockylinux
+siduction
+slackware
+slitaz
+solus
+steamos
+tails
+truenas-core
+truenas-scale
+ubuntu
+ubuntu-budgie
+ubuntukylin
+ubuntu-mate
+ubuntustudio
+ubuntu-unity
+void
+voidpup
+vxlinux
+xerolinux
+xubuntu
+zorin
+
 ### Testing version!
 
 # Without these amazing projects it wouldn't be posible:
 
-[QEMU](https://www.qemu.org/)
-
 [bash](https://www.gnu.org/software/bash/)
+
+[QEMU](https://www.qemu.org/)
 
 [quickemu](https://github.com/quickemu-project/quickemu)
 
