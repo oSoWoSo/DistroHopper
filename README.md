@@ -2,7 +2,7 @@ Welcome to
 
 # [DistroHooper](https://github.com/oSoWoSo/DistroHooper)
 ### Still Testing version!
-![quickgui](quickgui.png)
+![quickgui](DistroHopper.png)
 
 
 quickly create and run VMs
