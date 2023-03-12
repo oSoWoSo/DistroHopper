@@ -17,17 +17,13 @@ if ! command -v yad >/dev/null 2>&1; then
 fi
 # generate random key for yad (for connecting tabs in notebook together)
 key=$((RANDOM % 9000 + 1000))
+
 # set current dir as QUICKEMU_VMS_DIR
 #QUICKEMU_VMS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-# set default directories
-QUICKEMU_VMS_DIR="$HOME/.local/share/quickemu"
+
+# distrohopper config file
 CONFIG_DIR="$HOME/.config/distrohopper"
-ICON_DIR="$CONFIG_DIR/vms_icons"
-TERMINAL=sakura
-replace='"!"'
-export "QUICKEMU_VMS_DIR" "CONFIG_DIR" "ICON_DIR"
-# create default dirs if they are not present
-mkdir -p "$CONFIG_DIR" "$CONFIG_DIR/vms_ready" "$CONFIG_DIR/vms_supported"
+source "$CONFIG_DIR/distrohopper.conf"
 # remove desktop files (ready to run VMs)
 rm "$CONFIG_DIR"/vms_ready/*
 # Enter ditrohopper VMs dir
