@@ -2,5 +2,5 @@
 Type=Application
 Name=About yad
 Exec=yad --about
-Icon=/home/zen/.config/quickemu/vms_icons/cereus.svg
+Icon=/home/zen/.config/distrohopper/vms_icons/cereus.svg
 Categories=System;Virtualization;Settings;
