@@ -1,9 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=windows
-releases=8 10 11
-editions=
-replace='"!"'
-Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --field="Release:CB" "8"!"10"!"11" --field="Edition:CB" "" | xargs -I{} sakura -h -e "quickget windows {}"'
-Icon=/home/zen/.config/quickemu/vms_icons/windows.svg
-Categories=System;Virtualization;

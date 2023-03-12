@@ -2,8 +2,7 @@
 Type=Application
 Name=reactos
 releases=latest
-editions=
 replace='"!"'
-Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --field="Release:CB" "latest" --field="Edition:CB" "" | xargs -I{} sakura -h -e "quickget reactos {}"'
+Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --separator=" " --field="Release:CB" "latest" | xargs -I{} sakura -e "quickget reactos {}"'
 Icon=/home/zen/.config/quickemu/vms_icons/reactos.svg
 Categories=System;Virtualization;

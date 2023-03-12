@@ -1,9 +1,8 @@
 [Desktop Entry]
 Type=Application
 Name=netbsd
-releases=9.0 9.1 9.2
-editions=
+releases=9.0 9.1 9.2 9.3
 replace='"!"'
-Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --field="Release:CB" "9.0"!"9.1"!"9.2" --field="Edition:CB" "" | xargs -I{} sakura -h -e "quickget netbsd {}"'
+Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --separator=" " --field="Release:CB" "9.0"!"9.1"!"9.2"!"9.3" | xargs -I{} sakura -e "quickget netbsd {}"'
 Icon=/home/zen/.config/quickemu/vms_icons/netbsd.svg
 Categories=System;Virtualization;

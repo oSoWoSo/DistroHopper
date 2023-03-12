@@ -2,8 +2,7 @@
 Type=Application
 Name=steamos
 releases=4.0
-editions=
 replace='"!"'
-Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --field="Release:CB" "4.0" --field="Edition:CB" "" | xargs -I{} sakura -h -e "quickget steamos {}"'
+Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --separator=" " --field="Release:CB" "4.0" | xargs -I{} sakura -e "quickget steamos {}"'
 Icon=/home/zen/.config/quickemu/vms_icons/steamos.svg
 Categories=System;Virtualization;

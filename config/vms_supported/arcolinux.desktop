@@ -3,7 +3,7 @@ Type=Application
 Name=arcolinux
 releases=v21.09.11 v21.11.05 v22.01.10
 editions=large small
-replace='"!"'
-Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --field="Release:CB" "v21.09.11"!"v21.11.05"!"v22.01.10" --field="Edition:CB" "large"!"small" | xargs -I{} sakura -h -e "quickget arcolinux {}"'
+replace="!"
+Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --separator=" " --field="Release:CB" "v21.09.11"!"v21.11.05"!"v22.01.10" --field="Edition:CB" "large"!"small" | xargs -I{} sakura -e "quickget arcolinux {}"'
 Icon=/home/zen/.config/quickemu/vms_icons/arcolinux.svg
 Categories=System;Virtualization;

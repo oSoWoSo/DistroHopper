@@ -3,7 +3,7 @@ Type=Application
 Name=mageia
 releases=8
 editions=Plasma GNOME Xfce
-replace='"!"'
-Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --field="Release:CB" "8" --field="Edition:CB" "Plasma"!"GNOME"!"Xfce" | xargs -I{} sakura -h -e "quickget mageia {}"'
+replace="!"
+Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --separator=" " --field="Release:CB" "8" --field="Edition:CB" "Plasma"!"GNOME"!"Xfce" | xargs -I{} sakura -e "quickget mageia {}"'
 Icon=/home/zen/.config/quickemu/vms_icons/mageia.png
 Categories=System;Virtualization;

@@ -3,7 +3,7 @@ Type=Application
 Name=nixos
 releases=21.05 21.11 22.05 22.11
 editions=gnome plasma5 minimal
-replace='"!"'
-Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --field="Release:CB" "21.05"!"21.11"!"22.05"!"22.11" --field="Edition:CB" "gnome"!"plasma5"!"minimal" | xargs -I{} sakura -h -e "quickget nixos {}"'
+replace="!"
+Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --separator=" " --field="Release:CB" "21.05"!"21.11"!"22.05"!"22.11" --field="Edition:CB" "gnome"!"plasma5"!"minimal" | xargs -I{} sakura -e "quickget nixos {}"'
 Icon=/home/zen/.config/quickemu/vms_icons/nixos.svg
 Categories=System;Virtualization;

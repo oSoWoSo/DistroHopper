@@ -1,19 +1,24 @@
 Welcome to
 
-### [yadEmu](https://github.com/oSoWoSo/yadEmu)
+# [DistroHooper](https://github.com/oSoWoSo/DistroHooper)
 ### Still Testing version!
 ![quickgui](quickgui.png)
 
 
 quickly create and run VMs
 
-Using excellent [quickemu](https://github.com/quickemu-project/quickemu) as base
+ As a base fork of excellent [quickemu](https://github.com/quickemu-project/quickemu)
+
+Removed:
+  Windows support (Currently not intended)
+  MacoOS support (Currently not intended)
 
 I added:
 
-### quickgui
+## quickgui
   using yad
 
+### .Desktop file generator
   It will simple generate .desktop files for every supported VM in quickemu.
   So you can copy it anywhere...
   
@@ -21,7 +26,9 @@ I added:
   
   you can download new distro with few clicks of a mouse
   
-  You need to run quickgui just for update.
+  You need to run quickgui just for update supported distros.
+
+### Simple GUI using yad --notebook
 
 See it in action on youtube...
 
@@ -30,7 +37,7 @@ See it in action on youtube...
   or command line?...
 
 
-### quicktui
+## quicktui
   using fzf
 
 [![quicktui](https://img.youtube.com/vi/gJ5hqYEskOw/0.jpg)](https://www.youtube.com/watch?v=gJ5hqYEskOw)

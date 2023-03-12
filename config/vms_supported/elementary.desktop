@@ -2,8 +2,7 @@
 Type=Application
 Name=elementary
 releases=7.0
-editions=
 replace='"!"'
-Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --field="Release:CB" "7.0" --field="Edition:CB" "" | xargs -I{} sakura -h -e "quickget elementary {}"'
+Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --separator=" " --field="Release:CB" "7.0" | xargs -I{} sakura -e "quickget elementary {}"'
 Icon=/home/zen/.config/quickemu/vms_icons/elementary.svg
 Categories=System;Virtualization;

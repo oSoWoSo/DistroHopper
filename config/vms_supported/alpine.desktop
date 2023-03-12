@@ -2,8 +2,7 @@
 Type=Application
 Name=alpine
 releases=3.12 3.13 3.14 3.15 latest
-editions=
 replace='"!"'
-Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --field="Release:CB" "3.12"!"3.13"!"3.14"!"3.15"!"latest" --field="Edition:CB" "" | xargs -I{} sakura -h -e "quickget alpine {}"'
+Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --separator=" " --field="Release:CB" "3.12"!"3.13"!"3.14"!"3.15"!"latest" | xargs -I{} sakura -e "quickget alpine {}"'
 Icon=/home/zen/.config/quickemu/vms_icons/alpine.svg
 Categories=System;Virtualization;

@@ -3,7 +3,7 @@ Type=Application
 Name=linuxmint
 releases=20.2 20.3 21 21.1
 editions=cinnamon mate xfce
-replace='"!"'
-Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --field="Release:CB" "20.2"!"20.3"!"21"!"21.1" --field="Edition:CB" "cinnamon"!"mate"!"xfce" | xargs -I{} sakura -h -e "quickget linuxmint {}"'
+replace="!"
+Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --separator=" " --field="Release:CB" "20.2"!"20.3"!"21"!"21.1" --field="Edition:CB" "cinnamon"!"mate"!"xfce" | xargs -I{} sakura -e "quickget linuxmint {}"'
 Icon=/home/zen/.config/quickemu/vms_icons/linuxmint.svg
 Categories=System;Virtualization;

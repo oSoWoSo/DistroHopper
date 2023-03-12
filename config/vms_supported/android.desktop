@@ -3,7 +3,7 @@ Type=Application
 Name=android
 releases=7.1 8.1 9.0
 editions=x86 x86_64
-replace='"!"'
-Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --field="Release:CB" "7.1"!"8.1"!"9.0" --field="Edition:CB" "x86"!"x86_64" | xargs -I{} sakura -h -e "quickget android {}"'
+replace="!"
+Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --separator=" " --field="Release:CB" "7.1"!"8.1"!"9.0" --field="Edition:CB" "x86"!"x86_64" | xargs -I{} sakura -e "quickget android {}"'
 Icon=/home/zen/.config/quickemu/vms_icons/android.svg
 Categories=System;Virtualization;

@@ -3,7 +3,7 @@ Type=Application
 Name=zorin
 releases=16
 editions=core64 lite64 education64 edulite64
-replace='"!"'
-Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --field="Release:CB" "16" --field="Edition:CB" "core64"!"lite64"!"education64"!"edulite64" | xargs -I{} sakura -h -e "quickget zorin {}"'
+replace="!"
+Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --separator=" " --field="Release:CB" "16" --field="Edition:CB" "core64"!"lite64"!"education64"!"edulite64" | xargs -I{} sakura -e "quickget zorin {}"'
 Icon=/home/zen/.config/quickemu/vms_icons/zorin.svg
 Categories=System;Virtualization;

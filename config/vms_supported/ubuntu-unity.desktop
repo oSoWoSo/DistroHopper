@@ -2,8 +2,7 @@
 Type=Application
 Name=ubuntu-unity
 releases=22.10 daily-live daily-canary
-editions=
 replace='"!"'
-Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --field="Release:CB" "22.10"!"daily-live"!"daily-canary" --field="Edition:CB" "" | xargs -I{} sakura -h -e "quickget ubuntu-unity {}"'
+Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --separator=" " --field="Release:CB" "22.10"!"daily-live"!"daily-canary" | xargs -I{} sakura -e "quickget ubuntu-unity {}"'
 Icon=/home/zen/.config/quickemu/vms_icons/ubuntu-unity.png
 Categories=System;Virtualization;

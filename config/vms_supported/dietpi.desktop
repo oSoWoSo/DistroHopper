@@ -3,7 +3,7 @@ Type=Application
 Name=dietpi
 releases=bios uefi
 editions=bookworm bookworm-installer bullseye bullseye-installer
-replace='"!"'
-Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --field="Release:CB" "bios"!"uefi" --field="Edition:CB" "bookworm"!"bookworm-installer"!"bullseye"!"bullseye-installer" | xargs -I{} sakura -h -e "quickget dietpi {}"'
+replace="!"
+Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --separator=" " --field="Release:CB" "bios"!"uefi" --field="Edition:CB" "bookworm"!"bookworm-installer"!"bullseye"!"bullseye-installer" | xargs -I{} sakura -e "quickget dietpi {}"'
 Icon=/home/zen/.config/quickemu/vms_icons/dietpi.svg
 Categories=System;Virtualization;

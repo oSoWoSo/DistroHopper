@@ -2,8 +2,7 @@
 Type=Application
 Name=freedos
 releases=1.2 1.3
-editions=
 replace='"!"'
-Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --field="Release:CB" "1.2"!"1.3" --field="Edition:CB" "" | xargs -I{} sakura -h -e "quickget freedos {}"'
+Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --separator=" " --field="Release:CB" "1.2"!"1.3" | xargs -I{} sakura -e "quickget freedos {}"'
 Icon=/home/zen/.config/quickemu/vms_icons/freedos.svg
 Categories=System;Virtualization;

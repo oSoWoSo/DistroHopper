@@ -2,8 +2,7 @@
 Type=Application
 Name=ubuntu
 releases=14.04 16.04 18.04 20.04 22.04 22.10 jammy-daily daily-live daily-canary                                                                       
-editions=
 replace='"!"'
-Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --field="Release:CB" "14.04"!"16.04"!"18.04"!"20.04"!"22.04"!"22.10"!"jammy-daily"!"daily-live"!"daily-canary"!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!"" --field="Edition:CB" "" | xargs -I{} sakura -h -e "quickget ubuntu {}"'
+Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --separator=" " --field="Release:CB" "14.04"!"16.04"!"18.04"!"20.04"!"22.04"!"22.10"!"jammy-daily"!"daily-live"!"daily-canary"!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!"" | xargs -I{} sakura -e "quickget ubuntu {}"'
 Icon=/home/zen/.config/quickemu/vms_icons/ubuntu.svg
 Categories=System;Virtualization;
