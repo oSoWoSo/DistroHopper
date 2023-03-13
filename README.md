@@ -3,7 +3,7 @@ Welcome to
 # [DistroHooper](https://github.com/oSoWoSo/DistroHooper)
  Licensed under AGPL3
 ### Still Testing version!
-![quickgui](DistroHopper.png)
+![quickgui](distrohopper.png)
 
 
 quickly create and run VMs
