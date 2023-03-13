@@ -1,8 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=agarimos
-releases=20230305 20230303 20230225 20230216
-replace='"!"'
-Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --separator=" " --field="Release:CB" "20230305"!"20230303"!"20230225"!"20230216" | xargs -I{} sakura -e "quickget agarimos {}"'
-Icon=/home/zen/.config/quickemu/vms_icons/agarimos.png
-Categories=System;Virtualization;

@@ -1,9 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=debian
-releases=10.0.0 10.1.0 10.2.0 10.3.0 10.4.0 10.5.0 10.6.0 10.7.0 10.8.0 10.9.0 10.10.0 10.11.0 10.12.0 10.13.0 11.0.0 11.1.0 11.2.0 11.3.0 11.4.0 11.5.0 11.6.0
-editions=standard cinnamon gnome kde lxde lxqt mate xfce netinst
-replace="!"
-Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --separator=" " --field="Release:CB" "10.0.0"!"10.1.0"!"10.2.0"!"10.3.0"!"10.4.0"!"10.5.0"!"10.6.0"!"10.7.0"!"10.8.0"!"10.9.0"!"10.10.0"!"10.11.0"!"10.12.0"!"10.13.0"!"11.0.0"!"11.1.0"!"11.2.0"!"11.3.0"!"11.4.0"!"11.5.0"!"11.6.0" --field="Edition:CB" "standard"!"cinnamon"!"gnome"!"kde"!"lxde"!"lxqt"!"mate"!"xfce"!"netinst" | xargs -I{} sakura -e "quickget debian {}"'
-Icon=/home/zen/.config/quickemu/vms_icons/debian.svg
-Categories=System;Virtualization;

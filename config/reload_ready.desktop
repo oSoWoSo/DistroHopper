@@ -1,6 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=Renew ready VMs
-Exec=reload_ready.sh
-Icon=/home/zen/.config/quickemu/vms_icons/tux.svg
-Categories=System;Virtualization;Settings;

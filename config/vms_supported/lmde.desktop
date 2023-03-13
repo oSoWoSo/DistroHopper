@@ -1,9 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=lmde
-releases=5
-editions=cinnamon
-replace="!"
-Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --separator=" " --field="Release:CB" "5" --field="Edition:CB" "cinnamon" | xargs -I{} sakura -e "quickget lmde {}"'
-Icon=/home/zen/.config/quickemu/vms_icons/lmde.svg
-Categories=System;Virtualization;

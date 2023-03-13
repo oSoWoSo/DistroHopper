@@ -1,9 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=alma
-releases=8.6 8.7 9.0 9.1
-editions=minimal dvd
-replace="!"
-Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --separator=" " --field="Release:CB" "8.6"!"8.7"!"9.0"!"9.1" --field="Edition:CB" "minimal"!"dvd" | xargs -I{} sakura -e "quickget alma {}"'
-Icon=/home/zen/.config/quickemu/vms_icons/alma.svg
-Categories=System;Virtualization;

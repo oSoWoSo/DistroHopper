@@ -1,8 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=kubuntu
-releases=16.04 18.04 20.04 22.04 22.10 jammy-daily daily-live daily-canary                                                                       
-replace='"!"'
-Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --separator=" " --field="Release:CB" "16.04"!"18.04"!"20.04"!"22.04"!"22.10"!"jammy-daily"!"daily-live"!"daily-canary"!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!""!"" | xargs -I{} sakura -e "quickget kubuntu {}"'
-Icon=/home/zen/.config/quickemu/vms_icons/kubuntu.svg
-Categories=System;Virtualization;
