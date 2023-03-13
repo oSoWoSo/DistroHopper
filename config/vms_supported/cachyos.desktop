@@ -1,9 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=cachyos
-releases=230305
-editions=kde gnome
-replace="!"
-Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --separator=" " --field="Release:CB" "230305" --field="Edition:CB" "kde"!"gnome" | xargs -I{} sakura -e "quickget cachyos {}"'
-Icon=/home/zen/.config/quickemu/vms_icons/cachyos.svg
-Categories=System;Virtualization;

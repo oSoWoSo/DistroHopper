@@ -1,8 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=vxlinux
-releases=6.1.2 6.1 5.0 4.2 4.1 4.0.
-replace='"!"'
-Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --separator=" " --field="Release:CB" "6.1.2"!"6.1"!"5.0"!"4.2"!"4.1"!"4.0." | xargs -I{} sakura -e "quickget vxlinux {}"'
-Icon=/home/zen/.config/quickemu/vms_icons/vxlinux.svg
-Categories=System;Virtualization;

@@ -1,9 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=centos-stream
-releases=8 9
-editions=dvd1 boot
-replace="!"
-Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --separator=" " --field="Release:CB" "8"!"9" --field="Edition:CB" "dvd1"!"boot" | xargs -I{} sakura -e "quickget centos-stream {}"'
-Icon=/home/zen/.config/quickemu/vms_icons/centos-stream.svg
-Categories=System;Virtualization;

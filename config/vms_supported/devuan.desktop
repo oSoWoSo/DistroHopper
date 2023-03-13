@@ -1,8 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=devuan
-releases=beowulf chimaera
-replace='"!"'
-Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --separator=" " --field="Release:CB" "beowulf"!"chimaera" | xargs -I{} sakura -e "quickget devuan {}"'
-Icon=/home/zen/.config/quickemu/vms_icons/devuan.svg
-Categories=System;Virtualization;

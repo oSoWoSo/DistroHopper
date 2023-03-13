@@ -1,6 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=netboot-latest
-Exec=quickemu -vm "netboot-latest.conf"
-Icon=/home/zen/.config/quickemu/vms_icons/netboot.svg
-Categories=System;Virtualization;
