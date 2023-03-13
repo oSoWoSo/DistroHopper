@@ -1,9 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=cereus
-releases=latest
-editions=base lxqt xfce
-replace="!"
-Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --separator=" " --field="Release:CB" "latest" --field="Edition:CB" "base"!"lxqt"!"xfce" | xargs -I{} sakura -e "quickget cereus {}"'
-Icon=/home/zen/.config/quickemu/vms_icons/cereus.svg
-Categories=System;Virtualization;

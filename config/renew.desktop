@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=Renew VMs
+Exec=sakura -h renew.sh
+Icon=/home/zen/.config/distrohopper/vms_icons/tux.svg
+Categories=System;Virtualization;Settings;

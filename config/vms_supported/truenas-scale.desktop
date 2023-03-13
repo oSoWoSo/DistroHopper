@@ -1,8 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=truenas-scale
-releases=22.02 22.12
-replace='"!"'
-Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --separator=" " --field="Release:CB" "22.02"!"22.12" | xargs -I{} sakura -e "quickget truenas-scale {}"'
-Icon=/home/zen/.config/quickemu/vms_icons/truenas-scale.svg
-Categories=System;Virtualization;

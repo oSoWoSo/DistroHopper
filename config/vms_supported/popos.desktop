@@ -1,9 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=popos
-releases=20.04 21.10 22.04
-editions=intel nvidia
-replace="!"
-Exec=sh -c 'cd /home/zen/.local/share/quickemu && yad --form --separator=" " --field="Release:CB" "20.04"!"21.10"!"22.04" --field="Edition:CB" "intel"!"nvidia" | xargs -I{} sakura -e "quickget popos {}"'
-Icon=/home/zen/.config/quickemu/vms_icons/popos.svg
-Categories=System;Virtualization;
