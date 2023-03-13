@@ -999,16 +999,15 @@ function get_batocera() {
     local URL="https://mirrors.o2switch.fr/batocera/x86_64/stable/last"
     local ISO="$(curl -sl ${URL}/ | grep -e 'batocera.*img.gz'|cut -d\" -f2)"
     local CURRENT_RELEASE=$(echo "${ISO}"| cut -d\- -f3)
+}
 
 function get_blendos() {
     local HASH=""
     local URL="$(curl -s https://api.github.com/repos/blend-os/blendOS/releases  |grep 'browser_download_url'|grep ${RELEASE} | grep -o '\"http.*\.iso\"'| cut -d\" -f 2| head -1)"
     HASH=$(curl -s "${URL}.sha256sum" | cut -d' ' -f1)
     echo "${URL} ${HASH}"
-}
-
     case ${RELEASE} in
-      ${CURRENT_RELEASE})  #Current release
+      "${CURRENT_RELEASE}")  #Current release
          URL+=""
          ;;
       *)
