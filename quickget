@@ -234,7 +234,7 @@ function os_support() {
 }
 
 function releases_agarimos() {
-    echo latest 20230312 20230311 20230305 20230303 20230225 20230216
+    echo latest
 }
 
 function editions_agarimos() {
