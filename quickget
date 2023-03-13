@@ -1003,7 +1003,7 @@ function get_batocera() {
 
 function get_blendos() {
     local HASH=""
-    local URL="$(curl -s https://api.github.com/repos/blend-os/blendOS/releases  |grep 'browser_download_url'|grep ${RELEASE} | grep -o '\"http.*\.iso\"'| cut -d\" -f 2| head -1)"
+    local URL="$(curl -s https://api.github.com/repos/blend-os/blendOS/releases | grep 'browser_download_url'| grep ${RELEASE} | grep -o '\"http.*\.iso\"'| cut -d\" -f 2| head -1)"
     HASH=$(curl -s "${URL}.sha256sum" | cut -d' ' -f1)
     echo "${URL} ${HASH}"
     case ${RELEASE} in
