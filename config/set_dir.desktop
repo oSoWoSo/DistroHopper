@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
-Name=Set working dir
+Name=Set VMs dir
 Exec=set_dir.sh
-Icon=/home/zen/.config/quickemu/vms_icons/cereus.svg
+Icon=/home/zen/.config/distrohopper/vms_icons/cereus.svg
 Categories=System;Virtualization;Settings;
