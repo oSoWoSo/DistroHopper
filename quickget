@@ -1158,10 +1158,12 @@ function get_centos-stream() {
 function get_cereus() {
     local HASH=""
     local ISO=""
-    local URL=""
+    local URL="https://sourceforge.net/projects/cereus-linux/files/isos/beta/${RELEASE}/${EDITION}"
+    local DATE=""
+    DATE=$(wget -q -O- "${URL}/SHA256" | cut -d' ' -f3 | grep "${EDITION}")
     case ${EDITION} in
       base)
-        ISO="cereus-beta-live-x86_64-xfce-2023.02.17.iso"
+        ISO="cereus-beta-live-x86_64-xfce-${DATE}.iso"
         URL="https://sourceforge.net/projects/cereus-linux/files/isos/beta/latest/base"
         HASH=$(wget -q -O- ${URL}/SHA256 | grep "${ISO}" | cut -d' ' -f2)
         ;;

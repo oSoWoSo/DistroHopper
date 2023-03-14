@@ -59,7 +59,7 @@ Type=Application
 Name=$get_name
 releases=$releases
 replace='\"!\"'
-Exec=sh -c 'cd "$QUICKEMU_VMS_DIR" && yad --form --field=\"Release:CB\" \"${releases// /$replace}\" | cut -d\"|\" -f1 | xargs -I{} $TERMINAL -e \"quickget $get_name {}\"'
+Exec=sh -c 'cd "$QUICKEMU_VMS_DIR" && yad --form --field=\"Release:CB\" \"${releases// /$replace}\" | cut -d\"|\" -f1 | xargs -I{} sh -c \"quickget $get_name {}\"'
 Icon=$icon_file
 Categories=System;Virtualization;"
         echo "$desktop_file_content" > "$CONFIG_DIR"/vms_supported/"$vm_desktop_file".desktop
@@ -71,7 +71,7 @@ Name=$get_name
 releases=$releases
 editions=$editions
 replace=$replace
-Exec=sh -c 'cd \"$QUICKEMU_VMS_DIR\" && yad --form --separator=\" \" --field=\"Release:CB\" \"${releases// /$replace}\" --field=\"Edition:CB\" \"${editions// /$replace}\" | xargs -I{} $TERMINAL -e \"quickget $get_name {}\"'
+Exec=sh -c 'cd \"$QUICKEMU_VMS_DIR\" && yad --form --separator=\" \" --field=\"Release:CB\" \"${releases// /$replace}\" --field=\"Edition:CB\" \"${editions// /$replace}\" | xargs -I{} sh -c \"quickget $get_name {}\"'
 Icon=$icon_file
 Categories=System;Virtualization;"
         echo "$desktop_file_content" > "$CONFIG_DIR"/vms_supported/"$vm_desktop_file".desktop
