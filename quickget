@@ -289,6 +289,8 @@ function editions_arcolinux() {
     echo large small
 }
 
+
+
 function releases_blendos() {
     curl -s https://api.github.com/repos/blend-os/blendOS/releases  |grep tag_name | grep -o -E '[[:digit:]]+\.[[:digit:]]+'
 
@@ -408,6 +410,10 @@ function releases_fvoid() {
 
 function editions_fvoid() {
     echo lxqt
+}
+
+function releases_gabeeos() {
+    echo latest
 }
 
 function releases_garuda() {
