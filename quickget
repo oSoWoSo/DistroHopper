@@ -306,7 +306,7 @@ function releases_cachyos() {
 }
 
 function editions_cachyos() {
-    echo kde gnome
+    echo kde gnome cli
 }
 
 function releases_centos-stream() {
