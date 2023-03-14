@@ -302,7 +302,7 @@ function releases_blendos() {
 }
 
 function releases_cachyos() {
-    echo 230305
+    echo latest
 }
 
 function editions_cachyos() {
