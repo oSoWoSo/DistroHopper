@@ -289,11 +289,12 @@ function editions_arcolinux() {
     echo large small
 }
 
-
+function releases_batocera() {
+  echo 32 33 34
+}
 
 function releases_blendos() {
     curl -s https://api.github.com/repos/blend-os/blendOS/releases  |grep tag_name | grep -o -E '[[:digit:]]+\.[[:digit:]]+'
-
 }
 
 function releases_cachyos() {
