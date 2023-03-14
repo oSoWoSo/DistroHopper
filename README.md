@@ -39,6 +39,23 @@ See it in action on youtube...
 
 [![quicktui](https://img.youtube.com/vi/gJ5hqYEskOw/0.jpg)](https://www.youtube.com/watch?v=gJ5hqYEskOw)
 
+# Why I creating this?
+  Because I wanna learn
+
+- Linux
+
+- Bash
+
+- yad
+
+- project management
+
+- contribute to open source
+
+Because I wanna play with Quickemu
+
+And easily add new distro to it
+
 #
 
 Quickemu.
