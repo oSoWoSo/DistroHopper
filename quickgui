@@ -1,4 +1,5 @@
 #!/bin/bash
+export LC_ALL=C
 
 version="0.3"
 # DEBUG mod
