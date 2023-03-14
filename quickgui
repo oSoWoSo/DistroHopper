@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version="0.2"
+version="0.3"
 # DEBUG mod
 #bash -x quickyad 2>&1 | tee output.log
 
