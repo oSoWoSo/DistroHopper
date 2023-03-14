@@ -8,13 +8,7 @@ Welcome to
 
 quickly create and run VMs
 
- As a base my FOSS fork of excellent [quickemu](https://github.com/quickemu-project/quickemu)
-
-Removed:
-  
-  Windows support (Currently not intended)
-  
-  MacoOS support (Currently not intended)
+ As a base excellent [quickemu](https://github.com/quickemu-project/quickemu)
 
 I added:
 
@@ -179,6 +173,9 @@ with your preferred flavour.
 -   `vxlinux` (VX Linux)
 -   `xerolinux` (XeroLinux)
 -   `zorin` (Zorin OS)
+
+-   `macos` (MacOS)
+-   `windows` (Windows)
 
 ### Testing version!
 
