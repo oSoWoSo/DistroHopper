@@ -18,3 +18,4 @@ config/vms_supported/
 *.sock
 *.xml
 *.zs-old
+*.kate-swp
