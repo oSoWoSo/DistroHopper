@@ -3,7 +3,9 @@ Want you try new Operating system?
  How?
 
 # [DistroHooper](https://github.com/oSoWoSo/DistroHooper)
- Licensed under AGPL3
+Quickly download, create and run VM of any(TODO) operating system.
+
+Licensed under AGPL3
 ### Still Testing version!
 ![quickgui](distrohopper.png)
 
