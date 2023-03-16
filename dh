@@ -27,14 +27,14 @@ if [ $1 = -t ] ; then
     if ! command -v fzf >/dev/null 2>&1; then
         echo "You are missing fzf..." && exit 255
     fi
-    printf ' Prepared VMs:\n-------------\n'
+    printf ' Prepared VMs:\n-------------\n%s\n'
     # Check if there are any VMs
     if [ ${#vms[@]} -eq 0 ]; then
         echo "No VMs found."
         exit 1
     fi
     # Print the names of the available VMs
-    printf "%s\n" "${vms[@]%.conf}"
+    printf "%s\n" "${vms[@]%.*}"
     echo "-------------"
     # Action prompt
     printf " Do you want to create a new VM? (c)
