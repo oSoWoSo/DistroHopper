@@ -1,4 +1,6 @@
-Welcome to
+Want you try new Operating system? 
+
+ How?
 
 # [DistroHooper](https://github.com/oSoWoSo/DistroHooper)
  Licensed under AGPL3
