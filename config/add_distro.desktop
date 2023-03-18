@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
 Name=Add new distro
-Exec=sakura -h -e /home/zen/.config/distrohopper/add_distro.sh
-Icon=/home/zen/.config/distrohopper/vms_icons/cereus.svg
+Exec=add_distro.sh
+Icon=/usr/share/icons/distroicons/cereus.svg
 Categories=System;Virtualization;Settings;

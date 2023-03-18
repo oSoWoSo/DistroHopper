@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
-Name=About yad
-Exec=yad --about
-Icon=/home/zen/.config/distrohopper/vms_icons/cereus.svg
+Name=About DistroHopper
+Exec=yad --info --no-buttons
+Icon=/usr/share/icons/distroicons/hop.svg
 Categories=System;Virtualization;Settings;
