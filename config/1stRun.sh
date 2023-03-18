@@ -21,7 +21,8 @@ sudo cp ../dh ../quickget ../quickemu ../macrecovery ../windowskey /usr/bin/
 
 # Renew VMs
 "$CONFIG_DIR/renew.sh"
+
 # Set VMs dir
-#"$CONFIG_DIR/set_dir.sh"
+"$CONFIG_DIR/set_dir.sh"
 
 echo "Done"
