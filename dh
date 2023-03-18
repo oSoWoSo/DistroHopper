@@ -2,7 +2,7 @@
 export LC_ALL=C
 
 progname="${progname:="${0##*/}"}"
-version="0.3"
+version="0.4"
 GTK_THEME="alt-dialog"
 CONFIG_DIR="$HOME/.config/distrohopper"
 source "$CONFIG_DIR/distrohopper.conf"
