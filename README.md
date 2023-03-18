@@ -7,7 +7,7 @@ Quickly download, create and run VM of any(TODO) operating system.
 
 Licensed under AGPL3
 ### Still Testing version!
-![quickgui](distrohopper.png)
+![dh](distrohopper.png)
 
 
 quickly create and run VMs
@@ -16,7 +16,7 @@ quickly create and run VMs
 
 I added:
 
-## quickgui
+## GUI
   using yad
 
 ### .Desktop file generator
@@ -33,15 +33,15 @@ I added:
 
 See it in action on youtube...
 
-[![quickgui](https://img.youtube.com/vi/JtjIseqZMkQ/0.jpg)](https://www.youtube.com/watch?v=JtjIseqZMkQ)
+[![dh](https://img.youtube.com/vi/JtjIseqZMkQ/0.jpg)](https://www.youtube.com/watch?v=JtjIseqZMkQ)
 
   or command line?...
 
 
-## quicktui
+## TUI
   using fzf
 
-[![quicktui](https://img.youtube.com/vi/gJ5hqYEskOw/0.jpg)](https://www.youtube.com/watch?v=gJ5hqYEskOw)
+[![tui](https://img.youtube.com/vi/gJ5hqYEskOw/0.jpg)](https://www.youtube.com/watch?v=gJ5hqYEskOw)
 
 # Why I creating this?
   Because I wanna learn
