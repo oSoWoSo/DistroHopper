@@ -20,14 +20,14 @@ if ! command -v yad >/dev/null 2>&1; then
 	exit 1
 fi
 # run TUI instead
-if [ $1 = -t ] ; then
+if [ "$1" = "-t" ] ; then
     printf '%s: v.%s\nquickemu: v.%s\n\n VMs dir: %s\n\n' "$progname" "$version" "$(quickemu --version)" "$(pwd)"
     vms=(*.conf)
     # Dependency check: check if fzf is installed and can be executed
     if ! command -v fzf >/dev/null 2>&1; then
         echo "You are missing fzf..." && exit 255
     fi
-    printf ' Prepared VMs:\n-------------\n%s\n'
+    printf ' Prepared VMs:\n-------------\n\n'
     # Check if there are any VMs
     if [ ${#vms[@]} -eq 0 ]; then
         echo "No VMs found."
@@ -94,17 +94,16 @@ Choose other language" | fzf --cycle)
     # Run choosed VM
     printf '\n Starting %s...\n\n' "$choosed"
     quickemu -vm "$choosed.conf"
-fi
 else
     # run GUI
     key=$((RANDOM % 9000 + 1000))
     GTK_THEME="alt-dialog"
     CONFIG_DIR="$HOME/.config/distrohopper"
     source "$CONFIG_DIR/distrohopper.conf"
-    yad --plug="$key" --tabnum=1 --icons --listen --read-dir="$CONFIG_DIR"/vms_ready --sort-by-name --no-buttons --borders=0 --icon-size=48 --item-width=76 &
-    yad --plug="$key" --tabnum=2 --icons --listen --read-dir="$CONFIG_DIR"/vms_supported --sort-by-name --no-buttons --borders=0 --icon-size=48 --item-width=76 &
-    yad --plug="$key" --tabnum=3 --icons --listen --read-dir="$CONFIG_DIR" --sort-by-name --no-buttons --borders=0 --icon-size=48 --item-width=76 &
-    yad --dynamic --notebook --key="$key" --width=900 --height=800 --title="DistroHopper $version" --listen --no-buttons --tab="run VM" --tab="download VM" --tab="settings"
+    yad --plug="$key" --tabnum=1 --monitor --icons --listen --read-dir="$CONFIG_DIR"/ready --sort-by-name --no-buttons --borders=0 --icon-size=48 --item-width=76 &
+    yad --plug="$key" --tabnum=2 --monitor --icons --listen --read-dir="$CONFIG_DIR"/supported --sort-by-name --no-buttons --borders=0 --icon-size=48 --item-width=76 &
+    yad --plug="$key" --tabnum=3 --monitor --icons --listen --read-dir="$CONFIG_DIR" --sort-by-name --no-buttons --borders=0 --icon-size=48 --item-width=76 &
+    yad --dynamic --notebook --key="$key" --monitor --window-icon=hop.svg --width=900 --height=800 --title="DistroHopper $version" --listen --no-buttons --tab="run VM" --tab="download VM" --tab="settings"
 fi
 
 exit 0
