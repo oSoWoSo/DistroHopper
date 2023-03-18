@@ -94,6 +94,7 @@ Choose other language" | fzf --cycle)
     # Run choosed VM
     printf '\n Starting %s...\n\n' "$choosed"
     quickemu -vm "$choosed.conf"
+fi
 else
     # run GUI
     key=$((RANDOM % 9000 + 1000))
@@ -103,7 +104,7 @@ else
     yad --plug="$key" --tabnum=1 --monitor --icons --listen --read-dir="$CONFIG_DIR"/ready --sort-by-name --no-buttons --borders=0 --icon-size=48 --item-width=76 &
     yad --plug="$key" --tabnum=2 --monitor --icons --listen --read-dir="$CONFIG_DIR"/supported --sort-by-name --no-buttons --borders=0 --icon-size=48 --item-width=76 &
     yad --plug="$key" --tabnum=3 --monitor --icons --listen --read-dir="$CONFIG_DIR" --sort-by-name --no-buttons --borders=0 --icon-size=48 --item-width=76 &
-    yad --dynamic --notebook --key="$key" --monitor --window-icon=hop.svg --width=900 --height=800 --title="DistroHopper $version" --listen --no-buttons --tab="run VM" --tab="download VM" --tab="settings"
+    yad --dynamic --notebook --key="$key" --monitor --window-icon="$ICON_DIR/hop.svg" --width=900 --height=800 --title="DistroHopper $version" --listen --no-buttons --tab="run VM" --tab="download VM" --tab="settings"
 fi
 
 exit 0
