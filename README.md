@@ -2,7 +2,10 @@ Want you try new Operating system?
 
  How?
 
-# [DistroHopper](https://github.com/oSoWoSo/DistroHopper)
+[DistroHopper](https://github.com/oSoWoSo/DistroHopper)
+
+![Hop](config/icons/hop.svg)
+
 Quickly download, create and run VM of any(TODO) operating system.
 
 Licensed under AGPL3
@@ -143,3 +146,5 @@ GUI depends on
 
 TUI depends on
 [fzf](https://github.com/junegunn/fzf)
+
+[logo by](https://freesvg.org/by/OpenClipart)
