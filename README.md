@@ -36,7 +36,7 @@ See it in action on youtube...
   It will simple generate .desktop files for every supported and downloaded VM in quickemu.
   So you can link it anywhere...
 
-# Why I creating this?
+# Why am I doing it?
   Because I wanna learn
 
 - Linux
