@@ -64,7 +64,7 @@ Quickemu.
 [![quickemu video: Replace VirtualBox with Bash &
 QEMU](https://img.youtube.com/vi/AOTYWEgw0hI/0.jpg)](https://www.youtube.com/watch?v=AOTYWEgw0hI)
 
-## Requirements
+## Requirements (For running VMs)
 
 -   [QEMU](https://www.qemu.org/) (*6.0.0 or newer*) **with GTK, SDL,
     SPICE & VirtFS support**
@@ -113,6 +113,8 @@ Fedora:
 Void Linux:
 
     sudo xbps-install qemu bash coreutils grep jq procps-ng python3 util-linux sed spice-gtk swtpm usbutils wget xdg-user-dirs xrandr unzip zsync socat
+
+# For Distrohopper to work you need `wget yad fzf` quickemu is included
 
 # How to install DistroHopper?
 
