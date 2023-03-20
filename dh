@@ -10,7 +10,7 @@ TERMINAL=sakura
 replace='"!"'
 export "CONFIG_DIR" "ICON_DIR" "TERMINAL" "replace"
 
-cd "$VMS_DIR"
+cd "$VMS_DIR" || exit
 
 #source "$CONFIG_DIR/distrohopper.conf"
 # Set traps to catch the signals and exit gracefully
