@@ -28,36 +28,36 @@ if ! command -v yad >/dev/null 2>&1; then
 fi
 # run TUI instead
 if [ "$1" = "-t" ] ; then
-    printf '%s: v.%s\nquickemu: v.%s\n\n VMs dir: %s\n\n' "$progname" "$version" "$(quickemu --version)" "$(pwd)"
-    vms=(*.conf)
-    # Dependency check: check if fzf is installed and can be executed
-    if ! command -v fzf >/dev/null 2>&1; then
-        echo "You are missing fzf..." && exit 255
-    fi
-    printf ' Prepared VMs:\n-------------\n\n'
-    # Check if there are any VMs
-    if [ ${#vms[@]} -eq 0 ]; then
-        echo "No VMs found."
-        exit 1
-    fi
-    # Print the names of the available VMs
-    printf "%s\n" "${vms[@]%.*}"
-    echo "-------------"
-    # Action prompt
-    printf " Do you want to create a new VM? (c)
-     or run an existing one? (press anything)\n"
-    read -rn 1 -s start
-    case $start in
-        c )
-            todo="create"
-        ;;
-    esac
-    # If the user chose to create a new VM
-    if [ "$todo" = "create" ]; then
-        os=$(quickget | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' | fzf --cycle --header='Choose OS to download
+	printf '%s: v.%s\nquickemu: v.%s\n\n VMs dir: %s\n\n' "$progname" "$version" "$(quickemu --version)" "$(pwd)"
+	vms=(*.conf)
+	# Dependency check: check if fzf is installed and can be executed
+	if ! command -v fzf >/dev/null 2>&1; then
+		echo "You are missing fzf..." && exit 255
+	fi
+	printf ' Prepared VMs:\n-------------\n\n'
+	# Check if there are any VMs
+	if [ ${#vms[@]} -eq 0 ]; then
+		echo "No VMs found."
+		exit 1
+	fi
+	# Print the names of the available VMs
+	printf "%s\n" "${vms[@]%.*}"
+	echo "-------------"
+	# Action prompt
+	printf " Do you want to create a new VM? (c)
+	 or run an existing one? (press anything)\n"
+	read -rn 1 -s start
+	case $start in
+		c )
+			todo="create"
+		;;
+	esac
+	# If the user chose to create a new VM
+	if [ "$todo" = "create" ]; then
+		os=$(quickget | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' | fzf --cycle --header='Choose OS to download
  or CTRL-c or ESC to quit')
-    # If the OS is Windows
-    if [ "$os" = windows ]; then
+	# If the OS is Windows
+	if [ "$os" = windows ]; then
 		answer=$(echo "Default English
 Choose other language" | fzf --cycle)
 		# If the user wants another windows language
@@ -95,21 +95,21 @@ Choose other language" | fzf --cycle)
 		printf '\n Trying to download %s %s %s...\n\n' "$os" "$release" "$edition"
 		quickget "$os" "$release" "$edition"
 	fi
-    # choose VM to run
-    choosed=$(echo "$(ls ./***.conf 2>/dev/null | sed 's/\.conf$//')" | fzf --cycle --header='Choose VM to run
+	# choose VM to run
+	choosed=$(echo "$(ls ./***.conf 2>/dev/null | sed 's/\.conf$//')" | fzf --cycle --header='Choose VM to run
  or CTRL-c or ESC to quit')
-    # Run choosed VM
-    printf '\n Starting %s...\n\n' "$choosed"
-    quickemu -vm "$choosed.conf"
+	# Run choosed VM
+	printf '\n Starting %s...\n\n' "$choosed"
+	quickemu -vm "$choosed.conf"
 fi
 else
-    # run GUI
-    key=$((RANDOM % 9000 + 1000))
-    GTK_THEME="alt-dialog"
-    yad --plug="$key" --tabnum=1 --monitor --icons --listen --read-dir="$CONFIG_DIR"/ready --sort-by-name --no-buttons --borders=0 --icon-size=48 --item-width=76 &
-    yad --plug="$key" --tabnum=2 --monitor --icons --listen --read-dir="$CONFIG_DIR"/supported --sort-by-name --no-buttons --borders=0 --icon-size=48 --item-width=76 &
-    yad --plug="$key" --tabnum=3 --monitor --icons --listen --read-dir="$CONFIG_DIR" --sort-by-name --no-buttons --borders=0 --icon-size=48 --item-width=76 &
-    yad --dynamic --notebook --key="$key" --monitor --window-icon="$ICON_DIR"/hop.svg --width=900 --height=800 --title="DistroHopper $version" --listen --no-buttons --tab="run VM" --tab="download VM" --tab="settings"
+	# run GUI
+	key=$((RANDOM % 9000 + 1000))
+	GTK_THEME="alt-dialog"
+	yad --plug="$key" --tabnum=1 --monitor --icons --listen --read-dir="$CONFIG_DIR"/ready --sort-by-name --no-buttons --borders=0 --icon-size=48 --item-width=76 &
+	yad --plug="$key" --tabnum=2 --monitor --icons --listen --read-dir="$CONFIG_DIR"/supported --sort-by-name --no-buttons --borders=0 --icon-size=48 --item-width=76 &
+	yad --plug="$key" --tabnum=3 --monitor --icons --listen --read-dir="$CONFIG_DIR" --sort-by-name --no-buttons --borders=0 --icon-size=48 --item-width=76 &
+	yad --dynamic --notebook --key="$key" --monitor --window-icon="$ICON_DIR"/hop.svg --width=900 --height=800 --title="DistroHopper $version" --listen --no-buttons --tab="run VM" --tab="download VM" --tab="settings"
 fi
 
 exit 0
