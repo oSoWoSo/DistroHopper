@@ -1,6 +1,6 @@
 Want you try new Operating system? 
 
- How?
+ try
 
 [DistroHopper](https://github.com/oSoWoSo/DistroHopper)
 
@@ -16,23 +16,10 @@ Licensed under AGPL3
 quickly create and run VMs
 
  As a base excellent [quickemu](https://github.com/quickemu-project/quickemu)
-
-I added:
-
-## GUI
-  using yad
-
-### .Desktop file generator
-  It will simple generate .desktop files for every supported VM in quickemu.
-  So you can copy it anywhere...
-  
-  And I mean every supported distro.
   
   you can download new distro with few clicks of a mouse
   
-  You need to run quickgui just for update supported distros.
-
-### Simple GUI using yad --notebook
+## GUI using yad
 
 See it in action on youtube...
 
@@ -40,11 +27,14 @@ See it in action on youtube...
 
   or command line?...
 
-
-## TUI
-  using fzf
+## TUI using fzf
 
 [![tui](https://img.youtube.com/vi/gJ5hqYEskOw/0.jpg)](https://www.youtube.com/watch?v=gJ5hqYEskOw)
+
+
+## .Desktop file generator
+  It will simple generate .desktop files for every supported and downloaded VM in quickemu.
+  So you can link it anywhere...
 
 # Why I creating this?
   Because I wanna learn
@@ -57,13 +47,17 @@ See it in action on youtube...
 
 - project management
 
-- contribute to open source
+And contribute to open source
 
-Because I wanna play with Quickemu
+ play with Quickemu
 
-And easily add new distro to it
+And easily add new distros to it
 
-#
+
+
+# How to run DistroHopper?
+
+You need fullfill the requirement first...
 
 Quickemu.
 
@@ -119,6 +113,47 @@ Fedora:
 Void Linux:
 
     sudo xbps-install qemu bash coreutils grep jq procps-ng python3 util-linux sed spice-gtk swtpm usbutils wget xdg-user-dirs xrandr unzip zsync socat
+
+# How to install DistroHopper?
+
+ You need get copy of distrohopper
+ 
+  If you want more stable, download latest [release](https://github.com/oSoWoSo/DistroHopper/releases) version
+ 
+ If you want developer version... (could have bugs)
+ 
+ `git clone https://github.com/oSoWoSo/DistroHopper`
+ 
+ Enter created/unpacked distrohopper directory
+ 
+ Then enter config directory
+ 
+ `cd distrohopper/config`
+ 
+ And run
+ 
+ `./1stRun.sh`
+ 
+ Now should be good to go...
+
+# How to run
+
+ Just run from terminal
+ 
+ `dh`
+ 
+ or for TUI version (Download and run from/into same directory)
+ 
+ `dh -t`
+ 
+# Desktop files
+
+ All desktop files will be storred in your .config
+ in directories /distrohopper/ready and supported
+ 
+ Fell free to link them anywhere you want...
+ 
+ 
 
 # Currently supported Distribution:
 
