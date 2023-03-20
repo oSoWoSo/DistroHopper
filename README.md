@@ -184,4 +184,30 @@ GUI depends on
 TUI depends on
 [fzf](https://github.com/junegunn/fzf)
 
-[logo by](https://freesvg.org/by/OpenClipart)
+----
+
+For easy of use
+
+[fish](https://fishshell.com)
+
+For commiting and working with github
+
+[lazygit](https://github.com/jesseduffield/lazygit)
+
+Editing done mostly in
+
+[Kate](https://apps.kde.org/kate)
+
+Logo and icons edited in
+
+[GIMP](https://www.gimp.org)
+
+and
+
+[Inkscape](https://inkscape.org)
+
+[logo by](https://freesvg.org/by/OpenClipart) bit repaired by me..
+
+Everything done on
+
+[Void Linux](https://voidlinux.org)
