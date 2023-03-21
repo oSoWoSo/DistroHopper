@@ -57,6 +57,7 @@ function pretty_name() {
     linuxmint)          PRETTY_NAME="Linux Mint";;
     lmde)               PRETTY_NAME="Linux Mint Debian Edition";;
     mageia)             PRETTY_NAME="Mageia";;
+    miyo)           PRETTY_NAME="Miyo Linux";;
     mxlinux)            PRETTY_NAME="MX Linux";;
     netboot)            PRETTY_NAME="netboot.xyz";;
     netbsd)             PRETTY_NAME="NetBSD";;
@@ -214,6 +215,7 @@ function os_support() {
     lmde \
     mageia \
     manjaro \
+    miyo \
     mxlinux \
     netboot \
     netbsd \
@@ -499,6 +501,14 @@ function releases_manjaro() {
     cinnamon \
     i3 \
     mate
+}
+
+function releases_miyo() {
+    echo latest 2022 2020 2019 2018 2017 2016
+}
+
+function editions_miyo(){
+    echo kwin ceres jwm openbox mate
 }
 
 function releases_mxlinux(){
@@ -1615,6 +1625,15 @@ function get_manjaro() {
     URL="$(wget -qO- "${MANIFESTURL}" | grep "Download_x64 =" | cut -d'"' -f2)"
     HASH=$(wget -qO- "${MANIFESTURL}" | grep "Download_x64_Checksum =" | cut -d'"' -f2)
     echo "${URL} ${HASH}"
+}
+
+function get_miyo() {
+    local EDITION=
+    local HASH=
+    local ISO=miyo-${EDITION}-x86_64-BIOS-${DATE}.iso
+    local URL=https://sourceforge.net/projects/miyolinux/files/${RELEASE}-Release/${EDITION}
+    HASH=$(wget -q -O- "${URL}/${ISO}.sha256" | cut -d' ' -f1)
+    echo "${URL}/${ISO} ${HASH}"
 }
 
 function get_mxlinux() {
