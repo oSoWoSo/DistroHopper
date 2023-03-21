@@ -211,3 +211,12 @@ and
 Everything done on
 
 [Void Linux](https://voidlinux.org)
+
+---
+
+Mirrored on
+[SourceForge](https://sourceforge.net/projects/distrohopper)
+[disroot](https://git.disroot.org/oSoWoSo/DistroHopper)
+[codeberg](https://codeberg.org/oSoWoSo/DistroHopper)
+[gitlab](https://gitlab.com/osowoso/distrohopper)
+[]()
