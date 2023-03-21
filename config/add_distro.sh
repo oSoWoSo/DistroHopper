@@ -27,7 +27,7 @@ echo "function get_$NAME() {
     local HASH=""
     local ISO="$ISO"
     local URL="$URL"
-    HASH=\"$(wget -q -O- "${URL}/CHECKSUM" | grep "(${ISO}" | cut -d' ' -f4)\"
+    HASH="$HASH"
     echo "${URL}/${ISO} ${HASH}"
 }
 " >>  ${TMP_DIR}/newvm.tmp
