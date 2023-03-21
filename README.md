@@ -1,3 +1,10 @@
+![](https://img.shields.io/github/stars/oSoWoSo/DistroHopper?style=for-the-badge&color=8BC53F&logo=instatus&logoColor=000000)
+![](https://img.shields.io/github/forks/oSoWoSo/DistroHopper?style=for-the-badge&color=8BC53F&logo=git&logoColor=000000)
+![](https://img.shields.io/github/license/oSoWoSo/DistroHopper?style=for-the-badge&color=8BC53F&logo=apache&logoColor=000000)
+![](https://img.shields.io/github/repo-size/oSoWoSo/DistroHopper?style=for-the-badge&color=8BC53F&logo=files&logoColor=000000)
+![](https://img.shields.io/github/last-commit/oSoWoSo/DistroHopper?style=for-the-badge&color=8BC53F&logo=codeigniter&logoColor=000000)
+![](https://img.shields.io/badge/language-shell-green?style=for-the-badge&color=8BC53F&logo=sharp&logoColor=000000)
+
 Want you try new Operating system? 
 
  try
