@@ -8,6 +8,7 @@ datarootdir := $(PREFIX)/share
 datadir := $(datarootdir)
 mandir := $(datarootdir)/man
 bindir :=  $(PREFIX)/bin
+configdir := $(datarootdir)/distrohopper
 ICONS_DIR := config/icons
 
 all: distrohopper.1 quickget.1 quickemu.1 quickemu_conf.1
@@ -31,16 +32,19 @@ install_bins:
 	install -m 755 ../quickemu $(DESTDIR)$(bindir)
 	install -m 755 ../macrecovery $(DESTDIR)$(bindir)
 
+install_config:
+
+
 install_icons:
-	install -d $(DESTDIR)$(datadir)/icons/dh
-	install -m 644 $(ICONS_DIR)/*.svg $(DESTDIR)$(datadir)/icons/dh
-	install -m 644 $(ICONS_DIR)/*.png $(DESTDIR)$(datadir)/icons/dh
+	install -d $(DESTDIR)$(datadir)/icons/distrohopper
+	install -m 644 $(ICONS_DIR)/*.svg $(DESTDIR)$(datadir)/icons/distrohopper
+	install -m 644 $(ICONS_DIR)/*.png $(DESTDIR)$(datadir)/icons/distrohopper
 
 install: install_bins  install_docs install_icons
 
 uninstall_icons:
-	rm -f $(DESTDIR)$(datadir)/icons/dh/*.svg
-	rm -f $(DESTDIR)$(datadir)/icons/dh/*.png
+	rm -f $(DESTDIR)$(datadir)/icons/distrohopper/*.svg
+	rm -f $(DESTDIR)$(datadir)/icons/distrohopper/*.png
 
 uninstall_docs:
 	rm -f $(DESTDIR)$(mandir)/man1/distrohopper.1
