@@ -716,7 +716,11 @@ function releases_voidpup() {
 }
 
 function releases_vxlinux() {
-    echo 6.1.2 6.1 5.0 4.2 4.1 4.0.
+    echo 7.0 6.1.2 6.1 5.0 4.2 4.1 4.0.
+}
+
+function editions_vxlinux() {
+	echo lxqt kde
 }
 
 function releases_windows() {
