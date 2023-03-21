@@ -215,8 +215,19 @@ Everything done on
 ---
 
 Mirrored on
+
+[GitHub](https://github.com/oSoWoSo/DistroHopper)
+
 [SourceForge](https://sourceforge.net/projects/distrohopper)
-[disroot](https://git.disroot.org/oSoWoSo/DistroHopper)
-[codeberg](https://codeberg.org/oSoWoSo/DistroHopper)
-[gitlab](https://gitlab.com/osowoso/distrohopper)
-[]()
+
+[Disroot](https://git.disroot.org/oSoWoSo/DistroHopper)
+
+[Codeberg](https://codeberg.org/oSoWoSo/DistroHopper)
+
+[GitLab](https://gitlab.com/osowoso/distrohopper)
+
+[SourceHut](https://git.sr.ht/~osowoso/DistroHopper)
+
+Website
+
+https://osowoso.github.io/DistroHopper/
