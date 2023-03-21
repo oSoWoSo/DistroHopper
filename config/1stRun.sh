@@ -12,7 +12,7 @@ create_structure() {
     # copy everything to config dir
     cp -r * "$DH_CONFIG_DIR/"
     # copy icons
-    sudo cp "icons/"* "$DH_ICON_DIR/"
+    sudo cp "../icons/"* "$DH_ICON_DIR/"
 }
 
 # Set VMs dir
