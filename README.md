@@ -4,7 +4,7 @@ Want you try new Operating system?
 
 [DistroHopper](https://github.com/oSoWoSo/DistroHopper)
 
-![Hop](config/icons/hop.svg)
+![Hop](icons/hop.svg)
 
 Quickly download, create and run VM of any(TODO) operating system.
 
