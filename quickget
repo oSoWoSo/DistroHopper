@@ -78,6 +78,7 @@ function pretty_name() {
     ubuntu-mate)        PRETTY_NAME="Ubuntu MATE";;
     ubuntustudio)       PRETTY_NAME="Ubuntu Studio";;
     ubuntu-unity)       PRETTY_NAME="Ubuntu Unity";;
+    ventoy)           PRETTY_NAME=Ventoy;;
     void)               PRETTY_NAME="Void Linux";;
     voidpup)            PRETTY_NAME="Void Puppy";;
     vxlinux)            PRETTY_NAME="VX Linux";;
@@ -240,6 +241,7 @@ function os_support() {
     ubuntu-mate \
     ubuntustudio \
     ubuntu-unity \
+    ventoy \
     void \
     voidpup \
     vxlinux \
@@ -685,6 +687,10 @@ function releases_ubuntu() {
             eol-21.10 \
             ;
     fi
+}
+
+function releases_ventoy() {
+    echo latest
 }
 
 function releases_void() {
@@ -1868,6 +1874,14 @@ function get_ubuntu() {
         check_hash "${ISO}" "${HASH}"
         make_vm_config "${ISO}"
     fi
+}
+
+function get_ventoy() {
+    local HASH=
+    local ISO=ventoy-1.0.89-livecd.iso
+    local URL=https://github.com/ventoy/Ventoy/releases/download/v1.0.89
+    HASH="$(wget -q -O- "${URL}/sha256.txt" | grep "${ISO}" | cut -d' ' -f4)"
+    echo "${URL}/${ISO} ${HASH}"
 }
 
 function get_void() {
