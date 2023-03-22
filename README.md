@@ -19,7 +19,6 @@ Licensed under AGPL3
 ### Still Testing version!
 ![dh](distrohopper.png)
 
-
 quickly create and run VMs
 
  As a base excellent [quickemu](https://github.com/quickemu-project/quickemu)
@@ -127,9 +126,13 @@ Void Linux:
 
  You need get copy of distrohopper
  
-  If you want more stable, download latest [release](https://github.com/oSoWoSo/DistroHopper/releases) version
+  If you want more stable experience, download latest release from [GitHub](https://github.com/oSoWoSo/DistroHopper/releases)
+  
+  or
+  
+  From [![SourceForge](https://img.shields.io/sourceforge/dt/distrohopper.svg)](https://sourceforge.net/projects/distrohopper/files/latest/download)SourceForge
  
- If you want developer version... (could have bugs)
+ If you want latest developer version... (could have bugs)
  
  `git clone https://github.com/oSoWoSo/DistroHopper`
  
