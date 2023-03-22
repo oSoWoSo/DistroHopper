@@ -5,20 +5,20 @@
 ![](https://img.shields.io/github/last-commit/oSoWoSo/DistroHopper?style=for-the-badge&color=8BC53F&logo=codeigniter&logoColor=000000)
 ![](https://img.shields.io/badge/language-shell-green?style=for-the-badge&color=8BC53F&logo=sharp&logoColor=000000)
 
-Want you try new Operating system?
+Looking to try out a new operating system?
 
  try
 
-[DistroHopper](https://github.com/oSoWoSo/DistroHopper)
+# **DistroHopper**
 
 ![Hop](logo.svg)
 
-Quickly download, create and run VM of any(TODO) operating system.
+Quickly download, create and run VM of any#TODO operating system.
 
-<noscript><a href="https://liberapay.com/zenobit/donate"><img alt="Donate using Liberapay" src="https://liberapay.com/assets/widgets/donate.svg"></a></noscript>
+[![Donate](https://liberapay.com/assets/widgets/donate.svg)](https://liberapay.com/zenobit/donate)
 
 Licensed under AGPL3
-### Still Testing version!
+# Still Testing version!
 ![dh](distrohopper.png)
 
 quickly create and run VMs
@@ -31,13 +31,13 @@ quickly create and run VMs
 
 See it in action on youtube...
 
-<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/JtjIseqZMkQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<iframe width="720" height="480" src="https://www.youtube-nocookie.com/embed/JtjIseqZMkQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
   or command line?...
 
 ## TUI using fzf
 
-<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/gJ5hqYEskOw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<iframe width="720" height="480" src="https://www.youtube-nocookie.com/embed/gJ5hqYEskOw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 ## .Desktop file generator
   It will simple generate .desktop files for every supported and downloaded VM in quickemu.
@@ -64,13 +64,13 @@ And easily add new distros to it
 
 ---
 
-# How to run DistroHopper?
+## How to run DistroHopper?
 
 You need fullfill the requirement first...
 
 Quickemu.
 
-<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/AOTYWEgw0hI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<iframe width="720" height="480" src="https://www.youtube-nocookie.com/embed/AOTYWEgw0hI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 ## Requirements (For running VMs)
 
@@ -122,13 +122,17 @@ Void Linux:
 
     sudo xbps-install qemu bash coreutils grep jq procps-ng python3 util-linux sed spice-gtk swtpm usbutils wget xdg-user-dirs xrandr unzip zsync socat
 
-# For Distrohopper to work you need `wget yad fzf` quickemu is included
+### For DistroHopper to work you need
+
+  `wget yad fzf` quickemu is included
 
 # How to install DistroHopper?
 
  You need get copy of distrohopper
  
-  If you want more stable experience, download latest release from [GitHub](https://github.com/oSoWoSo/DistroHopper/releases)
+  If you want more stable experience, download latest release from
+  
+#### [GitHub](https://github.com/oSoWoSo/DistroHopper/releases)
   
   or
   
@@ -152,7 +156,7 @@ Void Linux:
 
 ---
 
-# How to run
+# How to run DistroHopper
 
  Just run from terminal
  
@@ -162,7 +166,7 @@ Void Linux:
  
  `dh -t`
  
-# Desktop files
+## Desktop files
 
  All desktop files will be storred in your .config
  in directories /distrohopper/ready and supported
@@ -171,7 +175,7 @@ Void Linux:
  
  
 
-# Currently supported Distribution:
+### Currently supported Distribution:
 
 In screenshot above...
 
@@ -179,7 +183,7 @@ In screenshot above...
 
 # Github discussion:
 
-[discuss](https://github.com/oSoWoSo/DistroHopper/discussions)
+#### [discuss](https://github.com/oSoWoSo/DistroHopper/discussions)
 
 # Project chat group:
 If anyone wanna join, here is one 
@@ -190,72 +194,83 @@ If anyone wanna join, here is one
 
 # Without these amazing projects it wouldn't be posible:
 
-[bash](https://www.gnu.org/software/bash/)
+#### [bash](https://www.gnu.org/software/bash/)
 
-[QEMU](https://www.qemu.org/)
+#### [QEMU](https://www.qemu.org/)
 
-[quickemu](https://github.com/quickemu-project/quickemu)
+#### [quickemu](https://github.com/quickemu-project/quickemu)
 
 GUI depends on
-[yad](https://github.com/v1cont/yad)
+#### [yad](https://github.com/v1cont/yad)
 
 TUI depends on
-[fzf](https://github.com/junegunn/fzf)
+#### [fzf](https://github.com/junegunn/fzf)
 
 ----
 
-For easy of use
+For 
 
-[fish](https://fishshell.com)
+- easy of use
 
-For commiting and working with github
+#### [fish](https://fishshell.com)
 
-[lazygit](https://github.com/jesseduffield/lazygit)
+- commiting and working with github
 
-Edited
+#### [lazygit](https://github.com/jesseduffield/lazygit)
 
-[geany](https://geany.org/)
+- Editing
 
-[Kate](https://apps.kde.org/kate)
+#### [geany](https://geany.org/)
 
-For diff
+#### [Kate](https://apps.kde.org/kate)
 
-[Meld](https://meld.app/)
+- diff
 
-for Logo and icons
+#### [Meld](https://meld.app/)
 
-[GIMP](https://www.gimp.org)
+- Logo and icons
+
+#### [GIMP](https://www.gimp.org)
 
 and
 
-[Inkscape](https://inkscape.org)
+#### [Inkscape](https://inkscape.org)
 
-[logo by](https://freesvg.org/by/OpenClipart) bit repaired by me..
+#### [logo by](https://freesvg.org/by/OpenClipart) bit repaired by me..
 
 Everything done on
 
-[Void Linux](https://voidlinux.org)
+#### [Void Linux](https://voidlinux.org)
 
 ---
 
-Mirrored on
+# Mirrored on
 
-[GitHub](https://github.com/oSoWoSo/DistroHopper)
+#### [GitHub](https://github.com/oSoWoSo/DistroHopper)
 
-[SourceForge](https://sourceforge.net/projects/distrohopper)
+#### [SourceForge](https://sourceforge.net/projects/distrohopper)
 
-[Disroot](https://git.disroot.org/oSoWoSo/DistroHopper)
+#### [Disroot](https://git.disroot.org/oSoWoSo/DistroHopper)
 
-[Codeberg](https://codeberg.org/oSoWoSo/DistroHopper)
+#### [Codeberg](https://codeberg.org/oSoWoSo/DistroHopper)
 
-[GitLab](https://gitlab.com/osowoso/distrohopper)
+#### [GitLab](https://gitlab.com/osowoso/distrohopper)
 
-[SourceHut](https://git.sr.ht/~osowoso/DistroHopper)
+#### [SourceHut](https://git.sr.ht/~osowoso/DistroHopper)
 
 ---
 
-DistroHopper
+# DistroHopper website (click mascot):
 
-[website](https://dh.osowoso.xyz/)
+[![website](logo.svg)](https://dh.osowoso.xyz/)
 
-<noscript><a href="https://liberapay.com/zenobit/donate"><img alt="Donate using Liberapay" src="https://liberapay.com/assets/widgets/donate.svg"></a></noscript>
+# donate
+[![Donate](https://liberapay.com/assets/widgets/donate.svg)](https://liberapay.com/zenobit/donate)
+
+@zen0bit at github
+
+mailto: <zenobit@osowoso.xyz>
+
+[up](./)
+
+#### [parent oSoWoSo](https://osowoso.xyz)

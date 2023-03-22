@@ -5,20 +5,20 @@
 ![](https://img.shields.io/github/last-commit/oSoWoSo/DistroHopper?style=for-the-badge&color=8BC53F&logo=codeigniter&logoColor=000000)
 ![](https://img.shields.io/badge/language-shell-green?style=for-the-badge&color=8BC53F&logo=sharp&logoColor=000000)
 
-Want you try new Operating system?
+Looking to try out a new operating system?
 
  try
 
-[DistroHopper](https://github.com/oSoWoSo/DistroHopper)
+# **DistroHopper**
 
 ![Hop](icons/hop.svg)
 
-Quickly download, create and run VM of any(TODO) operating system.
+Quickly download, create and run VM of any#TODO operating system.
 
 <noscript><a href="https://liberapay.com/zenobit/donate"><img alt="Donate using Liberapay" src="https://liberapay.com/assets/widgets/donate.svg"></a></noscript>
 
 Licensed under AGPL3
-### Still Testing version!
+# Still Testing version!
 ![dh](distrohopper.png)
 
 quickly create and run VMs
@@ -44,6 +44,8 @@ See it in action on youtube...
   It will simple generate .desktop files for every supported and downloaded VM in quickemu.
   So you can link it anywhere...
 
+---
+
 # Why am I doing it?
   Because I wanna learn
 
@@ -61,9 +63,9 @@ And contribute to open source
 
 And easily add new distros to it
 
+---
 
-
-# How to run DistroHopper?
+## How to run DistroHopper?
 
 You need fullfill the requirement first...
 
@@ -122,13 +124,17 @@ Void Linux:
 
     sudo xbps-install qemu bash coreutils grep jq procps-ng python3 util-linux sed spice-gtk swtpm usbutils wget xdg-user-dirs xrandr unzip zsync socat
 
-# For Distrohopper to work you need `wget yad fzf` quickemu is included
+### For DistroHopper to work you need
+
+  `wget yad fzf` quickemu is included
 
 # How to install DistroHopper?
 
  You need get copy of distrohopper
  
-  If you want more stable experience, download latest release from [GitHub](https://github.com/oSoWoSo/DistroHopper/releases)
+  If you want more stable experience, download latest release from
+  
+#### [GitHub](https://github.com/oSoWoSo/DistroHopper/releases)
   
   or
   
@@ -150,7 +156,9 @@ Void Linux:
  
  Now should be good to go...
 
-# How to run
+---
+
+# How to run DistroHopper
 
  Just run from terminal
  
@@ -160,7 +168,7 @@ Void Linux:
  
  `dh -t`
  
-# Desktop files
+## Desktop files
 
  All desktop files will be storred in your .config
  in directories /distrohopper/ready and supported
@@ -169,89 +177,100 @@ Void Linux:
  
  
 
-# Currently supported Distribution:
+### Currently supported Distribution:
 
 In screenshot above...
 
+---
+
 # Github discussion:
 
-[discuss](https://github.com/oSoWoSo/DistroHopper/discussions)
+#### [discuss](https://github.com/oSoWoSo/DistroHopper/discussions)
 
 # Project chat group:
 If anyone wanna join, here is one 
-[SimpleX](https://simplex.chat/contact#/?v=1-2&smp=smp%3A%2F%2FSkIkI6EPd2D63F4xFKfHk7I1UGZVNn6k1QWZ5rcyr6w%3D%40smp9.simplex.im%2FzmtsZwfTjwyynibt0bF6bb_xLWS9ce5A%23%2F%3Fv%3D1-2%26dh%3DMCowBQYDK2VuAyEAkMtz66wGfWb6VDn-_t_mVm3RFiFfOC3Hxye8Hm5tmVo%253D%26srv%3Djssqzccmrcws6bhmn77vgmhfjmhwlyr3u7puw4erkyoosywgl67slqqd.onion&data=%7B%22type%22%3A%22group%22%2C%22groupLinkId%22%3A%22o8KR0TOM0f2j33nO9goMRQ%3D%3D%22%7D) way
+[![SimpleX](simplex.svg)](https://simplex.chat/contact#/?v=1-2&smp=smp%3A%2F%2FSkIkI6EPd2D63F4xFKfHk7I1UGZVNn6k1QWZ5rcyr6w%3D%40smp9.simplex.im%2FzmtsZwfTjwyynibt0bF6bb_xLWS9ce5A%23%2F%3Fv%3D1-2%26dh%3DMCowBQYDK2VuAyEAkMtz66wGfWb6VDn-_t_mVm3RFiFfOC3Hxye8Hm5tmVo%253D%26srv%3Djssqzccmrcws6bhmn77vgmhfjmhwlyr3u7puw4erkyoosywgl67slqqd.onion&data=%7B%22type%22%3A%22group%22%2C%22groupLinkId%22%3A%22o8KR0TOM0f2j33nO9goMRQ%3D%3D%22%7D) way
 
 (check the software! even if you don't want chat about DistroHopper)
 [Simplex website](https://simplex.chat)
 
 # Without these amazing projects it wouldn't be posible:
 
-[bash](https://www.gnu.org/software/bash/)
+#### [bash](https://www.gnu.org/software/bash/)
 
-[QEMU](https://www.qemu.org/)
+#### [QEMU](https://www.qemu.org/)
 
-[quickemu](https://github.com/quickemu-project/quickemu)
+#### [quickemu](https://github.com/quickemu-project/quickemu)
 
 GUI depends on
-[yad](https://github.com/v1cont/yad)
+#### [yad](https://github.com/v1cont/yad)
 
 TUI depends on
-[fzf](https://github.com/junegunn/fzf)
+#### [fzf](https://github.com/junegunn/fzf)
 
 ----
 
-For easy of use
+For 
 
-[fish](https://fishshell.com)
+- easy of use
 
-For commiting and working with github
+#### [fish](https://fishshell.com)
 
-[lazygit](https://github.com/jesseduffield/lazygit)
+- commiting and working with github
 
-Edited
+#### [lazygit](https://github.com/jesseduffield/lazygit)
 
-[geany](https://geany.org/)
+- Editing
 
-[Kate](https://apps.kde.org/kate)
+#### [geany](https://geany.org/)
 
-For diff
+#### [Kate](https://apps.kde.org/kate)
 
-[Meld](https://meld.app/)
+- diff
 
-for Logo and icons
+#### [Meld](https://meld.app/)
 
-[GIMP](https://www.gimp.org)
+- Logo and icons
+
+#### [GIMP](https://www.gimp.org)
 
 and
 
-[Inkscape](https://inkscape.org)
+#### [Inkscape](https://inkscape.org)
 
-[logo by](https://freesvg.org/by/OpenClipart) bit repaired by me..
+#### [logo by](https://freesvg.org/by/OpenClipart) bit repaired by me..
 
 Everything done on
 
-[Void Linux](https://voidlinux.org)
+#### [Void Linux](https://voidlinux.org)
 
 ---
 
-Mirrored on
+# Mirrored on
 
-[GitHub](https://github.com/oSoWoSo/DistroHopper)
+#### [GitHub](https://github.com/oSoWoSo/DistroHopper)
 
-[SourceForge](https://sourceforge.net/projects/distrohopper)
+#### [SourceForge](https://sourceforge.net/projects/distrohopper)
 
-[Disroot](https://git.disroot.org/oSoWoSo/DistroHopper)
+#### [Disroot](https://git.disroot.org/oSoWoSo/DistroHopper)
 
-[Codeberg](https://codeberg.org/oSoWoSo/DistroHopper)
+#### [Codeberg](https://codeberg.org/oSoWoSo/DistroHopper)
 
-[GitLab](https://gitlab.com/osowoso/distrohopper)
+#### [GitLab](https://gitlab.com/osowoso/distrohopper)
 
-[SourceHut](https://git.sr.ht/~osowoso/DistroHopper)
+#### [SourceHut](https://git.sr.ht/~osowoso/DistroHopper)
 
 ---
 
-DistroHopper
+# DistroHopper website (click mascot):
 
-[website](https://dh.osowoso.xyz/)
+[![website](docs/logo.svg)](https://dh.osowoso.xyz/)
 
+# donate
 <noscript><a href="https://liberapay.com/zenobit/donate"><img alt="Donate using Liberapay" src="https://liberapay.com/assets/widgets/donate.svg"></a></noscript>
+
+@zen0bit at github
+
+mailto: <zenobit@osowoso.xyz>
+
+#### [parent oSoWoSo](https://osowoso.xyz)
