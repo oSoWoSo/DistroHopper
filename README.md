@@ -168,7 +168,9 @@ Void Linux:
 
 In screenshot above...
 
-### Testing version!
+# Github discussion:
+
+[discuss](https://github.com/oSoWoSo/DistroHopper/discussions)
 
 # Project chat group:
 If anyone wanna join, here is one 
