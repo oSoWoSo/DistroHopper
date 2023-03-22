@@ -14,11 +14,7 @@ set_variables() {
 	#GTK_THEME="alt-dialog"
 	DH_CONFIG_DIR="$HOME/.config/distrohopper"
 	DH_CONFIG="$DH_CONFIG_DIR/distrohopper.conf"
-	DH_ICON_DIR="/usr/share/icons/distrohopper"
-	TERMINAL=sakura
-	replace='"!"'
 	export LC_ALL=C
-	export "DH_CONFIG_DIR" "DH_CONFIG" "DH_ICON_DIR" "TERMINAL" "replace" # "GTK_THEME"
 	source "$DH_CONFIG"
 	# Set traps to catch the signals and exit gracefully
 	trap "exit" INT
@@ -143,7 +139,7 @@ run_gui() {
 	yad --plug="$key" --tabnum=1 --monitor --icons --listen --read-dir="$DH_CONFIG_DIR"/ready --sort-by-name --no-buttons --borders=0 --icon-size=48 --item-width=76 &
 	yad --plug="$key" --tabnum=2 --monitor --icons --listen --read-dir="$DH_CONFIG_DIR"/supported --sort-by-name --no-buttons --borders=0 --icon-size=48 --item-width=76 &
 	yad --plug="$key" --tabnum=3 --monitor --icons --listen --read-dir="$DH_CONFIG_DIR" --sort-by-name --no-buttons --borders=0 --icon-size=48 --item-width=76 &
-	yad --dynamic --notebook --key="$key" --monitor --window-icon="$DH_ICON_DIR"/hop.svg --width=900 --height=800 --title="DistroHopper" --listen --no-buttons --tab="run VM" --tab="download VM" --tab="settings"
+	yad --dynamic --notebook --key="$key" --monitor --window-icon="$DH_ICON_DIR"/hop.svg --width=900 --height=800 --title="DistroHopper" --listen --no-buttons --tab="run VM" --tab="download VM" --tab="settings" --button "test"
 }
 
 run_tui() {
@@ -267,7 +263,11 @@ add_distro() {
 }
 
 # run
+check_dependencies
+set_variables
+
 cd "$VMS_DIR" || set_dir
+
 if [ "$1" = "-t" ] ; then
 	run_tui
 else
@@ -275,8 +275,3 @@ else
 fi
 
 exit 0
-
-renew_supported
-renew_ready
-
-echo "Done"
