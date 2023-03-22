@@ -203,11 +203,17 @@ For commiting and working with github
 
 [lazygit](https://github.com/jesseduffield/lazygit)
 
-Editing done mostly in
+Edited
+
+[geany](https://geany.org/)
 
 [Kate](https://apps.kde.org/kate)
 
-Logo and icons edited in
+For diff
+
+[Meld](https://meld.app/)
+
+for Logo and icons
 
 [GIMP](https://www.gimp.org)
 
