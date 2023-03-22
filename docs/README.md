@@ -11,7 +11,7 @@ Want you try new Operating system?
 
 [DistroHopper](https://github.com/oSoWoSo/DistroHopper)
 
-![Hop](icons/hop.svg)
+![Hop](logo.svg)
 
 Quickly download, create and run VM of any(TODO) operating system.
 
@@ -31,14 +31,13 @@ quickly create and run VMs
 
 See it in action on youtube...
 
-[![dh](https://img.youtube.com/vi/JtjIseqZMkQ/0.jpg)](https://www.youtube.com/watch?v=JtjIseqZMkQ)
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/JtjIseqZMkQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
   or command line?...
 
 ## TUI using fzf
 
-[![tui](https://img.youtube.com/vi/gJ5hqYEskOw/0.jpg)](https://www.youtube.com/watch?v=gJ5hqYEskOw)
-
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/gJ5hqYEskOw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 ## .Desktop file generator
   It will simple generate .desktop files for every supported and downloaded VM in quickemu.
@@ -69,8 +68,7 @@ You need fullfill the requirement first...
 
 Quickemu.
 
-[![quickemu video: Replace VirtualBox with Bash &
-QEMU](https://img.youtube.com/vi/AOTYWEgw0hI/0.jpg)](https://www.youtube.com/watch?v=AOTYWEgw0hI)
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/AOTYWEgw0hI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 ## Requirements (For running VMs)
 
