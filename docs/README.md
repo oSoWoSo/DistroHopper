@@ -43,6 +43,8 @@ See it in action on youtube...
   It will simple generate .desktop files for every supported and downloaded VM in quickemu.
   So you can link it anywhere...
 
+---
+
 # Why am I doing it?
   Because I wanna learn
 
@@ -60,7 +62,7 @@ And contribute to open source
 
 And easily add new distros to it
 
-
+---
 
 # How to run DistroHopper?
 
@@ -148,6 +150,8 @@ Void Linux:
  
  Now should be good to go...
 
+---
+
 # How to run
 
  Just run from terminal
@@ -171,13 +175,15 @@ Void Linux:
 
 In screenshot above...
 
+---
+
 # Github discussion:
 
 [discuss](https://github.com/oSoWoSo/DistroHopper/discussions)
 
 # Project chat group:
 If anyone wanna join, here is one 
-[SimpleX](https://simplex.chat/contact#/?v=1-2&smp=smp%3A%2F%2FSkIkI6EPd2D63F4xFKfHk7I1UGZVNn6k1QWZ5rcyr6w%3D%40smp9.simplex.im%2FzmtsZwfTjwyynibt0bF6bb_xLWS9ce5A%23%2F%3Fv%3D1-2%26dh%3DMCowBQYDK2VuAyEAkMtz66wGfWb6VDn-_t_mVm3RFiFfOC3Hxye8Hm5tmVo%253D%26srv%3Djssqzccmrcws6bhmn77vgmhfjmhwlyr3u7puw4erkyoosywgl67slqqd.onion&data=%7B%22type%22%3A%22group%22%2C%22groupLinkId%22%3A%22o8KR0TOM0f2j33nO9goMRQ%3D%3D%22%7D) way
+[![SimpleX](simplex.svg)](https://simplex.chat/contact#/?v=1-2&smp=smp%3A%2F%2FSkIkI6EPd2D63F4xFKfHk7I1UGZVNn6k1QWZ5rcyr6w%3D%40smp9.simplex.im%2FzmtsZwfTjwyynibt0bF6bb_xLWS9ce5A%23%2F%3Fv%3D1-2%26dh%3DMCowBQYDK2VuAyEAkMtz66wGfWb6VDn-_t_mVm3RFiFfOC3Hxye8Hm5tmVo%253D%26srv%3Djssqzccmrcws6bhmn77vgmhfjmhwlyr3u7puw4erkyoosywgl67slqqd.onion&data=%7B%22type%22%3A%22group%22%2C%22groupLinkId%22%3A%22o8KR0TOM0f2j33nO9goMRQ%3D%3D%22%7D) way
 
 (check the software! even if you don't want chat about DistroHopper)
 [Simplex website](https://simplex.chat)
