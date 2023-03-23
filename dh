@@ -101,7 +101,7 @@ install_prereq() {
 dh_to_bin() {
 	sudo cp dh quickget quickemu macrecovery windowskey "$PREFIX"
 	# quickget also to config directory for adding new distros...
-	cp quickget 
+	cp quickget "$DH_CONFIG_DIR"
 }
 
 install_process() {
@@ -315,7 +315,7 @@ add_distro() {
 	echo \"${URL}/${ISO} ${HASH}\"
 }
 "; } >> ${TMP_DIR}/${NAME}.tmp
-	meld ${TMP_DIR}/${NAME}.tmp quickget
+	meld "${TMP_DIR}/${NAME}.tmp $DH_CONFIG_DIR/quickget"
 }
 
 # run
@@ -342,6 +342,7 @@ p) echo "Nothing here yet!";;
 *) echo "You can show help if you run 'dh h'
  Starting DistroHopper GUI..." && run_gui;;
 esac
+
 some_bugs
 
 exit 0
