@@ -1,30 +1,197 @@
 #!/bin/bash
-export LC_ALL=C
 
-progname="${progname:="${0##*/}"}"
-version="0.5"
-#GTK_THEME="alt-dialog"
-DH_CONFIG_DIR="$HOME/.config/distrohopper"
-DH_CONFIG="$DH_CONFIG_DIR/distrohopper.conf"
-DH_ICON_DIR="/usr/share/icons/distrohopper"
-TERMINAL=sakura
-replace='"!"'
-export "DH_CONFIG_DIR" "DH_CONFIG" "DH_ICON_DIR" "TERMINAL" "replace" # "GTK_THEME"
-source "$DH_CONFIG"
+# bugs notice
+some_bugs() {
+	echo "Done
+	PS: You saw some bugs? Let me know on project page:
+	https://github.com/oSoWoSo/DistroHopper
+	Happy distro hopping...		zenobit"
+}
 
-cd "$VMS_DIR" || exit
+# installation
+check_gui_dependencies() {
+	if ! command -v yad >/dev/null 2>&1; then
+		echo "You are missing yad...
+		It's needed for GUI!" >&2
+	fi
+}
 
-# Set traps to catch the signals and exit gracefully
-trap "exit" INT
-trap "exit" EXIT
+check_tui_dependencies() {
+	if ! command -v fzf >/dev/null 2>&1; then
+		echo "You are missing fzf...
+		It's needed for TUI!" >&2
+	fi
+}
 
-# dependencies checks
-if ! command -v yad >/dev/null 2>&1; then
-	echo "You are missing yad..." >&2
-	exit 1
-fi
-# run TUI instead
-if [ "$1" = "-t" ] ; then
+check_quickemu_dependencies() {
+	if ! command -v yad >/dev/null 2>&1; then
+		echo "You are missing some quickemu dependencies......
+		They are needed for running VMs!" >&2
+	fi
+}
+
+set_variables() {
+	progname="${progname:="${0##*/}"}"
+	version="0.5"
+	#GTK_THEME="alt-dialog"
+	DH_CONFIG_DIR="$HOME/.config/distrohopper"
+	DH_CONFIG="$DH_CONFIG_DIR/distrohopper.conf"
+	export LC_ALL=C
+	source "$DH_CONFIG" || install_process
+	# Set traps to catch the signals and exit gracefully
+	trap "exit" INT
+	trap "exit" EXIT
+}
+
+run_once() {
+	source config/distrohopper.conf
+}
+
+create_structure() {
+	echo "creating config dir..."
+	mkdir -p "$DH_CONFIG_DIR"
+	echo "creating ready dir..."
+	mkdir -p "$DH_CONFIG_DIR/ready"
+	echo "creating supported dir..."
+	mkdir -p "$DH_CONFIG_DIR/supported"
+	echo "creating icons dir as root..."
+	sudo mkdir -p "$DH_ICON_DIR"
+	echo "copying to config dir..."
+	cp -r * "$DH_CONFIG_DIR/"
+	echo "copying icons to root..."
+	sudo cp "icons/"* "$DH_ICON_DIR/"
+}
+
+set_dir() {
+	NEWDIR="$(yad --file --directory --title="Where to save VMs?")"
+	VMS_DIR="$NEWDIR"
+	echo "VMS_DIR=\"$VMS_DIR\"
+	export \"VMS_DIR\"" >> "$DH_CONFIG"
+	export "VMS_DIR"
+}
+
+install_prereq() {
+	# (Void linux)
+	sudo xbps-install -S qemu bash coreutils grep jq procps-ng python3 util-linux sed spice-gtk swtpm usbutils wget xdg-user-dirs xrandr unzip zsync socat
+}
+
+dh_to_bin() {
+	sudo cp dh quickget quickemu macrecovery windowskey "$PREFIX"
+	# quickget also to config directory for adding new distros...
+	cp quickget 
+}
+
+install_process() {
+	check_tui_dependencies
+	check_gui_dependencies
+	check_quickemu_dependencies
+	echo "Sourcing config..." \
+	 && run_once \
+	 && echo "Creating directory structure..." \
+	 && create_structure \
+	 && echo "Setting directory..." \
+	 && set_dir \
+	 && echo "Installing needed..." \
+	 && echo "For now voidlinux only" \
+	 && install_prereq \
+	 && echo "Installing DistroHopper to bin..." \
+	 && dh_to_bin
+}
+
+# basic
+enter_vms_dir() {
+	cd "$VMS_DIR" || set_dir
+}
+
+# DistroHopper info
+show_info() {
+	progname="${progname:="${0##*/}"}"
+	version="0.6"
+	echo "DistroHopper v$version"
+	echo "quickemu v$(quickemu --version)
+	"
+}
+
+renew_supported() {
+	# get supported VMs
+	quickget | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' > "$DH_CONFIG_DIR/supported.md"
+	while read -r get_name; do
+		vm_desktop=$(echo "$get_name" | tr ' ' '_')
+		releases=$(quickget "$vm_desktop" | grep 'Releases' | cut -d':' -f2 | sed 's/^ //')
+		editions=$(quickget "$vm_desktop" | grep 'Editions' | cut -d':' -f2 | sed 's/^ //')
+		icon_name="$DH_ICON_DIR/$get_name"
+		if [ -f "$icon_name.svg" ]; then
+			icon_file="$icon_name.svg"
+		elif [ -f "$icon_name.png" ]; then
+			icon_file="$icon_name.png"
+		else
+			icon_file="$DH_ICON_DIR/tux.svg"
+		fi
+		# Check if there are editions
+		if [ -z "$editions" ]; then
+			# Create desktop file for VMs without editions
+			desktop_file_content="[Desktop Entry]
+Type=Application
+Name=$get_name
+releases=$releases
+replace=$replace
+Exec=sh -c 'cd \"$VMS_DIR\" && yad --form --field=\"Release:CB\" \"${releases// /$replace}\" | cut -d\"|\" -f1 | xargs -I{} sh -c \"quickget $get_name {}\"'
+Icon=$icon_file
+Categories=System;Virtualization;"
+			echo "$desktop_file_content" > "$DH_CONFIG_DIR"/supported/"$vm_desktop".desktop
+		else
+			# Create desktop file for VMs with editions
+			desktop_file_content="[Desktop Entry]
+Type=Application
+Name=$get_name
+releases=$releases
+editions=$editions
+replace=$replace
+Exec=sh -c 'cd \"$VMS_DIR\" && yad --form --separator=\" \" --field=\"Release:CB\" \"${releases// /$replace}\" --field=\"Edition:CB\" \"${editions// /$replace}\" | xargs -I{} sh -c \"quickget $get_name {}\"'
+Icon=$icon_file
+Categories=System;Virtualization;"
+			echo "$desktop_file_content" > "$DH_CONFIG_DIR"/supported/"$vm_desktop".desktop
+		fi
+	done < "$DH_CONFIG_DIR"/supported.md
+}
+
+renew_ready() {
+	source "$DH_CONFIG"
+	cd "$VMS_DIR" || exit 1
+	# check for VMs .conf files (ready to run VMs)
+	for vm_conf in *.conf; do
+		vm_desktop=$(basename "$VMS_DIR/$vm_conf" .conf)
+		# Use fuzzy matching to find the best matching icon file (ready to run VMs)
+		icon_name=$(basename "$VMS_DIR/$vm_conf" .conf | cut -d'-' -f -2)
+		icon_file=$(find "$DH_ICON_DIR" -type f -iname "${icon_name// /}.*")
+		# If no icon was found, try shorter name (ready to run VMs)
+		if [ -z "$icon_file" ]; then
+			icon_name=$(basename "$VMS_DIR/$vm_conf" .conf | cut -d'-' -f1)
+			icon_file=$(find "$DH_ICON_DIR" -type f -iname "${icon_name// /}.*")
+		elif [ -z "$icon_file" ]; then
+			icon_file="$DH_ICON_DIR/tux.svg"
+		fi
+		# content of desktop files (ready to run VMs)
+		desktop_file_content="[Desktop Entry]
+Type=Application
+Name=$vm_desktop
+Exec=sh -c 'cd \"$VMS_DIR\" && quickemu -vm \"$vm_conf\"'
+Icon=$icon_file
+Categories=System;Virtualization;"
+	# create desktop files (ready to run VMs)
+	echo "$desktop_file_content" > "$DH_CONFIG_DIR"/ready/"$vm_desktop".desktop
+	done
+}
+
+run_gui() {
+	key=$((RANDOM % 9000 + 1000))
+	yad --plug="$key" --tabnum=1 --monitor --icons --listen --read-dir="$DH_CONFIG_DIR"/ready --sort-by-name --no-buttons --borders=0 --icon-size=48 --item-width=76 &
+	yad --plug="$key" --tabnum=2 --monitor --icons --listen --read-dir="$DH_CONFIG_DIR"/supported --sort-by-name --no-buttons --borders=0 --icon-size=48 --item-width=76 &
+	yad --plug="$key" --tabnum=3 --monitor --icons --listen --read-dir="$DH_CONFIG_DIR" --sort-by-name --no-buttons --borders=0 --icon-size=48 --item-width=76 &
+	yad --dynamic --notebook --key="$key" --monitor --window-icon="$DH_ICON_DIR"/hop.svg --width=900 --height=800 --title="DistroHopper" --listen --no-buttons --tab="run VM" --tab="download VM" --tab="settings" --button "test"
+}
+
+run_tui() {
 	printf '%s: v.%s\nquickemu: v.%s\n\n VMs dir: %s\n\n' "$progname" "$version" "$(quickemu --version)" "$(pwd)"
 	vms=(*.conf)
 	# Dependency check: check if fzf is installed and can be executed
@@ -53,59 +220,136 @@ if [ "$1" = "-t" ] ; then
 	if [ "$todo" = "create" ]; then
 		os=$(quickget | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' | fzf --cycle --header='Choose OS to download
  or CTRL-c or ESC to quit')
-	# If the OS is Windows
-	if [ "$os" = windows ]; then
-		answer=$(echo "Default English
+		# If the OS is Windows
+		if [ "$os" = windows ]; then
+			answer=$(echo "Default English
 Choose other language" | fzf --cycle)
-		# If the user wants another windows language
-		if [ "$answer" = "Choose other language" ]; then
-			wrelease=$(echo "8
+			# If the user wants another windows language
+			if [ "$answer" = "Choose other language" ]; then
+				wrelease=$(echo "8
 10
 11" | fzf --cycle)
-			# get window language list
-			wlend=$(($(cat quickget | sed '/Arabic/,$!d' | grep -n '}' | cut -d':' -f1 | head -n 1) - 1))
-			# get windows language
-			wlang=$(cat quickget | sed '/Arabic/,$!d' | head -n $wlend | cut -d'=' -f2 | tail -c +2 | head -c -2 | sed 's/^[ \t]*//' | fzf --cycle --header='Choose Language
+				# get window language list
+				wlend=$(($(cat quickget | sed '/Arabic/,$!d' | grep -n '}' | cut -d':' -f1 | head -n 1) - 1))
+				# get windows language
+				wlang=$(cat quickget | sed '/Arabic/,$!d' | head -n $wlend | cut -d'=' -f2 | tail -c +2 | head -c -2 | sed 's/^[ \t]*//' | fzf --cycle --header='Choose Language
  or CTRL-c or ESC to quit')
-			# downloading windows
-			printf '\n Trying to download Windows %s %s...\n\n' "$wrelease" "$wlang"
-			quickget "windows" "$wrelease" "$wlang"
+				# downloading windows
+				printf '\n Trying to download Windows %s %s...\n\n' "$wrelease" "$wlang"
+				quickget "windows" "$wrelease" "$wlang"
+			fi
 		fi
+		# Get the release and edition to download, if necessary
+		choices=$(quickget "$os" | sed 1d)
+		if [ "$(echo "$choices" | wc -l)" = 1 ]; then
+			# get release
+			release=$(echo "$choices" | grep 'Releases' | cut -d':' -f2 | grep -o '[^ ]*' | fzf --cycle --header='Choose Release
+ or CTRL-c or ESC to quit')
+			# downloading
+			printf '\n Trying to download %s %s...\n\n' "$os" "$release"
+			quickget "$os" "$release"
+		else
+			# get release
+			release=$(echo "$choices" | grep 'Releases' | cut -d':' -f2 | grep -o '[^ ]*' | fzf --cycle --header='Choose Release
+ or CTRL-c or ESC to quit')
+			# get edition
+			edition=$(echo "$choices" | grep 'Editions' | cut -d':' -f2 | grep -o '[^ ]*' | fzf --cycle --header='Choose Edition
+ or CTRL-c or ESC to quit')
+			# downloading
+			printf '\n Trying to download %s %s %s...\n\n' "$os" "$release" "$edition"
+			quickget "$os" "$release" "$edition"
+		fi
+		# choose VM to run
+		choosed=$(echo "$(ls ./***.conf 2>/dev/null | sed 's/\.conf$//')" | fzf --cycle --header='Choose VM to run
+ or CTRL-c or ESC to quit')
+		# Run choosed VM
+		printf '\n Starting %s...\n\n' "$choosed"
+		quickemu -vm "$choosed.conf"
 	fi
-	# Get the release and edition to download, if necessary
-	choices=$(quickget "$os" | sed 1d)
-	if [ "$(echo "$choices" | wc -l)" = 1 ]; then
-		# get release
-		release=$(echo "$choices" | grep 'Releases' | cut -d':' -f2 | grep -o '[^ ]*' | fzf --cycle --header='Choose Release
- or CTRL-c or ESC to quit')
-		# downloading
-		printf '\n Trying to download %s %s...\n\n' "$os" "$release"
-		quickget "$os" "$release"
-	else
-		# get release
-		release=$(echo "$choices" | grep 'Releases' | cut -d':' -f2 | grep -o '[^ ]*' | fzf --cycle --header='Choose Release
- or CTRL-c or ESC to quit')
-		# get edition
-		edition=$(echo "$choices" | grep 'Editions' | cut -d':' -f2 | grep -o '[^ ]*' | fzf --cycle --header='Choose Edition
- or CTRL-c or ESC to quit')
-		# downloading
-		printf '\n Trying to download %s %s %s...\n\n' "$os" "$release" "$edition"
-		quickget "$os" "$release" "$edition"
-	fi
-	# choose VM to run
-	choosed=$(echo "$(ls ./***.conf 2>/dev/null | sed 's/\.conf$//')" | fzf --cycle --header='Choose VM to run
- or CTRL-c or ESC to quit')
-	# Run choosed VM
-	printf '\n Starting %s...\n\n' "$choosed"
-	quickemu -vm "$choosed.conf"
-fi
+}
+
+# more
+isos_to_dir() {
+	yad --file --directory > target
+	cd "$VMS_DIR" || exit 1
+	cp */*.iso "$target"
+}
+
+add_distro() {
+	TMP_DIR="/tmp"
+	yad --form --field="Pretty name" "" --field="Name" "" --field="Releases" "" --field="Editions" "" --field="URL" "" --field="ISO" "" --field="Checksum file" "" > ${TMP_DIR}/template.tmp
+	PRETTY_NAME="$(cat ${TMP_DIR}/template.tmp | cut -d'|' -f1)"
+	NAME="$(cat ${TMP_DIR}/template.tmp | cut -d'|' -f2)"
+	RELEASES="$(cat ${TMP_DIR}/template.tmp | cut -d'|' -f3)"
+	EDITIONS="$(cat ${TMP_DIR}/template.tmp | cut -d'|' -f4)"
+	URL="$(cat ${TMP_DIR}/template.tmp | cut -d'|' -f5)"
+	ISO="$(cat ${TMP_DIR}/template.tmp | cut -d'|' -f6)"
+	CHECKSUM_FILE="$(cat ${TMP_DIR}/template.tmp | cut -d'|' -f7)"
+	echo "    $NAME)           PRETTY_NAME=$PRETTY_NAME;;
+" >  ${TMP_DIR}/${NAME}.tmp
+	{ echo "    $NAME \\
+"; echo "function releases_$NAME() {
+	echo $RELEASES
+}
+"; echo "function editions_$NAME() {
+	echo $EDITIONS
+}
+"; echo "function get_$NAME() {
+	local EDITION="${1:-}"
+	local HASH=""
+	local ISO="$ISO"
+	local URL="$URL"
+	HASH=\"$(wget -q -O- "${URL}/${CHECKSUM_FILE}" | grep "(${ISO}" | cut -d' ' -f4)\"
+	echo \"${URL}/${ISO} ${HASH}\"
+}
+"; } >> ${TMP_DIR}/${NAME}.tmp
+	meld ${TMP_DIR}/${NAME}.tmp quickget
+}
+
+# run
+set_variables
+show_info
+
+if [ "$1" = "d" ] ; then
+	set_dir
+	echo "New dir is: $VMS_DIR"
+elif [ "$1" = "i" ] ; then
+	echo "Starting installation..."
+	install_process
+elif [ "$1" = "s" ] ; then
+	echo "Updating supported VMs..."
+	renew_supported
+elif [ "$1" = "t" ] ; then
+	echo "You are master! Running TUI..."
+	run_tui
+elif [ "$1" = "r" ] ; then
+	echo "Updating ready VMs..."
+	renew_ready
+elif [ "$1" = "a" ] ; then
+	echo "Adding new distro started..."
+	add_distro
+elif [ "$1" = "h" ] ; then
+	echo "Posible argumets are:
+	d	Set where VMs are stored
+	i	Install DistroHopper
+	s	Update supported VMs
+	t	Run TUI instead of GUI
+	r	Update ready to run VMs
+	a	Add new distro to quickget
+	h	Show this help
+	o	Copy all ISOs to target dir (for Ventoy)
+	p	Push changed quickget to quickemu project"
+elif [ "$1" = "o" ] ; then
+	echo "Copying ISOs to dir. It will take some time..."
+	isos_to_dir
+elif [ "$1" = "p" ] ; then
+	echo "Nothing here yet!"
 else
-	# run GUI
-	key=$((RANDOM % 9000 + 1000))
-	yad --plug="$key" --tabnum=1 --monitor --icons --listen --read-dir="$DH_CONFIG_DIR"/ready --sort-by-name --no-buttons --borders=0 --icon-size=48 --item-width=76 &
-	yad --plug="$key" --tabnum=2 --monitor --icons --listen --read-dir="$DH_CONFIG_DIR"/supported --sort-by-name --no-buttons --borders=0 --icon-size=48 --item-width=76 &
-	yad --plug="$key" --tabnum=3 --monitor --icons --listen --read-dir="$DH_CONFIG_DIR" --sort-by-name --no-buttons --borders=0 --icon-size=48 --item-width=76 &
-	yad --dynamic --notebook --key="$key" --monitor --window-icon="$DH_ICON_DIR"/hop.svg --width=900 --height=800 --title="DistroHopper" --listen --no-buttons --tab="run VM" --tab="download VM" --tab="settings"
+	echo "You can show help if you run 'dh h'"
+	echo "Starting DistroHopper GUI..."
+	run_gui
 fi
+
+some_bugs
 
 exit 0
