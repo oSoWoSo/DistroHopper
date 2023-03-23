@@ -273,4 +273,5 @@ mailto: <zenobit@osowoso.xyz>
 
 [up](./)
 
-#### [parent oSoWoSo](https://osowoso.xyz)
+#### parent site [oSoWoSo](https://osowoso.xyz)
+

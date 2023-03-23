@@ -15,7 +15,7 @@ Looking to try out a new operating system?
 
 Quickly download, create and run VM of any#TODO operating system.
 
-<noscript><a href="https://liberapay.com/zenobit/donate"><img alt="Donate using Liberapay" src="https://liberapay.com/assets/widgets/donate.svg"></a></noscript>
+[![Donate](https://liberapay.com/assets/widgets/donate.svg)](https://liberapay.com/zenobit/donate)
 
 Licensed under AGPL3
 # Still Testing version!
@@ -267,10 +267,11 @@ Everything done on
 [![website](docs/logo.svg)](https://dh.osowoso.xyz/)
 
 # donate
-<noscript><a href="https://liberapay.com/zenobit/donate"><img alt="Donate using Liberapay" src="https://liberapay.com/assets/widgets/donate.svg"></a></noscript>
+[![Donate](https://liberapay.com/assets/widgets/donate.svg)](https://liberapay.com/zenobit/donate)
 
 @zen0bit at github
 
 mailto: <zenobit@osowoso.xyz>
 
-#### [parent oSoWoSo](https://osowoso.xyz)
+#### parent site [oSoWoSo](https://osowoso.xyz)
+
