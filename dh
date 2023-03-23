@@ -36,8 +36,31 @@ set_variables() {
 	#GTK_THEME="alt-dialog"
 	DH_CONFIG_DIR="$HOME/.config/distrohopper"
 	DH_CONFIG="$DH_CONFIG_DIR/distrohopper.conf"
-	export LC_ALL=C
-	source "$DH_CONFIG" || install_process
+	DH_ICON_DIR="/usr/share/icons/distrohopper"
+	PREFIX="/usr/bin/"
+	TERMINAL=sakura
+	replace='"!"'
+	source "$DH_CONFIG"  >/dev/null 2>&1 \
+		&& cd "$VMS_DIR" \
+		&& export "DH_CONFIG_DIR" \
+			"DH_CONFIG" \
+			"DH_ICON_DIR" \
+			"PREFIX" \
+			"TERMINAL" \
+			"replace" \
+		|| echo "Not installed yet!" \
+		&& VMS_DIR="$(pwd)" \
+		&& DH_CONFIG_DIR="$(pwd)" \
+		&& DH_ICON_DIR="$(pwd)"/icons \
+		&& export "VMS_DIR" \
+			"DH_CONFIG_DIR" \
+			"DH_ICON_DIR" \
+			"TERMINAL" \
+			"replace" \
+		&& echo "Using current: $VMS_DIR directory!"
+	echo "DistroHopper v$version"
+	echo "quickemu v$(quickemu --version)
+	"
 	# Set traps to catch the signals and exit gracefully
 	trap "exit" INT
 	trap "exit" EXIT
@@ -89,7 +112,7 @@ install_process() {
 	 && run_once \
 	 && echo "Creating directory structure..." \
 	 && create_structure \
-	 && echo "Setting directory..." \
+	 && echo "Setting up directory..." \
 	 && set_dir \
 	 && echo "Installing needed..." \
 	 && echo "For now voidlinux only" \
@@ -99,19 +122,6 @@ install_process() {
 }
 
 # basic
-enter_vms_dir() {
-	cd "$VMS_DIR" || set_dir
-}
-
-# DistroHopper info
-show_info() {
-	progname="${progname:="${0##*/}"}"
-	version="0.6"
-	echo "DistroHopper v$version"
-	echo "quickemu v$(quickemu --version)
-	"
-}
-
 renew_supported() {
 	# get supported VMs
 	quickget | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' > "$DH_CONFIG_DIR/supported.md"
@@ -156,39 +166,41 @@ Categories=System;Virtualization;"
 }
 
 renew_ready() {
-	source "$DH_CONFIG"
-	cd "$VMS_DIR" || exit 1
-	# check for VMs .conf files (ready to run VMs)
-	for vm_conf in *.conf; do
-		vm_desktop=$(basename "$VMS_DIR/$vm_conf" .conf)
-		# Use fuzzy matching to find the best matching icon file (ready to run VMs)
-		icon_name=$(basename "$VMS_DIR/$vm_conf" .conf | cut -d'-' -f -2)
-		icon_file=$(find "$DH_ICON_DIR" -type f -iname "${icon_name// /}.*")
-		# If no icon was found, try shorter name (ready to run VMs)
-		if [ -z "$icon_file" ]; then
-			icon_name=$(basename "$VMS_DIR/$vm_conf" .conf | cut -d'-' -f1)
-			icon_file=$(find "$DH_ICON_DIR" -type f -iname "${icon_name// /}.*")
-		elif [ -z "$icon_file" ]; then
-			icon_file="$DH_ICON_DIR/tux.svg"
-		fi
-		# content of desktop files (ready to run VMs)
-		desktop_file_content="[Desktop Entry]
+    cd "$VMS_DIR" || exit 1
+    # check for VMs .conf files (ready to run VMs)
+    if [ ! -e *.conf ]; then
+        echo "No .conf files found"
+        return
+    fi
+    for vm_conf in *.conf; do
+        vm_desktop=$(basename "$VMS_DIR/$vm_conf" .conf)
+        # Use fuzzy matching to find the best matching icon file (ready to run VMs)
+        icon_name=$(basename "$VMS_DIR/$vm_conf" .conf | cut -d'-' -f -2)
+        icon_file=$(find "$DH_ICON_DIR" -type f -iname "${icon_name// /}.*")
+        # If no icon was found, try shorter name (ready to run VMs)
+        if [ -z "$icon_file" ]; then
+            icon_name=$(basename "$VMS_DIR/$vm_conf" .conf | cut -d'-' -f1)
+            icon_file=$(find "$DH_ICON_DIR" -type f -iname "${icon_name// /}.*")
+        elif [ -z "$icon_file" ]; then
+            icon_file="$DH_ICON_DIR/tux.svg"
+        fi
+        # content of desktop files (ready to run VMs)
+        desktop_file_content="[Desktop Entry]
 Type=Application
 Name=$vm_desktop
 Exec=sh -c 'cd \"$VMS_DIR\" && quickemu -vm \"$vm_conf\"'
 Icon=$icon_file
 Categories=System;Virtualization;"
-	# create desktop files (ready to run VMs)
-	echo "$desktop_file_content" > "$DH_CONFIG_DIR"/ready/"$vm_desktop".desktop
-	done
+        # create desktop files (ready to run VMs)
+        echo "$desktop_file_content" > "$DH_CONFIG_DIR"/ready/"$vm_desktop".desktop
+    done
 }
 
 run_gui() {
 	key=$((RANDOM % 9000 + 1000))
-	yad --plug="$key" --tabnum=1 --monitor --icons --listen --read-dir="$DH_CONFIG_DIR"/ready --sort-by-name --no-buttons --borders=0 --icon-size=48 --item-width=76 &
-	yad --plug="$key" --tabnum=2 --monitor --icons --listen --read-dir="$DH_CONFIG_DIR"/supported --sort-by-name --no-buttons --borders=0 --icon-size=48 --item-width=76 &
-	yad --plug="$key" --tabnum=3 --monitor --icons --listen --read-dir="$DH_CONFIG_DIR" --sort-by-name --no-buttons --borders=0 --icon-size=48 --item-width=76 &
-	yad --dynamic --notebook --key="$key" --monitor --window-icon="$DH_ICON_DIR"/hop.svg --width=900 --height=800 --title="DistroHopper" --listen --no-buttons --tab="run VM" --tab="download VM" --tab="settings" --button "test"
+	yad --plug="$key" --tabnum=1 --monitor --icons --listen --read-dir="$DH_CONFIG_DIR"/ready --sort-by-name --no-buttons --borders=0 --icon-size=46 --item-width=76 &
+	yad --plug="$key" --tabnum=2 --monitor --icons --listen --read-dir="$DH_CONFIG_DIR"/supported --sort-by-name --no-buttons --borders=0 --icon-size=46 --item-width=76 &
+	yad --dynamic --notebook --key="$key" --monitor --listen --window-icon="$DH_ICON_DIR"/hop.svg --width=900 --height=900 --title="DistroHopper" --tab="run VM" --tab="download VM" --tab="settings" --button "test"
 }
 
 run_tui() {
@@ -308,28 +320,14 @@ add_distro() {
 
 # run
 set_variables
-show_info
-
-if [ "$1" = "d" ] ; then
-	set_dir
-	echo "New dir is: $VMS_DIR"
-elif [ "$1" = "i" ] ; then
-	echo "Starting installation..."
-	install_process
-elif [ "$1" = "s" ] ; then
-	echo "Updating supported VMs..."
-	renew_supported
-elif [ "$1" = "t" ] ; then
-	echo "You are master! Running TUI..."
-	run_tui
-elif [ "$1" = "r" ] ; then
-	echo "Updating ready VMs..."
-	renew_ready
-elif [ "$1" = "a" ] ; then
-	echo "Adding new distro started..."
-	add_distro
-elif [ "$1" = "h" ] ; then
-	echo "Posible argumets are:
+case "$1" in
+d) set_dir;;
+i) echo "Starting installation..." && install_process;;
+s) echo "Updating supported VMs..." && renew_supported;;
+t) echo "You are master! Running TUI..." && run_tui;;
+r) echo "Updating ready VMs..." && renew_ready;;
+a) echo "Adding new distro started..." && add_distro;;
+h) echo "Possible arguments are:
 	d	Set where VMs are stored
 	i	Install DistroHopper
 	s	Update supported VMs
@@ -338,18 +336,12 @@ elif [ "$1" = "h" ] ; then
 	a	Add new distro to quickget
 	h	Show this help
 	o	Copy all ISOs to target dir (for Ventoy)
-	p	Push changed quickget to quickemu project"
-elif [ "$1" = "o" ] ; then
-	echo "Copying ISOs to dir. It will take some time..."
-	isos_to_dir
-elif [ "$1" = "p" ] ; then
-	echo "Nothing here yet!"
-else
-	echo "You can show help if you run 'dh h'"
-	echo "Starting DistroHopper GUI..."
-	run_gui
-fi
-
+	p	Push changed quickget to quickemu project";;
+o) echo "Copying ISOs to dir. It will take some time..." && isos_to_dir;;
+p) echo "Nothing here yet!";;
+*) echo "You can show help if you run 'dh h'
+ Starting DistroHopper GUI..." && run_gui;;
+esac
 some_bugs
 
 exit 0
