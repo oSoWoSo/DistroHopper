@@ -181,7 +181,7 @@ Type=Application
 Name=$get_name
 releases=$releases
 replace=$replace
-Exec=sh -c 'cd \"$VMS_DIR\" && yad --form --field=\"Release:CB\" \"${releases// /$replace}\" | cut -d\"|\" -f1 | xargs -I{} sh -c "$prefix"quickget $get_name {}'
+Exec=sh -c 'cd \"$VMS_DIR\" && yad --form --field=\"Release:CB\" \"${releases// /$replace}\" | cut -d\"|\" -f1 | xargs -I{} sh -c \""$prefix"quickget $get_name {}\"'
 Icon=$icon_file
 Categories=System;Virtualization;"
 			echo "$desktop_file_content" > "$DH_CONFIG_DIR"/supported/"$vm_desktop".desktop
