@@ -19,7 +19,7 @@ Quickly download, create and run VM of any#TODO operating system.
 
 Licensed under AGPL3
 # Still Testing version!
-![dh](distrohopper.png)
+![dh](docs/distrohopper.png)
 
 quickly create and run VMs
 
