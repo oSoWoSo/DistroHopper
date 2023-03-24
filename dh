@@ -23,14 +23,32 @@ Possible arguments:
 ---------------------------------------------------------"
 }
 
+portable() {
+	[ -f "$DH_CONFIG" ] && mode_installed || mode_portable
+}
+
+mode_portable() {
+	VMS_DIR="$(pwd)"
+	DH_CONFIG_DIR="$(pwd)"
+	DH_ICON_DIR="$(pwd)/icons"
+	prefix=./
+	export "VMS_DIR" "DH_CONFIG_DIR" "DH_ICON_DIR" "TERMINAL" "replace" "prefix"
+}
+
+mode_installed() {
+	source "$DH_CONFIG"
+	prefix=
+	export "prefix"
+}
+
 # installation
 check_gui_dependencies() {
-	[ -f "$PREFIX/yad" ] && echo "yad is here" || echo "You are missing yad...
+	[ -f "$PREFIX/yad" ] || echo "You are missing yad...
 	It's needed for GUI!"
 }
 
 check_tui_dependencies() {
-	[ -f "$PREFIX/fzf" ] && echo "fzf is here" || echo "You are missing fzf...
+	[ -f "$PREFIX/fzf" ] || echo "You are missing fzf...
 	It's needed for TUI!"
 }
 
@@ -55,14 +73,11 @@ set_variables() {
 }
 
 create_structure() {
+	source distrohopper.conf
 	echo "creating config dir..."
 	mkdir -p "$DH_CONFIG_DIR"
-	echo "creating ready dir..."
-	mkdir -p "$DH_CONFIG_DIR/ready"
-	echo "creating supported dir..."
-	mkdir -p "$DH_CONFIG_DIR/supported"
 	echo "creating icons dir as root..."
-	sudo mkdir -p "$DH_ICON_DIR"
+	mkdir -p "$DH_ICON_DIR"  >/dev/null 2>&1 || sudo mkdir -p "$DH_ICON_DIR"
 }
 
 set_dir() {
@@ -78,39 +93,22 @@ install_prereq() {
 	sudo xbps-install -S qemu bash coreutils grep jq procps-ng python3 util-linux sed spice-gtk swtpm usbutils wget xdg-user-dirs xrandr unzip zsync socat
 }
 
-portable() {
-	[ -f "$DH_CONFIG" ] && mode_installed || mode_portable
-}
-
-mode_portable() {
-	VMS_DIR="$(pwd)"
-	DH_CONFIG_DIR="$(pwd)"
-	DH_ICON_DIR="$(pwd)/icons"
-	prefix=./
-	export "VMS_DIR" "DH_CONFIG_DIR" "DH_ICON_DIR" "TERMINAL" "replace" "prefix"
-}
-
-mode_installed() {
-	source "$DH_CONFIG"
-	prefix=
-	export "prefix"
-}
-
 install_dh() {
-	source distrohopper.conf
-	sudo cp dh quickget quickemu macrecovery windowskey "$PREFIX"
+	cp dh quickget quickemu macrecovery windowskey "$PREFIX" >/dev/null 2>&1 || sudo cp dh quickget quickemu macrecovery windowskey "$PREFIX"
 	# quickget also to config directory for adding new distros...
-	cp quickget "$DH_CONFIG_DIR"
-	echo "copying icons to root..."
-	sudo cp "icons/"* "$DH_ICON_DIR/"
-	echo "copying to config dir..."
-	cp -r * "$DH_CONFIG_DIR/"
+	cp quickget "$DH_CONFIG_DIR/"
+	echo "Copying icons..."
+	cp icons/* "$DH_ICON_DIR/" >/dev/null 2>&1 || sudo cp icons/* "$DH_ICON_DIR/"
+	echo "Copying to config dir..."
+	cp -r ready "$DH_CONFIG_DIR/"
+	cp -r supported "$DH_CONFIG_DIR/"
+	
 }
 
 install_process() {
 	check_tui_dependencies
 	check_gui_dependencies
-	check_quickemu_dependencies
+	#check_quickemu_dependencies
 	echo "Creating directory structure..." \
 	 && create_structure \
 	 && echo "Setting up directory..." \
