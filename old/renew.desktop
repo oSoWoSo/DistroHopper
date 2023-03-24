@@ -1,6 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=Renew VMs
-Exec=renew.sh
-Icon=/usr/share/icons/distroicons/tux.svg
-Categories=System;Virtualization;Settings;

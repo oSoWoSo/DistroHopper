@@ -1,6 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=1st Run
-Exec=1stRun.sh
-Icon=/usr/share/icons/distroicons/tux.svg
-Categories=System;Virtualization;Settings;

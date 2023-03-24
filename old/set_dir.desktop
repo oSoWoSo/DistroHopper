@@ -1,6 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=Set VMs dir
-Exec=set_dir.sh
-Icon=/usr/share/icons/distroicons/cereus.svg
-Categories=System;Virtualization;Settings;

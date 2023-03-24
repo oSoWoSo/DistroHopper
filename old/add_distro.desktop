@@ -1,6 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=Add new distro
-Exec=add_distro.sh
-Icon=/usr/share/icons/distroicons/cereus.svg
-Categories=System;Virtualization;Settings;

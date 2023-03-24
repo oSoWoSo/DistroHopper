@@ -1,7 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=ISOs copy
-Exec=iso_copy.sh
-Icon=copy.svg
-Comment=Copy all ISOs to target dir
-Categories=System;Virtualization;Settings;
