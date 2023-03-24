@@ -5,33 +5,38 @@ some_bugs() {
 	echo "Done
 	PS: You saw some bugs? Let me know on project page:
 	https://github.com/oSoWoSo/DistroHopper
-	Happy distro hopping...		zenobit"
+	Flawless distro hopping...		zenobit"
+}
+
+show_help() {
+	echo "
+Possible arguments:
+	d	Set where VMs are stored
+	i	Install DistroHopper
+	s	Update supported VMs
+	t	Run TUI instead of GUI
+	r	Update ready to run VMs
+	a	Add new distro to quickget
+	h	Show this help
+	o	Copy all ISOs to target dir (for Ventoy)
+	p	Push changed quickget to quickemu project
+---------------------------------------------------------"
 }
 
 # installation
 check_gui_dependencies() {
-	if ! command -v yad >/dev/null 2>&1; then
-		echo "You are missing yad...
-		It's needed for GUI!" >&2
-	fi
+	[ -f "$PREFIX/yad" ] && echo "yad is here" || echo "You are missing yad...
+	It's needed for GUI!"
 }
 
 check_tui_dependencies() {
-	if ! command -v fzf >/dev/null 2>&1; then
-		echo "You are missing fzf...
-		It's needed for TUI!" >&2
-	fi
-}
-
-check_quickemu_dependencies() {
-	if ! command -v yad >/dev/null 2>&1; then
-		echo "You are missing some quickemu dependencies......
-		They are needed for running VMs!" >&2
-	fi
+	[ -f "$PREFIX/fzf" ] && echo "fzf is here" || echo "You are missing fzf...
+	It's needed for TUI!"
 }
 
 set_variables() {
-	progname="${progname:="${0##*/}"}"
+	#progname="${progname:="${0##*/}"}"
+	progname="DistroHopper"
 	version="0.5"
 	#GTK_THEME="alt-dialog"
 	DH_CONFIG_DIR="$HOME/.config/distrohopper"
@@ -40,34 +45,13 @@ set_variables() {
 	PREFIX="/usr/bin/"
 	TERMINAL=sakura
 	replace='"!"'
-	source "$DH_CONFIG"  >/dev/null 2>&1 \
-		&& cd "$VMS_DIR" \
-		&& export "DH_CONFIG_DIR" \
-			"DH_CONFIG" \
-			"DH_ICON_DIR" \
-			"PREFIX" \
-			"TERMINAL" \
-			"replace" \
-		|| echo "Not installed yet!" \
-		&& VMS_DIR="$(pwd)" \
-		&& DH_CONFIG_DIR="$(pwd)" \
-		&& DH_ICON_DIR="$(pwd)"/icons \
-		&& export "VMS_DIR" \
-			"DH_CONFIG_DIR" \
-			"DH_ICON_DIR" \
-			"TERMINAL" \
-			"replace" \
-		&& echo "Using current: $VMS_DIR directory!"
-	echo "DistroHopper v$version"
-	echo "quickemu v$(quickemu --version)
-	"
+	export "DH_CONFIG_DIR" "DH_CONFIG" "replace" "DH_ICON_DIR" "PREFIX" "TERMINAL"
+	portable
 	# Set traps to catch the signals and exit gracefully
 	trap "exit" INT
 	trap "exit" EXIT
-}
-
-run_once() {
-	source config/distrohopper.conf
+	echo "DistroHopper v. $version"
+	echo "quickemu v. $("$prefix"quickemu --version)"
 }
 
 create_structure() {
@@ -79,10 +63,6 @@ create_structure() {
 	mkdir -p "$DH_CONFIG_DIR/supported"
 	echo "creating icons dir as root..."
 	sudo mkdir -p "$DH_ICON_DIR"
-	echo "copying to config dir..."
-	cp -r * "$DH_CONFIG_DIR/"
-	echo "copying icons to root..."
-	sudo cp "icons/"* "$DH_ICON_DIR/"
 }
 
 set_dir() {
@@ -98,19 +78,40 @@ install_prereq() {
 	sudo xbps-install -S qemu bash coreutils grep jq procps-ng python3 util-linux sed spice-gtk swtpm usbutils wget xdg-user-dirs xrandr unzip zsync socat
 }
 
-dh_to_bin() {
+portable() {
+	[ -f "$DH_CONFIG" ] && mode_installed || mode_portable
+}
+
+mode_portable() {
+	VMS_DIR="$(pwd)"
+	DH_CONFIG_DIR="$(pwd)"
+	DH_ICON_DIR="$(pwd)/icons"
+	prefix=./
+	export "VMS_DIR" "DH_CONFIG_DIR" "DH_ICON_DIR" "TERMINAL" "replace" "prefix"
+}
+
+mode_installed() {
+	source "$DH_CONFIG"
+	prefix=
+	export "prefix"
+}
+
+install_dh() {
+	source distrohopper.conf
 	sudo cp dh quickget quickemu macrecovery windowskey "$PREFIX"
 	# quickget also to config directory for adding new distros...
 	cp quickget "$DH_CONFIG_DIR"
+	echo "copying icons to root..."
+	sudo cp "icons/"* "$DH_ICON_DIR/"
+	echo "copying to config dir..."
+	cp -r * "$DH_CONFIG_DIR/"
 }
 
 install_process() {
 	check_tui_dependencies
 	check_gui_dependencies
 	check_quickemu_dependencies
-	echo "Sourcing config..." \
-	 && run_once \
-	 && echo "Creating directory structure..." \
+	echo "Creating directory structure..." \
 	 && create_structure \
 	 && echo "Setting up directory..." \
 	 && set_dir \
@@ -118,17 +119,52 @@ install_process() {
 	 && echo "For now voidlinux only" \
 	 && install_prereq \
 	 && echo "Installing DistroHopper to bin..." \
-	 && dh_to_bin
+	 && install_dh
 }
 
 # basic
+renew_ready() {
+	cd "$VMS_DIR" || exit 1
+	rm "$DH_CONFIG_DIR"/ready/*.desktop
+	if [ ! -e *.conf ]; then
+		echo "No .conf files found"
+		return
+	fi
+	for vm_conf in *.conf; do
+		if [ "$vm_conf" == "distrohopper.conf" ]; then
+			continue # skip processing distrohopper.conf
+		fi
+		vm_desktop=$(basename "$VMS_DIR/$vm_conf" .conf)
+		# Use fuzzy matching to find the best matching icon file (ready to run VMs)
+		icon_name=$(basename "$VMS_DIR/$vm_conf" .conf | cut -d'-' -f -2)
+		icon_file=$(find "$DH_ICON_DIR" -type f -iname "${icon_name// /}.*")
+		# If no icon was found, try shorter name (ready to run VMs)
+		if [ -z "$icon_file" ]; then
+			icon_name=$(basename "$VMS_DIR/$vm_conf" .conf | cut -d'-' -f1)
+			icon_file=$(find "$DH_ICON_DIR" -type f -iname "${icon_name// /}.*")
+		elif [ -z "$icon_file" ]; then
+			icon_file="$DH_ICON_DIR/tux.svg"
+		fi
+		# content of desktop files (ready to run VMs)
+		desktop_file_content="[Desktop Entry]
+Type=Application
+Name=$vm_desktop
+Exec=sh -c 'cd \"$VMS_DIR\" && "$prefix"quickemu -vm $vm_conf'
+Icon=$icon_file
+Categories=System;Virtualization;"
+		# create desktop files (ready to run VMs)
+		echo "$desktop_file_content" > "$DH_CONFIG_DIR"/ready/"$vm_desktop".desktop
+	done
+}
+
 renew_supported() {
+	rm "$DH_CONFIG_DIR"/supported/*.desktop
 	# get supported VMs
-	quickget | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' > "$DH_CONFIG_DIR/supported.md"
+	"$prefix"quickget | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' > "$DH_CONFIG_DIR/supported.md"
 	while read -r get_name; do
 		vm_desktop=$(echo "$get_name" | tr ' ' '_')
-		releases=$(quickget "$vm_desktop" | grep 'Releases' | cut -d':' -f2 | sed 's/^ //')
-		editions=$(quickget "$vm_desktop" | grep 'Editions' | cut -d':' -f2 | sed 's/^ //')
+		releases=$("$prefix"quickget "$vm_desktop" | grep 'Releases' | cut -d':' -f2 | sed 's/^ //')
+		editions=$("$prefix"quickget "$vm_desktop" | grep 'Editions' | cut -d':' -f2 | sed 's/^ //')
 		icon_name="$DH_ICON_DIR/$get_name"
 		if [ -f "$icon_name.svg" ]; then
 			icon_file="$icon_name.svg"
@@ -145,7 +181,7 @@ Type=Application
 Name=$get_name
 releases=$releases
 replace=$replace
-Exec=sh -c 'cd \"$VMS_DIR\" && yad --form --field=\"Release:CB\" \"${releases// /$replace}\" | cut -d\"|\" -f1 | xargs -I{} sh -c \"quickget $get_name {}\"'
+Exec=sh -c 'cd \"$VMS_DIR\" && yad --form --field=\"Release:CB\" \"${releases// /$replace}\" | cut -d\"|\" -f1 | xargs -I{} sh -c "$prefix"quickget $get_name {}'
 Icon=$icon_file
 Categories=System;Virtualization;"
 			echo "$desktop_file_content" > "$DH_CONFIG_DIR"/supported/"$vm_desktop".desktop
@@ -157,7 +193,7 @@ Name=$get_name
 releases=$releases
 editions=$editions
 replace=$replace
-Exec=sh -c 'cd \"$VMS_DIR\" && yad --form --separator=\" \" --field=\"Release:CB\" \"${releases// /$replace}\" --field=\"Edition:CB\" \"${editions// /$replace}\" | xargs -I{} sh -c \"quickget $get_name {}\"'
+Exec=sh -c 'cd \"$VMS_DIR\" && yad --form --separator=\" \" --field=\"Release:CB\" \"${releases// /$replace}\" --field=\"Edition:CB\" \"${editions// /$replace}\" | xargs -I{} sh -c \"$prefixquickget $get_name {}\"'
 Icon=$icon_file
 Categories=System;Virtualization;"
 			echo "$desktop_file_content" > "$DH_CONFIG_DIR"/supported/"$vm_desktop".desktop
@@ -165,51 +201,17 @@ Categories=System;Virtualization;"
 	done < "$DH_CONFIG_DIR"/supported.md
 }
 
-renew_ready() {
-    cd "$VMS_DIR" || exit 1
-    # check for VMs .conf files (ready to run VMs)
-    if [ ! -e *.conf ]; then
-        echo "No .conf files found"
-        return
-    fi
-    for vm_conf in *.conf; do
-        vm_desktop=$(basename "$VMS_DIR/$vm_conf" .conf)
-        # Use fuzzy matching to find the best matching icon file (ready to run VMs)
-        icon_name=$(basename "$VMS_DIR/$vm_conf" .conf | cut -d'-' -f -2)
-        icon_file=$(find "$DH_ICON_DIR" -type f -iname "${icon_name// /}.*")
-        # If no icon was found, try shorter name (ready to run VMs)
-        if [ -z "$icon_file" ]; then
-            icon_name=$(basename "$VMS_DIR/$vm_conf" .conf | cut -d'-' -f1)
-            icon_file=$(find "$DH_ICON_DIR" -type f -iname "${icon_name// /}.*")
-        elif [ -z "$icon_file" ]; then
-            icon_file="$DH_ICON_DIR/tux.svg"
-        fi
-        # content of desktop files (ready to run VMs)
-        desktop_file_content="[Desktop Entry]
-Type=Application
-Name=$vm_desktop
-Exec=sh -c 'cd \"$VMS_DIR\" && quickemu -vm \"$vm_conf\"'
-Icon=$icon_file
-Categories=System;Virtualization;"
-        # create desktop files (ready to run VMs)
-        echo "$desktop_file_content" > "$DH_CONFIG_DIR"/ready/"$vm_desktop".desktop
-    done
-}
-
 run_gui() {
+	check_gui_dependencies
 	key=$((RANDOM % 9000 + 1000))
 	yad --plug="$key" --tabnum=1 --monitor --icons --listen --read-dir="$DH_CONFIG_DIR"/ready --sort-by-name --no-buttons --borders=0 --icon-size=46 --item-width=76 &
 	yad --plug="$key" --tabnum=2 --monitor --icons --listen --read-dir="$DH_CONFIG_DIR"/supported --sort-by-name --no-buttons --borders=0 --icon-size=46 --item-width=76 &
-	yad --dynamic --notebook --key="$key" --monitor --listen --window-icon="$DH_ICON_DIR"/hop.svg --width=900 --height=900 --title="DistroHopper" --tab="run VM" --tab="download VM" --tab="settings" --button "test"
+	yad --dynamic --notebook --key="$key" --monitor --listen --window-icon="$DH_ICON_DIR"/hop.svg --width=900 --height=900 --title="DistroHopper" --tab="run VM" --tab="download VM"
 }
 
 run_tui() {
-	printf '%s: v.%s\nquickemu: v.%s\n\n VMs dir: %s\n\n' "$progname" "$version" "$(quickemu --version)" "$(pwd)"
+	check_tui_dependencies
 	vms=(*.conf)
-	# Dependency check: check if fzf is installed and can be executed
-	if ! command -v fzf >/dev/null 2>&1; then
-		echo "You are missing fzf..." && exit 255
-	fi
 	printf ' Prepared VMs:\n-------------\n\n'
 	# Check if there are any VMs
 	if [ ${#vms[@]} -eq 0 ]; then
@@ -230,7 +232,7 @@ run_tui() {
 	esac
 	# If the user chose to create a new VM
 	if [ "$todo" = "create" ]; then
-		os=$(quickget | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' | fzf --cycle --header='Choose OS to download
+		os=$("$prefix"quickget | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' | fzf --cycle --header='Choose OS to download
  or CTRL-c or ESC to quit')
 		# If the OS is Windows
 		if [ "$os" = windows ]; then
@@ -242,24 +244,24 @@ Choose other language" | fzf --cycle)
 10
 11" | fzf --cycle)
 				# get window language list
-				wlend=$(($(cat quickget | sed '/Arabic/,$!d' | grep -n '}' | cut -d':' -f1 | head -n 1) - 1))
+				wlend=$(($(cat "$prefix"quickget | sed '/Arabic/,$!d' | grep -n '}' | cut -d':' -f1 | head -n 1) - 1))
 				# get windows language
-				wlang=$(cat quickget | sed '/Arabic/,$!d' | head -n $wlend | cut -d'=' -f2 | tail -c +2 | head -c -2 | sed 's/^[ \t]*//' | fzf --cycle --header='Choose Language
+				wlang=$(cat "$prefix"quickget | sed '/Arabic/,$!d' | head -n $wlend | cut -d'=' -f2 | tail -c +2 | head -c -2 | sed 's/^[ \t]*//' | fzf --cycle --header='Choose Language
  or CTRL-c or ESC to quit')
 				# downloading windows
 				printf '\n Trying to download Windows %s %s...\n\n' "$wrelease" "$wlang"
-				quickget "windows" "$wrelease" "$wlang"
+				"$prefix"quickget "windows" "$wrelease" "$wlang"
 			fi
 		fi
 		# Get the release and edition to download, if necessary
-		choices=$(quickget "$os" | sed 1d)
+		choices=$("$prefix"quickget "$os" | sed 1d)
 		if [ "$(echo "$choices" | wc -l)" = 1 ]; then
 			# get release
 			release=$(echo "$choices" | grep 'Releases' | cut -d':' -f2 | grep -o '[^ ]*' | fzf --cycle --header='Choose Release
  or CTRL-c or ESC to quit')
 			# downloading
 			printf '\n Trying to download %s %s...\n\n' "$os" "$release"
-			quickget "$os" "$release"
+			"$prefix"quickget "$os" "$release"
 		else
 			# get release
 			release=$(echo "$choices" | grep 'Releases' | cut -d':' -f2 | grep -o '[^ ]*' | fzf --cycle --header='Choose Release
@@ -269,14 +271,14 @@ Choose other language" | fzf --cycle)
  or CTRL-c or ESC to quit')
 			# downloading
 			printf '\n Trying to download %s %s %s...\n\n' "$os" "$release" "$edition"
-			quickget "$os" "$release" "$edition"
+			"$prefix"quickget "$os" "$release" "$edition"
 		fi
 		# choose VM to run
 		choosed=$(echo "$(ls ./***.conf 2>/dev/null | sed 's/\.conf$//')" | fzf --cycle --header='Choose VM to run
  or CTRL-c or ESC to quit')
 		# Run choosed VM
 		printf '\n Starting %s...\n\n' "$choosed"
-		quickemu -vm "$choosed.conf"
+		"$prefix"quickemu -vm "$choosed.conf"
 	fi
 }
 
@@ -319,7 +321,9 @@ add_distro() {
 }
 
 # run
+
 set_variables
+
 case "$1" in
 d) set_dir;;
 i) echo "Starting installation..." && install_process;;
@@ -327,19 +331,10 @@ s) echo "Updating supported VMs..." && renew_supported;;
 t) echo "You are master! Running TUI..." && run_tui;;
 r) echo "Updating ready VMs..." && renew_ready;;
 a) echo "Adding new distro started..." && add_distro;;
-h) echo "Possible arguments are:
-	d	Set where VMs are stored
-	i	Install DistroHopper
-	s	Update supported VMs
-	t	Run TUI instead of GUI
-	r	Update ready to run VMs
-	a	Add new distro to quickget
-	h	Show this help
-	o	Copy all ISOs to target dir (for Ventoy)
-	p	Push changed quickget to quickemu project";;
+h) show_help;;
 o) echo "Copying ISOs to dir. It will take some time..." && isos_to_dir;;
 p) echo "Nothing here yet!";;
-*) echo "You can show help if you run 'dh h'
+*) echo "Run 'dh h' for help
  Starting DistroHopper GUI..." && run_gui;;
 esac
 
