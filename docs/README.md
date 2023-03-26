@@ -24,9 +24,9 @@ Licensed under AGPL3
 quickly create and run VMs
 
  As a base excellent [quickemu](https://github.com/quickemu-project/quickemu)
-  
+
   you can download new distro with few clicks of a mouse
-  
+
 ## GUI using yad
 
 See it in action on youtube...
@@ -117,7 +117,7 @@ Debian:
 Fedora:
 
     sudo dnf install qemu bash coreutils edk2-tools grep jq lsb procps python3 genisoimage usbutils util-linux sed spice-gtk-tools swtpm wget xdg-user-dirs xrandr unzip
-    
+
 Void Linux:
 
     sudo xbps-install qemu bash coreutils grep jq procps-ng python3 util-linux sed spice-gtk swtpm usbutils wget xdg-user-dirs xrandr unzip zsync socat
@@ -129,29 +129,29 @@ Void Linux:
 # How to install DistroHopper?
 
  You need get copy of distrohopper
- 
+
   If you want more stable experience, download latest release from
-  
+
 #### [GitHub](https://github.com/oSoWoSo/DistroHopper/releases)
-  
+
   or
-  
+
   From SourceForge [![SourceForge](https://img.shields.io/sourceforge/dt/distrohopper.svg)](https://sourceforge.net/projects/distrohopper/files/latest/download)
- 
- If you want latest developer version... (could have bugs)
- 
+
+ If you want latest developer version... (could have bugs and break anytime)
+
  `git clone https://github.com/oSoWoSo/DistroHopper`
- 
+
  Enter created/unpacked distrohopper directory
- 
+
  Then enter config directory
- 
+
  `cd distrohopper/config`
- 
+
  And run
- 
+
  `./1stRun.sh`
- 
+
  Now should be good to go...
 
 ---
@@ -159,21 +159,21 @@ Void Linux:
 # How to run DistroHopper
 
  Just run from terminal
- 
+
  `dh`
- 
+
  or for TUI version (Download and run from/into same directory)
- 
+
  `dh -t`
- 
+
 ## Desktop files
 
  All desktop files will be storred in your .config
  in directories /distrohopper/ready and supported
- 
+
  Fell free to link them anywhere you want...
- 
- 
+
+
 
 ### Currently supported Distribution:
 
@@ -186,7 +186,7 @@ In screenshot above...
 #### [discuss](https://github.com/oSoWoSo/DistroHopper/discussions)
 
 # Project chat group:
-If anyone wanna join, here is one 
+If anyone wanna join, here is one
 [![SimpleX](simplex.svg)](https://simplex.chat/contact#/?v=1-2&smp=smp%3A%2F%2FSkIkI6EPd2D63F4xFKfHk7I1UGZVNn6k1QWZ5rcyr6w%3D%40smp9.simplex.im%2FzmtsZwfTjwyynibt0bF6bb_xLWS9ce5A%23%2F%3Fv%3D1-2%26dh%3DMCowBQYDK2VuAyEAkMtz66wGfWb6VDn-_t_mVm3RFiFfOC3Hxye8Hm5tmVo%253D%26srv%3Djssqzccmrcws6bhmn77vgmhfjmhwlyr3u7puw4erkyoosywgl67slqqd.onion&data=%7B%22type%22%3A%22group%22%2C%22groupLinkId%22%3A%22o8KR0TOM0f2j33nO9goMRQ%3D%3D%22%7D) way (click SimpleX logo)
 
 (check the software! even if you don't want chat about DistroHopper)
@@ -208,7 +208,7 @@ TUI depends on
 
 ----
 
-For 
+For
 
 - easy of use
 
