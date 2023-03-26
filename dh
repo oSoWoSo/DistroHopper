@@ -69,7 +69,7 @@ check_tui_dependencies() {
 set_variables() {
 	#progname="${progname:="${0##*/}"}"
 	progname="DistroHopper"
-	version="0.5"
+	version="0.7"
 	#GTK_THEME="alt-dialog"
 	DH_CONFIG_DIR="$HOME/.config/distrohopper"
 	DH_CONFIG="$DH_CONFIG_DIR/distrohopper.conf"
