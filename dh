@@ -16,15 +16,24 @@ some_bugs() {
 show_help() {
 	echo "
 Possible arguments:
-	d	Set where VMs are stored
-	i	Install DistroHopper
-	s	Update supported VMs
-	t	Run TUI instead of GUI
-	r	Update ready to run VMs
-	a	Add new distro to quickget
-	h	Show this help
-	o	Copy all ISOs to target dir (for Ventoy)
-	p	Push changed quickget to quickemu project
+	-h	--help		Show this help and exit
+---------------------------------------------------------
+	-d	--dir		Set default directory where VMs are stored
+	-i	--install	Install DistroHopper
+---------------------------------------------------------
+	-m	--mode		Portable mode
+---------------------------------------------------------
+	-s	--supported	Update supported VMs
+	-r	--ready		Update ready to run VMs
+---------------------------------------------------------
+	-t	--tui		Run TUI
+	-g	--gui		Run GUI
+---------------------------------------------------------
+	-a	--add		Add new distro to quickget
+	-f	--functions	Sort functions in quickget
+	-p	--push		Push changed quickget to quickemu project #todo
+---------------------------------------------------------
+	-c	--copy		Copy all ISOs to target dir (for Ventoy)
 ---------------------------------------------------------"
 }
 
@@ -329,19 +338,75 @@ add_distro() {
 
 set_variables
 
-case "$1" in
-d) set_dir;;
-i) echo "Starting installation..." && install_process;;
-s) echo "Updating supported VMs..." && renew_supported;;
-t) echo "You are master! Running TUI..." && run_tui;;
-r) echo "Updating ready VMs..." && renew_ready;;
-a) echo "Adding new distro started..." && add_distro;;
-h) show_help;;
-o) echo "Copying ISOs to dir. It will take some time..." && isos_to_dir;;
-p) echo "Nothing here yet!";;
-*) echo "Run 'dh h' for help
- Starting DistroHopper GUI..." && run_gui;;
-esac
+while [[ $# -gt 0 ]]
+do
+	key="$1"
+	case $key in
+		-h|--help)
+			show_help
+			shift
+			;;
+		-d|-dir)
+			set_dir
+			shift
+			;;
+		-i|--install)
+			echo "Starting installation..."
+			install_process
+			shift
+			;;
+		-m|--mode)
+			echo "Switching to portable mode!"
+			mode_portable
+			shift
+			;;
+		-s|--supported)
+			echo "Updating supported VMs..."
+			renew_supported
+			shift
+			;;
+		-r|--ready)
+			echo "Updating ready VMs..."
+			renew_ready
+			shift
+			;;
+		-t|--tui)
+			echo "Running TUI..."
+			run_tui
+			shift
+			;;
+		-g|--gui)
+			echo "Starting DistroHopper GUI..."
+			run_gui
+			shift
+			;;
+		-a|--add)
+			echo "Adding new distro started..."
+			add_distro
+			shift
+			;;
+		-f|--functions)
+			echo "Sorting functions in template..."
+			sort_functions
+			shift
+			;;
+		-p|--push)
+			echo "Pushing changes to... #TODO"
+			push_changes
+			shift
+			;;
+		-c|--copy)
+			echo "Copying ISOs to dir. It will take some time..."
+			isos_to_dir
+			shift
+			;;
+		*)
+			echo "Invalid option: $1"
+			show_help
+			exit 1
+			;;
+	esac
+done
 
 some_bugs
 
