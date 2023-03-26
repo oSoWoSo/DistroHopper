@@ -3,8 +3,13 @@
 # bugs notice
 some_bugs() {
 	echo "Done
-	PS: You saw some bugs? Let me know on project page:
+	PS: You saw some bugs?
+		Could you please provide feedback?
+		How do you like DistroHopper?
+		What can be improved, added, changed?
+	 Let me know on project page:
 	https://github.com/oSoWoSo/DistroHopper
+	 Homepage: dh.osowoso.xyz
 	Flawless distro hopping...		zenobit"
 }
 
