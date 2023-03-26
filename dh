@@ -12,6 +12,7 @@ function some_bugs() {
 }
 
 function show_help() {
+	printf "DistroHopper v. $version\nquickemu v. $("$prefix"quickemu --version)\n"
 	echo "
 $(gettext "Possible arguments:")
 	-h	--help		$(gettext "Show this help and exit")
