@@ -1,40 +1,42 @@
 #!/bin/bash
 
 # bugs notice
-some_bugs() {
-	echo "Done
-	PS: You saw some bugs?
-		Could you please provide feedback?
-		How do you like DistroHopper?
-		What can be improved, added, changed?
-	 Let me know on project page:
-	https://github.com/oSoWoSo/DistroHopper
-	 Homepage: dh.osowoso.xyz
-	Flawless distro hopping...		zenobit"
+function some_bugs() {
+	echo "$(gettext "Done")
+	PS: $(gettext "You saw some bugs?")
+		$(gettext "Could you please provide feedback?")
+		$(gettext "How do you like DistroHopper?")
+		$(gettext "What can be improved, added, changed?")
+	$(gettext " Let me know...")
+	$(gettext "Flawless distro hopping...")		zenobit"
 }
 
 show_help() {
 	echo "
-Possible arguments:
-	-h	--help		Show this help and exit
+$(gettext "Possible arguments:")
+	-h	--help		$(gettext "Show this help and exit")
 ---------------------------------------------------------
-	-d	--dir		Set default directory where VMs are stored
-	-i	--install	Install DistroHopper
+	-d	--dir		$(gettext "Set default directory where VMs are stored")
+	-i	--install	$(gettext "Install DistroHopper")
 ---------------------------------------------------------
-	-m	--mode		Portable mode
+	-m	--mode		$(gettext "Portable mode")
 ---------------------------------------------------------
-	-s	--supported	Update supported VMs
-	-r	--ready		Update ready to run VMs
+	-s	--supported	$(gettext "Update supported VMs")
+	-r	--ready		$(gettext "Update ready to run VMs")
 ---------------------------------------------------------
-	-t	--tui		Run TUI
-	-g	--gui		Run GUI
+	-t	--tui		$(gettext "Run TUI")
+	-g	--gui		$(gettext "Run GUI")
 ---------------------------------------------------------
-	-a	--add		Add new distro to quickget
-	-f	--functions	Sort functions in quickget
-	-p	--push		Push changed quickget to quickemu project #todo
+	-a	--add		$(gettext "Add new distro to quickget")
+	-f	--functions	$(gettext "Sort functions in quickget")
+	-p	--push		$(gettext "Push changed quickget to quickemu project #todo")
 ---------------------------------------------------------
-	-c	--copy		Copy all ISOs to target dir (for Ventoy)
----------------------------------------------------------"
+	-c	--copy		$(gettext "Copy all ISOs to target dir (for Ventoy)")
+---------------------------------------------------------
+	$(gettext "Homepage:") dh.osowoso.xyz
+	$(gettext "Project hosted at:") https://github.com/oSoWoSo/DistroHopper
+	$(gettext "Chat group on SimpleX:") https://tinyurl.com/7hm4kcjx
+"
 }
 
 portable() {
@@ -57,12 +59,12 @@ mode_installed() {
 
 # installation
 check_gui_dependencies() {
-	[ -f "$PREFIX/yad" ] || echo "You are missing yad...
+	[ -f "$PREFIX/yad" ] || echo "$(gettext "You are missing yad...")
 	It's needed for GUI!"
 }
 
 check_tui_dependencies() {
-	[ -f "$PREFIX/fzf" ] || echo "You are missing fzf...
+	[ -f "$PREFIX/fzf" ] || echo "$(gettext "You are missing fzf...")
 	It's needed for TUI!"
 }
 
@@ -82,15 +84,13 @@ set_variables() {
 	# Set traps to catch the signals and exit gracefully
 	trap "exit" INT
 	trap "exit" EXIT
-	echo "DistroHopper v. $version"
-	echo "quickemu v. $("$prefix"quickemu --version)"
 }
 
 create_structure() {
 	source distrohopper.conf
-	echo "creating config dir..."
+	echo "$(gettext "creating config dir...")"
 	mkdir -p "$DH_CONFIG_DIR"
-	echo "creating icons dir as root..."
+	echo "$(gettext "creating icons dir as root...")"
 	mkdir -p "$DH_ICON_DIR"  >/dev/null 2>&1 || sudo mkdir -p "$DH_ICON_DIR"
 }
 
@@ -113,9 +113,9 @@ install_dh() {
 	cp dh quickget quickemu macrecovery windowskey "$PREFIX" >/dev/null 2>&1 || sudo cp dh quickget quickemu macrecovery windowskey "$PREFIX"
 	# quickget also to config directory for adding new distros...
 	cp quickget "$DH_CONFIG_DIR/"
-	echo "Copying icons..."
+	echo "$(gettext "Copying icons...")"
 	cp icons/* "$DH_ICON_DIR/" >/dev/null 2>&1 || sudo cp icons/* "$DH_ICON_DIR/"
-	echo "Copying to config dir..."
+	echo "$(gettext "Copying to config dir...")"
 	cp -r ready "$DH_CONFIG_DIR/"
 	cp -r supported "$DH_CONFIG_DIR/"
 
@@ -125,14 +125,14 @@ install_process() {
 	check_tui_dependencies
 	check_gui_dependencies
 	#check_quickemu_dependencies
-	echo "Creating directory structure..." \
+	echo "$(gettext "Creating directory structure...")" \
 	 && create_structure \
-	 && echo "Setting up directory..." \
+	 && echo "$(gettext "Setting up directory...")" \
 	 && set_dir \
-	 && echo "Installing needed..." \
-	 && echo "For now voidlinux only" \
+	 && echo "$(gettext "Installing needed...")" \
+	 && echo "$(gettext "For now voidlinux only")" \
 	 && install_prereq \
-	 && echo "Installing DistroHopper to bin..." \
+	 && echo "$(gettext "Installing DistroHopper to bin...")" \
 	 && install_dh
 }
 
@@ -141,7 +141,7 @@ renew_ready() {
 	cd "$VMS_DIR" || exit 1
 	rm "$DH_CONFIG_DIR"/ready/*.desktop
 	if [ ! -e *.conf ]; then
-		echo "No .conf files found"
+		echo "$(gettext "No .conf files found")"
 		return
 	fi
 	for vm_conf in *.conf; do
@@ -273,7 +273,7 @@ run_tui() {
 	printf ' Prepared VMs:\n-------------\n\n'
 	# Check if there are any VMs
 	if [ ${#vms[@]} -eq 0 ]; then
-		echo "No VMs found."
+		echo "$(gettext "No VMs found.")"
 		exit 1
 	fi
 	# Print the names of the available VMs
@@ -378,9 +378,27 @@ add_distro() {
 	meld "${TMP_DIR}/${NAME}.tmp $DH_CONFIG_DIR/quickget"
 }
 
+function localization() {
+	# načtení souboru s lokalizací
+	. gettext.sh
+	# nastavení domovského adresáře pro lokalizace
+	TEXTDOMAINDIR=./locale
+	# nastavení domovského jména pro skript
+	TEXTDOMAIN=dh
+	# použití gettext() pro lokalizaci výpisu
+	#echo $(gettext "Hello, world!")
+}
+
 # run
 
 set_variables
+localization
+
+if [[ $# -eq 0 ]]; then
+    printf "$(gettext "No argumet provided!\n\n")"
+    show_help
+    exit 0
+fi
 
 while [[ $# -gt 0 ]]
 do
@@ -395,62 +413,62 @@ do
 			shift
 			;;
 		-i|--install)
-			echo "Starting installation..."
+			echo "$(gettext "Starting installation...")"
 			install_process
 			shift
 			;;
 		-m|--mode)
-			echo "Switching to portable mode!"
+			echo "$(gettext "Switching to portable mode!")"
 			mode_portable
 			shift
 			;;
 		-s|--supported)
-			echo "Updating supported VMs..."
+			echo "$(gettext "Updating supported VMs...")"
 			renew_supported
 			shift
 			;;
 		-r|--ready)
-			echo "Updating ready VMs..."
+			echo "$(gettext "Updating ready VMs...")"
 			renew_ready
 			shift
 			;;
 		-t|--tui)
-			echo "Running TUI..."
+			echo "$(gettext "Running TUI...")"
 			run_tui
 			shift
 			;;
 		-g|--gui)
-			echo "Starting DistroHopper GUI..."
+			echo "$(gettext "Starting DistroHopper GUI...")"
 			run_gui
 			shift
 			;;
 		-a|--add)
-			echo "Adding new distro started..."
+			echo "$(gettext "Adding new distro started...")"
 			add_distro
 			shift
 			;;
 		-f|--functions)
-			echo "Sorting functions in template..."
+			echo "$(gettext "Sorting functions in template...")"
 			sort_functions
 			shift
 			;;
 		-p|--push)
-			echo "Pushing changes to... #TODO"
+			echo "$(gettext "Pushing changes to... #TODO")"
 			push_changes
 			shift
 			;;
 		-c|--copy)
-			echo "Copying ISOs to dir. It will take some time..."
+			echo "$(gettext "Copying ISOs to dir. It will take some time...")"
 			isos_to_dir
 			shift
 			;;
 		-e|--test)
-			echo "Running supported test..."
+			echo "$(gettext "Running supported test...")"
 			renew_supported_test
 			shift
 			;;
 		*)
-			echo "Invalid option: $1"
+			printf "$(gettext "Invalid option: $1\n\n")"
 			show_help
 			exit 1
 			;;
