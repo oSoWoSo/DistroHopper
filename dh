@@ -11,7 +11,7 @@ function some_bugs() {
 	$(gettext "Flawless distro hopping...")		zenobit"
 }
 
-show_help() {
+function show_help() {
 	echo "
 $(gettext "Possible arguments:")
 	-h	--help		$(gettext "Show this help and exit")
@@ -39,11 +39,11 @@ $(gettext "Possible arguments:")
 "
 }
 
-portable() {
+function portable() {
 	[ -f "$DH_CONFIG" ] && mode_installed || mode_portable
 }
 
-mode_portable() {
+function mode_portable() {
 	VMS_DIR="$(pwd)"
 	DH_CONFIG_DIR="$(pwd)"
 	DH_ICON_DIR="$(pwd)/icons"
@@ -51,24 +51,24 @@ mode_portable() {
 	export "VMS_DIR" "DH_CONFIG_DIR" "DH_ICON_DIR" "TERMINAL" "replace" "prefix"
 }
 
-mode_installed() {
+function mode_installed() {
 	source "$DH_CONFIG"
 	prefix=
 	export "prefix"
 }
 
 # installation
-check_gui_dependencies() {
+function check_gui_dependencies() {
 	[ -f "$PREFIX/yad" ] || echo "$(gettext "You are missing yad...")
 	It's needed for GUI!"
 }
 
-check_tui_dependencies() {
+function check_tui_dependencies() {
 	[ -f "$PREFIX/fzf" ] || echo "$(gettext "You are missing fzf...")
 	It's needed for TUI!"
 }
 
-set_variables() {
+function set_variables() {
 	#progname="${progname:="${0##*/}"}"
 	progname="DistroHopper"
 	version="0.7"
@@ -86,7 +86,7 @@ set_variables() {
 	trap "exit" EXIT
 }
 
-create_structure() {
+function create_structure() {
 	source distrohopper.conf
 	echo "$(gettext "creating config dir...")"
 	mkdir -p "$DH_CONFIG_DIR"
@@ -94,7 +94,7 @@ create_structure() {
 	mkdir -p "$DH_ICON_DIR"  >/dev/null 2>&1 || sudo mkdir -p "$DH_ICON_DIR"
 }
 
-set_dir() {
+function set_dir() {
 	NEWDIR="$(yad --file --directory --title="Where to save VMs?")"
 	VMS_DIR="$NEWDIR"
 	echo "VMS_DIR=\"$VMS_DIR\"
@@ -102,14 +102,14 @@ set_dir() {
 	export "VMS_DIR"
 }
 
-install_prereq() {
+function install_prereq() {
 	# (Void linux)
 	sudo xbps-install -S qemu bash coreutils grep jq procps-ng python3 util-linux sed spice-gtk swtpm usbutils wget xdg-user-dirs xrandr unzip zsync socat
 	# Debian: sudo apt install qemu bash coreutils ovmf grep jq lsb procps python3 genisoimage usbutils util-linux sed spice-client-gtk swtpm wget xdg-user-dirs zsync unzip
 	# Fedora: sudo dnf install qemu bash coreutils edk2-tools grep jq lsb procps python3 genisoimage usbutils util-linux sed spice-gtk-tools swtpm wget xdg-user-dirs xrandr unzip
 }
 
-install_dh() {
+function install_dh() {
 	cp dh quickget quickemu macrecovery windowskey "$PREFIX" >/dev/null 2>&1 || sudo cp dh quickget quickemu macrecovery windowskey "$PREFIX"
 	# quickget also to config directory for adding new distros...
 	cp quickget "$DH_CONFIG_DIR/"
@@ -121,7 +121,7 @@ install_dh() {
 
 }
 
-install_process() {
+function install_process() {
 	check_tui_dependencies
 	check_gui_dependencies
 	#check_quickemu_dependencies
@@ -137,7 +137,7 @@ install_process() {
 }
 
 # basic
-renew_ready() {
+function renew_ready() {
 	cd "$VMS_DIR" || exit 1
 	rm "$DH_CONFIG_DIR"/ready/*.desktop
 	if [ ! -e *.conf ]; then
@@ -171,7 +171,7 @@ Categories=System;Virtualization;"
 	done
 }
 
-renew_supported() {
+function renew_supported() {
 	rm "$DH_CONFIG_DIR"/supported/*.desktop
 	# get supported VMs
 	"$prefix"quickget | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' > "$DH_CONFIG_DIR/supported.md"
@@ -215,7 +215,7 @@ Categories=System;Virtualization;"
 	done < "$DH_CONFIG_DIR"/supported.md
 }
 
-renew_supported_test() {
+function renew_supported_test() {
 	rm "$DH_CONFIG_DIR"/test/ubuntu.desktop
 	# get supported VMs
 	"$prefix"quickget | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' > "$DH_CONFIG_DIR/ubuntu.md"
@@ -259,7 +259,7 @@ Categories=System;Virtualization;"
 	done < "$DH_CONFIG_DIR"/test/ubuntu.md
 }
 
-run_gui() {
+function run_gui() {
 	check_gui_dependencies
 	key=$((RANDOM % 9000 + 1000))
 	yad --plug="$key" --tabnum=1 --monitor --icons --listen --read-dir="$DH_CONFIG_DIR"/ready --sort-by-name --no-buttons --borders=0 --icon-size=46 --item-width=76 &
@@ -267,7 +267,7 @@ run_gui() {
 	yad --dynamic --notebook --key="$key" --monitor --listen --window-icon="$DH_ICON_DIR"/hop.svg --width=900 --height=900 --title="DistroHopper" --tab="run VM" --tab="download VM"
 }
 
-run_tui() {
+function run_tui() {
 	check_tui_dependencies
 	vms=(*.conf)
 	printf ' Prepared VMs:\n-------------\n\n'
@@ -341,13 +341,13 @@ Choose other language" | fzf --cycle)
 }
 
 # more
-isos_to_dir() {
+function isos_to_dir() {
 	yad --file --directory > target
 	cd "$VMS_DIR" || exit 1
 	cp */*.iso "$target"
 }
 
-add_distro() {
+function add_distro() {
 	TMP_DIR="/tmp"
 	yad --form --field="Pretty name" "" --field="Name" "" --field="Releases" "" --field="Editions" "" --field="URL" "" --field="ISO" "" --field="Checksum file" "" > ${TMP_DIR}/template.tmp
 	PRETTY_NAME="$(cat ${TMP_DIR}/template.tmp | cut -d'|' -f1)"
