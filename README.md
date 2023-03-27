@@ -18,8 +18,9 @@ Quickly download, create and run VM of any#TODO operating system.
 [![Donate](https://liberapay.com/assets/widgets/donate.svg)](https://liberapay.com/zenobit/donate)
 
 Licensed under AGPL3
-# Still Testing version!
-![dh](docs/distrohopper.png)
+# Still Beta version!
+
+![supported OS](docs/distrohopper.png)
 
 quickly create and run VMs
 
@@ -177,9 +178,155 @@ Void Linux:
 
 
 
-### Currently supported Distribution:
+### Currently supported Operating Systems and tools:
 
-In screenshot above...
+`agarimos
+
+alma
+
+alpine
+
+android
+
+archlinux
+
+archcraft
+
+arcolinux
+
+batocera
+
+blendos
+
+cachyos
+
+centos-stream
+
+cereus
+
+debian
+
+deepin
+
+devuan
+
+dietpi
+
+dragonflybsd
+
+elementary
+
+endeavouros
+
+endless
+
+fedora
+
+freebsd
+
+freedos
+
+fvoid
+
+gabeeos
+
+garuda
+
+gentoo
+
+ghostbsd
+
+haiku
+
+kali
+
+kdeneon
+
+kolibrios
+
+kubuntu
+
+linuxmint
+
+lmde
+
+mageia
+
+manjaro
+
+miyo
+
+mxlinux
+
+netboot
+
+netbsd
+
+nixos
+
+lubuntu
+
+macos
+
+openbsd
+
+opensuse
+
+oraclelinux
+
+popos
+
+reactos
+
+rebornos
+
+rockylinux
+
+siduction
+
+slackware
+
+slitaz
+
+solus
+
+steamos
+
+tails
+
+truenas-core
+
+truenas-scale
+
+ubuntu
+
+ubuntu-budgie
+
+ubuntukylin
+
+ubuntu-mate
+
+ubuntustudio
+
+ubuntu-unity
+
+ventoy
+
+void
+
+voidpup
+
+vxlinux
+
+windows
+
+xerolinux
+
+xubuntu
+
+zorin`
+
+Also with posible planned: [in duscusion](https://github.com/oSoWoSo/DistroHopper/discussions/9)
 
 ---
 
