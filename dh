@@ -400,6 +400,7 @@ function localization() {
 	#echo $"Hello, world!")
 	# ask for language
 	create_translation_source
+	export "TEXTDOMAIN" "TEXTDOMAINDIR"
 }
 
 function create_translation_source() {
