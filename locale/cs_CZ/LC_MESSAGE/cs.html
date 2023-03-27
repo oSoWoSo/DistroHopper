@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+  <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+  <style>
+
+
+/*
+Based on Minimal CSS (minimalcss.com) under the MIT license.
+*/
+
+/* Reset */
+* { margin: 0; padding: 0; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; }
+
+/* Layout */
+body { font: 14px/20px -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+
+.container { position: relative; max-width: 90%; margin: 0 auto; }
+
+/* Typography */
+a { color: #105CB6; text-decoration: none; }
+a:hover, a:focus { color: #105CB6; text-decoration: underline; }
+a:active { color: #105CB6; }
+
+h1 { font-size: 24px; line-height: 20px; margin: 10px 0; }
+h2 { font-size: 20px; line-height: 20px; margin: 10px 0; }
+h3 { font-size: 16px; line-height: 20px; margin: 10px 0; }
+h4 { font-size: 14px; line-height: 20px; margin: 10px 0; }
+h5 { font-size: 12px; line-height: 20px; margin: 10px 0; }
+h5 { font-size: 10px; line-height: 20px; margin: 10px 0; }
+
+p { margin-bottom: 10px; }
+
+.float-left     { float: left; }
+.float-right    { float: right; }
+img.float-left  { float: left; margin: 0 20px 20px 0; }
+img.float-right { float: right; margin: 0 0 20px 20px; }
+img.center      { margin: 0 auto; display: block; }
+
+.text-left    { text-align: left; }
+.text-center  { text-align: center; }
+.text-right   { text-align: right; }
+.text-justify { text-align: justify; }
+
+/* List */
+ul { list-style-position:inside; }
+ol { list-style-position:inside; }
+
+/* Table */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+th { font-weight: bold; }
+tfoot { font-style: italic; }
+
+/* Metadata part */
+
+.metadata {
+  margin-top: 15px;
+  margin-bottom: 10px;
+  font-size: 90%;
+}
+table.metadata td {
+  padding-right: 20px;
+}
+
+.stats {
+  padding-top: 5px;
+  padding-bottom: 20px;
+}
+.graph {
+  width: 100%;
+}
+.graph div { float: left; }
+.graph div:first-child { border-top-left-radius: 3px; border-bottom-left-radius: 3px; }
+.graph div:last-child { border-top-right-radius: 3px; border-bottom-right-radius: 3px; }
+.legend {
+  font-size: smaller;
+  padding-top: 12px;
+  text-align: center;
+}
+
+/* Translations */
+table.translations {
+  width: 100%;
+  table-layout: fixed;
+}
+table.translations th, table.translations td {
+  padding: 5px 10px;
+  vertical-align: top;
+  border-bottom: 1px solid #F1F1F1;
+}
+table.translations th {
+  text-align: left;
+}
+table.translations th:first-child, table.translations td:first-child { padding-left: 0; }
+table.translations th:last-child, table.translations td:last-child { padding-right: 0; }
+
+.with-comments td {
+  border-bottom: none !important;
+}
+tr.comments div {
+  float: left;
+  max-width: 90%;
+  font-size: smaller;
+}
+tr.comments div p:last-child { margin-bottom: 0; }
+tr.comments td { padding-top: 0; }
+
+.msgctxt {
+  font-size: smaller;
+  border-radius: 2px;
+  padding: 2px 4px;
+  margin-right: 4px;
+}
+
+
+/* Colors */
+
+body { background-color: #fff; color: #333; }
+
+.percent-done    { background-color: rgb(146, 236, 106); height: 10px; }
+.percent-fuzzy   { background-color: rgb(255, 149, 0); height: 10px; }
+.percent-untrans { background-color: #F1F1F1; height: 10px; }
+.legend          { color: #aaa; }
+tr.comments div  { color: #aaa; }
+.fuzzy .tra      { color: rgb(230, 134, 0); }
+
+.msgctxt         { color: rgb(70, 109, 137); background-color: rgb(217, 232, 242); }
+
+
+@media (prefers-color-scheme: dark) {
+    body             { background-color: rgb(45, 42, 41); color: #eee; }
+    .percent-untrans { background-color: rgba(255, 255, 255, 0.3); }
+    .legend          { color: rgba(255, 255, 255, 0.6); }
+    tr.comments div  { color: rgba(255, 255, 255, 0.6); }
+    .fuzzy .tra      { color: rgb(253, 178, 72); }
+    .msgctxt         { color: rgb(180, 222, 254); background-color: rgba(67, 94, 147, 0.6); }
+    table.translations th, table.translations td { border-bottom: 1px solid #333; }
+}
+
+
+  </style>
+</head>
+<body>
+<div class='container'>
+<table class='metadata'>
+<tr><td>Jazyk:</td><td>čeština</td></tr>
+</table>
+<div class='stats'>
+  <div class='graph'>
+    <div class='percent-done' style='width: 100%'>&nbsp;</div>
+  </div>
+  <div class='legend'>Přeloženo: 49 z 49 (100 %)  </div>
+</div>
+<table class='translations'>
+  <thead>
+    <tr>
+      <th>Zdrojový text — angličtina</th>
+      <th>Překlad — čeština</th>
+    </tr>
+  </thead>
+  <tbody>
+<tr class='i'>
+<td class='src'  lang='en'>
+Done</td>
+<td class='tra'  lang='cs'>
+Hotovo</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+PS: You saw some bugs?</td>
+<td class='tra'  lang='cs'>
+PS: Viděli jste nějaké chyby?</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+Could you please provide feedback?</td>
+<td class='tra'  lang='cs'>
+Můžete prosím poslat zpětnou vazbu?</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+How do you like DistroHopper?</td>
+<td class='tra'  lang='cs'>
+Jak se vám líbí DistroHopper?</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+What can be improved, added, changed?</td>
+<td class='tra'  lang='cs'>
+Co může být vylepšeno, přidáno, změněno?</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+ Let me know...</td>
+<td class='tra'  lang='cs'>
+ Dejte mi vědět...</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+Flawless distro hopping...</td>
+<td class='tra'  lang='cs'>
+Bezchybné zkoušení distribucí...</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+Possible arguments:</td>
+<td class='tra'  lang='cs'>
+Možné argumenty:</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+	-h	--help			Show this help and exit</td>
+<td class='tra'  lang='cs'>
+	-h	--help			Zobrazit tuto nápovědu a skončit</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+	-d	--dir			Set default directory where VMs are stored</td>
+<td class='tra'  lang='cs'>
+	-d	--dir			Nastavit adresář kde jsou virtuální stroje uloženy</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+	-i	--install		Install DistroHopper</td>
+<td class='tra'  lang='cs'>
+	-i	--install		Instalovat DistroHopper</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+	-m	--mode			Portable mode</td>
+<td class='tra'  lang='cs'>
+	-m	--mode			Přenosný mód</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+	-s	--supported		Update supported VMs</td>
+<td class='tra'  lang='cs'>
+	-s	--supported		Aktualizovat podporované VM</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+	-r	--ready			Update ready to run VMs</td>
+<td class='tra'  lang='cs'>
+	-r	--ready			Aktualizovat připravené VM</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+	-t	--tui			Run TUI</td>
+<td class='tra'  lang='cs'>
+	-t	--tui			Spustit terminálové uživatelské rozhranní</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+	-g	--gui			Run GUI</td>
+<td class='tra'  lang='cs'>
+	-g	--gui			Spustit grafické uživatelské rozhranní</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+	-a	--add			Add new distro to quickget</td>
+<td class='tra'  lang='cs'>
+	-a	--add			Přidat distribuci do quickget</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+	-f	--functions		Sort functions in quickget</td>
+<td class='tra'  lang='cs'>
+	-f	--functions		Seřadit funkce v quickget</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+	-p	--push			Push changed quickget to quickemu project #todo</td>
+<td class='tra'  lang='cs'>
+	-p	--push			Poslat změněný quickget do quickemu projektu #UDELAT</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+	-c	--copy			Copy all ISOs to target dir (for Ventoy)</td>
+<td class='tra'  lang='cs'>
+	-c	--copy			Kopírovat všechny ISO to cílového adresáře</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+Homepage: dh.osowoso.xyz</td>
+<td class='tra'  lang='cs'>
+Domovský stránka: dh.osowoso.xyz</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+Project hosted at: https://github.com/oSoWoSo/DistroHopper</td>
+<td class='tra'  lang='cs'>
+Projekt hostován na: https://github.com/oSoWoSo/DistroHopper</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+Chat group on SimpleX: https://tinyurl.com/7hm4kcjx</td>
+<td class='tra'  lang='cs'>
+Chat skupina na SimpleX: https://tinyurl.com/7hm4kcjx</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+You are missing yad...
+<br>	Needed for GUI!</td>
+<td class='tra'  lang='cs'>
+Chybí vám yad...
+<br> Potřeba pro GUI!</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+You are missing fzf...
+<br>	Needed for TUI!</td>
+<td class='tra'  lang='cs'>
+Chybí vám fzf...
+<br> Potřeba pro TUI!</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+creating config dir...</td>
+<td class='tra'  lang='cs'>
+vytvářím adresář konfigurace...</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+creating icons dir as root...</td>
+<td class='tra'  lang='cs'>
+vytvářím adresář ikon jako superuživatel...</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+Copying icons...</td>
+<td class='tra'  lang='cs'>
+Kopíruji ikony...</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+Copying to config dir...</td>
+<td class='tra'  lang='cs'>
+Kopíruji do konfig adresáře...</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+Creating directory structure...</td>
+<td class='tra'  lang='cs'>
+Vytvářím adresářovou stukturu...</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+Setting up directory...</td>
+<td class='tra'  lang='cs'>
+Nastavuji adresář...</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+Installing needed...</td>
+<td class='tra'  lang='cs'>
+Instaluji potřebné...</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+For now voidlinux only</td>
+<td class='tra'  lang='cs'>
+Zatím jen VoidLinux</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+Installing DistroHopper to bin...</td>
+<td class='tra'  lang='cs'>
+Instaluji DistroHopper do bin...</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+No .conf files found</td>
+<td class='tra'  lang='cs'>
+Nenalezen žádný soubor .conf</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+No VMs found.</td>
+<td class='tra'  lang='cs'>
+Žádný VM nenalezen.</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+No argumet provided!\n\n</td>
+<td class='tra'  lang='cs'>
+Nezadali jste žádný argument!\n\n</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+Starting installation...</td>
+<td class='tra'  lang='cs'>
+Zahajuji instalaci...</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+Switching to portable mode!</td>
+<td class='tra'  lang='cs'>
+Přepínám do přenosného módu!</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+Updating supported VMs...</td>
+<td class='tra'  lang='cs'>
+Aktualizuji podporované VM...</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+Updating ready VMs...</td>
+<td class='tra'  lang='cs'>
+Aktualizuji připravené VM...</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+Running TUI...</td>
+<td class='tra'  lang='cs'>
+Spouštím TUI...</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+Starting DistroHopper GUI...</td>
+<td class='tra'  lang='cs'>
+Spouštím DistroHopper GUI...</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+Adding new distro started...</td>
+<td class='tra'  lang='cs'>
+Přidání nového distra zahájeno...</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+Sorting functions in template...</td>
+<td class='tra'  lang='cs'>
+Srovnávám funkce v šabloně...</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+Pushing changes to... #TODO</td>
+<td class='tra'  lang='cs'>
+Posílám změny do... #UDELAT</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+Copying ISOs to dir. It will take some time...</td>
+<td class='tra'  lang='cs'>
+Kopíruji soubory ISO do adresáře. Zabere to nějaký čas...</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+Running supported test...</td>
+<td class='tra'  lang='cs'>
+Spouštím  test podporovaných...</td>
+</tr>
+<tr class='i'>
+<td class='src'  lang='en'>
+Invalid option: $1\n\n</td>
+<td class='tra'  lang='cs'>
+Chybný argument: $1\n\n</td>
+</tr>
+</tbody>
+</table>
+</div>
+</body>
+</html>
