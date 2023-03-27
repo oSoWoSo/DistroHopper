@@ -1,0 +1,147 @@
+#: dh.sh:11
+msgid "Done"
+msgstr "Hotovo"
+#: dh.sh:12
+msgid "PS: You saw some bugs?"
+msgstr "PS: Viděli jste nějaké chyby?"
+#: dh.sh:13
+msgid "Could you please provide feedback?"
+msgstr "Můžete prosím poslat zpětnou vazbu?"
+#: dh.sh:14
+msgid "How do you like DistroHopper?"
+msgstr "Jak se vám líbí DistroHopper?"
+#: dh.sh:15
+msgid "What can be improved, added, changed?"
+msgstr "Co může být vylepšeno, přidáno, změněno?"
+#: dh.sh:16
+msgid " Let me know..."
+msgstr " Dejte mi vědět..."
+#: dh.sh:17
+msgid "Flawless distro hopping..."
+msgstr "Bezchybné zkoušení distribucí..."
+#: dh.sh:22
+msgid "Possible arguments:"
+msgstr "Možné argumenty:"
+#: dh.sh:23
+msgid "	-h	--help			Show this help and exit"
+msgstr "	-h --help			Zobrazit tuto nápovědu a skončit"
+#: dh.sh:25
+msgid "	-d	--dir			Set default directory where VMs are stored"
+msgstr "	-d	--dir			Nastavit adresář kde jsou virtuální stroje uloženy"
+#: dh.sh:26
+msgid "	-i	--install		Install DistroHopper"
+msgstr "\t-i\t--install\t\tInstalovat DistroHopper"
+#: dh.sh:28
+msgid "	-m	--mode			Portable mode"
+msgstr "\t-m\t--mode\t\t\tPřenosný mód"
+#: dh.sh:30
+msgid "	-s	--supported		Update supported VMs"
+msgstr "\t-s\t--supported\t\tAktualizovat podporované VM"
+#: dh.sh:31
+msgid "	-r	--ready			Update ready to run VMs"
+msgstr "\t-r\t--ready\t\t\tAktualizovat připravené VM"
+#: dh.sh:33
+msgid "	-t	--tui			Run TUI"
+msgstr "\t-t\t--tui\t\t\tSpustit terminálové uživatelské rozhranní"
+#: dh.sh:34
+msgid "	-g	--gui			Run GUI"
+msgstr "\t-g\t--gui\t\t\tSpustit grafické uživatelské rozhranní"
+#: dh.sh:36
+msgid "	-a	--add			Add new distro to quickget"
+msgstr "\t-a\t--add\t\t\tPřidat distribuci do quickget"
+#: dh.sh:37
+msgid "	-f	--functions		Sort functions in quickget"
+msgstr "\t-f\t--functions\t\tSeřadit funkce v quickget"
+#: dh.sh:38
+msgid "	-p	--push			Push changed quickget to quickemu project #todo"
+msgstr "\t-p\t--push\t\t\tPoslat změněný quickget do quickemu projektu #UDELAT"
+#: dh.sh:40
+msgid "	-c	--copy			Copy all ISOs to target dir (for Ventoy)"
+msgstr "\t-c\t--copy\t\t\tKopírovat všechny ISO to cílového adresáře (pro Ventoy)"
+#: dh.sh:42
+msgid "Homepage: dh.osowoso.xyz"
+msgstr "Domovský stránka: dh.osowoso.xyz"
+#: dh.sh:43
+msgid "Project hosted at: https://github.com/oSoWoSo/DistroHopper"
+msgstr "Projekt hostován na: https://github.com/oSoWoSo/DistroHopper"
+#: dh.sh:44
+msgid "Chat group on SimpleX: https://tinyurl.com/7hm4kcjx"
+msgstr "Chat skupina na SimpleX: https://tinyurl.com/7hm4kcjx"
+#: dh.sh:67
+msgid "Missing yad!"
+msgstr "Chybí vám yad!"
+#: dh.sh:71
+msgid "Missing fzf!"
+msgstr "Chybí vám fzf!"
+#: dh.sh:94
+msgid "creating config dir..."
+msgstr "vytvářím adresář konfigurace..."
+#: dh.sh:96
+msgid "creating icons dir as root..."
+msgstr "vytvářím adresář ikon jako superuživatel..."
+#: dh.sh:119
+msgid "Copying icons..."
+msgstr "Kopíruji ikony..."
+#: dh.sh:121
+msgid "Copying to config dir..."
+msgstr "Kopíruji do konfig adresáře..."
+#: dh.sh:131
+msgid "Creating directory structure..."
+msgstr "Vytvářím adresářovou stukturu..."
+#: dh.sh:133
+msgid "Setting up directory..."
+msgstr "Nastavuji adresář..."
+#: dh.sh:135
+msgid "Installing needed..."
+msgstr "Instaluji potřebné..."
+#: dh.sh:136
+msgid "For now voidlinux only"
+msgstr "Zatím jen VoidLinux"
+#: dh.sh:138
+msgid "Installing DistroHopper to bin..."
+msgstr "Instaluji DistroHopper do bin..."
+#: dh.sh:280
+msgid "No VMs found."
+msgstr "Žádný VM nenalezen."
+#: dh.sh:412
+msgid "Which language you want use [en_US cs_CZ]?"
+msgstr "Který jazyk chcete použít [en_US cs_CZ]?"
+#: dh.sh:441
+msgid "No argumet provided!\\n\\n"
+msgstr "Nezadali jste žádný argument!\\n\\n"
+#: dh.sh:459
+msgid "Starting installation..."
+msgstr "Zahajuji instalaci..."
+#: dh.sh:464
+msgid "Switching to portable mode!"
+msgstr "Přepínám do přenosného módu!"
+#: dh.sh:469
+msgid "Updating supported VMs..."
+msgstr "Aktualizuji podporované VM..."
+#: dh.sh:474
+msgid "Updating ready VMs..."
+msgstr "Aktualizuji připravené VM..."
+#: dh.sh:479
+msgid "Running TUI..."
+msgstr "Spouštím TUI..."
+#: dh.sh:484
+msgid "Starting DistroHopper GUI..."
+msgstr "Spouštím DistroHopper GUI..."
+#: dh.sh:489
+msgid "Adding new distro started..."
+msgstr "Přidání nového distra zahájeno..."
+#: dh.sh:494
+msgid "Sorting functions in template..."
+msgstr "Srovnávám funkce v šabloně..."
+#: dh.sh:499
+msgid "Pushing changes to... #TODO"
+msgstr "Posílám změny do... #UDELAT"
+#: dh.sh:504
+msgid "Copying ISOs to dir. It will take some time..."
+msgstr "Kopíruji soubory ISO do adresáře. Zabere to nějaký čas..."
+#: dh.sh:509
+msgid "Running supported test..."
+msgstr "Spouštím  test podporovaných..."
+#: dh.sh:518
+msgid "Invalid option: $1\\n\\n"
+msgstr "Chybný argument: $1\\n\\n"

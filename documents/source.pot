@@ -1,151 +1,147 @@
-#: dh:5
+#: dh.sh:10
 msgid "Done"
 msgstr ""
-#: dh:6
+#: dh.sh:11
 msgid "PS: You saw some bugs?"
 msgstr ""
-#: dh:7
+#: dh.sh:12
 msgid "Could you please provide feedback?"
 msgstr ""
-#: dh:8
+#: dh.sh:13
 msgid "How do you like DistroHopper?"
 msgstr ""
-#: dh:9
+#: dh.sh:14
 msgid "What can be improved, added, changed?"
 msgstr ""
-#: dh:10
+#: dh.sh:15
 msgid " Let me know..."
 msgstr ""
-#: dh:11
+#: dh.sh:16
 msgid "Flawless distro hopping..."
 msgstr ""
-#: dh:16
+#: dh.sh:21
 msgid "Possible arguments:"
 msgstr ""
-#: dh:17
+#: dh.sh:22
 msgid "	-h	--help			Show this help and exit"
 msgstr ""
-#: dh:19
+#: dh.sh:24
 msgid "	-d	--dir			Set default directory where VMs are stored"
 msgstr ""
-#: dh:20
+#: dh.sh:25
 msgid "	-i	--install		Install DistroHopper"
 msgstr ""
-#: dh:22
+#: dh.sh:27
 msgid "	-m	--mode			Portable mode"
 msgstr ""
-#: dh:24
+#: dh.sh:29
 msgid "	-s	--supported		Update supported VMs"
 msgstr ""
-#: dh:25
+#: dh.sh:30
 msgid "	-r	--ready			Update ready to run VMs"
 msgstr ""
-#: dh:27
+#: dh.sh:32
 msgid "	-t	--tui			Run TUI"
 msgstr ""
-#: dh:28
+#: dh.sh:33
 msgid "	-g	--gui			Run GUI"
 msgstr ""
-#: dh:30
+#: dh.sh:35
 msgid "	-a	--add			Add new distro to quickget"
 msgstr ""
-#: dh:31
+#: dh.sh:36
 msgid "	-f	--functions		Sort functions in quickget"
 msgstr ""
-#: dh:32
+#: dh.sh:37
 msgid "	-p	--push			Push changed quickget to quickemu project #todo"
 msgstr ""
-#: dh:34
+#: dh.sh:39
 msgid "	-c	--copy			Copy all ISOs to target dir (for Ventoy)"
 msgstr ""
-#: dh:36
+#: dh.sh:41
 msgid "Homepage: dh.osowoso.xyz"
 msgstr ""
-#: dh:37
+#: dh.sh:42
 msgid "Project hosted at: https://github.com/oSoWoSo/DistroHopper"
 msgstr ""
-#: dh:38
+#: dh.sh:43
 msgid "Chat group on SimpleX: https://tinyurl.com/7hm4kcjx"
 msgstr ""
-#: dh:61
-msgid ""
-"You are missing yad...\n"
-"	Needed for GUI!"
+#: dh.sh:66
+msgid "Missing yad!"
 msgstr ""
-#: dh:66
-msgid ""
-"You are missing fzf...\n"
-"	Needed for TUI!"
+#: dh.sh:70
+msgid "Missing fzf!"
 msgstr ""
-#: dh:90
+#: dh.sh:93
 msgid "creating config dir..."
 msgstr ""
-#: dh:92
+#: dh.sh:95
 msgid "creating icons dir as root..."
 msgstr ""
-#: dh:115
+#: dh.sh:118
 msgid "Copying icons..."
 msgstr ""
-#: dh:117
+#: dh.sh:120
 msgid "Copying to config dir..."
 msgstr ""
-#: dh:127
+#: dh.sh:130
 msgid "Creating directory structure..."
 msgstr ""
-#: dh:129
+#: dh.sh:132
 msgid "Setting up directory..."
 msgstr ""
-#: dh:131
+#: dh.sh:134
 msgid "Installing needed..."
 msgstr ""
-#: dh:132
+#: dh.sh:135
 msgid "For now voidlinux only"
 msgstr ""
-#: dh:134
+#: dh.sh:137
 msgid "Installing DistroHopper to bin..."
 msgstr ""
-#: dh:143
-msgid "No .conf files found"
-msgstr ""
-#: dh:275
+#: dh.sh:279
 msgid "No VMs found."
 msgstr ""
-#: dh:440
+#: dh.sh:411
+msgid "Which language you want use [en_US cs_CZ]?"
+msgstr ""
+#: dh.sh:438
 msgid "No argumet provided!\\n\\n"
 msgstr ""
-#: dh:458
+#: dh.sh:456
 msgid "Starting installation..."
 msgstr ""
-#: dh:463
+#: dh.sh:461
 msgid "Switching to portable mode!"
 msgstr ""
-#: dh:468
+#: dh.sh:466
 msgid "Updating supported VMs..."
 msgstr ""
-#: dh:473
+#: dh.sh:471
 msgid "Updating ready VMs..."
 msgstr ""
-#: dh:478
+#: dh.sh:476
 msgid "Running TUI..."
 msgstr ""
-#: dh:483
+#: dh.sh:481
 msgid "Starting DistroHopper GUI..."
 msgstr ""
-#: dh:488
+#: dh.sh:486
 msgid "Adding new distro started..."
 msgstr ""
-#: dh:493
+#: dh.sh:491
 msgid "Sorting functions in template..."
 msgstr ""
-#: dh:498
+#: dh.sh:496
 msgid "Pushing changes to... #TODO"
 msgstr ""
-#: dh:503
+#: dh.sh:501
 msgid "Copying ISOs to dir. It will take some time..."
 msgstr ""
-#: dh:508
+#: dh.sh:506
 msgid "Running supported test..."
 msgstr ""
-#: dh:517
+#: dh.sh:515
 msgid "Invalid option: $1\\n\\n"
 msgstr ""

@@ -1,9 +1,10 @@
-#!/usr/bin/bash
-# shellcheck disable=1078,1079,1091,2027,2034
+#!/bin/bash
 
+#
+#LANGUAGE=cs_CZ
+#LANG=cs_CZ
 TEXTDOMAIN=distrohopper
 TEXTDOMAINDIR=/usr/share/locale
-export "TEXTDOMAINDIR" "TEXTDOMAIN"
 
 # bugs notice
 function some_bugs() {
@@ -17,31 +18,27 @@ function some_bugs() {
 }
 
 function show_help() {
-	echo $"DistroHopper v. $version"
-	echo $"quickemu v. $("$prefix"quickemu --version)"
-	echo ""
-	echo $"Possible arguments:"
-	echo $"	-h	--help			Show this help and exit"
-	echo "---------------------------------------------------------"
-	echo $"	-d	--dir			Set default directory where VMs are stored"
-	echo $"	-i	--install		Install DistroHopper"
-	echo "---------------------------------------------------------"
-	echo $"	-m	--mode			Portable mode"
-	echo "---------------------------------------------------------"
-	echo $"	-s	--supported		Update supported VMs"
-	echo $"	-r	--ready			Update ready to run VMs"
-	echo "---------------------------------------------------------"
-	echo $"	-t	--tui			Run TUI"
-	echo $"	-g	--gui			Run GUI"
-	echo "---------------------------------------------------------"
-	echo $"	-a	--add			Add new distro to quickget"
-	echo $"	-f	--functions		Sort functions in quickget"
-	echo $"	-p	--push			Push changed quickget to quickemu project #todo"
-	echo "---------------------------------------------------------"
-	echo $"	-c	--copy			Copy all ISOs to target dir (for Ventoy)"
-	echo "---------------------------------------------------------"
-	echo $"	-l	--language		Translate DistroHopper"
-	echo "---------------------------------------------------------"
+	printf "DistroHopper v. $version\nquickemu v. $("$prefix"quickemu --version)\n"
+echo $"Possible arguments:"
+echo $"	-h	--help			Show this help and exit"
+ echo "---------------------------------------------------------"
+echo $"	-d	--dir			Set default directory where VMs are stored"
+echo $"	-i	--install		Install DistroHopper"
+ echo "---------------------------------------------------------"
+echo $"	-m	--mode			Portable mode"
+ echo "---------------------------------------------------------"
+echo $"	-s	--supported		Update supported VMs"
+echo $"	-r	--ready			Update ready to run VMs"
+ echo "---------------------------------------------------------"
+echo $"	-t	--tui			Run TUI"
+echo $"	-g	--gui			Run GUI"
+ echo "---------------------------------------------------------"
+echo $"	-a	--add			Add new distro to quickget"
+echo $"	-f	--functions		Sort functions in quickget"
+echo $"	-p	--push			Push changed quickget to quickemu project #todo"
+ echo "---------------------------------------------------------"
+echo $"	-c	--copy			Copy all ISOs to target dir (for Ventoy)"
+ echo "---------------------------------------------------------"
 	echo $"Homepage: dh.osowoso.xyz"
 	echo $"Project hosted at: https://github.com/oSoWoSo/DistroHopper"
 	echo $"Chat group on SimpleX: https://tinyurl.com/7hm4kcjx"
@@ -75,8 +72,6 @@ function check_tui_dependencies() {
 }
 
 function set_variables() {
-	# DEBUG mod
-	#bash -x ./dh 2>&1 | tee output.log
 	#progname="${progname:="${0##*/}"}"
 	progname="DistroHopper"
 	version="0.7"
@@ -84,10 +79,12 @@ function set_variables() {
 	DH_CONFIG_DIR="$HOME/.config/distrohopper"
 	DH_CONFIG="$DH_CONFIG_DIR/distrohopper.conf"
 	DH_ICON_DIR="/usr/share/icons/distrohopper"
+	TEXTDOMAIN=distrohopper
+	TEXTDOMAINDIR=/usr/share/locale
 	PREFIX="/usr/bin/"
 	TERMINAL=sakura
 	replace='"!"'
-	export "DH_CONFIG_DIR" "DH_CONFIG" "replace" "DH_ICON_DIR" "PREFIX" "TERMINAL"
+	export "DH_CONFIG_DIR" "DH_CONFIG" "TEXTDOMAIN" "TEXTDOMAINDIR" "replace" "DH_ICON_DIR" "PREFIX" "TERMINAL"
 	portable
 	# Set traps to catch the signals and exit gracefully
 	trap "exit" INT
@@ -126,7 +123,6 @@ function install_dh() {
 	echo $"Copying to config dir..."
 	cp -r ready "$DH_CONFIG_DIR/"
 	cp -r supported "$DH_CONFIG_DIR/"
-	cp -r locale "$DH_CONFIG_DIR/"
 
 }
 
@@ -211,7 +207,6 @@ Categories=System;Virtualization;"
 			echo "$desktop_file_content" > "$DH_CONFIG_DIR"/supported/"$vm_desktop".desktop
 		else
 			# Create desktop file for VMs with editions
-			# shellcheck disable=2154
 			desktop_file_content="[Desktop Entry]
 Type=Application
 Name=$get_name
@@ -355,10 +350,9 @@ Choose other language" | fzf --cycle)
 function isos_to_dir() {
 	yad --file --directory > target
 	cd "$VMS_DIR" || exit 1
-	# shellcheck disable=2154
-	cp ./*glob*/*.iso "$target"
+	cp */*.iso "$target"
 }
-# shellcheck disable=2086
+
 function add_distro() {
 	TMP_DIR="/tmp"
 	yad --form --field="Pretty name" "" --field="Name" "" --field="Releases" "" --field="Editions" "" --field="URL" "" --field="ISO" "" --field="Checksum file" "" > ${TMP_DIR}/template.tmp
@@ -370,7 +364,7 @@ function add_distro() {
 	ISO="$(cat ${TMP_DIR}/template.tmp | cut -d'|' -f6)"
 	CHECKSUM_FILE="$(cat ${TMP_DIR}/template.tmp | cut -d'|' -f7)"
 	echo "    $NAME)           PRETTY_NAME=$PRETTY_NAME;;
-" >  "${TMP_DIR}/${NAME}".tmp
+" >  ${TMP_DIR}/${NAME}.tmp
 	{ echo "    $NAME \\
 "; echo "function releases_$NAME() {
 	echo $RELEASES
@@ -386,12 +380,11 @@ function add_distro() {
 	HASH=\"$(wget -q -O- "${URL}/${CHECKSUM_FILE}" | grep "(${ISO}" | cut -d' ' -f4)\"
 	echo \"${URL}/${ISO} ${HASH}\"
 }
-"; } >> "${TMP_DIR}/${NAME}".tmp
+"; } >> ${TMP_DIR}/${NAME}.tmp
 	meld "${TMP_DIR}/${NAME}.tmp $DH_CONFIG_DIR/quickget"
 }
 
 function sort_functions() {
-	#TODO
 	# Get the name of the script from the command line argument
 	script_name=$1
 	# Get a list of all the function names in the script
@@ -402,18 +395,29 @@ function sort_functions() {
 	for function_name in $sorted_function_names
 	do
 		# Print the function definition to stdout
-		grep -A "$(wc -l < "$script_name")" -w "function $function_name" "$script_name"
+		grep -A $(wc -l < "$script_name") -w "function $function_name" "$script_name"
 	done
 }
 
-function create_translation() {
-	echo $"Which language use [en,cs]?"
-	read -rn 2 -s lang
+function localization() {
+	#. gettext.sh
+	TEXTDOMAIN=distrohopper
+	TEXTDOMAINDIR=/usr/share/locale
+	mkdir lang
+	mkdir lang/cs
+	bash --dump-po-strings dh > lang/source.pot
+	cp lang/source.pot lang/cs/distrohopper.pot.tmp
+	meld lang/cs/distrohopper.pot.tmp lang/cs/distrohopper.pot && rm lang/cs/distrohopper.pot.tmp
+}
+
+create_translation() {
+	echo $"Which language you want use [en,cs]?"
+	read -rn 1 -s lang
 	echo $"Choosed language is: $lang"
 	echo $"Dumping language source..."
-	bash --dump-po-strings dh > "$DH_CONFIG_DIR"/locale/dh-source.pot
+	bash --dump-po-strings dh.sh > "$DH_CONFIG_DIR"/locale/dh-source.pot
 	echo $"Merging changes... (Do it yourself)"
-	meld "$DH_CONFIG_DIR"/locale/dh-source.pot "$DH_CONFIG_DIR"/locale/distrohopper-"$lang".pot
+	meld "$DH_CONFIG_DIR"/locale/dh-source.pot "$DH_CONFIG_DIR"/distrohopper-"$lang".pot
 	echo $"Generating .mo file..."
 	msgfmt -o "$DH_CONFIG_DIR"/locale/distrohopper-"$lang".mo "$DH_CONFIG_DIR"/locale/distrohopper-"$lang".pot
 	echo $"Copying translation to '/usr/share/local'..."
@@ -501,8 +505,7 @@ do
 			shift
 			;;
 		*)
-			echo $"Invalid option: $1"
-			echo ""
+			printf $"Invalid option: $1\n\n"
 			show_help
 			exit 1
 			;;
