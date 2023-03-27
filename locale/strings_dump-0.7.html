@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>DistroHopper</title>
+  <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+  <style>
+
+
+/*
+Based on Minimal CSS (minimalcss.com) under the MIT license.
+*/
+
+/* Reset */
+* { margin: 0; padding: 0; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; }
+
+/* Layout */
+body { font: 14px/20px -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+
+.container { position: relative; max-width: 90%; margin: 0 auto; }
+
+/* Typography */
+a { color: #105CB6; text-decoration: none; }
+a:hover, a:focus { color: #105CB6; text-decoration: underline; }
+a:active { color: #105CB6; }
+
+h1 { font-size: 24px; line-height: 20px; margin: 10px 0; }
+h2 { font-size: 20px; line-height: 20px; margin: 10px 0; }
+h3 { font-size: 16px; line-height: 20px; margin: 10px 0; }
+h4 { font-size: 14px; line-height: 20px; margin: 10px 0; }
+h5 { font-size: 12px; line-height: 20px; margin: 10px 0; }
+h5 { font-size: 10px; line-height: 20px; margin: 10px 0; }
+
+p { margin-bottom: 10px; }
+
+.float-left     { float: left; }
+.float-right    { float: right; }
+img.float-left  { float: left; margin: 0 20px 20px 0; }
+img.float-right { float: right; margin: 0 0 20px 20px; }
+img.center      { margin: 0 auto; display: block; }
+
+.text-left    { text-align: left; }
+.text-center  { text-align: center; }
+.text-right   { text-align: right; }
+.text-justify { text-align: justify; }
+
+/* List */
+ul { list-style-position:inside; }
+ol { list-style-position:inside; }
+
+/* Table */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+th { font-weight: bold; }
+tfoot { font-style: italic; }
+
+/* Metadata part */
+
+.metadata {
+  margin-top: 15px;
+  margin-bottom: 10px;
+  font-size: 90%;
+}
+table.metadata td {
+  padding-right: 20px;
+}
+
+.stats {
+  padding-top: 5px;
+  padding-bottom: 20px;
+}
+.graph {
+  width: 100%;
+}
+.graph div { float: left; }
+.graph div:first-child { border-top-left-radius: 3px; border-bottom-left-radius: 3px; }
+.graph div:last-child { border-top-right-radius: 3px; border-bottom-right-radius: 3px; }
+.legend {
+  font-size: smaller;
+  padding-top: 12px;
+  text-align: center;
+}
+
+/* Translations */
+table.translations {
+  width: 100%;
+  table-layout: fixed;
+}
+table.translations th, table.translations td {
+  padding: 5px 10px;
+  vertical-align: top;
+  border-bottom: 1px solid #F1F1F1;
+}
+table.translations th {
+  text-align: left;
+}
+table.translations th:first-child, table.translations td:first-child { padding-left: 0; }
+table.translations th:last-child, table.translations td:last-child { padding-right: 0; }
+
+.with-comments td {
+  border-bottom: none !important;
+}
+tr.comments div {
+  float: left;
+  max-width: 90%;
+  font-size: smaller;
+}
+tr.comments div p:last-child { margin-bottom: 0; }
+tr.comments td { padding-top: 0; }
+
+.msgctxt {
+  font-size: smaller;
+  border-radius: 2px;
+  padding: 2px 4px;
+  margin-right: 4px;
+}
+
+
+/* Colors */
+
+body { background-color: #fff; color: #333; }
+
+.percent-done    { background-color: rgb(146, 236, 106); height: 10px; }
+.percent-fuzzy   { background-color: rgb(255, 149, 0); height: 10px; }
+.percent-untrans { background-color: #F1F1F1; height: 10px; }
+.legend          { color: #aaa; }
+tr.comments div  { color: #aaa; }
+.fuzzy .tra      { color: rgb(230, 134, 0); }
+
+.msgctxt         { color: rgb(70, 109, 137); background-color: rgb(217, 232, 242); }
+
+
+@media (prefers-color-scheme: dark) {
+    body             { background-color: rgb(45, 42, 41); color: #eee; }
+    .percent-untrans { background-color: rgba(255, 255, 255, 0.3); }
+    .legend          { color: rgba(255, 255, 255, 0.6); }
+    tr.comments div  { color: rgba(255, 255, 255, 0.6); }
+    .fuzzy .tra      { color: rgb(253, 178, 72); }
+    .msgctxt         { color: rgb(180, 222, 254); background-color: rgba(67, 94, 147, 0.6); }
+    table.translations th, table.translations td { border-bottom: 1px solid #333; }
+}
+
+
+  </style>
+</head>
+<body>
+<div class='container'>
+<table class='metadata'>
+<tr><td>Projekt:</td><td>DistroHopper</td></tr>
+<tr><td>Jazyk:</td><td>angličtina</td></tr>
+</table>
+<div class='stats'>
+  <div class='graph'>
+    <div class='percent-untrans' style='width: 100%'>&nbsp;</div>
+  </div>
+  <div class='legend'>Přeloženo: 0 z 49 (0 %)  •  Zbývá: 49  </div>
+</div>
+<table class='translations'>
+  <thead>
+    <tr>
+      <th>Zdrojový text — angličtina</th>
+      <th>Překlad — angličtina</th>
+    </tr>
+  </thead>
+  <tbody>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Done</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+PS: You saw some bugs?</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Could you please provide feedback?</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+How do you like DistroHopper?</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+What can be improved, added, changed?</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+ Let me know...</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Flawless distro hopping...</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Possible arguments:</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+	-h	--help			Show this help and exit</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+	-d	--dir			Set default directory where VMs are stored</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+	-i	--install		Install DistroHopper</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+	-m	--mode			Portable mode</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+	-s	--supported		Update supported VMs</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+	-r	--ready			Update ready to run VMs</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+	-t	--tui			Run TUI</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+	-g	--gui			Run GUI</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+	-a	--add			Add new distro to quickget</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+	-f	--functions		Sort functions in quickget</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+	-p	--push			Push changed quickget to quickemu project #todo</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+	-c	--copy			Copy all ISOs to target dir (for Ventoy)</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Homepage: dh.osowoso.xyz</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Project hosted at: https://github.com/oSoWoSo/DistroHopper</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Chat group on SimpleX: https://tinyurl.com/7hm4kcjx</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+You are missing yad...
+<br>	Needed for GUI!</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+You are missing fzf...
+<br>	Needed for TUI!</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+creating config dir...</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+creating icons dir as root...</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Copying icons...</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Copying to config dir...</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Creating directory structure...</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Setting up directory...</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Installing needed...</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+For now voidlinux only</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Installing DistroHopper to bin...</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+No .conf files found</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+No VMs found.</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+No argumet provided!\n\n</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Starting installation...</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Switching to portable mode!</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Updating supported VMs...</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Updating ready VMs...</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Running TUI...</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Starting DistroHopper GUI...</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Adding new distro started...</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Sorting functions in template...</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Pushing changes to... #TODO</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Copying ISOs to dir. It will take some time...</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Running supported test...</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Invalid option: $1\n\n</td>
+<td class='tra'  lang='en'>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</body>
+</html>

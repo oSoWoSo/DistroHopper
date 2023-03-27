@@ -1,0 +1,151 @@
+#: dh:5
+msgid "Done"
+msgstr ""
+#: dh:6
+msgid "PS: You saw some bugs?"
+msgstr ""
+#: dh:7
+msgid "Could you please provide feedback?"
+msgstr ""
+#: dh:8
+msgid "How do you like DistroHopper?"
+msgstr ""
+#: dh:9
+msgid "What can be improved, added, changed?"
+msgstr ""
+#: dh:10
+msgid " Let me know..."
+msgstr ""
+#: dh:11
+msgid "Flawless distro hopping..."
+msgstr ""
+#: dh:16
+msgid "Possible arguments:"
+msgstr ""
+#: dh:17
+msgid "	-h	--help			Show this help and exit"
+msgstr ""
+#: dh:19
+msgid "	-d	--dir			Set default directory where VMs are stored"
+msgstr ""
+#: dh:20
+msgid "	-i	--install		Install DistroHopper"
+msgstr ""
+#: dh:22
+msgid "	-m	--mode			Portable mode"
+msgstr ""
+#: dh:24
+msgid "	-s	--supported		Update supported VMs"
+msgstr ""
+#: dh:25
+msgid "	-r	--ready			Update ready to run VMs"
+msgstr ""
+#: dh:27
+msgid "	-t	--tui			Run TUI"
+msgstr ""
+#: dh:28
+msgid "	-g	--gui			Run GUI"
+msgstr ""
+#: dh:30
+msgid "	-a	--add			Add new distro to quickget"
+msgstr ""
+#: dh:31
+msgid "	-f	--functions		Sort functions in quickget"
+msgstr ""
+#: dh:32
+msgid "	-p	--push			Push changed quickget to quickemu project #todo"
+msgstr ""
+#: dh:34
+msgid "	-c	--copy			Copy all ISOs to target dir (for Ventoy)"
+msgstr ""
+#: dh:36
+msgid "Homepage: dh.osowoso.xyz"
+msgstr ""
+#: dh:37
+msgid "Project hosted at: https://github.com/oSoWoSo/DistroHopper"
+msgstr ""
+#: dh:38
+msgid "Chat group on SimpleX: https://tinyurl.com/7hm4kcjx"
+msgstr ""
+#: dh:61
+msgid ""
+"You are missing yad...\n"
+"	Needed for GUI!"
+msgstr ""
+#: dh:66
+msgid ""
+"You are missing fzf...\n"
+"	Needed for TUI!"
+msgstr ""
+#: dh:90
+msgid "creating config dir..."
+msgstr ""
+#: dh:92
+msgid "creating icons dir as root..."
+msgstr ""
+#: dh:115
+msgid "Copying icons..."
+msgstr ""
+#: dh:117
+msgid "Copying to config dir..."
+msgstr ""
+#: dh:127
+msgid "Creating directory structure..."
+msgstr ""
+#: dh:129
+msgid "Setting up directory..."
+msgstr ""
+#: dh:131
+msgid "Installing needed..."
+msgstr ""
+#: dh:132
+msgid "For now voidlinux only"
+msgstr ""
+#: dh:134
+msgid "Installing DistroHopper to bin..."
+msgstr ""
+#: dh:143
+msgid "No .conf files found"
+msgstr ""
+#: dh:275
+msgid "No VMs found."
+msgstr ""
+#: dh:440
+msgid "No argumet provided!\\n\\n"
+msgstr ""
+#: dh:458
+msgid "Starting installation..."
+msgstr ""
+#: dh:463
+msgid "Switching to portable mode!"
+msgstr ""
+#: dh:468
+msgid "Updating supported VMs..."
+msgstr ""
+#: dh:473
+msgid "Updating ready VMs..."
+msgstr ""
+#: dh:478
+msgid "Running TUI..."
+msgstr ""
+#: dh:483
+msgid "Starting DistroHopper GUI..."
+msgstr ""
+#: dh:488
+msgid "Adding new distro started..."
+msgstr ""
+#: dh:493
+msgid "Sorting functions in template..."
+msgstr ""
+#: dh:498
+msgid "Pushing changes to... #TODO"
+msgstr ""
+#: dh:503
+msgid "Copying ISOs to dir. It will take some time..."
+msgstr ""
+#: dh:508
+msgid "Running supported test..."
+msgstr ""
+#: dh:517
+msgid "Invalid option: $1\\n\\n"
+msgstr ""
