@@ -20,6 +20,7 @@ Quickly download, create and run VM of any#TODO operating system.
 
 Licensed under AGPL3
 # Still Beta version!
+
 ![supported Operating systems](distrohopper.png)
 
 quickly create and run VMs
@@ -159,15 +160,7 @@ Void Linux:
 
  Enter created/unpacked distrohopper directory
 
- Then enter config directory
-
- `cd distrohopper/config`
-
- And run
-
- `./1stRun.sh`
-
- Now should be good to go...
+ Now you should be good to go...
 
 ---
 
@@ -177,16 +170,14 @@ Void Linux:
 
  `dh`
 
- or for TUI version (Download and run from/into same directory)
-
- `dh -t`
+  And you will see what next...
 
 ## Desktop files
 
  All desktop files will be storred in your .config
  in directories /distrohopper/ready and supported
 
- Fell free to link them anywhere you want...
+ Fell free to copy them anywhere you want...
 
 
 

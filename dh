@@ -17,8 +17,8 @@ function some_bugs() {
 }
 
 function show_help() {
-	echo $"DistroHopper v. $version"
-	echo $"quickemu v. $("$prefix"quickemu --version)"
+	echo "DistroHopper v. $version"
+	echo "quickemu v. $("$prefix"quickemu --version)"
 	echo ""
 	echo $"Possible arguments:"
 	echo $"	-h	--help			Show this help and exit"
