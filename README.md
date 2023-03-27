@@ -4,6 +4,7 @@
 ![](https://img.shields.io/github/repo-size/oSoWoSo/DistroHopper?style=for-the-badge&color=8BC53F&logo=files&logoColor=000000)
 ![](https://img.shields.io/github/last-commit/oSoWoSo/DistroHopper?style=for-the-badge&color=8BC53F&logo=codeigniter&logoColor=000000)
 ![](https://img.shields.io/badge/language-shell-green?style=for-the-badge&color=8BC53F&logo=sharp&logoColor=000000)
+Developed in English and translated into Czech language. Translations welcomed!
 
 Looking to try out a new operating system?
 
@@ -20,7 +21,7 @@ Quickly download, create and run VM of any#TODO operating system.
 Licensed under AGPL3
 # Still Beta version!
 
-![supported OS](docs/distrohopper.png)
+![supported Operating systems](docs/distrohopper.png)
 
 quickly create and run VMs
 
@@ -28,7 +29,9 @@ quickly create and run VMs
 
   you can download new distro with few clicks of a mouse
 
-## GUI using yad
+# Features
+
+ - GUI using yad (old video)
 
 See it in action on youtube...
 
@@ -36,14 +39,25 @@ See it in action on youtube...
 
   or command line?...
 
-## TUI using fzf
+ - TUI using fzf (old video)
 
 [![tui](https://img.youtube.com/vi/gJ5hqYEskOw/0.jpg)](https://www.youtube.com/watch?v=gJ5hqYEskOw)
 
-
-## .Desktop file generator
+ - Desktop(shortcuts) file generator
   It will simple generate .desktop files for every supported and downloaded VM in quickemu.
-  So you can link it anywhere...
+  So you can copy it anywhere...
+
+ - Set dir where VMs will be stored
+
+ - Install DistroHopper systemwide
+
+ - Portable mode (dependecies still must be installed)
+
+ - Add new operating system to quickget (bit easier)
+
+ - Copy all downloaded ISOs to destination directory
+
+ - Translate DistroHopper (Currently supported English and Czech language)
 
 ---
 
