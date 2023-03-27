@@ -406,6 +406,34 @@ function localization() {
 }
 
 # run
+function create_translation_source() {
+    cat > header.tmp <<EOF
+msgid ""
+msgstr ""
+"Project-Id-Version: DistroHopper $version\n"
+"POT-Creation-Date: $(date +%Y-%m-%d\ %H:%M%z)\n"
+"PO-Revision-Date: $(date +%Y-%m-%d\ %H:%M%z)\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: cs\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 ? 1 : 2);\n"
+"X-Generator: Poedit 3.2.2\n"
+"X-Poedit-Basepath: ../..\n"
+"X-Poedit-SearchPath-0: .\n"
+
+EOF
+	#cat ./dh | grep '$(gettext "' | cut -d'(' -f2 | cut -d'"' -f2 | cut -d')' -f1 > po.tmp
+	#sed -i 's/$/msgstr""\n\nmsgid "/g' po.tmp
+	#cat header.tmp po.tmp > locale/translation_source.po
+	#rm header.tmp po.tmp
+	#LANGUAGE="cs"
+	#export "LANGUAGE"
+	#echo "language: $LANGUAGE"
+	bash --dump-po-strings dh > locale/strings_dump-$version.po
+}
 
 set_variables
 localization
