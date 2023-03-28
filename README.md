@@ -125,19 +125,7 @@ packaging will take care of the dependencies. For other host
 distributions or operating systems it will be necessary to install the
 above requirements or their equivalents.
 
-These examples may save a little typing
-
-Debian:
-
-    sudo apt install qemu bash coreutils ovmf grep jq lsb procps python3 genisoimage usbutils util-linux sed spice-client-gtk swtpm wget xdg-user-dirs zsync unzip
-
-Fedora:
-
-    sudo dnf install qemu bash coreutils edk2-tools grep jq lsb procps python3 genisoimage usbutils util-linux sed spice-gtk-tools swtpm wget xdg-user-dirs xrandr unzip
-
-Void Linux:
-
-    sudo xbps-install qemu bash coreutils grep jq procps-ng python3 util-linux sed spice-gtk swtpm usbutils wget xdg-user-dirs xrandr unzip zsync socat
+	If you install DistroHopper, it should take care of dependencies on Arch, Debian, Ubuntu, openSuse and Fedora
 
 ### For DistroHopper to work you need
 
