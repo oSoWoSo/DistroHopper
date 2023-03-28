@@ -7,13 +7,17 @@ export "TEXTDOMAINDIR" "TEXTDOMAIN"
 
 # bugs notice
 function some_bugs() {
+	echo ""
 	echo $"Done"
+	echo ""
 	echo $"PS: You saw some bugs?"
 	echo $"Could you please provide feedback?"
 	echo $"How do you like DistroHopper?"
 	echo $"What can be improved, added, changed?"
 	echo $" Let me know..."
-	echo $"Flawless distro hopping..." && echo "zenobit"
+	echo ""
+	echo $"Wish you flawless distro hopping..."
+	echo "			zenobit"
 }
 
 function show_help() {
@@ -79,7 +83,7 @@ function set_variables() {
 	#bash -x ./dh 2>&1 | tee output.log
 	#progname="${progname:="${0##*/}"}"
 	progname="DistroHopper"
-	version="0.7"
+	version="0.76"
 	#GTK_THEME="alt-dialog"
 	DH_CONFIG_DIR="$HOME/.config/distrohopper"
 	DH_CONFIG="$DH_CONFIG_DIR/distrohopper.conf"
@@ -121,6 +125,8 @@ function install_prereq() {
 			sudo xbps-install -S qemu bash coreutils grep jq procps-ng python3 util-linux sed spice-gtk swtpm usbutils wget xdg-user-dirs xrandr unzip zsync socat gettext yad fzf
 		elif grep -q fedora /etc/os-release; then
 			sudo dnf install qemu bash coreutils edk2-tools grep jq lsb procps python3 genisoimage usbutils util-linux sed spice-gtk-tools swtpm wget xdg-user-dirs xrandr unzip gettext yad fzf
+		elif grep -q nix /etc/os-release; then
+			echo "#TODO"
 		elif grep -q openSUSE /etc/os-release; then
 			# openSUSE supports dnf, but the default is zypper
 			if hash dnf 2>/dev/null; then
@@ -444,7 +450,6 @@ set_variables
 if [[ $# -eq 0 ]]; then
     printf $"No argumet provided!\n\n"
     show_help
-    exit 0
 fi
 
 while [[ $# -gt 0 ]]
