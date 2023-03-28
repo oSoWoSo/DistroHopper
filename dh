@@ -4,7 +4,6 @@
 TEXTDOMAIN=distrohopper
 TEXTDOMAINDIR=/usr/share/locale
 export "TEXTDOMAINDIR" "TEXTDOMAIN"
-
 # bugs notice
 function some_bugs() {
 	echo ""
@@ -23,28 +22,28 @@ function some_bugs() {
 function show_help() {
 	echo "DistroHopper v. $version"
 	echo "quickemu v. $("$prefix"quickemu --version)"
-	echo ""
+	echo "	example for First run from terminal: ./dh i && dh s g"
 	echo $"Possible arguments:"
-	echo $"	-h	--help			Show this help and exit"
+	echo $"	h	help			Show this help and exit"
 	echo "---------------------------------------------------------"
-	echo $"	-d	--dir			Set default directory where VMs are stored"
-	echo $"	-i	--install		Install DistroHopper"
+	echo $"	d	dir			Set default directory where VMs are stored"
+	echo $"	i	install		Install DistroHopper"
 	echo "---------------------------------------------------------"
-	echo $"	-m	--mode			Portable mode"
+	echo $"	m	mode			Portable mode"
 	echo "---------------------------------------------------------"
-	echo $"	-s	--supported		Update supported VMs"
-	echo $"	-r	--ready			Update ready to run VMs"
+	echo $"	s	supported		Update supported VMs"
+	echo $"	r	ready			Update ready to run VMs"
 	echo "---------------------------------------------------------"
-	echo $"	-t	--tui			Run TUI"
-	echo $"	-g	--gui			Run GUI"
+	echo $"	t	tui			Run TUI"
+	echo $"	g	gui			Run GUI"
 	echo "---------------------------------------------------------"
-	echo $"	-a	--add			Add new distro to quickget"
-	echo $"	-f	--functions		Sort functions in quickget"
-	echo $"	-p	--push			Push changed quickget to quickemu project #todo"
+	echo $"	a	add			Add new distro to quickget"
+	echo $"	f	functions		Sort functions in quickget"
+	echo $"	p	push			Push changed quickget to quickemu project #todo"
 	echo "---------------------------------------------------------"
-	echo $"	-c	--copy			Copy all ISOs to target dir (for Ventoy)"
+	echo $"	c	copy			Copy all ISOs to target dir (for Ventoy)"
 	echo "---------------------------------------------------------"
-	echo $"	-l	--language		Translate DistroHopper"
+	echo $"	l	language		Translate DistroHopper"
 	echo "---------------------------------------------------------"
 	echo $"Homepage: dh.osowoso.xyz"
 	echo $"Project hosted at: https://github.com/oSoWoSo/DistroHopper"
@@ -68,8 +67,7 @@ function mode_installed() {
 	prefix=
 	export "prefix"
 }
-
-# installation
+# installation ---------------------------
 function check_gui_dependencies() {
 	[ -f "$PREFIX/yad" ] || echo $"Missing yad!"
 }
@@ -168,8 +166,7 @@ function install_process() {
 	 && echo $"Installing DistroHopper to bin..." \
 	 && install_dh
 }
-
-# basic
+# basic -----------------------------------
 function renew_ready() {
 	cd "$VMS_DIR" || exit 1
 	rm "$DH_CONFIG_DIR"/ready/*.desktop
@@ -374,7 +371,6 @@ Choose other language" | fzf --cycle)
 		"$prefix"quickemu -vm "$choosed.conf"
 	fi
 }
-
 # more
 function isos_to_dir() {
 	yad --file --directory > target
@@ -443,8 +439,7 @@ function create_translation() {
 	echo $"Copying translation to '/usr/share/local'..."
 	sudo cp "$DH_CONFIG_DIR"/locale/distrohopper-"$lang".mo /usr/share/locale/"$lang"/LC_MESSAGES/distrohopper.mo
 }
-
-# run
+# run --------------------------------------
 set_variables
 
 if [[ $# -eq 0 ]]; then
@@ -456,70 +451,70 @@ while [[ $# -gt 0 ]]
 do
 	key="$1"
 	case $key in
-		-h|--help)
+		h|help)
 			show_help
 			shift
 			;;
-		-d|-dir)
+		d|dir)
 			set_dir
 			shift
 			;;
-		-i|--install)
+		i|install)
 			echo $"Starting installation..."
 			install_process
 			shift
 			;;
-		-m|--mode)
+		m|mode)
 			echo $"Switching to portable mode!"
 			mode_portable
 			shift
 			;;
-		-s|--supported)
+		s|supported)
 			echo $"Updating supported VMs..."
 			renew_supported
 			shift
 			;;
-		-r|--ready)
+		r|ready)
 			echo $"Updating ready VMs..."
 			renew_ready
 			shift
 			;;
-		-t|--tui)
+		t|tui)
 			echo $"Running TUI..."
 			run_tui
 			shift
 			;;
-		-g|--gui)
+		g|gui)
 			echo $"Starting DistroHopper GUI..."
 			run_gui
 			shift
 			;;
-		-a|--add)
+		a|add)
 			echo $"Adding new distro started..."
 			add_distro
 			shift
 			;;
-		-f|--functions)
+		f|functions)
 			echo $"Sorting functions in template..."
 			sort_functions
 			shift
 			;;
-		-p|--push)
+		p|push)
 			echo $"Pushing changes to... #TODO"
 			push_changes
 			shift
 			;;
-		-c|--copy)
+		c|copy)
 			echo $"Copying ISOs to dir. It will take some time..."
 			isos_to_dir
 			shift
 			;;
-		-e|--test)
+		e|test)
 			echo $"Running supported test..."
 			renew_supported_test
 			shift
 			;;
-		-l|--language)
+		l|language)
 			create_translation
 			shift
 			;;
