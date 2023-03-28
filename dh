@@ -101,7 +101,7 @@ function create_structure() {
 	echo $"creating config dir..."
 	mkdir -p "$DH_CONFIG_DIR"
 	echo $"creating icons dir as root..."
-	mkdir -p "$DH_ICON_DIR"  >/dev/null 2>&1 || sudo mkdir -p "$DH_ICON_DIR"
+	mkdir -p "$DH_ICON_DIR" >/dev/null 2>&1 || sudo mkdir -p "$DH_ICON_DIR"
 }
 
 function set_dir() {
@@ -169,7 +169,7 @@ function install_process() {
 # basic -----------------------------------
 function renew_ready() {
 	cd "$VMS_DIR" || exit 1
-	rm "$DH_CONFIG_DIR"/ready/*.desktop
+	rm "$DH_CONFIG_DIR"/ready/*.desktop >/dev/null 2>&1
 #	for files in "$VMS_DIR"/*; do
 #	if [ ! -e *.conf ]; then
 #		echo $"No .conf files found"
@@ -203,7 +203,7 @@ Categories=System;Virtualization;"
 }
 
 function renew_supported() {
-	rm "$DH_CONFIG_DIR"/supported/*.desktop
+	rm "$DH_CONFIG_DIR"/supported/*.desktop >/dev/null 2>&1
 	# get supported VMs
 	"$prefix"quickget | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' > "$DH_CONFIG_DIR/supported.md"
 	while read -r get_name; do
@@ -248,7 +248,7 @@ Categories=System;Virtualization;"
 }
 
 function renew_supported_test() {
-	rm "$DH_CONFIG_DIR"/test/ubuntu.desktop
+	rm "$DH_CONFIG_DIR"/test/ubuntu.desktop >/dev/null 2>&1
 	# get supported VMs
 	"$prefix"quickget | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' > "$DH_CONFIG_DIR/ubuntu.md"
 	while read -r get_name; do
@@ -301,6 +301,7 @@ function run_gui() {
 
 function run_tui() {
 	check_tui_dependencies
+	cd "$VMS_DIR" || exit 1
 	vms=(*.conf)
 	printf ' Prepared VMs:\n-------------\n\n'
 	# Check if there are any VMs
@@ -509,7 +510,7 @@ do
 			isos_to_dir
 			shift
 			;;
-		e|test)
+		e|'test')
 			echo $"Running supported test..."
 			renew_supported_test
 			shift
