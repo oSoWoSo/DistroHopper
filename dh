@@ -111,10 +111,29 @@ function set_dir() {
 }
 
 function install_prereq() {
-	# (Void linux)
-	sudo xbps-install -S qemu bash coreutils grep jq procps-ng python3 util-linux sed spice-gtk swtpm usbutils wget xdg-user-dirs xrandr unzip zsync socat gettext
-	# Debian: sudo apt install qemu bash coreutils ovmf grep jq lsb procps python3 genisoimage usbutils util-linux sed spice-client-gtk swtpm wget xdg-user-dirs zsync unzip
-	# Fedora: sudo dnf install qemu bash coreutils edk2-tools grep jq lsb procps python3 genisoimage usbutils util-linux sed spice-gtk-tools swtpm wget xdg-user-dirs xrandr unzip
+# Find the current distribution and install dependecies
+	if [ -f /etc/os-release ]; then
+		if grep -q arch /etc/os-release; then
+			sudo pacman -S cdrtools coreutils edk2-ovmf grep jq procps python3 qemu-full sed socat spice-gtk swtpm usbutils util-linux wget xdg-user-dirs xorg-xrandr zsync getext yad fzf
+		elif [[ -f /etc/debian_version ]]; then
+			sudo apt install qemu bash coreutils ovmf grep jq lsb procps python3 genisoimage usbutils util-linux sed spice-client-gtk swtpm wget xdg-user-dirs zsync unzip gettext yad fzf
+		elif grep -q void /etc/os-release; then
+			sudo xbps-install -S qemu bash coreutils grep jq procps-ng python3 util-linux sed spice-gtk swtpm usbutils wget xdg-user-dirs xrandr unzip zsync socat gettext yad fzf
+		elif grep -q fedora /etc/os-release; then
+			sudo dnf install qemu bash coreutils edk2-tools grep jq lsb procps python3 genisoimage usbutils util-linux sed spice-gtk-tools swtpm wget xdg-user-dirs xrandr unzip gettext yad fzf
+		elif grep -q openSUSE /etc/os-release; then
+			# openSUSE supports dnf, but the default is zypper
+			if hash dnf 2>/dev/null; then
+				sudo dnf install qemu bash coreutils edk2-tools grep jq lsb procps python3 genisoimage usbutils util-linux sed spice-gtk-tools swtpm wget xdg-user-dirs xrandr unzip gettext yad fzf
+			else
+				echo "ERROR: I currently don't have support for your distro"
+				exit 1
+			fi
+		else
+			echo "ERROR: I currently don't have support for your distro"
+			exit 1
+		fi
+	fi
 }
 
 function install_dh() {
@@ -139,7 +158,6 @@ function install_process() {
 	 && echo $"Setting up directory..." \
 	 && set_dir \
 	 && echo $"Installing needed..." \
-	 && echo $"For now voidlinux only" \
 	 && install_prereq \
 	 && echo $"Installing DistroHopper to bin..." \
 	 && install_dh
