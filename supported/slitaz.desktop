@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=slitaz
+releases=preferred core core64 loram core-5in1 preinit
+replace="!"
+Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --field="Release:CB" "preferred"!"core"!"core64"!"loram"!"core-5in1"!"preinit" | cut -d'|' -f1 | xargs -I{} sh -c "./"quickget slitaz {}'
+Icon=/home/zen/git/distrohopper/icons/slitaz.png
+Categories=System;Virtualization;
+

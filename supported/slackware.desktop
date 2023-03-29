@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=slackware
+releases=14.2 15.0
+replace="!"
+Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --field="Release:CB" "14.2"!"15.0" | cut -d'|' -f1 | xargs -I{} sh -c "./"quickget slackware {}'
+Icon=/home/zen/git/distrohopper/icons/slackware.svg
+Categories=System;Virtualization;
+

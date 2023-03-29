@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=nixos
+releases=21.05 21.11 22.05 22.11
+editions=gnome plasma5 minimal
+replace="!"
+Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --separator=" " --field="Release:CB" "21.05"!"21.11"!"22.05"!"22.11" --field="Edition:CB" "gnome"!"plasma5"!"minimal" | xargs -I{} sh -c " nixos {}'
+Icon=/home/zen/git/distrohopper/icons/nixos.svg
+Categories=System;Virtualization;
+

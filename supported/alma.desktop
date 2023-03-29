@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=alma
+releases=8.6 8.7 9.0 9.1
+editions=minimal dvd
+replace="!"
+Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --separator=" " --field="Release:CB" "8.6"!"8.7"!"9.0"!"9.1" --field="Edition:CB" "minimal"!"dvd" | xargs -I{} sh -c " alma {}'
+Icon=/home/zen/git/distrohopper/icons/alma.svg
+Categories=System;Virtualization;
+

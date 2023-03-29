@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=popos
+releases=20.04 21.10 22.04
+editions=intel nvidia
+replace="!"
+Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --separator=" " --field="Release:CB" "20.04"!"21.10"!"22.04" --field="Edition:CB" "intel"!"nvidia" | xargs -I{} sh -c " popos {}'
+Icon=/home/zen/git/distrohopper/icons/popos.svg
+Categories=System;Virtualization;
+

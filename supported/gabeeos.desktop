@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=gabeeos
+releases=latest
+replace="!"
+Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --field="Release:CB" "latest" | cut -d'|' -f1 | xargs -I{} sh -c "./"quickget gabeeos {}'
+Icon=/home/zen/git/distrohopper/icons/gabeeos.png
+Categories=System;Virtualization;
+

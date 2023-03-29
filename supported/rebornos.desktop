@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=rebornos
+releases=latest
+replace="!"
+Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --field="Release:CB" "latest" | cut -d'|' -f1 | xargs -I{} sh -c "./"quickget rebornos {}'
+Icon=/home/zen/git/distrohopper/icons/rebornos.svg
+Categories=System;Virtualization;
+

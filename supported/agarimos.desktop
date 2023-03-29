@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=agarimos
+releases=latest
+editions=plasma gnome xfce
+replace="!"
+Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --separator=" " --field="Release:CB" "latest" --field="Edition:CB" "plasma"!"gnome"!"xfce" | xargs -I{} sh -c " agarimos {}'
+Icon=/home/zen/git/distrohopper/icons/agarimos.png
+Categories=System;Virtualization;
+

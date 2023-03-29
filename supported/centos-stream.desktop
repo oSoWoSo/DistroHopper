@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=centos-stream
+releases=8 9
+editions=dvd1 boot
+replace="!"
+Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --separator=" " --field="Release:CB" "8"!"9" --field="Edition:CB" "dvd1"!"boot" | xargs -I{} sh -c " centos-stream {}'
+Icon=/home/zen/git/distrohopper/icons/centos-stream.svg
+Categories=System;Virtualization;
+

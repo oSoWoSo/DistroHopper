@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=tails
+releases=stable
+replace="!"
+Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --field="Release:CB" "stable" | cut -d'|' -f1 | xargs -I{} sh -c "./"quickget tails {}'
+Icon=/home/zen/git/distrohopper/icons/tails.svg
+Categories=System;Virtualization;
+

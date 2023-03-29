@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=ghostbsd
+releases=21.10.16 21.11.24 22.01.12
+editions=mate xfce
+replace="!"
+Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --separator=" " --field="Release:CB" "21.10.16"!"21.11.24"!"22.01.12" --field="Edition:CB" "mate"!"xfce" | xargs -I{} sh -c " ghostbsd {}'
+Icon=/home/zen/git/distrohopper/icons/ghostbsd.svg
+Categories=System;Virtualization;
+

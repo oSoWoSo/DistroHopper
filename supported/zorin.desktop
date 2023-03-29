@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=zorin
+releases=16
+editions=core64 lite64 education64 edulite64
+replace="!"
+Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --separator=" " --field="Release:CB" "16" --field="Edition:CB" "core64"!"lite64"!"education64"!"edulite64" | xargs -I{} sh -c " zorin {}'
+Icon=/home/zen/git/distrohopper/icons/zorin.svg
+Categories=System;Virtualization;
+

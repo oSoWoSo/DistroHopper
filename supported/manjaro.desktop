@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=manjaro
+releases=xfce gnome kde budgie cinnamon i3 mate
+replace="!"
+Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --field="Release:CB" "xfce"!"gnome"!"kde"!"budgie"!"cinnamon"!"i3"!"mate" | cut -d'|' -f1 | xargs -I{} sh -c "./"quickget manjaro {}'
+Icon=/home/zen/git/distrohopper/icons/manjaro.svg
+Categories=System;Virtualization;
+

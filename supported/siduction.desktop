@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=siduction
+releases=latest
+editions=kde lxqt nox xfce xorg
+replace="!"
+Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --separator=" " --field="Release:CB" "latest" --field="Edition:CB" "kde"!"lxqt"!"nox"!"xfce"!"xorg" | xargs -I{} sh -c " siduction {}'
+Icon=/home/zen/git/distrohopper/icons/siduction.svg
+Categories=System;Virtualization;
+

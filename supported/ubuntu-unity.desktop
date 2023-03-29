@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=ubuntu-unity
+releases=22.10 daily-live daily-canary
+replace="!"
+Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --field="Release:CB" "22.10"!"daily-live"!"daily-canary" | cut -d'|' -f1 | xargs -I{} sh -c "./"quickget ubuntu-unity {}'
+Icon=/home/zen/git/distrohopper/icons/ubuntu-unity.png
+Categories=System;Virtualization;
+

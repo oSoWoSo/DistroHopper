@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=dragonflybsd
+releases=6.4.0
+replace="!"
+Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --field="Release:CB" "6.4.0" | cut -d'|' -f1 | xargs -I{} sh -c "./"quickget dragonflybsd {}'
+Icon=/home/zen/git/distrohopper/icons/dragonflybsd.svg
+Categories=System;Virtualization;
+

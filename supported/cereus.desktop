@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=cereus
+releases=latest
+editions=base lxqt xfce
+replace="!"
+Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --separator=" " --field="Release:CB" "latest" --field="Edition:CB" "base"!"lxqt"!"xfce" | xargs -I{} sh -c " cereus {}'
+Icon=/home/zen/git/distrohopper/icons/cereus.svg
+Categories=System;Virtualization;
+

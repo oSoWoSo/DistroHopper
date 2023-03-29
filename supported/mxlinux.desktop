@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=mxlinux
+releases=21.3
+editions=Xfce KDE Fluxbox
+replace="!"
+Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --separator=" " --field="Release:CB" "21.3" --field="Edition:CB" "Xfce"!"KDE"!"Fluxbox" | xargs -I{} sh -c " mxlinux {}'
+Icon=/home/zen/git/distrohopper/icons/mxlinux.svg
+Categories=System;Virtualization;
+

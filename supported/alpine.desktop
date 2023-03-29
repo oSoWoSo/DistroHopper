@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=alpine
+releases=3.12 3.13 3.14 3.15 latest
+replace="!"
+Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --field="Release:CB" "3.12"!"3.13"!"3.14"!"3.15"!"latest" | cut -d'|' -f1 | xargs -I{} sh -c "./"quickget alpine {}'
+Icon=/home/zen/git/distrohopper/icons/alpine.svg
+Categories=System;Virtualization;
+

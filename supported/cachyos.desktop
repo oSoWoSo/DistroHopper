@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=cachyos
+releases=latest
+editions=kde gnome cli
+replace="!"
+Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --separator=" " --field="Release:CB" "latest" --field="Edition:CB" "kde"!"gnome"!"cli" | xargs -I{} sh -c " cachyos {}'
+Icon=/home/zen/git/distrohopper/icons/cachyos.svg
+Categories=System;Virtualization;
+

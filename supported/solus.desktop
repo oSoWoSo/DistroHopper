@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=solus
+releases=4.3
+editions=Budgie GNOME MATE Plasma
+replace="!"
+Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --separator=" " --field="Release:CB" "4.3" --field="Edition:CB" "Budgie"!"GNOME"!"MATE"!"Plasma" | xargs -I{} sh -c " solus {}'
+Icon=/home/zen/git/distrohopper/icons/solus.svg
+Categories=System;Virtualization;
+

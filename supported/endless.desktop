@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=endless
+releases=5.0.0
+editions=base en fr pt_BR es
+replace="!"
+Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --separator=" " --field="Release:CB" "5.0.0" --field="Edition:CB" "base"!"en"!"fr"!"pt_BR"!"es" | xargs -I{} sh -c " endless {}'
+Icon=/home/zen/git/distrohopper/icons/endless.svg
+Categories=System;Virtualization;
+
