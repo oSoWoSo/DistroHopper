@@ -1,0 +1,189 @@
+#: dh:10
+msgid "Done"
+msgstr ""
+#: dh:12
+msgid "PS: You saw some bugs?"
+msgstr ""
+#: dh:13
+msgid "Could you please provide feedback?"
+msgstr ""
+#: dh:14
+msgid "How do you like DistroHopper?"
+msgstr ""
+#: dh:15
+msgid "What can be improved, added, changed?"
+msgstr ""
+#: dh:16
+msgid " Let me know..."
+msgstr ""
+#: dh:18
+msgid "Wish you flawless distro hopping..."
+msgstr ""
+#: dh:25
+msgid "\\texample for First run from terminal: ./dh i && dh s g\\n"
+msgstr ""
+#: dh:26
+msgid "Possible arguments:"
+msgstr ""
+#: dh:27
+msgid "\\th\\thelp\\t\\t\\tShow this help and exit\\n"
+msgstr ""
+#: dh:29
+msgid "\\td\\tdir\\t\\t\\tSet default directory where VMs are stored\\n"
+msgstr ""
+#: dh:30
+msgid "\\ti\\tinstall\\t\\t\\tInstall DistroHopper\\n"
+msgstr ""
+#: dh:32
+msgid "\\tm\\tmode\\t\\t\\tPortable mode\\n"
+msgstr ""
+#: dh:34
+msgid "\\ts\\tsupported\\t\\tUpdate supported VMs\\n"
+msgstr ""
+#: dh:35
+msgid "\\tr\\tready\\t\\t\\tUpdate ready to run VMs\\n"
+msgstr ""
+#: dh:37
+msgid "\\tt\\ttui\\t\\t\\tRun TUI\\n"
+msgstr ""
+#: dh:38
+msgid "\\tg\\tgui\\t\\t\\tRun GUI\\n"
+msgstr ""
+#: dh:40
+msgid "\\ta\\tadd\\t\\t\\tAdd new distro to quickget\\n"
+msgstr ""
+#: dh:41
+msgid "\\tf\\tfunctions\\t\\tSort functions in quickget\\n"
+msgstr ""
+#: dh:42
+msgid "\\tp\\tpush\\t\\t\\tPush changed quickget to quickemu project #todo\\n"
+msgstr ""
+#: dh:44
+msgid "\\tc\\tcopy\\t\\t\\tCopy all ISOs to target dir (for Ventoy)\\n"
+msgstr ""
+#: dh:46
+msgid "\\tl\\tlanguage\\t\\tTranslate DistroHopper\\n"
+msgstr ""
+#: dh:48
+msgid "Homepage: dh.osowoso.xyz"
+msgstr ""
+#: dh:49
+msgid "Project hosted at: https://github.com/oSoWoSo/DistroHopper"
+msgstr ""
+#: dh:50
+msgid "Chat group on SimpleX: https://tinyurl.com/7hm4kcjx"
+msgstr ""
+#: dh:72
+msgid "Missing yad!"
+msgstr ""
+#: dh:76
+msgid "Missing fzf!"
+msgstr ""
+#: dh:101
+msgid "creating config dir..."
+msgstr ""
+#: dh:103
+msgid "creating icons dir as root..."
+msgstr ""
+#: dh:147
+msgid "Copying icons..."
+msgstr ""
+#: dh:149
+msgid "Copying to config dir..."
+msgstr ""
+#: dh:159
+msgid "Creating directory structure..."
+msgstr ""
+#: dh:161
+msgid "Setting up directory..."
+msgstr ""
+#: dh:163
+msgid "Installing needed..."
+msgstr ""
+#: dh:165
+msgid "Installing DistroHopper to bin..."
+msgstr ""
+#: dh:220
+msgid "Creating desktop file for $vm_desktop..."
+msgstr ""
+#: dh:264
+msgid " Prepared VMs:\\n-------------\\n\\n"
+msgstr ""
+#: dh:267
+msgid "No VMs found."
+msgstr ""
+#: dh:274
+msgid " Do you want to create a new VM? (c)"
+msgstr ""
+#: dh:275
+msgid "  or run an existing one? (press anything)\\n"
+msgstr ""
+#: dh:307
+msgid "\\n Trying to download Windows %s %s...\\n\\n"
+msgstr ""
+#: dh:322
+msgid "\\n Trying to download %s %s...\\n\\n"
+msgstr ""
+#: dh:335
+msgid "\\n Trying to download %s %s %s...\\n\\n"
+msgstr ""
+#: dh:344
+msgid "\\n Starting %s...\\n\\n"
+msgstr ""
+#: dh:420
+msgid "Which language change? [en,cs]"
+msgstr ""
+#: dh:421
+msgid "If you want create new one, insert two digit language code..."
+msgstr ""
+#: dh:423
+msgid "Choosed language is: $lang"
+msgstr ""
+#: dh:424
+msgid "Dumping language source..."
+msgstr ""
+#: dh:426
+msgid "Merging changes... (Do it yourself)"
+msgstr ""
+#: dh:428
+msgid "Generating .mo file..."
+msgstr ""
+#: dh:430
+msgid "Copying translation to '/usr/share/local'..."
+msgstr ""
+#: dh:437
+msgid "No argumet provided!\\n\\n"
+msgstr ""
+#: dh:454
+msgid "Starting installation..."
+msgstr ""
+#: dh:459
+msgid "Switching to portable mode!"
+msgstr ""
+#: dh:464
+msgid "Updating supported VMs..."
+msgstr ""
+#: dh:469
+msgid "Updating ready VMs..."
+msgstr ""
+#: dh:474
+msgid "Running TUI..."
+msgstr ""
+#: dh:479
+msgid "Starting DistroHopper GUI..."
+msgstr ""
+#: dh:484
+msgid "Adding new distro started..."
+msgstr ""
+#: dh:489
+msgid "Sorting functions in template..."
+msgstr ""
+#: dh:494
+msgid "Pushing changes to... #TODO"
+msgstr ""
+#: dh:499
+msgid "Copying ISOs to dir. It will take some time..."
+msgstr ""
+#: dh:508
+msgid "Invalid option: $1"
+msgstr ""

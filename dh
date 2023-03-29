@@ -22,7 +22,7 @@ function some_bugs() {
 function show_help() {
 	echo "DistroHopper v. $version"
 	echo "quickemu v. $("$prefix"quickemu --version)"
-	printf $"	example for First run from terminal: ./dh i && dh s g\n"
+	printf $"\texample for First run from terminal: ./dh i && dh s g\n"
 	echo $"Possible arguments:"
 	printf $"\th\thelp\t\t\tShow this help and exit\n"
 	echo "---------------------------------------------------------"
@@ -81,7 +81,7 @@ function set_variables() {
 	#bash -x ./dh 2>&1 | tee output.log
 	#progname="${progname:="${0##*/}"}"
 	progname="DistroHopper"
-	version="0.76"
+	version="0.77b"
 	#GTK_THEME="alt-dialog"
 	DH_CONFIG_DIR="$HOME/.config/distrohopper"
 	DH_CONFIG="$DH_CONFIG_DIR/distrohopper.conf"
@@ -150,7 +150,6 @@ function install_dh() {
 	cp -r ready "$DH_CONFIG_DIR/"
 	cp -r supported "$DH_CONFIG_DIR/"
 	cp -r locale "$DH_CONFIG_DIR/"
-
 }
 
 function install_process() {
@@ -417,7 +416,7 @@ function sort_functions() {
 	done
 }
 
-function create_translation() {
+function translate() {
 	echo $"Which language change? [en,cs]"
 	echo $"If you want create new one, insert two digit language code..."
 	read -rn 2 -s lang
@@ -502,7 +501,7 @@ do
 			shift
 			;;
 		l|language)
-			create_translation
+			translate
 			shift
 			;;
 		*)
