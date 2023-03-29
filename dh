@@ -303,7 +303,7 @@ function run_tui() {
 	check_tui_dependencies
 	cd "$VMS_DIR" || exit 1
 	vms=(*.conf)
-	printf ' Prepared VMs:\n-------------\n\n'
+	printf $" Prepared VMs:\n-------------\n\n"
 	# Check if there are any VMs
 	if [ ${#vms[@]} -eq 0 ]; then
 		echo $"No VMs found."
@@ -313,65 +313,81 @@ function run_tui() {
 	printf "%s\n" "${vms[@]%.*}"
 	echo "-------------"
 	# Action prompt
-	printf " Do you want to create a new VM? (c)
-	 or run an existing one? (press anything)\n"
+	echo $" Do you want to create a new VM? (c)"
+	printf $"  or run an existing one? (press anything)\n"
 	read -rn 1 -s start
 	case $start in
 		c )
 			todo="create"
 		;;
 	esac
+
 	# If the user chose to create a new VM
 	if [ "$todo" = "create" ]; then
 		os=$("$prefix"quickget | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' | fzf --cycle --header='Choose OS to download
  or CTRL-c or ESC to quit')
+
 		# If the OS is Windows
 		if [ "$os" = windows ]; then
 			answer=$(echo "Default English
 Choose other language" | fzf --cycle)
+
 			# If the user wants another windows language
 			if [ "$answer" = "Choose other language" ]; then
 				wrelease=$(echo "8
 10
 11" | fzf --cycle)
+
 				# get window language list
 				wlend=$(($(cat "$prefix"quickget | sed '/Arabic/,$!d' | grep -n '}' | cut -d':' -f1 | head -n 1) - 1))
+
 				# get windows language
 				wlang=$(cat "$prefix"quickget | sed '/Arabic/,$!d' | head -n $wlend | cut -d'=' -f2 | tail -c +2 | head -c -2 | sed 's/^[ \t]*//' | fzf --cycle --header='Choose Language
  or CTRL-c or ESC to quit')
+
 				# downloading windows
-				printf '\n Trying to download Windows %s %s...\n\n' "$wrelease" "$wlang"
+				printf $"\n Trying to download Windows %s %s...\n\n" "$wrelease" "$wlang"
 				"$prefix"quickget "windows" "$wrelease" "$wlang"
 			fi
 		fi
+
 		# Get the release and edition to download, if necessary
 		choices=$("$prefix"quickget "$os" | sed 1d)
+
 		if [ "$(echo "$choices" | wc -l)" = 1 ]; then
+
 			# get release
 			release=$(echo "$choices" | grep 'Releases' | cut -d':' -f2 | grep -o '[^ ]*' | fzf --cycle --header='Choose Release
  or CTRL-c or ESC to quit')
+
 			# downloading
-			printf '\n Trying to download %s %s...\n\n' "$os" "$release"
+			printf $"\n Trying to download %s %s...\n\n" "$os" "$release"
 			"$prefix"quickget "$os" "$release"
 		else
+
 			# get release
 			release=$(echo "$choices" | grep 'Releases' | cut -d':' -f2 | grep -o '[^ ]*' | fzf --cycle --header='Choose Release
  or CTRL-c or ESC to quit')
+
 			# get edition
 			edition=$(echo "$choices" | grep 'Editions' | cut -d':' -f2 | grep -o '[^ ]*' | fzf --cycle --header='Choose Edition
  or CTRL-c or ESC to quit')
+
 			# downloading
-			printf '\n Trying to download %s %s %s...\n\n' "$os" "$release" "$edition"
+			printf $"\n Trying to download %s %s %s...\n\n" "$os" "$release" "$edition"
 			"$prefix"quickget "$os" "$release" "$edition"
 		fi
+
 		# choose VM to run
 		choosed=$(echo "$(ls ./***.conf 2>/dev/null | sed 's/\.conf$//')" | fzf --cycle --header='Choose VM to run
  or CTRL-c or ESC to quit')
+
 		# Run choosed VM
-		printf '\n Starting %s...\n\n' "$choosed"
+		printf $"\n Starting %s...\n\n" "$choosed"
 		"$prefix"quickemu -vm "$choosed.conf"
 	fi
 }
+
 # more
 function isos_to_dir() {
 	yad --file --directory > target
@@ -390,25 +406,40 @@ function add_distro() {
 	URL="$(cat ${TMP_DIR}/template.tmp | cut -d'|' -f5)"
 	ISO="$(cat ${TMP_DIR}/template.tmp | cut -d'|' -f6)"
 	CHECKSUM_FILE="$(cat ${TMP_DIR}/template.tmp | cut -d'|' -f7)"
-	echo "    $NAME)           PRETTY_NAME=$PRETTY_NAME;;
-" >  "${TMP_DIR}/${NAME}".tmp
-	{ echo "    $NAME \\
-"; echo "function releases_$NAME() {
+
+	cat <<EOF > "${TMP_DIR}"/template.tmp
+#32
+
+    $NAME)           PRETTY_NAME="$PRETTY_NAME";;
+
+#184+
+
+    $NAME \\
+
+#262+
+
+function releases_$NAME() {
 	echo $RELEASES
 }
-"; echo "function editions_$NAME() {
+
+function editions_$NAME() {
 	echo $EDITIONS
 }
-"; echo "function get_$NAME() {
-	local EDITION="${1:-}"
+
+#1052+
+
+function get_$NAME() {
+	local EDITION="\${1:-}"
 	local HASH=""
 	local ISO="$ISO"
 	local URL="$URL"
-	HASH=\"$(wget -q -O- "${URL}/${CHECKSUM_FILE}" | grep "(${ISO}" | cut -d' ' -f4)\"
-	echo \"${URL}/${ISO} ${HASH}\"
+	HASH="\$(wget -q -O- \${URL}/\${CHECKSUM_FILE} | grep (\${ISO} | cut -d' ' -f4)"
+	echo "\${URL}/\${ISO}" "\${HASH}"
 }
-"; } >> "${TMP_DIR}/${NAME}".tmp
-	meld "${TMP_DIR}/${NAME}.tmp $DH_CONFIG_DIR/quickget"
+
+EOF
+	echo "Done"
+	meld "${TMP_DIR}"/template.tmp "$DH_CONFIG_DIR"/quickget
 }
 
 function sort_functions() {
@@ -428,7 +459,8 @@ function sort_functions() {
 }
 
 function create_translation() {
-	echo $"Which language use [en,cs]?"
+	echo $"Which language change? [en,cs]"
+	echo $"If you want create new one, insert two digit language code..."
 	read -rn 2 -s lang
 	echo $"Choosed language is: $lang"
 	echo $"Dumping language source..."
