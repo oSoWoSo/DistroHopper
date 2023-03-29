@@ -27,7 +27,7 @@ function show_help() {
 	echo $"	h	help			Show this help and exit"
 	echo "---------------------------------------------------------"
 	echo $"	d	dir			Set default directory where VMs are stored"
-	echo $"	i	install		Install DistroHopper"
+	echo $"	i	install			Install DistroHopper"
 	echo "---------------------------------------------------------"
 	echo $"	m	mode			Portable mode"
 	echo "---------------------------------------------------------"
