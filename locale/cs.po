@@ -1,0 +1,261 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: zenobit <zen@osowoso.xyz>\n"
+"Language-Team: \n"
+"Language: cs\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 ? 1 : 2);\n"
+"X-Generator: Poedit 3.2.2\n"
+
+#: dh:10
+msgid "Done"
+msgstr "Hotovo"
+
+#: dh:12
+msgid "PS: You saw some bugs?"
+msgstr "PS: Viděli jste nějaké chyby?"
+
+#: dh:13
+msgid "Could you please provide feedback?"
+msgstr "Můžete prosím poslat zpětnou vazbu?"
+
+#: dh:14
+msgid "How do you like DistroHopper?"
+msgstr "Jak se vám líbí DistroHopper?"
+
+#: dh:15
+msgid "What can be improved, added, changed?"
+msgstr "Co může být vylepšeno, přidáno, změněno?"
+
+#: dh:16
+msgid " Let me know..."
+msgstr " Dejte mi vědět..."
+
+#: dh:18
+msgid "Wish you flawless distro hopping..."
+msgstr "Přeji bezchybné zkoušení operačních systémů..."
+
+#: dh:26
+msgid "Possible arguments:"
+msgstr "Možné argumenty:"
+
+#: dh:27
+msgid "\th\thelp\t\t\tShow this help and exit"
+msgstr "\th help\t\t\tZobrazit tuto nápovědu a skončit"
+
+#: dh:29
+msgid "\td\tdir\t\t\tSet default directory where VMs are stored"
+msgstr "\td\tdir\t\t\tNastavit adresář kde jsou virtuální stroje uloženy"
+
+#: dh:30
+msgid "\ti\tinstall\t\t\tInstall DistroHopper"
+msgstr "\ti\tinstall\t\t\tInstalovat DistroHopper"
+
+#: dh:32
+msgid "\tm\tmode\t\t\tPortable mode"
+msgstr "\tm\tmode\t\t\tPřenosný mód"
+
+#: dh:34
+msgid "\ts\tsupported\t\tUpdate supported VMs"
+msgstr "\ts\tsupported\t\tAktualizovat podporované VM"
+
+#: dh:35
+msgid "\tr\tready\t\t\tUpdate ready to run VMs"
+msgstr "\tr\tready\t\t\tAktualizovat připravené VM"
+
+#: dh:37
+msgid "\tt\ttui\t\t\tRun TUI"
+msgstr "\tt\ttui\t\t\tSpustit terminálové uživatelské rozhranní"
+
+#: dh:38
+msgid "\tg\tgui\t\t\tRun GUI"
+msgstr "\tg\tgui\t\t\tSpustit grafické uživatelské rozhranní"
+
+#: dh:40
+msgid "\ta\tadd\t\t\tAdd new distro to quickget"
+msgstr "\ta\tadd\t\t\tPřidat distribuci do quickget"
+
+#: dh:41
+msgid "\tf\tfunctions\t\tSort functions in quickget"
+msgstr "\tf\tfunctions\t\tSeřadit funkce v quickget"
+
+#: dh:42
+msgid "\tp\tpush\t\t\tPush changed quickget to quickemu project #todo"
+msgstr "\tp\tpush\t\t\tPoslat změněný quickget do quickemu projektu #UDELAT"
+
+#: dh:44
+msgid "\tc\tcopy\t\t\tCopy all ISOs to target dir (for Ventoy)"
+msgstr "\tc\tcopy\t\t\tKopírovat všechny ISO to cílového adresáře (pro Ventoy)"
+
+#: dh:46
+msgid "\tl\tlanguage\t\tTranslate DistroHopper"
+msgstr "\tl\tlanguage\t\tPřeložit DistroHopper"
+
+#: dh:48
+msgid "Homepage: dh.osowoso.xyz"
+msgstr "Domovský stránka: dh.osowoso.xyz"
+
+#: dh:49
+msgid "Project hosted at: https://github.com/oSoWoSo/DistroHopper"
+msgstr "Projekt hostován na: https://github.com/oSoWoSo/DistroHopper"
+
+#: dh:50
+msgid "Chat group on SimpleX: https://tinyurl.com/7hm4kcjx"
+msgstr "Chat skupina na SimpleX: https://tinyurl.com/7hm4kcjx"
+
+#: dh:72
+msgid "Missing yad!"
+msgstr "Chybí vám yad!"
+
+#: dh:76
+msgid "Missing fzf!"
+msgstr "Chybí vám fzf!"
+
+#: dh:101
+msgid "creating config dir..."
+msgstr "vytvářím adresář konfigurace..."
+
+#: dh:103
+msgid "creating icons dir as root..."
+msgstr "vytvářím adresář ikon jako superuživatel..."
+
+#: dh:147
+msgid "Copying icons..."
+msgstr "Kopíruji ikony..."
+
+#: dh:149
+msgid "Copying to config dir..."
+msgstr "Kopíruji do konfig adresáře..."
+
+#: dh:160
+msgid "Creating directory structure..."
+msgstr "Vytvářím adresářovou stukturu..."
+
+#: dh:162
+msgid "Setting up directory..."
+msgstr "Nastavuji adresář..."
+
+#: dh:164
+msgid "Installing needed..."
+msgstr "Instaluji potřebné..."
+
+#: dh:166
+msgid "Installing DistroHopper to bin..."
+msgstr "Instaluji DistroHopper do bin..."
+
+#: dh:221
+msgid "Creating desktop file for $vm_desktop..."
+msgstr "Vytvářím soubor desktop pro $vm_desktop..."
+
+#: dh:265
+msgid " Prepared VMs:\\n-------------\\n\\n"
+msgstr " Připravené VM:\\n-------------\\n\\n"
+
+#: dh:268
+msgid "No VMs found."
+msgstr "Žádný VM nenalezen."
+
+#: dh:275
+msgid " Do you want to create a new VM? (c)"
+msgstr " Chcete vytvořit nový VM? (c)"
+
+#: dh:276
+msgid "  or run an existing one? (press anything)\\n"
+msgstr " nebo spustit existující? (stiskněte cokoli\\n"
+
+#: dh:308
+msgid "\\n Trying to download Windows %s %s...\\n\\n"
+msgstr "\\n Zkouším stáhnout  Windows %s %s...\\n\\n"
+
+#: dh:323
+msgid "\\n Trying to download %s %s...\\n\\n"
+msgstr "\\n Zkouším stáhnout %s %s...\\n\\n"
+
+#: dh:336
+msgid "\\n Trying to download %s %s %s...\\n\\n"
+msgstr "\\n Zkouším stáhnout  %s %s %s...\\n\\n"
+
+#: dh:345
+msgid "\\n Starting %s...\\n\\n"
+msgstr "\\n Začínám %s...\\n\\n"
+
+#: dh:421
+msgid "Which language change? [en,cs]"
+msgstr "Který jazyk upravit? [en,cs]"
+
+#: dh:422
+msgid "If you want create new one, insert two digit language code..."
+msgstr "Pokud chcete vytvořit nový, vložte dvoumístný jazykový kód..."
+
+#: dh:424
+msgid "Choosed language is: $lang"
+msgstr "Vybraný jazyk je: $lang"
+
+#: dh:425
+msgid "Dumping language source..."
+msgstr "Vytváření jazykového zdroje.."
+
+#: dh:427
+msgid "Merging changes... (Do it yourself)"
+msgstr "Slučuji změny... (Udělej sám)"
+
+#: dh:429
+msgid "Generating .mo file..."
+msgstr "Vytvářím soubor .mo..."
+
+#: dh:431
+msgid "Copying translation to '/usr/share/local'..."
+msgstr "Kopíruji překlad do '/usr/share/local'..."
+
+#: dh:438
+msgid "No argumet provided!\\n\\n"
+msgstr "Nezadali jste žádný argument!\\n\\n"
+
+#: dh:455
+msgid "Starting installation..."
+msgstr "Zahajuji instalaci..."
+
+#: dh:460
+msgid "Switching to portable mode!"
+msgstr "Přepínám do přenosného módu!"
+
+#: dh:465
+msgid "Updating supported VMs..."
+msgstr "Aktualizuji podporované VM..."
+
+#: dh:470
+msgid "Updating ready VMs..."
+msgstr "Aktualizuji připravené VM..."
+
+#: dh:475
+msgid "Running TUI..."
+msgstr "Spouštím TUI..."
+
+#: dh:480
+msgid "Starting DistroHopper GUI..."
+msgstr "Spouštím DistroHopper GUI..."
+
+#: dh:485
+msgid "Adding new distro started..."
+msgstr "Přidání nového distra zahájeno..."
+
+#: dh:490
+msgid "Sorting functions in template..."
+msgstr "Srovnávám funkce v šabloně..."
+
+#: dh:495
+msgid "Pushing changes to... #TODO"
+msgstr "Posílám změny do... #UDELAT"
+
+#: dh:500
+msgid "Copying ISOs to dir. It will take some time..."
+msgstr "Kopíruji soubory ISO do adresáře. Zabere to nějaký čas..."
+
+#: dh:509
+msgid "Invalid option: $1"
+msgstr "Chybný argument: $1"
