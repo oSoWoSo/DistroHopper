@@ -208,8 +208,8 @@ function renew_supported() {
 	"$prefix"quickget | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' > "$DH_CONFIG_DIR/supported.md"
 	while read -r get_name; do
 		vm_desktop=$(echo "$get_name" | tr ' ' '_')
-		releases=$("$prefix"quickget "$vm_desktop" | grep 'Releases' | cut -d':' -f2 | sed 's/^ //')
-		editions=$("$prefix"quickget "$vm_desktop" | grep 'Editions' | cut -d':' -f2 | sed 's/^ //')
+		releases=$("$prefix"quickget "$vm_desktop" | grep 'Releases' | cut -d':' -f2 | sed 's/^ //' | sed 's/ *$//')
+		editions=$("$prefix"quickget "$vm_desktop" | grep 'Editions' | cut -d':' -f2 | sed 's/^ //' | sed 's/ *$//')
 		icon_name="$DH_ICON_DIR/$get_name"
 		if [ -f "$icon_name.svg" ]; then
 			icon_file="$icon_name.svg"
@@ -218,77 +218,36 @@ function renew_supported() {
 		else
 			icon_file="$DH_ICON_DIR/tux.svg"
 		fi
+		echo $"Creating desktop file for $vm_desktop..."
+		echo ""
 		# Check if there are editions
 		if [ -z "$editions" ]; then
-			# Create desktop file for VMs without editions
-			desktop_file_content="[Desktop Entry]
+			cat <<EOF > "$DH_CONFIG_DIR"/supported/"$vm_desktop".desktop
+[Desktop Entry]
 Type=Application
 Name=$get_name
 releases=$releases
 replace=$replace
-Exec=sh -c 'cd \"$VMS_DIR\" && yad --form --field=\"Release:CB\" \"${releases// /$replace}\" | cut -d\"|\" -f1 | xargs -I{} sh -c \""$prefix"quickget $get_name {}\"'
+Exec=sh -c 'cd $VMS_DIR && yad --form --field="Release:CB" "${releases// /$replace}" | cut -d'|' -f1 | xargs -I{} sh -c "$prefix"quickget $get_name {}'
 Icon=$icon_file
-Categories=System;Virtualization;"
-			echo "$desktop_file_content" > "$DH_CONFIG_DIR"/supported/"$vm_desktop".desktop
+Categories=System;Virtualization;
+
+EOF
 		else
-			# Create desktop file for VMs with editions
-			# shellcheck disable=2154
-			desktop_file_content="[Desktop Entry]
+			cat <<EOF > "$DH_CONFIG_DIR"/supported/"$vm_desktop".desktop
+[Desktop Entry]
 Type=Application
 Name=$get_name
 releases=$releases
 editions=$editions
 replace=$replace
-Exec=sh -c 'cd \"$VMS_DIR\" && yad --form --separator=\" \" --field=\"Release:CB\" \"${releases// /$replace}\" --field=\"Edition:CB\" \"${editions// /$replace}\" | xargs -I{} sh -c \"$prefixquickget $get_name {}\"'
+Exec=sh -c 'cd $VMS_DIR && yad --form --separator=" " --field="Release:CB" "${releases// /$replace}" --field="Edition:CB" "${editions// /$replace}" | xargs -I{} sh -c "$prefixquickget $get_name {}'
 Icon=$icon_file
-Categories=System;Virtualization;"
-			echo "$desktop_file_content" > "$DH_CONFIG_DIR"/supported/"$vm_desktop".desktop
+Categories=System;Virtualization;
+
+EOF
 		fi
 	done < "$DH_CONFIG_DIR"/supported.md
-}
-
-function renew_supported_test() {
-	rm "$DH_CONFIG_DIR"/test/ubuntu.desktop >/dev/null 2>&1
-	# get supported VMs
-	"$prefix"quickget | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' > "$DH_CONFIG_DIR/ubuntu.md"
-	while read -r get_name; do
-		vm_desktop=ubuntu
-		releases=$("$prefix"quickget "$vm_desktop" | grep 'Releases' | cut -d':' -f2 | sed 's/^ //')
-		editions=$("$prefix"quickget "$vm_desktop" | grep 'Editions' | cut -d':' -f2 | sed 's/^ //')
-		icon_name="$DH_ICON_DIR/$get_name"
-		if [ -f "$icon_name.svg" ]; then
-			icon_file="$icon_name.svg"
-		elif [ -f "$icon_name.png" ]; then
-			icon_file="$icon_name.png"
-		else
-			icon_file="$DH_ICON_DIR/tux.svg"
-		fi
-		# Check if there are editions
-		if [ -z "$editions" ]; then
-			# Create desktop file for VMs without editions
-			desktop_file_content="[Desktop Entry]
-Type=Application
-Name=$get_name
-releases=$releases
-replace=$replace
-Exec=sh -c 'cd \"$VMS_DIR\" && yad --form --field=\"Release:CB\" \"${releases// /$replace}\" | cut -d\"|\" -f1 | xargs -I{} sh -c \""$prefix"quickget $get_name {}\"'
-Icon=$icon_file
-Categories=System;Virtualization;"
-			echo "$desktop_file_content" > "$DH_CONFIG_DIR"/test/ubuntu.desktop
-		else
-			# Create desktop file for VMs with editions
-			desktop_file_content="[Desktop Entry]
-Type=Application
-Name=$get_name
-releases=$releases
-editions=$editions
-replace=$replace
-Exec=sh -c 'cd \"$VMS_DIR\" && yad --form --separator=\" \" --field=\"Release:CB\" \"${releases// /$replace}\" --field=\"Edition:CB\" \"${editions// /$replace}\" | xargs -I{} sh -c \"$prefixquickget $get_name {}\"'
-Icon=$icon_file
-Categories=System;Virtualization;"
-			echo "$desktop_file_content" > "$DH_CONFIG_DIR"/test/ubuntu.desktop
-		fi
-	done < "$DH_CONFIG_DIR"/test/ubuntu.md
 }
 
 function run_gui() {
@@ -540,11 +499,6 @@ do
 		c|copy)
 			echo $"Copying ISOs to dir. It will take some time..."
 			isos_to_dir
-			shift
-			;;
-		e|'test')
-			echo $"Running supported test..."
-			renew_supported_test
 			shift
 			;;
 		l|language)
