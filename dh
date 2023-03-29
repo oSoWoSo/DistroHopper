@@ -22,7 +22,7 @@ function some_bugs() {
 function show_help() {
 	echo "DistroHopper v. $version"
 	echo "quickemu v. $("$prefix"quickemu --version)"
-	echo "	example for First run from terminal: ./dh i && dh s g"
+	echo $"	example for First run from terminal: ./dh i && dh s g"
 	echo $"Possible arguments:"
 	echo $"	h	help			Show this help and exit"
 	echo "---------------------------------------------------------"
