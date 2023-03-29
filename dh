@@ -427,9 +427,14 @@ function translate() {
 	meld "$DH_CONFIG_DIR"/locale/dh-source.pot "$DH_CONFIG_DIR"/locale/distrohopper-"$lang".pot
 	echo $"Generating .mo file..."
 	msgfmt -o "$DH_CONFIG_DIR"/locale/distrohopper-"$lang".mo "$DH_CONFIG_DIR"/locale/distrohopper-"$lang".pot
-	echo $"Copying translation to '/usr/share/local'..."
-	sudo cp "$DH_CONFIG_DIR"/locale/distrohopper-"$lang".mo /usr/share/locale/"$lang"/LC_MESSAGES/distrohopper.mo
+	echo $"Do you want copy $lang translation to '/usr/share/local' as ROOT? (y/n)"
+	read response
+	if [[ "$response" =~ ^[Yy]$ ]]; then
+		echo $"Copying translation to '/usr/share/local'..."
+		sudo cp "$DH_CONFIG_DIR"/locale/distrohopper-"$lang".mo /usr/share/locale/"$lang"/LC_MESSAGES/distrohopper.mo
+	fi
 }
+
 # run --------------------------------------
 set_variables
 
