@@ -98,6 +98,27 @@ function set_variables() {
 	trap "exit" EXIT
 }
 
+function create_desktop_entry() {
+	cat <<EOF > ${DESKTOP_FILE}
+[Desktop Entry]
+Version=$version
+Type=$type
+Name=$name
+GenericName=$gname
+Comment=$comment
+Exec=$execmd
+Icon=$icon
+Terminal=$terminal
+X-MultipleArgs=$args
+Type=$type
+Categories=$categories
+StartupNotify=$notify
+MimeType=$mime
+Keywords=$keyword
+
+EOF
+}
+
 function create_structure() {
 	source distrohopper.conf
 	echo $"creating config dir..."
