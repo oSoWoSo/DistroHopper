@@ -160,7 +160,7 @@ EOF
 }
 
 function set_dir() {
-	NEWDIR="$(yad --file --directory --title="Where to save VMs?")"
+	NEWDIR="$(yad  --width=900 --height=900 --file --directory --title="Where to save VMs?")"
 	VMS_DIR="$NEWDIR"
 	echo "VMS_DIR=\"$VMS_DIR\"
 	export \"VMS_DIR\"" >> "$DH_CONFIG"
@@ -431,7 +431,7 @@ Choose other language" | fzf --cycle)
 
 # more
 function isos_to_dir() {
-	yad --file --directory > target
+	yad  --width=900 --height=900 --file --directory > target
 	cd "$VMS_DIR" || exit 1
 	# shellcheck disable=2154
 	cp ./*glob*/*.iso "$target"
