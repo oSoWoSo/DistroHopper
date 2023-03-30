@@ -88,9 +88,10 @@ function set_variables() {
 	DH_CONFIG="$DH_CONFIG_DIR/distrohopper.conf"
 	DH_ICON_DIR="/usr/share/icons/distrohopper"
 	PATH_PREFIX="/usr/bin/"
+	TMP_DIR="/tmp"
 	TERMINAL="sakura"
 	replace='"!"'
-	export "DH_CONFIG_DIR" "DH_CONFIG" "replace" "DH_ICON_DIR" "PATH_PREFIX" "TERMINAL"
+	export "DH_CONFIG_DIR" "DH_CONFIG" "replace" "DH_ICON_DIR" "PATH_PREFIX" "TMP_DIR" "TERMINAL"
 	portable
 	# Set traps to catch the signals and exit gracefully
 	trap "exit" INT
@@ -106,7 +107,6 @@ function create_structure() {
 }
 
 function dh_desktop_entry() {
-	cat <<EOF > ${TMP_DIR}/dh.desktop
 	echo $"Do you want DistroHopper to run in the terminal? (y/n)"
 	run_in_terminal
 	if [ "$interminal" == "yes" ]; then
@@ -417,7 +417,6 @@ function isos_to_dir() {
 }
 # shellcheck disable=2086
 function add_distro() {
-	TMP_DIR="/tmp"
 	yad --form --field="Pretty name" "" --field="Name" "" --field="Releases" "" --field="Editions" "" --field="URL" "" --field="ISO" "" --field="Checksum file" "" > ${TMP_DIR}/template.tmp
 	PRETTY_NAME="$(cat ${TMP_DIR}/template.tmp | cut -d'|' -f1)"
 	NAME="$(cat ${TMP_DIR}/template.tmp | cut -d'|' -f2)"
@@ -427,7 +426,7 @@ function add_distro() {
 	ISO="$(cat ${TMP_DIR}/template.tmp | cut -d'|' -f6)"
 	CHECKSUM_FILE="$(cat ${TMP_DIR}/template.tmp | cut -d'|' -f7)"
 
-	cat <<EOF > "${TMP_DIR}"/template.tmp
+	cat <<EOF > ${TMP_DIR}/template.tmp
 #32
 
     $NAME)           PRETTY_NAME="$PRETTY_NAME";;
