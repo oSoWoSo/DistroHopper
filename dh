@@ -63,6 +63,7 @@ function mode_portable() {
 }
 
 function mode_installed() {
+	# shellcheck source=distrohopper.conf
 	source "$DH_CONFIG"
 	portable_prefix=''
 	export "portable_prefix"
