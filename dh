@@ -34,8 +34,8 @@ function show_help() {
 	printf $"\ts\tsupported\t\tUpdate supported VMs\n"
 	printf $"\tr\tready\t\t\tUpdate ready to run VMs\n"
 	echo "---------------------------------------------------------"
-	printf $"\tt\ttui\t\t\tRun TUI\n"
-	printf $"\tg\tgui\t\t\tRun GUI\n"
+	printf $"\tt\ttui\t\t\tRun terminal user interface (TUI)\n"
+	printf $"\tg\tgui\t\t\tRun graphical user interface (GUI)\n"
 	echo "---------------------------------------------------------"
 	printf $"\ta\tadd\t\t\tAdd new distro to quickget\n"
 	printf $"\tf\tfunctions\t\tSort functions in quickget\n"
@@ -417,9 +417,9 @@ function sort_functions() {
 }
 
 function translate() {
-	echo $"Which language change? [en,cs]"
+	echo $"Which language change? (en/cs)"
 	echo $"If you want create new one, insert two digit language code..."
-	read -rn 2 -s lang
+	read lang
 	echo $"Choosed language is: $lang"
 	echo $"Dumping language source..."
 	bash --dump-po-strings dh > "$DH_CONFIG_DIR"/locale/dh-source.pot
@@ -427,9 +427,9 @@ function translate() {
 	meld "$DH_CONFIG_DIR"/locale/dh-source.pot "$DH_CONFIG_DIR"/locale/distrohopper-"$lang".pot
 	echo $"Generating .mo file..."
 	msgfmt -o "$DH_CONFIG_DIR"/locale/distrohopper-"$lang".mo "$DH_CONFIG_DIR"/locale/distrohopper-"$lang".pot
-	echo $"Do you want copy $lang translation to '/usr/share/local' as ROOT? (y/n)"
+	echo $"Do you want copy $lang translation to '/usr/share/local' as root? (y/n)"
 	read response
-	if [[ "$response" =~ ^[Yy]$ ]]; then
+	if [[ "$response" =~ ^[YyAa]$ ]]; then
 		echo $"Copying translation to '/usr/share/local'..."
 		sudo cp "$DH_CONFIG_DIR"/locale/distrohopper-"$lang".mo /usr/share/locale/"$lang"/LC_MESSAGES/distrohopper.mo
 	fi
@@ -476,7 +476,7 @@ do
 			shift
 			;;
 		t|tui)
-			echo $"Running TUI..."
+			echo $"Running DistroHopper TUI..."
 			run_tui
 			shift
 			;;

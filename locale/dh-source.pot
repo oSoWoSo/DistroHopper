@@ -103,7 +103,7 @@ msgstr ""
 #: dh:165
 msgid "Installing DistroHopper to bin..."
 msgstr ""
-#: dh:220
+#: dh:219
 msgid "Creating desktop file for $vm_desktop..."
 msgstr ""
 #: dh:264

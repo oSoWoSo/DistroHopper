@@ -153,7 +153,7 @@ msgstr "Instaluji potřebné..."
 msgid "Installing DistroHopper to bin..."
 msgstr "Instaluji DistroHopper do bin..."
 
-#: dh:220
+#: dh:219
 msgid "Creating desktop file for $vm_desktop..."
 msgstr "Vytvářím soubor desktop pro $vm_desktop..."
 
