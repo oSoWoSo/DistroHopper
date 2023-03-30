@@ -234,8 +234,6 @@ function run_in_terminal() {
 }
 
 function renew_ready() {
-	echo $"Do you want quickemu to show outputs in the terminal? (y/n)"
-	run_in_terminal
 	cd "$VMS_DIR" || exit 1
 #	for files in "$VMS_DIR"/*; do
 #	if [ ! -e *.conf ]; then
@@ -258,19 +256,7 @@ function renew_ready() {
 			icon_file="$DH_ICON_DIR/tux.svg"
 		fi
 		# content of desktop files (ready to run VMs)
-		if [ "$interminal" == "yes" ]; then
-			cat <<EOF > "$DH_CONFIG_DIR"/ready/"$vm_desktop".desktop
-[Desktop Entry]
-Type=Application
-Name=$vm_desktop
-Terminal=true
-Exec=sh -c 'cd ${VMS_DIR} && ${portable_prefix}quickemu -vm ${vm_conf}'
-Icon=$icon_file
-Categories=System;Virtualization;
-
-EOF
-		else
-			cat <<EOF > "$DH_CONFIG_DIR"/ready/"$vm_desktop".desktop
+		cat <<EOF > "$DH_CONFIG_DIR"/ready/"$vm_desktop".desktop
 [Desktop Entry]
 Type=Application
 Name=$vm_desktop
@@ -279,7 +265,6 @@ Icon=$icon_file
 Categories=System;Virtualization;
 
 EOF
-		fi
 	done
 }
 
