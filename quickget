@@ -326,7 +326,7 @@ function releases_cereus() {
 }
 
 function editions_cereus() {
-    echo base lxqt xfce
+    echo lxqt xfce
 }
 
 function releases_debian() {
