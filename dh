@@ -104,6 +104,21 @@ function create_structure() {
 	mkdir -p "$DH_ICON_DIR" >/dev/null 2>&1 || sudo mkdir -p "$DH_ICON_DIR"
 }
 
+function dh_desktop_entry() {
+	cat <<EOF > ${TMP_DIR}/dh.desktop
+[Desktop Entry]
+Type=Application
+Name=DistroHopper
+Description=Quickly download, create and run VM of any#TODO operating system.
+version=0.77b
+Exec=sh -c 'cd ${VMS_DIR} && exec dh g'
+Icon=/home/zen/git/distrohopper/icons/hop.svg
+Categories=System;Virtualization;
+
+EOF
+	sudo cp dh.desktop /usr/share/applications/
+}
+
 function set_dir() {
 	NEWDIR="$(yad --file --directory --title="Where to save VMs?")"
 	VMS_DIR="$NEWDIR"
@@ -163,7 +178,9 @@ function install_process() {
 	 && echo $"Installing needed..." \
 	 && install_prereq \
 	 && echo $"Installing DistroHopper to bin..." \
-	 && install_dh
+	 && install_dh \
+	 && echo $"Copying desktop entry..." \
+	 && dh_desktop_entry
 }
 # basic -----------------------------------
 function renew_ready() {
