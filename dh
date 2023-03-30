@@ -180,7 +180,7 @@ function install_dh() {
 	cp quickget "$DH_CONFIG_DIR/"
 	echo $"Copying icons..."
 	cp icons/* "$DH_ICON_DIR/" >/dev/null 2>&1 || sudo cp icons/* "$DH_ICON_DIR/"
-	echo $"Copying to config dir..."
+	echo $"Copying desktop entries and locales..."
 	cp -r ready "$DH_CONFIG_DIR/"
 	cp -r supported "$DH_CONFIG_DIR/"
 	cp -r locale "$DH_CONFIG_DIR/"
@@ -279,7 +279,7 @@ function renew_supported() {
 		else
 			icon_file="$DH_ICON_DIR/tux.svg"
 		fi
-		echo $"Creating desktop file for $vm_desktop..."
+		echo $"Creating $vm_desktop desktop entry..."
 		echo ""
 		# Check if there are editions
 		if [ -z "$editions" ]; then
