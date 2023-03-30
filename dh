@@ -107,17 +107,35 @@ function create_structure() {
 
 function dh_desktop_entry() {
 	cat <<EOF > ${TMP_DIR}/dh.desktop
+	echo $"Do you want DistroHopper to run in the terminal? (y/n)"
+	run_in_terminal
+	if [ "$interminal" == "yes" ]; then
+		cat <<EOF > ${TMP_DIR}/dh.desktop
 [Desktop Entry]
 Type=Application
 Name=DistroHopper
 Description=Quickly download, create and run VM of any#TODO operating system.
 version=0.77b
-Exec=sh -c 'cd ${VMS_DIR} && exec dh g'
-Icon=/home/zen/git/distrohopper/icons/hop.svg
+Terminal=true
+Exec=sh -c 'cd ${VMS_DIR} && dh g'
+Icon=/home/zen/git/distrohopper/icons/hop
 Categories=System;Virtualization;
 
 EOF
-	sudo cp dh.desktop /usr/share/applications/
+	else
+		cat <<EOF > ${TMP_DIR}/dh.desktop
+[Desktop Entry]
+Type=Application
+Name=DistroHopper
+Description=Quickly download, create and run VM of any#TODO operating system.
+version=0.77b
+Exec=sh -c 'cd ${VMS_DIR} && dh g'
+Icon=/home/zen/git/distrohopper/icons/hop
+Categories=System;Virtualization;
+
+EOF
+	fi
+	sudo cp ${TMP_DIR}/dh.desktop /usr/share/applications/
 }
 
 function set_dir() {
@@ -184,7 +202,19 @@ function install_process() {
 	 && dh_desktop_entry
 }
 # basic -----------------------------------
+
+function run_in_terminal() {
+	read -r response
+	if [[ "$response" =~ ^[YyAa]$ ]]; then
+		interminal="yes"
+	else
+		interminal="no"
+	fi
+}
+
 function renew_ready() {
+	echo $"Do you want quickemu to show outputs in the terminal? (y/n)"
+	run_in_terminal
 	cd "$VMS_DIR" || exit 1
 #	for files in "$VMS_DIR"/*; do
 #	if [ ! -e *.conf ]; then
@@ -207,7 +237,19 @@ function renew_ready() {
 			icon_file="$DH_ICON_DIR/tux.svg"
 		fi
 		# content of desktop files (ready to run VMs)
-		cat <<EOF > "$DH_CONFIG_DIR"/ready/"$vm_desktop".desktop
+		if [ "$interminal" == "yes" ]; then
+			cat <<EOF > "$DH_CONFIG_DIR"/ready/"$vm_desktop".desktop
+[Desktop Entry]
+Type=Application
+Name=$vm_desktop
+Terminal=true
+Exec=sh -c 'cd ${VMS_DIR} && ${portable_prefix}quickemu -vm ${vm_conf}'
+Icon=$icon_file
+Categories=System;Virtualization;
+
+EOF
+		else
+			cat <<EOF > "$DH_CONFIG_DIR"/ready/"$vm_desktop".desktop
 [Desktop Entry]
 Type=Application
 Name=$vm_desktop
@@ -216,10 +258,13 @@ Icon=$icon_file
 Categories=System;Virtualization;
 
 EOF
+		fi
 	done
 }
 
 function renew_supported() {
+	echo $"Do you want quickget to show outputs in the terminal? (y/n)"
+	run_in_terminal
 	# get supported VMs
 	"$portable_prefix"quickget | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' > "$DH_CONFIG_DIR/supported.md"
 	while read -r get_name; do
@@ -238,7 +283,6 @@ function renew_supported() {
 		echo ""
 		# Check if there are editions
 		if [ -z "$editions" ]; then
-# use terminal instead: xargs -I{} $TERMINAL -e "${portable_prefix}quickget $get_name {}"'
 			cat <<EOF > "$DH_CONFIG_DIR"/supported/"$vm_desktop".desktop
 [Desktop Entry]
 Type=Application
