@@ -72,6 +72,9 @@ function mode_installed() {
 function check_gui_dependencies() {
 	[ -f "$PATH_PREFIX/yad" ] || echo $"Missing yad!"
 }
+trap 'exit' SIGINT SIGTERM SIGQUIT
+set -e
+echo $"DistroHopper is running... Press Ctrl-Q anytime to exit."
 
 function check_tui_dependencies() {
 	[ -f "$PATH_PREFIX/fzf" ] || echo $"Missing fzf!"
