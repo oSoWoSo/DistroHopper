@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=alpine-3.12
+Exec=sh -c 'echo $pwd && cd /home/zen/git/distrohopper && ./quickemu -vm alpine-3.12.conf'
+Icon=/home/zen/git/distrohopper/icons/alpine.svg
+Categories=System;Virtualization;
+

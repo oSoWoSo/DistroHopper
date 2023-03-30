@@ -3,7 +3,7 @@ Type=Application
 Name=blendos
 releases=23.01
 replace="!"
-Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --field="Release:CB" "23.01" | cut -d'|' -f1 | xargs -I{} sh -c "./"quickget blendos {}'
+Exec=sh -c 'cd "/home/zen/git/distrohopper" && yad --form --field="Release:CB" "23.01" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget blendos {}"'
 Icon=/home/zen/git/distrohopper/icons/blendos.svg
 Categories=System;Virtualization;
 

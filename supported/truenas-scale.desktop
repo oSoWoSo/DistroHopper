@@ -3,7 +3,7 @@ Type=Application
 Name=truenas-scale
 releases=22.02 22.12
 replace="!"
-Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --field="Release:CB" "22.02"!"22.12" | cut -d'|' -f1 | xargs -I{} sh -c "./"quickget truenas-scale {}'
+Exec=sh -c 'cd "/home/zen/git/distrohopper" && yad --form --field="Release:CB" "22.02"!"22.12" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget truenas-scale {}"'
 Icon=/home/zen/git/distrohopper/icons/truenas-scale.svg
 Categories=System;Virtualization;
 

@@ -3,7 +3,7 @@ Type=Application
 Name=freedos
 releases=1.2 1.3
 replace="!"
-Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --field="Release:CB" "1.2"!"1.3" | cut -d'|' -f1 | xargs -I{} sh -c "./"quickget freedos {}'
+Exec=sh -c 'cd "/home/zen/git/distrohopper" && yad --form --field="Release:CB" "1.2"!"1.3" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget freedos {}"'
 Icon=/home/zen/git/distrohopper/icons/freedos.svg
 Categories=System;Virtualization;
 

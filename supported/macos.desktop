@@ -3,7 +3,7 @@ Type=Application
 Name=macos
 releases=high-sierra mojave catalina big-sur monterey ventura
 replace="!"
-Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --field="Release:CB" "high-sierra"!"mojave"!"catalina"!"big-sur"!"monterey"!"ventura" | cut -d'|' -f1 | xargs -I{} sh -c "./"quickget macos {}'
+Exec=sh -c 'cd "/home/zen/git/distrohopper" && yad --form --field="Release:CB" "high-sierra"!"mojave"!"catalina"!"big-sur"!"monterey"!"ventura" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget macos {}"'
 Icon=/home/zen/git/distrohopper/icons/macos.svg
 Categories=System;Virtualization;
 

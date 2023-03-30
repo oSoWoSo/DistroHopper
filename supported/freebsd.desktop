@@ -4,7 +4,7 @@ Name=freebsd
 releases=12.3 12.4 13.0 13.1 13.2
 editions=disc1 dvd1
 replace="!"
-Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --separator=" " --field="Release:CB" "12.3"!"12.4"!"13.0"!"13.1"!"13.2" --field="Edition:CB" "disc1"!"dvd1" | xargs -I{} sh -c " freebsd {}'
+Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --separator=" " --field="Release:CB" "12.3"!"12.4"!"13.0"!"13.1"!"13.2" --field="Edition:CB" "disc1"!"dvd1" | xargs -I{} sh -c "./quickget freebsd {}"'
 Icon=/home/zen/git/distrohopper/icons/freebsd.svg
 Categories=System;Virtualization;
 

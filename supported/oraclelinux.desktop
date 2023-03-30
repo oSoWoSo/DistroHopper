@@ -3,7 +3,7 @@ Type=Application
 Name=oraclelinux
 releases=7.7 7.8 7.9 8.4 8.5 8.6 9.0
 replace="!"
-Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --field="Release:CB" "7.7"!"7.8"!"7.9"!"8.4"!"8.5"!"8.6"!"9.0" | cut -d'|' -f1 | xargs -I{} sh -c "./"quickget oraclelinux {}'
+Exec=sh -c 'cd "/home/zen/git/distrohopper" && yad --form --field="Release:CB" "7.7"!"7.8"!"7.9"!"8.4"!"8.5"!"8.6"!"9.0" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget oraclelinux {}"'
 Icon=/home/zen/git/distrohopper/icons/oraclelinux.svg
 Categories=System;Virtualization;
 

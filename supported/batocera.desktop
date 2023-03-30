@@ -3,7 +3,7 @@ Type=Application
 Name=batocera
 releases=32 33 34
 replace="!"
-Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --field="Release:CB" "32"!"33"!"34" | cut -d'|' -f1 | xargs -I{} sh -c "./"quickget batocera {}'
+Exec=sh -c 'cd "/home/zen/git/distrohopper" && yad --form --field="Release:CB" "32"!"33"!"34" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget batocera {}"'
 Icon=/home/zen/git/distrohopper/icons/batocera.svg
 Categories=System;Virtualization;
 

@@ -3,7 +3,7 @@ Type=Application
 Name=truenas-core
 releases=12.0 13.0
 replace="!"
-Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --field="Release:CB" "12.0"!"13.0" | cut -d'|' -f1 | xargs -I{} sh -c "./"quickget truenas-core {}'
+Exec=sh -c 'cd "/home/zen/git/distrohopper" && yad --form --field="Release:CB" "12.0"!"13.0" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget truenas-core {}"'
 Icon=/home/zen/git/distrohopper/icons/truenas-core.svg
 Categories=System;Virtualization;
 

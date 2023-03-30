@@ -4,7 +4,7 @@ Name=miyo
 releases=latest 2022 2020 2019 2018 2017 2016
 editions=kwin ceres jwm openbox mate
 replace="!"
-Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --separator=" " --field="Release:CB" "latest"!"2022"!"2020"!"2019"!"2018"!"2017"!"2016" --field="Edition:CB" "kwin"!"ceres"!"jwm"!"openbox"!"mate" | xargs -I{} sh -c " miyo {}'
+Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --separator=" " --field="Release:CB" "latest"!"2022"!"2020"!"2019"!"2018"!"2017"!"2016" --field="Edition:CB" "kwin"!"ceres"!"jwm"!"openbox"!"mate" | xargs -I{} sh -c "./quickget miyo {}"'
 Icon=/home/zen/git/distrohopper/icons/tux.svg
 Categories=System;Virtualization;
 

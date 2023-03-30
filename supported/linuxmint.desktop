@@ -4,7 +4,7 @@ Name=linuxmint
 releases=20.2 20.3 21 21.1
 editions=cinnamon mate xfce
 replace="!"
-Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --separator=" " --field="Release:CB" "20.2"!"20.3"!"21"!"21.1" --field="Edition:CB" "cinnamon"!"mate"!"xfce" | xargs -I{} sh -c " linuxmint {}'
+Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --separator=" " --field="Release:CB" "20.2"!"20.3"!"21"!"21.1" --field="Edition:CB" "cinnamon"!"mate"!"xfce" | xargs -I{} sh -c "./quickget linuxmint {}"'
 Icon=/home/zen/git/distrohopper/icons/linuxmint.svg
 Categories=System;Virtualization;
 

@@ -3,7 +3,7 @@ Type=Application
 Name=netboot
 releases=latest
 replace="!"
-Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --field="Release:CB" "latest" | cut -d'|' -f1 | xargs -I{} sh -c "./"quickget netboot {}'
+Exec=sh -c 'cd "/home/zen/git/distrohopper" && yad --form --field="Release:CB" "latest" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget netboot {}"'
 Icon=/home/zen/git/distrohopper/icons/netboot.svg
 Categories=System;Virtualization;
 

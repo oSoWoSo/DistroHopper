@@ -3,7 +3,7 @@ Type=Application
 Name=kdeneon
 releases=user testing unstable developer
 replace="!"
-Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --field="Release:CB" "user"!"testing"!"unstable"!"developer" | cut -d'|' -f1 | xargs -I{} sh -c "./"quickget kdeneon {}'
+Exec=sh -c 'cd "/home/zen/git/distrohopper" && yad --form --field="Release:CB" "user"!"testing"!"unstable"!"developer" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget kdeneon {}"'
 Icon=/home/zen/git/distrohopper/icons/kdeneon.svg
 Categories=System;Virtualization;
 

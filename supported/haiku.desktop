@@ -4,7 +4,7 @@ Name=haiku
 releases=r1beta3 r1beta4
 editions=x86_64 x86_gcc2h
 replace="!"
-Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --separator=" " --field="Release:CB" "r1beta3"!"r1beta4" --field="Edition:CB" "x86_64"!"x86_gcc2h" | xargs -I{} sh -c " haiku {}'
+Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --separator=" " --field="Release:CB" "r1beta3"!"r1beta4" --field="Edition:CB" "x86_64"!"x86_gcc2h" | xargs -I{} sh -c "./quickget haiku {}"'
 Icon=/home/zen/git/distrohopper/icons/haiku.png
 Categories=System;Virtualization;
 

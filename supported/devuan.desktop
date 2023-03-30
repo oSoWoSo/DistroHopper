@@ -3,7 +3,7 @@ Type=Application
 Name=devuan
 releases=beowulf chimaera
 replace="!"
-Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --field="Release:CB" "beowulf"!"chimaera" | cut -d'|' -f1 | xargs -I{} sh -c "./"quickget devuan {}'
+Exec=sh -c 'cd "/home/zen/git/distrohopper" && yad --form --field="Release:CB" "beowulf"!"chimaera" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget devuan {}"'
 Icon=/home/zen/git/distrohopper/icons/devuan.svg
 Categories=System;Virtualization;
 

@@ -3,7 +3,7 @@ Type=Application
 Name=kali
 releases=current kali-weekly
 replace="!"
-Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --field="Release:CB" "current"!"kali-weekly" | cut -d'|' -f1 | xargs -I{} sh -c "./"quickget kali {}'
+Exec=sh -c 'cd "/home/zen/git/distrohopper" && yad --form --field="Release:CB" "current"!"kali-weekly" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget kali {}"'
 Icon=/home/zen/git/distrohopper/icons/kali.svg
 Categories=System;Virtualization;
 

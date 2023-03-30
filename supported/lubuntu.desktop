@@ -3,7 +3,7 @@ Type=Application
 Name=lubuntu
 releases=16.04 18.04 20.04 22.04 22.10 jammy-daily daily-live daily-canary
 replace="!"
-Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --field="Release:CB" "16.04"!"18.04"!"20.04"!"22.04"!"22.10"!"jammy-daily"!"daily-live"!"daily-canary" | cut -d'|' -f1 | xargs -I{} sh -c "./"quickget lubuntu {}'
+Exec=sh -c 'cd "/home/zen/git/distrohopper" && yad --form --field="Release:CB" "16.04"!"18.04"!"20.04"!"22.04"!"22.10"!"jammy-daily"!"daily-live"!"daily-canary" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget lubuntu {}"'
 Icon=/home/zen/git/distrohopper/icons/lubuntu.svg
 Categories=System;Virtualization;
 

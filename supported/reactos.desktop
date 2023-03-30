@@ -3,7 +3,7 @@ Type=Application
 Name=reactos
 releases=latest
 replace="!"
-Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --field="Release:CB" "latest" | cut -d'|' -f1 | xargs -I{} sh -c "./"quickget reactos {}'
+Exec=sh -c 'cd "/home/zen/git/distrohopper" && yad --form --field="Release:CB" "latest" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget reactos {}"'
 Icon=/home/zen/git/distrohopper/icons/reactos.svg
 Categories=System;Virtualization;
 

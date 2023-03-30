@@ -3,7 +3,7 @@ Type=Application
 Name=openbsd
 releases=6.8 6.9 7.0 7.1 7.2 7.3
 replace="!"
-Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --field="Release:CB" "6.8"!"6.9"!"7.0"!"7.1"!"7.2"!"7.3" | cut -d'|' -f1 | xargs -I{} sh -c "./"quickget openbsd {}'
+Exec=sh -c 'cd "/home/zen/git/distrohopper" && yad --form --field="Release:CB" "6.8"!"6.9"!"7.0"!"7.1"!"7.2"!"7.3" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget openbsd {}"'
 Icon=/home/zen/git/distrohopper/icons/openbsd.svg
 Categories=System;Virtualization;
 

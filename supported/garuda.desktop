@@ -3,7 +3,7 @@ Type=Application
 Name=garuda
 releases=latest
 replace="!"
-Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --field="Release:CB" "latest" | cut -d'|' -f1 | xargs -I{} sh -c "./"quickget garuda {}'
+Exec=sh -c 'cd "/home/zen/git/distrohopper" && yad --form --field="Release:CB" "latest" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget garuda {}"'
 Icon=/home/zen/git/distrohopper/icons/garuda.svg
 Categories=System;Virtualization;
 

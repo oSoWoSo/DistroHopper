@@ -4,7 +4,7 @@ Name=arcolinux
 releases=v21.09.11 v21.11.05 v22.01.10
 editions=large small
 replace="!"
-Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --separator=" " --field="Release:CB" "v21.09.11"!"v21.11.05"!"v22.01.10" --field="Edition:CB" "large"!"small" | xargs -I{} sh -c " arcolinux {}'
+Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --separator=" " --field="Release:CB" "v21.09.11"!"v21.11.05"!"v22.01.10" --field="Edition:CB" "large"!"small" | xargs -I{} sh -c "./quickget arcolinux {}"'
 Icon=/home/zen/git/distrohopper/icons/arcolinux.svg
 Categories=System;Virtualization;
 

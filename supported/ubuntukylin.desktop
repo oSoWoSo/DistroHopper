@@ -3,7 +3,7 @@ Type=Application
 Name=ubuntukylin
 releases=16.04 18.04 20.04 22.04 22.10 jammy-daily daily-live daily-canary
 replace="!"
-Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --field="Release:CB" "16.04"!"18.04"!"20.04"!"22.04"!"22.10"!"jammy-daily"!"daily-live"!"daily-canary" | cut -d'|' -f1 | xargs -I{} sh -c "./"quickget ubuntukylin {}'
+Exec=sh -c 'cd "/home/zen/git/distrohopper" && yad --form --field="Release:CB" "16.04"!"18.04"!"20.04"!"22.04"!"22.10"!"jammy-daily"!"daily-live"!"daily-canary" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget ubuntukylin {}"'
 Icon=/home/zen/git/distrohopper/icons/ubuntukylin.svg
 Categories=System;Virtualization;
 

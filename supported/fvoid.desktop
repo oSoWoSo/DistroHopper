@@ -4,7 +4,7 @@ Name=fvoid
 releases=latest 20230222 20230124 20221021 20220818
 editions=lxqt
 replace="!"
-Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --separator=" " --field="Release:CB" "latest"!"20230222"!"20230124"!"20221021"!"20220818" --field="Edition:CB" "lxqt" | xargs -I{} sh -c " fvoid {}'
+Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --separator=" " --field="Release:CB" "latest"!"20230222"!"20230124"!"20221021"!"20220818" --field="Edition:CB" "lxqt" | xargs -I{} sh -c "./quickget fvoid {}"'
 Icon=/home/zen/git/distrohopper/icons/tux.svg
 Categories=System;Virtualization;
 

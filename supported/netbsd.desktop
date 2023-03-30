@@ -3,7 +3,7 @@ Type=Application
 Name=netbsd
 releases=9.0 9.1 9.2 9.3
 replace="!"
-Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --field="Release:CB" "9.0"!"9.1"!"9.2"!"9.3" | cut -d'|' -f1 | xargs -I{} sh -c "./"quickget netbsd {}'
+Exec=sh -c 'cd "/home/zen/git/distrohopper" && yad --form --field="Release:CB" "9.0"!"9.1"!"9.2"!"9.3" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget netbsd {}"'
 Icon=/home/zen/git/distrohopper/icons/netbsd.svg
 Categories=System;Virtualization;
 

@@ -3,7 +3,7 @@ Type=Application
 Name=deepin
 releases=20 20.1 20.2 20.2.1 20.2.2 20.2.3 20.2.4 20.3 20.4 20.5 20.6 20.7
 replace="!"
-Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --field="Release:CB" "20"!"20.1"!"20.2"!"20.2.1"!"20.2.2"!"20.2.3"!"20.2.4"!"20.3"!"20.4"!"20.5"!"20.6"!"20.7" | cut -d'|' -f1 | xargs -I{} sh -c "./"quickget deepin {}'
+Exec=sh -c 'cd "/home/zen/git/distrohopper" && yad --form --field="Release:CB" "20"!"20.1"!"20.2"!"20.2.1"!"20.2.2"!"20.2.3"!"20.2.4"!"20.3"!"20.4"!"20.5"!"20.6"!"20.7" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget deepin {}"'
 Icon=/home/zen/git/distrohopper/icons/deepin.svg
 Categories=System;Virtualization;
 

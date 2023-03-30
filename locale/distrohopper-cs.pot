@@ -74,12 +74,12 @@ msgid "\\tr\\tready\\t\\t\\tUpdate ready to run VMs\\n"
 msgstr "\\tr\\tready\\t\\t\\tAktualizovat připravené VM\\n"
 
 #: dh:37
-msgid "\\tt\\ttui\\t\\t\\tRun TUI\\n"
-msgstr "\\tt\\ttui\\t\\t\\tSpustit terminálové uživatelské rozhranní\\n"
+msgid "\\tt\\ttui\\t\\t\\tRun terminal user interface (TUI)\\n"
+msgstr "\\tt\\ttui\\t\\t\\tSpustit uživatelské rozhranní v terminálu (TUI)\\n"
 
 #: dh:38
-msgid "\\tg\\tgui\\t\\t\\tRun GUI\\n"
-msgstr "\\tg\\tgui\\t\\t\\tSpustit grafické uživatelské rozhranní\\n"
+msgid "\\tg\\tgui\\t\\t\\tRun graphical user interface (GUI)\\n"
+msgstr "\\tg\\tgui\\t\\t\\tSpustit grafické uživatelské rozhranní (GUI)\\n"
 
 #: dh:40
 msgid "\\ta\\tadd\\t\\t\\tAdd new distro to quickget\\n"
@@ -127,7 +127,7 @@ msgstr "vytvářím adresář konfigurace..."
 
 #: dh:103
 msgid "creating icons dir as root..."
-msgstr "vytvářím adresář ikon jako superuživatel..."
+msgstr "vytvářím adresář ikon jako správce..."
 
 #: dh:147
 msgid "Copying icons..."
@@ -190,8 +190,8 @@ msgid "\\n Starting %s...\\n\\n"
 msgstr "\\n Začínám %s...\\n\\n"
 
 #: dh:420
-msgid "Which language change? [en,cs]"
-msgstr "Který jazyk upravit? [en,cs]"
+msgid "Which language change? (en/cs)"
+msgstr "Který jazyk upravit? (en/cs)"
 
 #: dh:421
 msgid "If you want create new one, insert two digit language code..."
@@ -214,53 +214,57 @@ msgid "Generating .mo file..."
 msgstr "Vytvářím soubor .mo..."
 
 #: dh:430
+msgid "Do you want copy $lang translation to '/usr/share/local' as root? (y/n)"
+msgstr "Chcete zkopírovat $lang překlad do '/usr/share/local' jako správce? (a/n)"
+
+#: dh:433
 msgid "Copying translation to '/usr/share/local'..."
 msgstr "Kopíruji překlad do '/usr/share/local'..."
 
-#: dh:437
+#: dh:442
 msgid "No argumet provided!\\n\\n"
 msgstr "Nezadali jste žádný argument!\\n\\n"
 
-#: dh:454
+#: dh:459
 msgid "Starting installation..."
 msgstr "Zahajuji instalaci..."
 
-#: dh:459
+#: dh:464
 msgid "Switching to portable mode!"
 msgstr "Přepínám do přenosného módu!"
 
-#: dh:464
+#: dh:469
 msgid "Updating supported VMs..."
 msgstr "Aktualizuji podporované VM..."
 
-#: dh:469
+#: dh:474
 msgid "Updating ready VMs..."
 msgstr "Aktualizuji připravené VM..."
 
-#: dh:474
-msgid "Running TUI..."
-msgstr "Spouštím TUI..."
-
 #: dh:479
+msgid "Running DistroHopper TUI..."
+msgstr "Spouštím DistroHopper TUI..."
+
+#: dh:484
 msgid "Starting DistroHopper GUI..."
 msgstr "Spouštím DistroHopper GUI..."
 
-#: dh:484
+#: dh:489
 msgid "Adding new distro started..."
 msgstr "Přidání nového distra zahájeno..."
 
-#: dh:489
+#: dh:494
 msgid "Sorting functions in template..."
 msgstr "Srovnávám funkce v šabloně..."
 
-#: dh:494
+#: dh:499
 msgid "Pushing changes to... #TODO"
 msgstr "Posílám změny do... #UDELAT"
 
-#: dh:499
+#: dh:504
 msgid "Copying ISOs to dir. It will take some time..."
 msgstr "Kopíruji soubory ISO do adresáře. Zabere to nějaký čas..."
 
-#: dh:508
+#: dh:513
 msgid "Invalid option: $1"
 msgstr "Chybný argument: $1"

@@ -4,7 +4,7 @@ Name=lmde
 releases=5
 editions=cinnamon
 replace="!"
-Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --separator=" " --field="Release:CB" "5" --field="Edition:CB" "cinnamon" | xargs -I{} sh -c " lmde {}'
+Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --separator=" " --field="Release:CB" "5" --field="Edition:CB" "cinnamon" | xargs -I{} sh -c "./quickget lmde {}"'
 Icon=/home/zen/git/distrohopper/icons/lmde.svg
 Categories=System;Virtualization;
 
