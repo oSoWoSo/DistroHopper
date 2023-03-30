@@ -4,105 +4,110 @@
 TEXTDOMAIN=distrohopper
 TEXTDOMAINDIR=/usr/share/locale
 export "TEXTDOMAINDIR" "TEXTDOMAIN"
-# bugs notice
-function some_bugs() {
-	echo ""
-	echo $"Done"
-	echo ""
-	echo $"PS: You saw some bugs?"
-	echo $"Could you please provide feedback?"
-	echo $"How do you like DistroHopper?"
-	echo $"What can be improved, added, changed?"
-	echo $" Let me know..."
-	echo ""
-	echo $"Wish you flawless distro hopping..."
-	echo "			zenobit"
-}
 
-function show_help() {
-	echo "DistroHopper v. $version"
-	echo "quickemu v. $("$portable_prefix"quickemu --version)"
-	printf $"\texample for First run from terminal: ./dh i && dh s g\n"
-	echo $"Possible arguments:"
-	printf $"\th\thelp\t\t\tShow this help and exit\n"
-	echo "---------------------------------------------------------"
-	printf $"\td\tdir\t\t\tSet default directory where VMs are stored\n"
-	printf $"\ti\tinstall\t\t\tInstall DistroHopper\n"
-	echo "---------------------------------------------------------"
-	printf $"\tm\tmode\t\t\tPortable mode\n"
-	echo "---------------------------------------------------------"
-	printf $"\ts\tsupported\t\tUpdate supported VMs\n"
-	printf $"\tr\tready\t\t\tUpdate ready to run VMs\n"
-	echo "---------------------------------------------------------"
-	printf $"\tt\ttui\t\t\tRun terminal user interface (TUI)\n"
-	printf $"\tg\tgui\t\t\tRun graphical user interface (GUI)\n"
-	echo "---------------------------------------------------------"
-	printf $"\ta\tadd\t\t\tAdd new distro to quickget\n"
-	printf $"\tf\tfunctions\t\tSort functions in quickget\n"
-	printf $"\tp\tpush\t\t\tPush changed quickget to quickemu project #todo\n"
-	echo "---------------------------------------------------------"
-	printf $"\tc\tcopy\t\t\tCopy all ISOs to target dir (for Ventoy)\n"
-	echo "---------------------------------------------------------"
-	printf $"\tl\tlanguage\t\tTranslate DistroHopper\n"
-	echo "---------------------------------------------------------"
-	echo $"Homepage: dh.osowoso.xyz"
-	echo $"Project hosted at: https://github.com/oSoWoSo/DistroHopper"
-	echo $"Chat group on SimpleX: https://tinyurl.com/7hm4kcjx"
-}
-
-function portable() {
-	[ -f "$DH_CONFIG" ] && mode_installed || mode_portable
-}
-
-function mode_portable() {
-	VMS_DIR="$(pwd)"
-	DH_CONFIG_DIR="$(pwd)"
-	DH_ICON_DIR="$(pwd)/icons"
-	portable_prefix='./'
-	export "VMS_DIR" "DH_CONFIG_DIR" "DH_ICON_DIR" "TERMINAL" "replace" "portable_prefix"
-}
-
-function mode_installed() {
-	# shellcheck source=distrohopper.conf
-	source "$DH_CONFIG"
-	portable_prefix=''
-	export "portable_prefix"
-}
-# installation ---------------------------
-function check_gui_dependencies() {
-	[ -f "$PATH_PREFIX/yad" ] || echo $"Missing yad!"
-}
 trap 'exit' SIGINT SIGTERM SIGQUIT
 set -e
 echo $"DistroHopper is running... Press Ctrl-Q anytime to exit."
 
-function check_tui_dependencies() {
-	[ -f "$PATH_PREFIX/fzf" ] || echo $"Missing fzf!"
-}
+while true
+do
+	function bugs_notice_show() {
+		echo ""
+		echo $"Done"
+		echo ""
+		echo $"PS: You saw some bugs?"
+		echo $"Could you please provide feedback?"
+		echo $"How do you like DistroHopper?"
+		echo $"What can be improved, added, changed?"
+		echo $" Let me know..."
+		echo ""
+		echo $"Wish you flawless distro hopping..."
+		echo "			zenobit"
+	}
 
-function set_variables() {
-	# DEBUG mod
-	#bash -x ./dh 2>&1 | tee output.log
-	#progname="${progname:="${0##*/}"}"
-	progname="DistroHopper"
-	version="0.77b"
-	#GTK_THEME="alt-dialog"
-	DH_CONFIG_DIR="$HOME/.config/distrohopper"
-	DH_CONFIG="$DH_CONFIG_DIR/distrohopper.conf"
-	DH_ICON_DIR="/usr/share/icons/distrohopper"
-	PATH_PREFIX="/usr/bin/"
-	TMP_DIR="/tmp"
-	TERMINAL="sakura"
-	replace='"!"'
-	export "DH_CONFIG_DIR" "DH_CONFIG" "replace" "DH_ICON_DIR" "PATH_PREFIX" "TMP_DIR" "TERMINAL"
-	portable
-	# Set traps to catch the signals and exit gracefully
-	trap "exit" INT
-	trap "exit" EXIT
-}
+	function help_show() {
+		echo "DistroHopper v. $version"
+		echo "quickemu v. $("$portable_prefix"quickemu --version)"
+		printf $"\texample for First run from terminal: ./dh i && dh s g\n"
+		echo $"Possible arguments:"
+		printf $"\th\thelp\t\t\tShow this help and exit\n"
+		echo "---------------------------------------------------------"
+		printf $"\td\tdir\t\t\tSet default directory where VMs are stored\n"
+		printf $"\ti\tinstall\t\t\tInstall DistroHopper\n"
+		echo "---------------------------------------------------------"
+		printf $"\tm\tmode\t\t\tPortable mode\n"
+		echo "---------------------------------------------------------"
+		printf $"\ts\tsupported\t\tUpdate supported VMs\n"
+		printf $"\tr\tready\t\t\tUpdate ready to run VMs\n"
+		echo "---------------------------------------------------------"
+		printf $"\tt\ttui\t\t\tRun terminal user interface (TUI)\n"
+		printf $"\tg\tgui\t\t\tRun graphical user interface (GUI)\n"
+		echo "---------------------------------------------------------"
+		printf $"\ta\tadd\t\t\tAdd new distro to quickget\n"
+		printf $"\tf\tfunctions\t\tSort functions in quickget\n"
+		printf $"\tp\tpush\t\t\tPush changed quickget to quickemu project #todo\n"
+		echo "---------------------------------------------------------"
+		printf $"\tc\tcopy\t\t\tCopy all ISOs to target dir (for Ventoy)\n"
+		echo "---------------------------------------------------------"
+		printf $"\tl\tlanguage\t\tTranslate DistroHopper\n"
+		echo "---------------------------------------------------------"
+		echo $"Homepage: dh.osowoso.xyz"
+		echo $"Project hosted at: https://github.com/oSoWoSo/DistroHopper"
+		echo $"Chat group on SimpleX: https://tinyurl.com/7hm4kcjx"
+	}
 
-function create_desktop_entry() {
-	cat <<EOF > ${DESKTOP_FILE}
+	function check_and_set_mode() {
+		[ -f "$DH_CONFIG" ] && work_in_choosed_dir || work_in_current_dir
+	}
+
+	function work_in_current_dir() {
+		VMS_DIR="$(pwd)"
+		DH_CONFIG_DIR="$(pwd)"
+		DH_ICON_DIR="$(pwd)/icons"
+		portable_prefix='./'
+		export "VMS_DIR" "DH_CONFIG_DIR" "DH_ICON_DIR" "TERMINAL" "replace" "portable_prefix"
+	}
+
+	function work_in_choosed_dir() {
+		# shellcheck source=distrohopper.conf
+		source "$DH_CONFIG"
+		portable_prefix=''
+		export "portable_prefix"
+	}
+
+	# installation ---------------------------
+
+	function gui_dependencies_check() {
+		[ -f "$PATH_PREFIX/yad" ] || echo $"Missing yad!"
+	}
+
+	function tui_dependencies_check() {
+		[ -f "$PATH_PREFIX/fzf" ] || echo $"Missing fzf!"
+	}
+
+	function variables_set() {
+		# DEBUG mod
+		#bash -x ./dh 2>&1 | tee output.log
+		#progname="${progname:="${0##*/}"}"
+		progname="DistroHopper"
+		version="0.77b"
+		#GTK_THEME="alt-dialog"
+		DH_CONFIG_DIR="$HOME/.config/distrohopper"
+		DH_CONFIG="$DH_CONFIG_DIR/distrohopper.conf"
+		DH_ICON_DIR="/usr/share/icons/distrohopper"
+		PATH_PREFIX="/usr/bin/"
+		TMP_DIR="/tmp"
+		TERMINAL="sakura"
+		replace='"!"'
+		export "DH_CONFIG_DIR" "DH_CONFIG" "replace" "DH_ICON_DIR" "PATH_PREFIX" "TMP_DIR" "TERMINAL"
+		check_and_set_mode
+		# Set traps to catch the signals and exit gracefully
+		trap "exit" INT
+		trap "exit" EXIT
+	}
+
+	function desktop_entry_create() {
+		cat <<EOF > ${DESKTOP_FILE}
 [Desktop Entry]
 Version=$version
 Type=$type
@@ -120,247 +125,266 @@ MimeType=$mime
 Keywords=$keyword
 
 EOF
-}
+	}
 
-function create_structure() {
-	source distrohopper.conf
-	echo $"creating config dir..."
-	mkdir -p "$DH_CONFIG_DIR"
-	echo $"creating icons dir as root..."
-	mkdir -p "$DH_ICON_DIR" >/dev/null 2>&1 || sudo mkdir -p "$DH_ICON_DIR"
-}
+	function directory_structure_create() {
+		source distrohopper.conf
+		echo $"creating config dir..."
+		mkdir -p "$DH_CONFIG_DIR"
+		echo $"creating icons dir as root..."
+		mkdir -p "$DH_ICON_DIR" >/dev/null 2>&1 || sudo mkdir -p "$DH_ICON_DIR"
+	}
 
-function dh_desktop_entry() {
-	echo $"Do you want DistroHopper to run in the terminal? (y/n)"
-	run_in_terminal
-	if [ "$interminal" == "yes" ]; then
-		cat <<EOF > ${TMP_DIR}/dh.desktop
-[Desktop Entry]
-Type=Application
-Name=DistroHopper
-Description=Quickly download, create and run VM of any#TODO operating system.
-version=0.77b
-Terminal=true
-Exec=sh -c 'cd ${VMS_DIR} && dh g'
-Icon=/home/zen/git/distrohopper/icons/hop
-Categories=System;Virtualization;
+	function desktop_entry_distrohopper() {
+		echo $"Do you want DistroHopper to run in the terminal? (y/n)"
+		run_in_terminal
+		DESKTOP_FILE="${TMP_DIR}/dh.desktop"
+		type='Application'
+		name='DistroHopper'
+		comment='Quickly download, create and run VM of any#TODO operating system.'
+		version='0.77b'
+		execmd="sh -c 'cd ${VMS_DIR} && dh g'"
+		if [ "$interminal" == "yes" ]; then
+			terminal='true'
+		fi
+		icon='hop'
+		categories='System;Virtualization;'
+		desktop_entry_create
+		sudo cp ${TMP_DIR}/dh.desktop /usr/share/applications/
+	}
 
-EOF
-	else
-		cat <<EOF > ${TMP_DIR}/dh.desktop
-[Desktop Entry]
-Type=Application
-Name=DistroHopper
-Description=Quickly download, create and run VM of any#TODO operating system.
-version=0.77b
-Exec=sh -c 'cd ${VMS_DIR} && dh g'
-Icon=/home/zen/git/distrohopper/icons/hop
-Categories=System;Virtualization;
+	function virtual_machines_directory_choose() {
+		NEWDIR="$(yad  --width=900 --height=900 --file --directory --title="Where to save VMs?")"
+		VMS_DIR="$NEWDIR"
+		echo "VMS_DIR=\"$VMS_DIR\"
+		export \"VMS_DIR\"" >> "$DH_CONFIG"
+		export "VMS_DIR"
+	}
 
-EOF
-	fi
-	sudo cp ${TMP_DIR}/dh.desktop /usr/share/applications/
-}
-
-function set_dir() {
-	NEWDIR="$(yad  --width=900 --height=900 --file --directory --title="Where to save VMs?")"
-	VMS_DIR="$NEWDIR"
-	echo "VMS_DIR=\"$VMS_DIR\"
-	export \"VMS_DIR\"" >> "$DH_CONFIG"
-	export "VMS_DIR"
-}
-
-function install_prereq() {
-# Find the current distribution and install dependecies
-	if [ -f /etc/os-release ]; then
-		if grep -q arch /etc/os-release; then
-			sudo pacman -S cdrtools coreutils edk2-ovmf grep jq procps python3 qemu-full sed socat spice-gtk swtpm usbutils util-linux wget xdg-user-dirs xorg-xrandr zsync getext yad fzf
-		elif [[ -f /etc/debian_version ]]; then
-			sudo apt install qemu bash coreutils ovmf grep jq lsb procps python3 genisoimage usbutils util-linux sed spice-client-gtk swtpm wget xdg-user-dirs zsync unzip gettext yad fzf
-		elif grep -q void /etc/os-release; then
-			sudo xbps-install -S qemu bash coreutils grep jq procps-ng python3 util-linux sed spice-gtk swtpm usbutils wget xdg-user-dirs xrandr unzip zsync socat gettext yad fzf
-		elif grep -q fedora /etc/os-release; then
-			sudo dnf install qemu bash coreutils edk2-tools grep jq lsb procps python3 genisoimage usbutils util-linux sed spice-gtk-tools swtpm wget xdg-user-dirs xrandr unzip gettext yad fzf
-		elif grep -q nix /etc/os-release; then
-			echo "#TODO"
-		elif grep -q openSUSE /etc/os-release; then
-			# openSUSE supports dnf, but the default is zypper
-			if hash dnf 2>/dev/null; then
+	function dependencies_install() {
+	# Find the current distribution and install dependecies
+		if [ -f /etc/os-release ]; then
+			if grep -q arch /etc/os-release; then
+				sudo pacman -S cdrtools coreutils edk2-ovmf grep jq procps python3 qemu-full sed socat spice-gtk swtpm usbutils util-linux wget xdg-user-dirs xorg-xrandr zsync getext yad fzf
+			elif [[ -f /etc/debian_version ]]; then
+				sudo apt install qemu bash coreutils ovmf grep jq lsb procps python3 genisoimage usbutils util-linux sed spice-client-gtk swtpm wget xdg-user-dirs zsync unzip gettext yad fzf
+			elif grep -q void /etc/os-release; then
+				sudo xbps-install -S qemu bash coreutils grep jq procps-ng python3 util-linux sed spice-gtk swtpm usbutils wget xdg-user-dirs xrandr unzip zsync socat gettext yad fzf
+			elif grep -q fedora /etc/os-release; then
 				sudo dnf install qemu bash coreutils edk2-tools grep jq lsb procps python3 genisoimage usbutils util-linux sed spice-gtk-tools swtpm wget xdg-user-dirs xrandr unzip gettext yad fzf
+			elif grep -q nix /etc/os-release; then
+				echo "#TODO"
+			elif grep -q openSUSE /etc/os-release; then
+				# openSUSE supports dnf, but the default is zypper
+				if hash dnf 2>/dev/null; then
+					sudo dnf install qemu bash coreutils edk2-tools grep jq lsb procps python3 genisoimage usbutils util-linux sed spice-gtk-tools swtpm wget xdg-user-dirs xrandr unzip gettext yad fzf
+				else
+					echo "ERROR: I currently don't have support for your distro"
+					exit 1
+				fi
 			else
 				echo "ERROR: I currently don't have support for your distro"
 				exit 1
 			fi
+		fi
+	}
+
+	function distrohopper_install() {
+		cp dh quickget quickemu macrecovery windowskey "$PATH_PREFIX" >/dev/null 2>&1 || sudo cp dh quickget quickemu macrecovery windowskey "$PATH_PREFIX"
+		# quickget also to config directory for adding new distros...
+		cp quickget "$DH_CONFIG_DIR/"
+		echo $"Copying icons..."
+		cp icons/* "$DH_ICON_DIR/" >/dev/null 2>&1 || sudo cp icons/* "$DH_ICON_DIR/"
+		echo $"Copying desktop entries and locales..."
+		cp -r ready "$DH_CONFIG_DIR/"
+		cp -r supported "$DH_CONFIG_DIR/"
+		cp -r locale "$DH_CONFIG_DIR/"
+	}
+
+	function installation_process() {
+		tui_dependencies_check
+		gui_dependencies_check
+		#check_quickemu_dependencies
+		echo $"Creating directory structure..." \
+		 && directory_structure_create \
+		 && echo $"Setting up directory..." \
+		 && virtual_machines_directory_choose \
+		 && echo $"Installing needed..." \
+		 && dependencies_install \
+		 && echo $"Installing DistroHopper to bin..." \
+		 && distrohopper_install \
+		 && echo $"Copying desktop entry..." \
+		 && desktop_entry_distrohopper
+	}
+
+	# basic -----------------------------------
+
+	function run_in_terminal() {
+		read -r response
+		if [[ "$response" =~ ^[YyAa]$ ]]; then
+			interminal="yes"
 		else
-			echo "ERROR: I currently don't have support for your distro"
+			interminal="no"
+		fi
+	}
+
+	function virtual_machines_update_ready() {
+		cd "$VMS_DIR" || exit 1
+	#	for files in "$VMS_DIR"/*; do
+	#	if [ ! -e *.conf ]; then
+	#		echo $"No .conf files found"
+	#		return
+	#	fi
+		for vm_conf in *.conf; do
+			if [ "$vm_conf" == "distrohopper.conf" ]; then
+				continue # skip processing distrohopper.conf
+			fi
+			vm_desktop=$(basename "$VMS_DIR/$vm_conf" .conf)
+			# Use fuzzy matching to find the best matching icon file (ready to run VMs)
+			icon_name=$(basename "$VMS_DIR/$vm_conf" .conf | cut -d'-' -f -2)
+			icon_file=$(find "$DH_ICON_DIR" -type f -iname "${icon_name// /}.*")
+			# If no icon was found, try shorter name (ready to run VMs)
+			if [ -z "$icon_file" ]; then
+				icon_name=$(basename "$VMS_DIR/$vm_conf" .conf | cut -d'-' -f1)
+				icon_file=$(find "$DH_ICON_DIR" -type f -iname "${icon_name// /}.*")
+			elif [ -z "$icon_file" ]; then
+				icon_file="$DH_ICON_DIR/tux.svg"
+			fi
+			DESKTOP_FILE="$DH_CONFIG_DIR/ready/$vm_desktop.desktop"
+			type='Application'
+			name="$vm_desktop"
+			comment='Quickly download, create and run VM of any#TODO operating system.'
+			version='0.77b'
+			execmd="sh -c 'cd ${VMS_DIR} && ${portable_prefix}quickemu -vm ${vm_conf}'"
+			icon="$icon_file"
+			categories='System;Virtualization;'
+			desktop_entry_create
+		done
+	}
+
+	function virtual_machines_update_supported() {
+		echo $"Do you want quickget to show outputs in the terminal? (y/n)"
+		run_in_terminal
+		# get supported VMs
+		"$portable_prefix"quickget | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' > "$DH_CONFIG_DIR/supported.md"
+		while read -r get_name; do
+			vm_desktop=$(echo "$get_name" | tr ' ' '_')
+			releases=$("$portable_prefix"quickget "$vm_desktop" | grep 'Releases' | cut -d':' -f2 | sed 's/^ //' | sed 's/ *$//')
+			editions=$("$portable_prefix"quickget "$vm_desktop" | grep 'Editions' | cut -d':' -f2 | sed 's/^ //' | sed 's/ *$//')
+			icon_name="$DH_ICON_DIR/$get_name"
+			if [ -f "$icon_name.svg" ]; then
+				icon_file="$icon_name.svg"
+			elif [ -f "$icon_name.png" ]; then
+				icon_file="$icon_name.png"
+			else
+				icon_file="$DH_ICON_DIR/tux.svg"
+			fi
+			echo $"Creating $vm_desktop desktop entry..."
+			echo ""
+			# Check if there are editions
+			DESKTOP_FILE="$DH_CONFIG_DIR/supported/$vm_desktop.desktop"
+			type='Application'
+			name="$get_name"
+			releases=$releases
+			replace=$replace
+			if [ -z "$editions" ]; then
+				execmd="sh -c 'cd $VMS_DIR && yad --form --field=\"Release:CB\" \"${releases// /$replace}\" | cut -d\'|\' -f1 | xargs -I{} sh -c \"${portable_prefix}quickget $get_name {}\"'"
+			elif [ "$interminal" == "yes" ]; then
+				terminal='true'
+			else
+				editions=$editions
+				execcmd="sh -c 'cd $VMS_DIR && yad --form --separator=\" \" --field=\"Release:CB\" \"${releases// /$replace}\" --field=\"Edition:CB\" \"${editions// /$replace}\" | xargs -I{} sh -c \"${portable_prefix}quickget $get_name {}\"'"
+			fi
+			icon='hop'
+			categories='System;Virtualization;'
+
+			desktop_entry_create
+		done < "$DH_CONFIG_DIR"/supported.md
+	}
+
+	function distrohopper_run_gui() {
+		gui_dependencies_check
+		key=$((RANDOM % 9000 + 1000))
+		yad --plug="$key" --tabnum=1 --monitor --icons --listen --read-dir="$DH_CONFIG_DIR"/ready --sort-by-name --no-buttons --borders=0 --icon-size=46 --item-width=76 &
+		yad --plug="$key" --tabnum=2 --monitor --icons --listen --read-dir="$DH_CONFIG_DIR"/supported --sort-by-name --no-buttons --borders=0 --icon-size=46 --item-width=76 &
+		yad --dynamic --notebook --key="$key" --monitor --listen --window-icon="$DH_ICON_DIR"/hop.svg --width=900 --height=900 --title="DistroHopper" --tab="run VM" --tab="download VM"
+	}
+
+	function distrohopper_run_tui() {
+		tui_dependencies_check
+		tui_run
+		if [ "$todo" = "create" ]; then
+			virtual_machine_create
+			tui_windows
+			tui_get_releases_and_editions
+			tui_get_releases
+			if [ "$(echo "$choices" | wc -l)" = 1 ]; then
+				tui_downloading
+			else
+				tui_get_editions
+				tui_downloading_with_edition
+			fi
+		fi
+		virtual_machine_choose_to_run
+		virtual_machine_run
+	}
+
+	tui_run() {
+		cd "$VMS_DIR" || exit 1
+		vms=(*.conf)
+		printf $" Prepared VMs:\n-------------\n\n"
+		# Check if there are any VMs
+		if [ ${#vms[@]} -eq 0 ]; then
+			echo $"No VMs found."
 			exit 1
 		fi
-	fi
-}
+		# Print the names of the available VMs
+		printf "%s\n" "${vms[@]%.*}"
+		echo "-------------"
+		# Action prompt
+		echo $" Do you want to create a new VM? (c)"
+		printf $"  or run an existing one? (press anything)\n"
+		read -rn 1 -s start
+		case $start in
+			c )
+				todo="create"
+			;;
+		esac
+	}
 
-function install_dh() {
-	cp dh quickget quickemu macrecovery windowskey "$PATH_PREFIX" >/dev/null 2>&1 || sudo cp dh quickget quickemu macrecovery windowskey "$PATH_PREFIX"
-	# quickget also to config directory for adding new distros...
-	cp quickget "$DH_CONFIG_DIR/"
-	echo $"Copying icons..."
-	cp icons/* "$DH_ICON_DIR/" >/dev/null 2>&1 || sudo cp icons/* "$DH_ICON_DIR/"
-	echo $"Copying desktop entries and locales..."
-	cp -r ready "$DH_CONFIG_DIR/"
-	cp -r supported "$DH_CONFIG_DIR/"
-	cp -r locale "$DH_CONFIG_DIR/"
-}
-
-function install_process() {
-	check_tui_dependencies
-	check_gui_dependencies
-	#check_quickemu_dependencies
-	echo $"Creating directory structure..." \
-	 && create_structure \
-	 && echo $"Setting up directory..." \
-	 && set_dir \
-	 && echo $"Installing needed..." \
-	 && install_prereq \
-	 && echo $"Installing DistroHopper to bin..." \
-	 && install_dh \
-	 && echo $"Copying desktop entry..." \
-	 && dh_desktop_entry
-}
-# basic -----------------------------------
-
-function run_in_terminal() {
-	read -r response
-	if [[ "$response" =~ ^[YyAa]$ ]]; then
-		interminal="yes"
-	else
-		interminal="no"
-	fi
-}
-
-function renew_ready() {
-	cd "$VMS_DIR" || exit 1
-#	for files in "$VMS_DIR"/*; do
-#	if [ ! -e *.conf ]; then
-#		echo $"No .conf files found"
-#		return
-#	fi
-	for vm_conf in *.conf; do
-		if [ "$vm_conf" == "distrohopper.conf" ]; then
-			continue # skip processing distrohopper.conf
-		fi
-		vm_desktop=$(basename "$VMS_DIR/$vm_conf" .conf)
-		# Use fuzzy matching to find the best matching icon file (ready to run VMs)
-		icon_name=$(basename "$VMS_DIR/$vm_conf" .conf | cut -d'-' -f -2)
-		icon_file=$(find "$DH_ICON_DIR" -type f -iname "${icon_name// /}.*")
-		# If no icon was found, try shorter name (ready to run VMs)
-		if [ -z "$icon_file" ]; then
-			icon_name=$(basename "$VMS_DIR/$vm_conf" .conf | cut -d'-' -f1)
-			icon_file=$(find "$DH_ICON_DIR" -type f -iname "${icon_name// /}.*")
-		elif [ -z "$icon_file" ]; then
-			icon_file="$DH_ICON_DIR/tux.svg"
-		fi
-		# content of desktop files (ready to run VMs)
-		cat <<EOF > "$DH_CONFIG_DIR"/ready/"$vm_desktop".desktop
-[Desktop Entry]
-Type=Application
-Name=$vm_desktop
-Exec=sh -c 'cd ${VMS_DIR} && ${portable_prefix}quickemu -vm ${vm_conf}'
-Icon=$icon_file
-Categories=System;Virtualization;
-
-EOF
-	done
-}
-
-function renew_supported() {
-	echo $"Do you want quickget to show outputs in the terminal? (y/n)"
-	run_in_terminal
-	# get supported VMs
-	"$portable_prefix"quickget | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' > "$DH_CONFIG_DIR/supported.md"
-	while read -r get_name; do
-		vm_desktop=$(echo "$get_name" | tr ' ' '_')
-		releases=$("$portable_prefix"quickget "$vm_desktop" | grep 'Releases' | cut -d':' -f2 | sed 's/^ //' | sed 's/ *$//')
-		editions=$("$portable_prefix"quickget "$vm_desktop" | grep 'Editions' | cut -d':' -f2 | sed 's/^ //' | sed 's/ *$//')
-		icon_name="$DH_ICON_DIR/$get_name"
-		if [ -f "$icon_name.svg" ]; then
-			icon_file="$icon_name.svg"
-		elif [ -f "$icon_name.png" ]; then
-			icon_file="$icon_name.png"
-		else
-			icon_file="$DH_ICON_DIR/tux.svg"
-		fi
-		echo $"Creating $vm_desktop desktop entry..."
-		echo ""
-		# Check if there are editions
-		if [ -z "$editions" ]; then
-			cat <<EOF > "$DH_CONFIG_DIR"/supported/"$vm_desktop".desktop
-[Desktop Entry]
-Type=Application
-Name=$get_name
-releases=$releases
-replace=$replace
-Exec=sh -c 'cd "$VMS_DIR" && yad --form --field="Release:CB" "${releases// /$replace}" | cut -d"|" -f1 | xargs -I{} sh -c "${portable_prefix}quickget $get_name {}"'
-Icon=$icon_file
-Categories=System;Virtualization;
-
-EOF
-		else
-			cat <<EOF > "$DH_CONFIG_DIR"/supported/"$vm_desktop".desktop
-[Desktop Entry]
-Type=Application
-Name=$get_name
-releases=$releases
-editions=$editions
-replace=$replace
-Exec=sh -c 'cd $VMS_DIR && yad --form --separator=" " --field="Release:CB" "${releases// /$replace}" --field="Edition:CB" "${editions// /$replace}" | xargs -I{} sh -c "${portable_prefix}quickget $get_name {}"'
-Icon=$icon_file
-Categories=System;Virtualization;
-
-EOF
-		fi
-	done < "$DH_CONFIG_DIR"/supported.md
-}
-
-function run_gui() {
-	check_gui_dependencies
-	key=$((RANDOM % 9000 + 1000))
-	yad --plug="$key" --tabnum=1 --monitor --icons --listen --read-dir="$DH_CONFIG_DIR"/ready --sort-by-name --no-buttons --borders=0 --icon-size=46 --item-width=76 &
-	yad --plug="$key" --tabnum=2 --monitor --icons --listen --read-dir="$DH_CONFIG_DIR"/supported --sort-by-name --no-buttons --borders=0 --icon-size=46 --item-width=76 &
-	yad --dynamic --notebook --key="$key" --monitor --listen --window-icon="$DH_ICON_DIR"/hop.svg --width=900 --height=900 --title="DistroHopper" --tab="run VM" --tab="download VM"
-}
-
-function run_tui() {
-	check_tui_dependencies
-	cd "$VMS_DIR" || exit 1
-	vms=(*.conf)
-	printf $" Prepared VMs:\n-------------\n\n"
-	# Check if there are any VMs
-	if [ ${#vms[@]} -eq 0 ]; then
-		echo $"No VMs found."
-		exit 1
-	fi
-	# Print the names of the available VMs
-	printf "%s\n" "${vms[@]%.*}"
-	echo "-------------"
-	# Action prompt
-	echo $" Do you want to create a new VM? (c)"
-	printf $"  or run an existing one? (press anything)\n"
-	read -rn 1 -s start
-	case $start in
-		c )
-			todo="create"
-		;;
-	esac
-
-	# If the user chose to create a new VM
-	if [ "$todo" = "create" ]; then
+	virtual_machine_create() {
 		os=$("$portable_prefix"quickget | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' | fzf --cycle --header='Choose OS to download
  or CTRL-c or ESC to quit')
+	}
 
-		# If the OS is Windows
+	tui_get_releases_and_editions() {
+		choices=$("$portable_prefix"quickget "$os" | sed 1d)
+	}
+
+	tui_get_releases() {
+		release=$(echo "$choices" | grep 'Releases' | cut -d':' -f2 | grep -o '[^ ]*' | fzf --cycle --header='Choose Release
+ or CTRL-c or ESC to quit')
+	}
+
+	tui_get_editions() {
+		edition=$(echo "$choices" | grep 'Editions' | cut -d':' -f2 | grep -o '[^ ]*' | fzf --cycle --header='Choose Edition
+ or CTRL-c or ESC to quit')
+	}
+
+	tui_downloading() {
+		printf $"\n Trying to download %s %s...\n\n" "$os" "$release"
+		"$portable_prefix"quickget "$os" "$release"
+	}
+
+	tui_downloading_with_edition() {
+		printf $"\n Trying to download %s %s %s...\n\n" "$os" "$release" "$edition"
+		"$portable_prefix"quickget "$os" "$release" "$edition"
+	}
+
+	tui_windows() {
 		if [ "$os" = windows ]; then
 			answer=$(echo "Default English
 Choose other language" | fzf --cycle)
-
 			# If the user wants another windows language
 			if [ "$answer" = "Choose other language" ]; then
 				wrelease=$(echo "8
@@ -379,63 +403,38 @@ Choose other language" | fzf --cycle)
 				"$portable_prefix"quickget "windows" "$wrelease" "$wlang"
 			fi
 		fi
+	}
 
-		# Get the release and edition to download, if necessary
-		choices=$("$portable_prefix"quickget "$os" | sed 1d)
-
-		if [ "$(echo "$choices" | wc -l)" = 1 ]; then
-
-			# get release
-			release=$(echo "$choices" | grep 'Releases' | cut -d':' -f2 | grep -o '[^ ]*' | fzf --cycle --header='Choose Release
+	virtual_machine_choose_to_run() {
+		choosed=$(echo "$(ls ***.conf 2>/dev/null | sed 's/\.conf$//')" | fzf --cycle --header='Choose VM to run
  or CTRL-c or ESC to quit')
+	}
 
-			# downloading
-			printf $"\n Trying to download %s %s...\n\n" "$os" "$release"
-			"$portable_prefix"quickget "$os" "$release"
-		else
+	virtual_machine_run() {
+			printf $"\n Starting %s...\n\n" "$choosed"
+			"$portable_prefix"quickemu -vm "$choosed.conf"
+	}
 
-			# get release
-			release=$(echo "$choices" | grep 'Releases' | cut -d':' -f2 | grep -o '[^ ]*' | fzf --cycle --header='Choose Release
- or CTRL-c or ESC to quit')
+	# more
 
-			# get edition
-			edition=$(echo "$choices" | grep 'Editions' | cut -d':' -f2 | grep -o '[^ ]*' | fzf --cycle --header='Choose Edition
- or CTRL-c or ESC to quit')
+	function isos_copy_to_dir() {
+		yad  --width=900 --height=900 --file --directory > target
+		cd "$VMS_DIR" || exit 1
+		# shellcheck disable=2154
+		cp ./*glob*/*.iso "$target"
+	}
+	# shellcheck disable=2086
+	function add_distro() {
+		yad --form --field="Pretty name" "" --field="Name" "" --field="Releases" "" --field="Editions" "" --field="URL" "" --field="ISO" "" --field="Checksum file" "" > ${TMP_DIR}/template.tmp
+		PRETTY_NAME="$(cat ${TMP_DIR}/template.tmp | cut -d'|' -f1)"
+		NAME="$(cat ${TMP_DIR}/template.tmp | cut -d'|' -f2)"
+		RELEASES="$(cat ${TMP_DIR}/template.tmp | cut -d'|' -f3)"
+		EDITIONS="$(cat ${TMP_DIR}/template.tmp | cut -d'|' -f4)"
+		URL="$(cat ${TMP_DIR}/template.tmp | cut -d'|' -f5)"
+		ISO="$(cat ${TMP_DIR}/template.tmp | cut -d'|' -f6)"
+		CHECKSUM_FILE="$(cat ${TMP_DIR}/template.tmp | cut -d'|' -f7)"
 
-			# downloading
-			printf $"\n Trying to download %s %s %s...\n\n" "$os" "$release" "$edition"
-			"$portable_prefix"quickget "$os" "$release" "$edition"
-		fi
-
-		# choose VM to run
-		choosed=$(echo "$(ls ./***.conf 2>/dev/null | sed 's/\.conf$//')" | fzf --cycle --header='Choose VM to run
- or CTRL-c or ESC to quit')
-
-		# Run choosed VM
-		printf $"\n Starting %s...\n\n" "$choosed"
-		"$portable_prefix"quickemu -vm "$choosed.conf"
-	fi
-}
-
-# more
-function isos_to_dir() {
-	yad  --width=900 --height=900 --file --directory > target
-	cd "$VMS_DIR" || exit 1
-	# shellcheck disable=2154
-	cp ./*glob*/*.iso "$target"
-}
-# shellcheck disable=2086
-function add_distro() {
-	yad --form --field="Pretty name" "" --field="Name" "" --field="Releases" "" --field="Editions" "" --field="URL" "" --field="ISO" "" --field="Checksum file" "" > ${TMP_DIR}/template.tmp
-	PRETTY_NAME="$(cat ${TMP_DIR}/template.tmp | cut -d'|' -f1)"
-	NAME="$(cat ${TMP_DIR}/template.tmp | cut -d'|' -f2)"
-	RELEASES="$(cat ${TMP_DIR}/template.tmp | cut -d'|' -f3)"
-	EDITIONS="$(cat ${TMP_DIR}/template.tmp | cut -d'|' -f4)"
-	URL="$(cat ${TMP_DIR}/template.tmp | cut -d'|' -f5)"
-	ISO="$(cat ${TMP_DIR}/template.tmp | cut -d'|' -f6)"
-	CHECKSUM_FILE="$(cat ${TMP_DIR}/template.tmp | cut -d'|' -f7)"
-
-	cat <<EOF > ${TMP_DIR}/template.tmp
+		cat <<EOF > ${TMP_DIR}/template.tmp
 #32
 
     $NAME)           PRETTY_NAME="$PRETTY_NAME";;
@@ -466,132 +465,135 @@ function get_$NAME() {
 }
 
 EOF
-	echo "Done"
-	meld "${TMP_DIR}"/template.tmp "$DH_CONFIG_DIR"/quickget
-}
+		echo "Done"
+		meld "${TMP_DIR}"/template.tmp "$DH_CONFIG_DIR"/quickget
+	}
 
-function sort_functions() {
-	#TODO
-	# Get the name of the script from the command line argument
-	script_name=$1
-	# Get a list of all the function names in the script
-	function_names=$(grep -oP '^[[:space:]]*function \K\w+' "$script_name")
-	# Sort the function names alphabetically
-	sorted_function_names=$(echo "$function_names" | sort)
-	# Loop through the sorted function names and print the function definitions
-	for function_name in $sorted_function_names
-	do
-		# Print the function definition to stdout
-		grep -A "$(wc -l < "$script_name")" -w "function $function_name" "$script_name"
-	done
-}
+	function sort_functions() {
+		#TODO
+		# Get the name of the script from the command line argument
+		script_name=$1
+		# Get a list of all the function names in the script
+		function_names=$(grep -oP '^[[:space:]]*function \K\w+' "$script_name")
+		# Sort the function names alphabetically
+		sorted_function_names=$(echo "$function_names" | sort)
+		# Loop through the sorted function names and print the function definitions
+		for function_name in $sorted_function_names
+		do
+			# Print the function definition to stdout
+			grep -A "$(wc -l < "$script_name")" -w "function $function_name" "$script_name"
+		done
+	}
 
-function translate() {
-	echo $"Which language change? (en/cs)"
-	echo $"If you want create new one, insert two digit language code..."
-	read lang
-	echo $"Choosed language is: $lang"
-	echo $"Dumping language source..."
-	bash --dump-po-strings dh > "$DH_CONFIG_DIR"/locale/dh-source.pot
-	echo $"Merging changes... (Do it yourself)"
-	meld "$DH_CONFIG_DIR"/locale/dh-source.pot "$DH_CONFIG_DIR"/locale/distrohopper-"$lang".pot
-	echo $"Generating .mo file..."
-	msgfmt -o "$DH_CONFIG_DIR"/locale/distrohopper-"$lang".mo "$DH_CONFIG_DIR"/locale/distrohopper-"$lang".pot
-	echo $"Do you want copy $lang translation to '/usr/share/local' as root? (y/n)"
-	read response
-	if [[ "$response" =~ ^[YyAa]$ ]]; then
-		echo $"Copying translation to '/usr/share/local'..."
-		sudo cp "$DH_CONFIG_DIR"/locale/distrohopper-"$lang".mo /usr/share/locale/"$lang"/LC_MESSAGES/distrohopper.mo
+	function translate() {
+		echo $"Which language change? (en/cs)"
+		echo $"If you want create new one, insert two digit language code..."
+		read lang
+		echo $"Choosed language is: $lang"
+		echo $"Dumping language source..."
+		bash --dump-po-strings dh > "$DH_CONFIG_DIR"/locale/dh-source.pot
+		echo $"Merging changes... (Do it yourself)"
+		meld "$DH_CONFIG_DIR"/locale/dh-source.pot "$DH_CONFIG_DIR"/locale/distrohopper-"$lang".pot
+		echo $"Generating .mo file..."
+		msgfmt -o "$DH_CONFIG_DIR"/locale/distrohopper-"$lang".mo "$DH_CONFIG_DIR"/locale/distrohopper-"$lang".pot
+		echo $"Do you want copy $lang translation to '/usr/share/local' as root? (y/n)"
+		read response
+		if [[ "$response" =~ ^[YyAa]$ ]]; then
+			echo $"Copying translation to '/usr/share/local'..."
+			sudo cp "$DH_CONFIG_DIR"/locale/distrohopper-"$lang".mo /usr/share/locale/"$lang"/LC_MESSAGES/distrohopper.mo
+		fi
+	}
+
+	# run --------------------------------------
+
+	variables_set
+
+	if [[ $# -eq 0 ]]; then
+	    printf $"No argumet provided!\n\n"
+	    help_show
 	fi
-}
 
-# run --------------------------------------
-set_variables
+	while [[ $# -gt 0 ]]
+	do
+		key="$1"
+		case $key in
+			h|help)
+				help_show
+				shift
+				;;
+			d|dir)
+				virtual_machines_directory_choose
+				shift
+				;;
+			i|install)
+				echo $"Starting installation..."
+				installation_process
+				shift
+				;;
+			m|mode)
+				echo $"Switching to portable mode!"
+				work_in_current_dir
+				shift
+				;;
+			s|supported)
+				echo $"Updating supported VMs..."
+				virtual_machines_update_supported
+				shift
+				;;
+			r|ready)
+				echo $"Updating ready VMs..."
+				virtual_machines_update_ready
+				shift
+				;;
+			t|tui)
+				echo $"Running DistroHopper TUI..."
+				distrohopper_run_tui
+				shift
+				;;
+			g|gui)
+				echo $"Starting DistroHopper GUI..."
+				distrohopper_run_gui
+				shift
+				;;
+			a|add)
+				echo $"Adding new distro started..."
+				add_distro
+				shift
+				;;
+			f|functions)
+				echo $"Sorting functions in template..."
+				sort_functions
+				shift
+				;;
+			p|push)
+				echo $"Pushing changes to... #TODO"
+				push_changes
+				shift
+				;;
+			c|copy)
+				echo $"Copying ISOs to dir. It will take some time..."
+				isos_copy_to_dir
+				shift
+				;;
+			l|language)
+				translate
+				shift
+				;;
+			z)
+				run_tui_new
+				shift
+				;;
+			*)
+				echo $"Invalid option: $1"
+				echo ""
+				help_show
+				exit 1
+				;;
+		esac
+	done
 
-if [[ $# -eq 0 ]]; then
-    printf $"No argumet provided!\n\n"
-    show_help
-fi
+	bugs_notice_show
 
-while [[ $# -gt 0 ]]
-do
-	key="$1"
-	case $key in
-		h|help)
-			show_help
-			shift
-			;;
-		d|dir)
-			set_dir
-			shift
-			;;
-		i|install)
-			echo $"Starting installation..."
-			install_process
-			shift
-			;;
-		m|mode)
-			echo $"Switching to portable mode!"
-			mode_portable
-			shift
-			;;
-		s|supported)
-			echo $"Updating supported VMs..."
-			renew_supported
-			shift
-			;;
-		r|ready)
-			echo $"Updating ready VMs..."
-			renew_ready
-			shift
-			;;
-		t|tui)
-			echo $"Running DistroHopper TUI..."
-			run_tui
-			shift
-			;;
-		g|gui)
-			echo $"Starting DistroHopper GUI..."
-			run_gui
-			shift
-			;;
-		a|add)
-			echo $"Adding new distro started..."
-			add_distro
-			shift
-			;;
-		f|functions)
-			echo $"Sorting functions in template..."
-			sort_functions
-			shift
-			;;
-		p|push)
-			echo $"Pushing changes to... #TODO"
-			push_changes
-			shift
-			;;
-		c|copy)
-			echo $"Copying ISOs to dir. It will take some time..."
-			isos_to_dir
-			shift
-			;;
-		l|language)
-			translate
-			shift
-			;;
-		z)
-			WIP
-			shift
-			;;
-		*)
-			echo $"Invalid option: $1"
-			echo ""
-			show_help
-			exit 1
-			;;
-	esac
+	exit 0
+
 done
-
-some_bugs
-
-exit 0
