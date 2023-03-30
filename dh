@@ -168,7 +168,6 @@ function install_process() {
 # basic -----------------------------------
 function renew_ready() {
 	cd "$VMS_DIR" || exit 1
-	rm "$DH_CONFIG_DIR"/ready/*.desktop >/dev/null 2>&1
 #	for files in "$VMS_DIR"/*; do
 #	if [ ! -e *.conf ]; then
 #		echo $"No .conf files found"
@@ -190,19 +189,19 @@ function renew_ready() {
 			icon_file="$DH_ICON_DIR/tux.svg"
 		fi
 		# content of desktop files (ready to run VMs)
-		desktop_file_content="[Desktop Entry]
+		cat <<EOF > "$DH_CONFIG_DIR"/ready/"$vm_desktop".desktop
+[Desktop Entry]
 Type=Application
 Name=$vm_desktop
 Exec=sh -c 'cd ${VMS_DIR} && ${portable_prefix}quickemu -vm ${vm_conf}'
 Icon=$icon_file
-Categories=System;Virtualization;"
-		# create desktop files (ready to run VMs)
-		echo "$desktop_file_content" > "$DH_CONFIG_DIR"/ready/"$vm_desktop".desktop
+Categories=System;Virtualization;
+
+EOF
 	done
 }
 
 function renew_supported() {
-	rm "$DH_CONFIG_DIR"/supported/*.desktop >/dev/null 2>&1
 	# get supported VMs
 	"$portable_prefix"quickget | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' > "$DH_CONFIG_DIR/supported.md"
 	while read -r get_name; do
@@ -221,13 +220,14 @@ function renew_supported() {
 		echo ""
 		# Check if there are editions
 		if [ -z "$editions" ]; then
+# use terminal instead: xargs -I{} $TERMINAL -e "${portable_prefix}quickget $get_name {}"'
 			cat <<EOF > "$DH_CONFIG_DIR"/supported/"$vm_desktop".desktop
 [Desktop Entry]
 Type=Application
 Name=$get_name
 releases=$releases
 replace=$replace
-Exec=sh -c 'cd $VMS_DIR && yad --form --field="Release:CB" "${releases// /$replace}" | cut -d'|' -f1 | xargs -I{} sh -c "$prefixquickget $get_name {}"'
+Exec=sh -c 'cd "$VMS_DIR" && yad --form --field="Release:CB" "${releases// /$replace}" | cut -d"|" -f1 | xargs -I{} sh -c "${portable_prefix}quickget $get_name {}"'
 Icon=$icon_file
 Categories=System;Virtualization;
 
@@ -240,7 +240,7 @@ Name=$get_name
 releases=$releases
 editions=$editions
 replace=$replace
-Exec=sh -c 'cd $VMS_DIR && yad --form --separator=" " --field="Release:CB" "${releases// /$replace}" --field="Edition:CB" "${editions// /$replace}" | xargs -I{} sh -c "$prefixquickget $get_name {}"'
+Exec=sh -c 'cd $VMS_DIR && yad --form --separator=" " --field="Release:CB" "${releases// /$replace}" --field="Edition:CB" "${editions// /$replace}" | xargs -I{} sh -c "${portable_prefix}quickget $get_name {}"'
 Icon=$icon_file
 Categories=System;Virtualization;
 
