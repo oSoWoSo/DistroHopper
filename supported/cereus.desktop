@@ -2,9 +2,9 @@
 Type=Application
 Name=cereus
 releases=latest
-editions=base lxqt xfce
+editions=lxqt xfce
 replace="!"
-Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --separator=" " --field="Release:CB" "latest" --field="Edition:CB" "base"!"lxqt"!"xfce" | xargs -I{} sh -c "./quickget cereus {}"'
+Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --separator=" " --field="Release:CB" "latest" --field="Edition:CB" "lxqt"!"xfce" | xargs -I{} sh -c "./quickget cereus {}"'
 Icon=/home/zen/git/distrohopper/icons/cereus.svg
 Categories=System;Virtualization;
 
