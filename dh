@@ -21,7 +21,7 @@ function some_bugs() {
 
 function show_help() {
 	echo "DistroHopper v. $version"
-	echo "quickemu v. $("$prefix"quickemu --version)"
+	echo "quickemu v. $("$portable_prefix"quickemu --version)"
 	printf $"\texample for First run from terminal: ./dh i && dh s g\n"
 	echo $"Possible arguments:"
 	printf $"\th\thelp\t\t\tShow this help and exit\n"
@@ -58,22 +58,22 @@ function mode_portable() {
 	VMS_DIR="$(pwd)"
 	DH_CONFIG_DIR="$(pwd)"
 	DH_ICON_DIR="$(pwd)/icons"
-	prefix=./
-	export "VMS_DIR" "DH_CONFIG_DIR" "DH_ICON_DIR" "TERMINAL" "replace" "prefix"
+	portable_prefix='./'
+	export "VMS_DIR" "DH_CONFIG_DIR" "DH_ICON_DIR" "TERMINAL" "replace" "portable_prefix"
 }
 
 function mode_installed() {
 	source "$DH_CONFIG"
-	prefix=
-	export "prefix"
+	portable_prefix=''
+	export "portable_prefix"
 }
 # installation ---------------------------
 function check_gui_dependencies() {
-	[ -f "$PREFIX/yad" ] || echo $"Missing yad!"
+	[ -f "$PATH_PREFIX/yad" ] || echo $"Missing yad!"
 }
 
 function check_tui_dependencies() {
-	[ -f "$PREFIX/fzf" ] || echo $"Missing fzf!"
+	[ -f "$PATH_PREFIX/fzf" ] || echo $"Missing fzf!"
 }
 
 function set_variables() {
@@ -86,10 +86,10 @@ function set_variables() {
 	DH_CONFIG_DIR="$HOME/.config/distrohopper"
 	DH_CONFIG="$DH_CONFIG_DIR/distrohopper.conf"
 	DH_ICON_DIR="/usr/share/icons/distrohopper"
-	PREFIX="/usr/bin/"
-	TERMINAL=sakura
+	PATH_PREFIX="/usr/bin/"
+	TERMINAL="sakura"
 	replace='"!"'
-	export "DH_CONFIG_DIR" "DH_CONFIG" "replace" "DH_ICON_DIR" "PREFIX" "TERMINAL"
+	export "DH_CONFIG_DIR" "DH_CONFIG" "replace" "DH_ICON_DIR" "PATH_PREFIX" "TERMINAL"
 	portable
 	# Set traps to catch the signals and exit gracefully
 	trap "exit" INT
@@ -141,7 +141,7 @@ function install_prereq() {
 }
 
 function install_dh() {
-	cp dh quickget quickemu macrecovery windowskey "$PREFIX" >/dev/null 2>&1 || sudo cp dh quickget quickemu macrecovery windowskey "$PREFIX"
+	cp dh quickget quickemu macrecovery windowskey "$PATH_PREFIX" >/dev/null 2>&1 || sudo cp dh quickget quickemu macrecovery windowskey "$PATH_PREFIX"
 	# quickget also to config directory for adding new distros...
 	cp quickget "$DH_CONFIG_DIR/"
 	echo $"Copying icons..."
@@ -193,7 +193,7 @@ function renew_ready() {
 		desktop_file_content="[Desktop Entry]
 Type=Application
 Name=$vm_desktop
-Exec=sh -c 'cd \"$VMS_DIR\" && "$prefix"quickemu -vm $vm_conf'
+Exec=sh -c 'cd ${VMS_DIR} && ${portable_prefix}quickemu -vm ${vm_conf}'
 Icon=$icon_file
 Categories=System;Virtualization;"
 		# create desktop files (ready to run VMs)
@@ -204,11 +204,11 @@ Categories=System;Virtualization;"
 function renew_supported() {
 	rm "$DH_CONFIG_DIR"/supported/*.desktop >/dev/null 2>&1
 	# get supported VMs
-	"$prefix"quickget | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' > "$DH_CONFIG_DIR/supported.md"
+	"$portable_prefix"quickget | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' > "$DH_CONFIG_DIR/supported.md"
 	while read -r get_name; do
 		vm_desktop=$(echo "$get_name" | tr ' ' '_')
-		releases=$("$prefix"quickget "$vm_desktop" | grep 'Releases' | cut -d':' -f2 | sed 's/^ //' | sed 's/ *$//')
-		editions=$("$prefix"quickget "$vm_desktop" | grep 'Editions' | cut -d':' -f2 | sed 's/^ //' | sed 's/ *$//')
+		releases=$("$portable_prefix"quickget "$vm_desktop" | grep 'Releases' | cut -d':' -f2 | sed 's/^ //' | sed 's/ *$//')
+		editions=$("$portable_prefix"quickget "$vm_desktop" | grep 'Editions' | cut -d':' -f2 | sed 's/^ //' | sed 's/ *$//')
 		icon_name="$DH_ICON_DIR/$get_name"
 		if [ -f "$icon_name.svg" ]; then
 			icon_file="$icon_name.svg"
@@ -282,7 +282,7 @@ function run_tui() {
 
 	# If the user chose to create a new VM
 	if [ "$todo" = "create" ]; then
-		os=$("$prefix"quickget | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' | fzf --cycle --header='Choose OS to download
+		os=$("$portable_prefix"quickget | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' | fzf --cycle --header='Choose OS to download
  or CTRL-c or ESC to quit')
 
 		# If the OS is Windows
@@ -297,20 +297,20 @@ Choose other language" | fzf --cycle)
 11" | fzf --cycle)
 
 				# get window language list
-				wlend=$(($(cat "$prefix"quickget | sed '/Arabic/,$!d' | grep -n '}' | cut -d':' -f1 | head -n 1) - 1))
+				wlend=$(($(cat "$portable_prefix"quickget | sed '/Arabic/,$!d' | grep -n '}' | cut -d':' -f1 | head -n 1) - 1))
 
 				# get windows language
-				wlang=$(cat "$prefix"quickget | sed '/Arabic/,$!d' | head -n $wlend | cut -d'=' -f2 | tail -c +2 | head -c -2 | sed 's/^[ \t]*//' | fzf --cycle --header='Choose Language
+				wlang=$(cat "$portable_prefix"quickget | sed '/Arabic/,$!d' | head -n $wlend | cut -d'=' -f2 | tail -c +2 | head -c -2 | sed 's/^[ \t]*//' | fzf --cycle --header='Choose Language
  or CTRL-c or ESC to quit')
 
 				# downloading windows
 				printf $"\n Trying to download Windows %s %s...\n\n" "$wrelease" "$wlang"
-				"$prefix"quickget "windows" "$wrelease" "$wlang"
+				"$portable_prefix"quickget "windows" "$wrelease" "$wlang"
 			fi
 		fi
 
 		# Get the release and edition to download, if necessary
-		choices=$("$prefix"quickget "$os" | sed 1d)
+		choices=$("$portable_prefix"quickget "$os" | sed 1d)
 
 		if [ "$(echo "$choices" | wc -l)" = 1 ]; then
 
@@ -320,7 +320,7 @@ Choose other language" | fzf --cycle)
 
 			# downloading
 			printf $"\n Trying to download %s %s...\n\n" "$os" "$release"
-			"$prefix"quickget "$os" "$release"
+			"$portable_prefix"quickget "$os" "$release"
 		else
 
 			# get release
@@ -333,7 +333,7 @@ Choose other language" | fzf --cycle)
 
 			# downloading
 			printf $"\n Trying to download %s %s %s...\n\n" "$os" "$release" "$edition"
-			"$prefix"quickget "$os" "$release" "$edition"
+			"$portable_prefix"quickget "$os" "$release" "$edition"
 		fi
 
 		# choose VM to run
@@ -342,7 +342,7 @@ Choose other language" | fzf --cycle)
 
 		# Run choosed VM
 		printf $"\n Starting %s...\n\n" "$choosed"
-		"$prefix"quickemu -vm "$choosed.conf"
+		"$portable_prefix"quickemu -vm "$choosed.conf"
 	fi
 }
 
