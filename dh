@@ -571,6 +571,10 @@ do
 			translate
 			shift
 			;;
+		z)
+			WIP
+			shift
+			;;
 		*)
 			echo $"Invalid option: $1"
 			echo ""
