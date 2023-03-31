@@ -310,6 +310,51 @@ EOF
 		yad --dynamic --notebook --key="$key" --monitor --listen --window-icon="$DH_ICON_DIR"/hop.svg --width=900 --height=900 --title="DistroHopper" --tab="run VM" --tab="download VM"
 	}
 
+	function WIP() {
+		#define functions for buttons
+		ABOUT=distrohopper_about
+
+
+
+
+
+		dependencies_check_gui
+		key=$((RANDOM % 9000 + 1000))
+		yad --plug="$key" --tabnum=1 --monitor --icons --listen --read-dir="$DH_CONFIG_DIR"/ready --sort-by-name --borders=0 --icon-size=46 --item-width=76 &
+		yad --plug="$key" --tabnum=2 --monitor --icons --listen --read-dir="$DH_CONFIG_DIR"/supported --sort-by-name --borders=0 --icon-size=46 --item-width=76 &
+		yad --plug="$key" --tabnum=3 --monitor --icons --borders=0 --icon-size=46 --item-width=76 --form --text-align=center \
+ --field="Help!!Show this help and exit":fbtn "$HELP" \
+ --field="Set VMs Directory!!Set default directory where VMs are stored":DIR "$DIR" \
+ --field="!Enter new language string" "${lang:-$lang}" \
+ --field="Install DistroHopper!!Install DistroHopper":fbtn "$INSTALL" \
+ --field="Portable mode!Portable mode":fbtn "$MODE" \
+ --field="Supported!!Update supported VMs":fbtn "$SUPPORTED" \
+ --field="Ready!!Update ready to run VMs":fbtn "$READY" \
+ --field="Tui!!Run terminal user interface (TUI)":fbtn "$TUI" \
+ --field="Add!!Add new distro to quickget":fbtn "$ADD" \
+ --field="Sort!!Sort functions in quickget":fbtn "$SORT" \
+ --field="Push!!Push changed quickget to quickemu project #todo":fbtn "$PUSH" \
+ --field="Copy!!Copy all ISOs to target dir (for Ventoy)":fbtn "$COPY" \
+ --field="Translate DistroHopper!!Translate DistroHopper":fbtn "$TRANSLATE" \
+ --field="Test!!Work in Progress":fbtn "$TEST" \
+ --field="About!!Show info about DistroHopper":fbtn "$ABOUT" \
+ --button="Exit":0 &
+		yad --dynamic --notebook --key="$key" --monitor --listen --no-buttons \
+		--mouse --selectable-labels \
+		--window-icon="$DH_ICON_DIR"/hop.svg --width=900 --height=900 \
+		--title="DistroHopper" --tab="run VM" --tab="download VM" --tab="Options"
+		# posible: --undecorated --fixed ontop --buttons-layout=spread edge start end center --keep-icon-size --image=IMAGE --splash
+		VAR1="$?"
+		echo "  DEBUG: VAR1 = $VAR1"
+		echo $?
+	}
+
+	distrohopper_about() {
+		yad --about --pname=DistroHopper --image="$DH_ICON_DIR"/hop.svg --pversion="$version" \
+		 --copyright=AGPL3 --comments="random comment" --license=ALGPL3 --authors=zenobit --website=dh.osowoso.xyz \
+		 --website-label="oSoWoSo"
+	}
+
 	function distrohopper_run_tui() {
 		dependencies_check_tui
 		tui_run
