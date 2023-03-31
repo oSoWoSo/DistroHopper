@@ -595,7 +595,7 @@ EOF
 				shift
 				;;
 			z)
-				run_tui_new
+				WIP
 				shift
 				;;
 			*)
