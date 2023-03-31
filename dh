@@ -328,7 +328,7 @@ EOF
 				fi
 			fi
 		else
-			virtual_machine_choose_to_run
+			fzf_choose_virtual_machine_to_run
 			virtual_machine_run
 		fi
 	}
@@ -356,35 +356,6 @@ EOF
 		esac
 	}
 
-	virtual_machine_create() {
-		os=$("$portable_prefix"quickget | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' | fzf --cycle --header='Choose OS to download
- or CTRL-c or ESC to quit')
-	}
-
-	tui_get_releases_and_editions() {
-		choices=$("$portable_prefix"quickget "$os" | sed 1d)
-	}
-
-	fzf_choose_release() {
-		release=$(echo "$choices" | grep 'Releases' | cut -d':' -f2 | grep -o '[^ ]*' | fzf --cycle --header='Choose Release
- or CTRL-c or ESC to quit')
-	}
-
-	fzf_choose_edition() {
-		edition=$(echo "$choices" | grep 'Editions' | cut -d':' -f2 | grep -o '[^ ]*' | fzf --cycle --header='Choose Edition
- or CTRL-c or ESC to quit')
-	}
-
-	quickget_download_os_release() {
-		printf $"\n Trying to download %s %s...\n\n" "$os" "$release"
-		"$portable_prefix"quickget "$os" "$release"
-	}
-
-	quickget_download_os_release_edition() {
-		printf $"\n Trying to download %s %s %s...\n\n" "$os" "$release" "$edition"
-		"$portable_prefix"quickget "$os" "$release" "$edition"
-	}
-
 	tui_windows() {
 		fzf_choose_language_windows_other
 		if [ "$answer" = "Choose other language" ]; then
@@ -395,37 +366,68 @@ EOF
 		fi
 	}
 
-	fzf_choose_language_windows_other() {
-		answer=$(echo "Default English
-Choose other language" | fzf --cycle)
+	function fzf_choose_release() {
+		release=$(echo "$releases" | fzf --cycle --header='Choose Release
+ or CTRL-c or ESC to quit')
 	}
 
-	fzf_choose_release_windows() {
+	function fzf_choose_edition() {
+		edition=$(echo "$editions" | fzf --cycle --header='Choose Edition
+ or CTRL-c or ESC to quit')
+	}
+
+	function fzf_choose_release_windows() {
 		wrelease=$(echo "8
 10
 11" | fzf --cycle)
 	}
 
-	quickget_get_windows_languages_list() {
-		wlend=$(($(cat "$portable_prefix"quickget | sed '/Arabic/,$!d' | grep -n '}' | cut -d':' -f1 | head -n 1) - 1))
-}
-
-	fzf_choose_language_windows() {
+	function fzf_choose_language_windows() {
 		wlang=$(cat "$portable_prefix"quickget | sed '/Arabic/,$!d' | head -n $wlend | cut -d'=' -f2 | tail -c +2 | head -c -2 | sed 's/^[ \t]*//' | fzf --cycle --header='Choose Language
  or CTRL-c or ESC to quit')
 }
 
-	quickget_download_windows() {
-		printf $"\n Trying to download Windows %s %s...\n\n" "$wrelease" "$wlang"
-		"$portable_prefix"quickget "windows" "$wrelease" "$wlang"
-}
+	function fzf_choose_language_windows_other() {
+		answer=$(echo "Default English
+Choose other language" | fzf --cycle)
+	}
 
-	virtual_machine_choose_to_run() {
+	function fzf_choose_virtual_machine_to_run() {
 		choosed=$(echo "$(ls ***.conf 2>/dev/null | sed 's/\.conf$//')" | fzf --cycle --header='Choose VM to run
  or CTRL-c or ESC to quit')
 	}
 
-	virtual_machine_run() {
+	function quickget_get_releases_and_editions() {
+		result=$(quickget "$choices" | sed 1d | cut -d':' -f2 | grep -o '[^ ]*')
+		releases=$(echo "$result" | head -1)
+		editions=$(echo "$result" | tail -1)
+	}
+
+	function quickget_get_windows_languages_list() {
+		wlend=$(($(cat "$portable_prefix"quickget | sed '/Arabic/,$!d' | grep -n '}' | cut -d':' -f1 | head -n 1) - 1))
+}
+
+	function quickget_download_os_release() {
+		printf $"\n Trying to download %s %s...\n\n" "$os" "$release"
+		"$portable_prefix"quickget "$os" "$release"
+	}
+
+	function quickget_download_os_release_edition() {
+		printf $"\n Trying to download %s %s %s...\n\n" "$os" "$release" "$edition"
+		"$portable_prefix"quickget "$os" "$release" "$edition"
+	}
+
+	function quickget_download_windows() {
+		printf $"\n Trying to download Windows %s %s...\n\n" "$wrelease" "$wlang"
+		"$portable_prefix"quickget "windows" "$wrelease" "$wlang"
+}
+
+	function virtual_machine_create() {
+		os=$("$portable_prefix"quickget | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' | fzf --cycle --header='Choose OS to download
+ or CTRL-c or ESC to quit')
+	}
+
+	function virtual_machine_run() {
 			printf $"\n Starting %s...\n\n" "$choosed"
 			"$portable_prefix"quickemu -vm "$choosed.conf"
 	}
@@ -438,7 +440,6 @@ Choose other language" | fzf --cycle)
 		# shellcheck disable=2154
 		cp ./*glob*/*.iso "$target"
 	}
-
 	# shellcheck disable=2086
 	function TOOL_quickget_add_distro() {
 		yad --form --field="Pretty name" "" --field="Name" "" --field="Releases" "" --field="Editions" "" --field="URL" "" --field="ISO" "" --field="Checksum file" "" > ${TMP_DIR}/template.tmp
