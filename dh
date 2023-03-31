@@ -77,11 +77,11 @@ do
 
 	# installation ---------------------------
 
-	function gui_dependencies_check() {
+	function dependencies_check_gui() {
 		[ -f "$PATH_PREFIX/yad" ] || echo $"Missing yad!"
 	}
 
-	function tui_dependencies_check() {
+	function dependencies_check_tui() {
 		[ -f "$PATH_PREFIX/fzf" ] || echo $"Missing fzf!"
 	}
 
@@ -202,8 +202,8 @@ EOF
 	}
 
 	function installation_process() {
-		tui_dependencies_check
-		gui_dependencies_check
+		dependencies_check_tui
+		dependencies_check_gui
 		#check_quickemu_dependencies
 		echo $"Creating directory structure..." \
 		 && directory_structure_create \
@@ -211,7 +211,7 @@ EOF
 		 && virtual_machines_directory_choose \
 		 && echo $"Installing needed..." \
 		 && dependencies_install \
-		 && echo $"Installing DistroHopper to bin..." \
+		 && echo $"Installing DistroHopper..." \
 		 && distrohopper_install \
 		 && echo $"Copying desktop entry..." \
 		 && desktop_entry_distrohopper
@@ -303,7 +303,7 @@ EOF
 	}
 
 	function distrohopper_run_gui() {
-		gui_dependencies_check
+		dependencies_check_gui
 		key=$((RANDOM % 9000 + 1000))
 		yad --plug="$key" --tabnum=1 --monitor --icons --listen --read-dir="$DH_CONFIG_DIR"/ready --sort-by-name --no-buttons --borders=0 --icon-size=46 --item-width=76 &
 		yad --plug="$key" --tabnum=2 --monitor --icons --listen --read-dir="$DH_CONFIG_DIR"/supported --sort-by-name --no-buttons --borders=0 --icon-size=46 --item-width=76 &
@@ -311,7 +311,7 @@ EOF
 	}
 
 	function distrohopper_run_tui() {
-		tui_dependencies_check
+		dependencies_check_tui
 		tui_run
 		if [ "$todo" = "create" ]; then
 			virtual_machine_create
@@ -417,14 +417,15 @@ Choose other language" | fzf --cycle)
 
 	# more
 
-	function isos_copy_to_dir() {
+	function TOOL_copy_ISOs_to_dir() {
 		yad  --width=900 --height=900 --file --directory > target
 		cd "$VMS_DIR" || exit 1
 		# shellcheck disable=2154
 		cp ./*glob*/*.iso "$target"
 	}
+
 	# shellcheck disable=2086
-	function add_distro() {
+	function TOOL_quickget_add_distro() {
 		yad --form --field="Pretty name" "" --field="Name" "" --field="Releases" "" --field="Editions" "" --field="URL" "" --field="ISO" "" --field="Checksum file" "" > ${TMP_DIR}/template.tmp
 		PRETTY_NAME="$(cat ${TMP_DIR}/template.tmp | cut -d'|' -f1)"
 		NAME="$(cat ${TMP_DIR}/template.tmp | cut -d'|' -f2)"
@@ -433,7 +434,6 @@ Choose other language" | fzf --cycle)
 		URL="$(cat ${TMP_DIR}/template.tmp | cut -d'|' -f5)"
 		ISO="$(cat ${TMP_DIR}/template.tmp | cut -d'|' -f6)"
 		CHECKSUM_FILE="$(cat ${TMP_DIR}/template.tmp | cut -d'|' -f7)"
-
 		cat <<EOF > ${TMP_DIR}/template.tmp
 #32
 
@@ -469,7 +469,7 @@ EOF
 		meld "${TMP_DIR}"/template.tmp "$DH_CONFIG_DIR"/quickget
 	}
 
-	function sort_functions() {
+	function TOOL_quickget_sort_functions() {
 		#TODO
 		# Get the name of the script from the command line argument
 		script_name=$1
@@ -485,7 +485,7 @@ EOF
 		done
 	}
 
-	function translate() {
+	function TOOL_distrohopper_translate() {
 		echo $"Which language change? (en/cs)"
 		echo $"If you want create new one, insert two digit language code..."
 		read lang
@@ -557,12 +557,12 @@ EOF
 				;;
 			a|add)
 				echo $"Adding new distro started..."
-				add_distro
+				TOOL_quickget_add_distro
 				shift
 				;;
 			f|functions)
 				echo $"Sorting functions in template..."
-				sort_functions
+				TOOL_quickget_sort_functions
 				shift
 				;;
 			p|push)
@@ -572,11 +572,11 @@ EOF
 				;;
 			c|copy)
 				echo $"Copying ISOs to dir. It will take some time..."
-				isos_copy_to_dir
+				TOOL_copy_ISOs_to_dir
 				shift
 				;;
 			l|language)
-				translate
+				TOOL_distrohopper_translate
 				shift
 				;;
 			z)
