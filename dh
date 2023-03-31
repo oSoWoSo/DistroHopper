@@ -395,29 +395,31 @@ EOF
 		fi
 	}
 
-fzf_choose_language_windows_other() {
-	answer=$(echo "Default English
+	fzf_choose_language_windows_other() {
+		answer=$(echo "Default English
 Choose other language" | fzf --cycle)
-}
-if [ "$answer" = "Choose other language" ]; then
-fzf_choose_release_windows() {
-	wrelease=$(echo "8
+	}
+
+	fzf_choose_release_windows() {
+		wrelease=$(echo "8
 10
 11" | fzf --cycle)
+	}
+
+	quickget_get_windows_languages_list() {
+		wlend=$(($(cat "$portable_prefix"quickget | sed '/Arabic/,$!d' | grep -n '}' | cut -d':' -f1 | head -n 1) - 1))
 }
 
-quickget_get_windows_languages_list() {
-	wlend=$(($(cat "$portable_prefix"quickget | sed '/Arabic/,$!d' | grep -n '}' | cut -d':' -f1 | head -n 1) - 1))
-}
-fzf_choose_language_windows() {
-	wlang=$(cat "$portable_prefix"quickget | sed '/Arabic/,$!d' | head -n $wlend | cut -d'=' -f2 | tail -c +2 | head -c -2 | sed 's/^[ \t]*//' | fzf --cycle --header='Choose Language
+	fzf_choose_language_windows() {
+		wlang=$(cat "$portable_prefix"quickget | sed '/Arabic/,$!d' | head -n $wlend | cut -d'=' -f2 | tail -c +2 | head -c -2 | sed 's/^[ \t]*//' | fzf --cycle --header='Choose Language
  or CTRL-c or ESC to quit')
 }
-quickget_download_windows() {
-	printf $"\n Trying to download Windows %s %s...\n\n" "$wrelease" "$wlang"
-	"$portable_prefix"quickget "windows" "$wrelease" "$wlang"
+
+	quickget_download_windows() {
+		printf $"\n Trying to download Windows %s %s...\n\n" "$wrelease" "$wlang"
+		"$portable_prefix"quickget "windows" "$wrelease" "$wlang"
 }
-fi
+
 	virtual_machine_choose_to_run() {
 		choosed=$(echo "$(ls ***.conf 2>/dev/null | sed 's/\.conf$//')" | fzf --cycle --header='Choose VM to run
  or CTRL-c or ESC to quit')
