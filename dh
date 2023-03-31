@@ -75,7 +75,7 @@ do
 		export "portable_prefix"
 	}
 
-	# installation ---------------------------
+# installation ---------------------------------------------------------
 
 	function dependencies_check_gui() {
 		[ -f "$PATH_PREFIX/yad" ] || echo $"Missing yad!"
@@ -217,7 +217,7 @@ EOF
 		 && desktop_entry_distrohopper
 	}
 
-	# basic -----------------------------------
+# basic ----------------------------------------------------------------
 
 	function run_in_terminal() {
 		read -r response
@@ -430,7 +430,7 @@ Choose other language" | fzf --cycle)
 			"$portable_prefix"quickemu -vm "$choosed.conf"
 	}
 
-	# more
+# more -----------------------------------------------------------------
 
 	function TOOL_copy_ISOs_to_dir() {
 		yad  --width=900 --height=900 --file --directory > target
@@ -519,7 +519,7 @@ EOF
 		fi
 	}
 
-	# run --------------------------------------
+# run ------------------------------------------------------------------
 
 	variables_set
 
