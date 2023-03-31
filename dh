@@ -315,18 +315,22 @@ EOF
 		tui_run
 		if [ "$todo" = "create" ]; then
 			virtual_machine_create
-			tui_windows
-			tui_get_releases_and_editions
-			tui_get_releases
-			if [ "$(echo "$choices" | wc -l)" = 1 ]; then
-				tui_downloading
+			if [ "$os" = windows ]; then
+				tui_windows
 			else
-				tui_get_editions
-				tui_downloading_with_edition
+				tui_get_releases_and_editions
+				fzf_choose_release
+				if [ "$(echo "$choices" | wc -l)" = 1 ]; then
+					quickget_download_os_release
+				else
+					fzf_choose_edition
+					quickget_download_os_release_edition
+				fi
 			fi
+		else
+			virtual_machine_choose_to_run
+			virtual_machine_run
 		fi
-		virtual_machine_choose_to_run
-		virtual_machine_run
 	}
 
 	tui_run() {
@@ -361,50 +365,59 @@ EOF
 		choices=$("$portable_prefix"quickget "$os" | sed 1d)
 	}
 
-	tui_get_releases() {
+	fzf_choose_release() {
 		release=$(echo "$choices" | grep 'Releases' | cut -d':' -f2 | grep -o '[^ ]*' | fzf --cycle --header='Choose Release
  or CTRL-c or ESC to quit')
 	}
 
-	tui_get_editions() {
+	fzf_choose_edition() {
 		edition=$(echo "$choices" | grep 'Editions' | cut -d':' -f2 | grep -o '[^ ]*' | fzf --cycle --header='Choose Edition
  or CTRL-c or ESC to quit')
 	}
 
-	tui_downloading() {
+	quickget_download_os_release() {
 		printf $"\n Trying to download %s %s...\n\n" "$os" "$release"
 		"$portable_prefix"quickget "$os" "$release"
 	}
 
-	tui_downloading_with_edition() {
+	quickget_download_os_release_edition() {
 		printf $"\n Trying to download %s %s %s...\n\n" "$os" "$release" "$edition"
 		"$portable_prefix"quickget "$os" "$release" "$edition"
 	}
 
 	tui_windows() {
-		if [ "$os" = windows ]; then
-			answer=$(echo "Default English
-Choose other language" | fzf --cycle)
-			# If the user wants another windows language
-			if [ "$answer" = "Choose other language" ]; then
-				wrelease=$(echo "8
-10
-11" | fzf --cycle)
-
-				# get window language list
-				wlend=$(($(cat "$portable_prefix"quickget | sed '/Arabic/,$!d' | grep -n '}' | cut -d':' -f1 | head -n 1) - 1))
-
-				# get windows language
-				wlang=$(cat "$portable_prefix"quickget | sed '/Arabic/,$!d' | head -n $wlend | cut -d'=' -f2 | tail -c +2 | head -c -2 | sed 's/^[ \t]*//' | fzf --cycle --header='Choose Language
- or CTRL-c or ESC to quit')
-
-				# downloading windows
-				printf $"\n Trying to download Windows %s %s...\n\n" "$wrelease" "$wlang"
-				"$portable_prefix"quickget "windows" "$wrelease" "$wlang"
-			fi
+		fzf_choose_language_windows_other
+		if [ "$answer" = "Choose other language" ]; then
+			fzf_choose_release_windows
+			quickget_get_windows_languages_list
+			fzf_choose_language_windows
+			quickget_download_windows
 		fi
 	}
 
+fzf_choose_language_windows_other() {
+	answer=$(echo "Default English
+Choose other language" | fzf --cycle)
+}
+if [ "$answer" = "Choose other language" ]; then
+fzf_choose_release_windows() {
+	wrelease=$(echo "8
+10
+11" | fzf --cycle)
+}
+
+quickget_get_windows_languages_list() {
+	wlend=$(($(cat "$portable_prefix"quickget | sed '/Arabic/,$!d' | grep -n '}' | cut -d':' -f1 | head -n 1) - 1))
+}
+fzf_choose_language_windows() {
+	wlang=$(cat "$portable_prefix"quickget | sed '/Arabic/,$!d' | head -n $wlend | cut -d'=' -f2 | tail -c +2 | head -c -2 | sed 's/^[ \t]*//' | fzf --cycle --header='Choose Language
+ or CTRL-c or ESC to quit')
+}
+quickget_download_windows() {
+	printf $"\n Trying to download Windows %s %s...\n\n" "$wrelease" "$wlang"
+	"$portable_prefix"quickget "windows" "$wrelease" "$wlang"
+}
+fi
 	virtual_machine_choose_to_run() {
 		choosed=$(echo "$(ls ***.conf 2>/dev/null | sed 's/\.conf$//')" | fzf --cycle --header='Choose VM to run
  or CTRL-c or ESC to quit')
