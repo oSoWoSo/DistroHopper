@@ -59,6 +59,7 @@ truenas-core
 truenas-scale
 ubuntu
 ubuntu-budgie
+ubuntucinnamon
 ubuntukylin
 ubuntu-mate
 ubuntustudio

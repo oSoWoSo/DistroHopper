@@ -75,6 +75,7 @@ function pretty_name() {
     truenas-core)       PRETTY_NAME="TrueNAS Core";;
     truenas-scale)      PRETTY_NAME="TrueNAS Scale";;
     ubuntu-budgie)      PRETTY_NAME="Ubuntu Budgie";;
+    ubuntucinnamon)    PRETTY_NAME="Ubuntu Cinnamon";;
     ubuntukylin)        PRETTY_NAME="Ubuntu Kylin";;
     ubuntu-mate)        PRETTY_NAME="Ubuntu MATE";;
     ubuntustudio)       PRETTY_NAME="Ubuntu Studio";;
@@ -239,6 +240,7 @@ function os_support() {
     truenas-scale \
     ubuntu \
     ubuntu-budgie \
+    ubuntucinnamon \
     ubuntukylin \
     ubuntu-mate \
     ubuntustudio \
@@ -630,7 +632,7 @@ function releases_truenas-scale() {
 
 function releases_ubuntu() {
     local LTS_SUPPORT="14.04 16.04 18.04 20.04 22.04"
-    local INTERIM_SUPPORT="22.10"
+    local INTERIM_SUPPORT="22.10 23.04"
 
     case "${OS}" in
         kubuntu|lubuntu|ubuntukylin|\
@@ -645,14 +647,17 @@ function releases_ubuntu() {
         ubuntu-unity)
         INTERIM_SUPPORT="${INTERIM_SUPPORT}"
         ;;
+        ubuntucinnamon)
+        INTERIM_SUPPORT="${INTERIM_SUPPORT/22.10 /}"
+        ;;
     esac
 
-    INTERIM_SUPPORT="${INTERIM_SUPPORT/22.10 /}"
+    #INTERIM_SUPPORT="${INTERIM_SUPPORT/22.10 /}"
 
-    if [ "${OS}" == "ubuntu-unity" ]; then
+    if [ "${OS}" == "ubuntu-unity" ]  ||  [ "${OS}" == "ubuntucinnamon" ]; then
         echo ${INTERIM_SUPPORT} \
             daily-live \
-             daily-canary \
+            daily-canary \
              ;
 
     else
@@ -2618,3 +2623,4 @@ else
 fi
 
 # vim:tabstop=4:shiftwidth=4:expandtab
+
