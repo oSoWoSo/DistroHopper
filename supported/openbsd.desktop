@@ -1,9 +1,16 @@
 [Desktop Entry]
+Version=0.77b
 Type=Application
 Name=openbsd
-releases=6.8 6.9 7.0 7.1 7.2 7.3
-replace="!"
-Exec=sh -c 'cd "/home/zen/git/distrohopper" && yad --form --field="Release:CB" "6.8"!"6.9"!"7.0"!"7.1"!"7.2"!"7.3" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget openbsd {}"'
-Icon=/home/zen/git/distrohopper/icons/openbsd.svg
+GenericName=
+Comment=
+Exec=xterm-256color -e sh -c 'cd /home/zen/git/distrohopper && yad --form --field="Release:CB" "6.8"!"6.9"!"7.0"!"7.1"!"7.2"!"7.3" | cut -d\' | \' -f1 | xargs -I{} sh -c "./quickget openbsd {}";/usr/bin/fish'
+Icon=hop
+Terminal=
+X-MultipleArgs=
+Type=Application
 Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
 

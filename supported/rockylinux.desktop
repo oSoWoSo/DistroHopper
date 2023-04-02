@@ -1,10 +1,16 @@
 [Desktop Entry]
+Version=0.77b
 Type=Application
 Name=rockylinux
-releases=8.3 8.4 8.5 9.0 9.1
-editions=minimal dvd (dvd1 prior to 9.0)
-replace="!"
-Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --separator=" " --field="Release:CB" "8.3"!"8.4"!"8.5"!"9.0"!"9.1" --field="Edition:CB" "minimal"!"dvd"!"(dvd1"!"prior"!"to"!"9.0)" | xargs -I{} sh -c "./quickget rockylinux {}"'
-Icon=/home/zen/git/distrohopper/icons/rockylinux.svg
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --separator=" " --field="Release:CB" "8.3"!"8.4"!"8.5"!"9.0"!"9.1" --field="Edition:CB" "minimal"!"dvd"!"(dvd1"!"prior"!"to"!"9.0)" | xargs -I{} sh -c "./quickget rockylinux {}";/usr/bin/fish'
+Icon=hop
+Terminal=
+X-MultipleArgs=
+Type=Application
 Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
 

@@ -29,6 +29,7 @@ Licensed under AGPL3
 # Still Beta version!
 <details>
   <summary>Click for screenshot</summary>
+  <img src="https://github.com/oSoWoSo/DistroHopper/blob/dev/docs/distrohopper.png">
 ![supported Operating systems](docs/distrohopper.png)
 </details>
 

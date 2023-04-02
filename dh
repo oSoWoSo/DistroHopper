@@ -28,7 +28,7 @@ do
 		echo "$MSG_IMPROVE"
 		echo "$MSG_KNOW"
 		echo ""
-		echo "$MSG_FLAWLESS"
+		echo "$MSQ_FLAWLESS"
 		echo "			zenobit"
 	}
 
@@ -398,7 +398,7 @@ EOF
 			if [ "$os" = windows ]; then
 				tui_windows
 			else
-				tui_get_releases_and_editions
+				quickget_get_releases_and_editions
 				fzf_choose_release
 				if [ "$(echo "$choices" | wc -l)" = 1 ]; then
 					quickget_download_os_release
@@ -672,6 +672,7 @@ EOF
 				shift
 				;;
 			l|language)
+				ttt="dh"
 				TOOL_distrohopper_translate
 				shift
 				;;

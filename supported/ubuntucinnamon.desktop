@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=0.77b
+Type=Application
+Name=ubuntucinnamon
+GenericName=
+Comment=
+Exec=xterm-256color -e sh -c 'cd /home/zen/git/distrohopper && yad --form --field="Release:CB" "23.04"!"daily-live"!"daily-canary" | cut -d\' | \' -f1 | xargs -I{} sh -c "./quickget ubuntucinnamon {}";/usr/bin/fish'
+Icon=hop
+Terminal=
+X-MultipleArgs=
+Type=Application
+Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
+

@@ -1,9 +1,16 @@
 [Desktop Entry]
+Version=0.77b
 Type=Application
 Name=xubuntu
-releases=16.04 18.04 20.04 22.04 22.10 jammy-daily daily-live daily-canary
-replace="!"
-Exec=sh -c 'cd "/home/zen/git/distrohopper" && yad --form --field="Release:CB" "16.04"!"18.04"!"20.04"!"22.04"!"22.10"!"jammy-daily"!"daily-live"!"daily-canary" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget xubuntu {}"'
-Icon=/home/zen/git/distrohopper/icons/xubuntu.svg
+GenericName=
+Comment=
+Exec=xterm-256color -e sh -c 'cd /home/zen/git/distrohopper && yad --form --field="Release:CB" "16.04"!"18.04"!"20.04"!"22.04"!"22.10"!"23.04"!"jammy-daily"!"daily-live"!"daily-canary" | cut -d\' | \' -f1 | xargs -I{} sh -c "./quickget xubuntu {}";/usr/bin/fish'
+Icon=hop
+Terminal=
+X-MultipleArgs=
+Type=Application
 Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
 
