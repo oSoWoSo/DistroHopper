@@ -20,47 +20,47 @@ while true
 do
 	function bugs_notice_show() {
 		echo ""
-		echo $"Done"
+		echo "$MSG_DONE"
 		echo ""
-		echo $"PS: You saw some bugs?"
-		echo $"Could you please provide feedback?"
-		echo $"How do you like DistroHopper?"
-		echo $"What can be improved, added, changed?"
-		echo $" Let me know..."
+		echo "$MSG_BUGS"
+		echo "$MSG_FEEDBACK"
+		echo "$MSG_LIKE"
+		echo "$MSG_IMPROVE"
+		echo "$MSG_KNOW"
 		echo ""
-		echo $"Wish you flawless distro hopping..."
+		echo "$MSG_FLAWLESS"
 		echo "			zenobit"
 	}
 
 	function help_show() {
 		echo "DistroHopper v. $version"
 		echo "quickemu v. $("$portable_prefix"quickemu --version)"
-		printf $"\texample for First run from terminal: ./dh i && dh s g\n"
-		echo $"Possible arguments:"
-		printf $"\th\thelp\t\t\tShow this help and exit\n"
+		printf "$MSG_H_FIRST ./dh i && dh s g\n"
+		echo "$MSG_ARGUMENTS"
+		printf $"\th\thelp\t\t\t$MSG_H_HELP\n"
 		echo "---------------------------------------------------------"
-		printf $"\td\tdir\t\t\tSet default directory where VMs are stored\n"
-		printf $"\ti\tinstall\t\t\tInstall DistroHopper\n"
+		printf $"\td\tdir\t\t\t$MSG_H_DIR\n"
+		printf $"\ti\tinstall\t\t\t$MSG_H_INSTALL\n"
 		echo "---------------------------------------------------------"
-		printf $"\tm\tmode\t\t\tPortable mode\n"
+		printf $"\tm\tmode\t\t\t$MSG_H_MODE\n"
 		echo "---------------------------------------------------------"
-		printf $"\ts\tsupported\t\tUpdate supported VMs\n"
-		printf $"\tr\tready\t\t\tUpdate ready to run VMs\n"
+		printf $"\ts\tsupported\t\t$MSG_H_SUPPORTED\n"
+		printf $"\tr\tready\t\t\t$MSG_H_READY\n"
 		echo "---------------------------------------------------------"
-		printf $"\tt\ttui\t\t\tRun terminal user interface (TUI)\n"
-		printf $"\tg\tgui\t\t\tRun graphical user interface (GUI)\n"
+		printf $"\tt\ttui\t\t\t$MSG_H_TUI\n"
+		printf $"\tg\tgui\t\t\t$MSG_H_GUI\n"
 		echo "---------------------------------------------------------"
-		printf $"\ta\tadd\t\t\tAdd new distro to quickget\n"
-		printf $"\tf\tfunctions\t\tSort functions in quickget\n"
-		printf $"\tp\tpush\t\t\tPush changed quickget to quickemu project #todo\n"
+		printf $"\ta\tadd\t\t\t$MSG_H_ADD\n"
+		printf $"\tf\tfunctions\t\t$MSG_H_SORT\n"
+		printf $"\tp\tpush\t\t\t$MSG_H_PUSH\n"
 		echo "---------------------------------------------------------"
-		printf $"\tc\tcopy\t\t\tCopy all ISOs to target dir (for Ventoy)\n"
+		printf $"\tc\tcopy\t\t\t$MSG_H_COPY\n"
 		echo "---------------------------------------------------------"
-		printf $"\tl\tlanguage\t\tTranslate DistroHopper\n"
+		printf $"\tl\tlanguage\t\t$MSG_H_TRANSLATE\n"
 		echo "---------------------------------------------------------"
-		echo $"Homepage: dh.osowoso.xyz"
-		echo $"Project hosted at: https://github.com/oSoWoSo/DistroHopper"
-		echo $"Chat group on SimpleX: https://tinyurl.com/7hm4kcjx"
+		echo "$MSG_HOMEPAGE"
+		echo "$MSG_HOSTED"
+		echo "$MSG_CHAT"
 	}
 
 	function check_and_set_mode() {
@@ -85,11 +85,11 @@ do
 # installation ---------------------------------------------------------
 
 	function dependencies_check_gui() {
-		[ -f "$PATH_PREFIX/yad" ] || echo $"Missing yad!"
+		[ -f "$PATH_PREFIX/yad" ] || echo "$MSG_YAD"
 	}
 
 	function dependencies_check_tui() {
-		[ -f "$PATH_PREFIX/fzf" ] || echo $"Missing fzf!"
+		[ -f "$PATH_PREFIX/fzf" ] || echo "$MSG_FZF"
 	}
 
 	function variables_set() {
@@ -136,14 +136,14 @@ EOF
 
 	function directory_structure_create() {
 		source distrohopper.conf
-		echo $"creating config dir..."
+		echo "$MSG_CONFIG"
 		mkdir -p "$DH_CONFIG_DIR"
-		echo $"creating icons dir as root..."
+		echo "$MSG_ICONS"
 		mkdir -p "$DH_ICON_DIR" >/dev/null 2>&1 || sudo mkdir -p "$DH_ICON_DIR"
 	}
 
 	function desktop_entry_distrohopper() {
-		echo $"Do you want DistroHopper to run in the terminal? (y/n)"
+		echo "$MSG_INTERM"
 		run_in_terminal
 		DESKTOP_FILE="${TMP_DIR}/dh.desktop"
 		type='Application'
@@ -209,11 +209,11 @@ EOF
 				if hash dnf 2>/dev/null; then
 					sudo dnf install qemu bash coreutils edk2-tools grep jq lsb procps python3 genisoimage usbutils util-linux sed spice-gtk-tools swtpm wget xdg-user-dirs xrandr unzip gettext yad fzf
 				else
-					echo "ERROR: I currently don't have support for your distro"
+					echo "$MSG_ERROR: $MSG_NO_DISTRO"
 					exit 1
 				fi
 			else
-				echo "ERROR: I currently don't have support for your distro"
+				echo "$MSG_ERROR: $MSG_NO_DISTRO"
 				exit 1
 			fi
 		fi
@@ -223,9 +223,9 @@ EOF
 		cp dh quickget quickemu macrecovery windowskey "$PATH_PREFIX" >/dev/null 2>&1 || sudo cp dh quickget quickemu macrecovery windowskey "$PATH_PREFIX"
 		# quickget also to config directory for adding new distros...
 		cp quickget "$DH_CONFIG_DIR/"
-		echo $"Copying icons..."
+		echo "$MSG_C_ICONS"
 		cp icons/* "$DH_ICON_DIR/" >/dev/null 2>&1 || sudo cp icons/* "$DH_ICON_DIR/"
-		echo $"Copying desktop entries and locales..."
+		echo "$MSG_C_ENTRIES"
 		cp -r ready "$DH_CONFIG_DIR/"
 		cp -r supported "$DH_CONFIG_DIR/"
 		cp -r locale "$DH_CONFIG_DIR/"
@@ -235,15 +235,15 @@ EOF
 		dependencies_check_tui
 		dependencies_check_gui
 		#check_quickemu_dependencies
-		echo $"Creating directory structure..." \
+		echo "$MSG_STRUCTURE" \
 		 && directory_structure_create \
-		 && echo $"Setting up directory..." \
+		 && echo "$MSG_SETTINGUP" \
 		 && virtual_machines_directory_choose \
-		 && echo $"Installing needed..." \
+		 && echo "$MSG_NEEDED" \
 		 && dependencies_install \
-		 && echo $"Installing DistroHopper..." \
+		 && echo "$MSG_INSTALLING" \
 		 && distrohopper_install \
-		 && echo $"Copying desktop entry..." \
+		 && echo "$MSG_C_ENTRY" \
 		 && desktop_entry_distrohopper
 	}
 
@@ -293,7 +293,7 @@ EOF
 	}
 
 	function virtual_machines_update_supported() {
-		echo $"Do you want quickget to show outputs in the terminal? (y/n)"
+		echo "$MSG_Q_INTERM"
 		run_in_terminal
 		# get supported VMs
 		"$portable_prefix"quickget | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' > "$DH_CONFIG_DIR/supported.md"
@@ -309,7 +309,7 @@ EOF
 			else
 				icon_file="$DH_ICON_DIR/tux.svg"
 			fi
-			echo $"Creating $vm_desktop desktop entry..."
+			echo "$MSG_CREATING $vm_desktop $MSG_DESKTOP_ENTRY"
 			echo ""
 			# Check if there are editions
 			DESKTOP_FILE="$DH_CONFIG_DIR/supported/$vm_desktop.desktop"
@@ -416,18 +416,18 @@ EOF
 	tui_run() {
 		cd "$VMS_DIR" || exit 1
 		vms=(*.conf)
-		printf $" Prepared VMs:\n-------------\n\n"
+		printf "$MSG_PREPARED:\n-------------\n\n"
 		# Check if there are any VMs
 		if [ ${#vms[@]} -eq 0 ]; then
-			echo $"No VMs found."
+			echo "$MSG_NO_VM"
 			exit 1
 		fi
 		# Print the names of the available VMs
 		printf "%s\n" "${vms[@]%.*}"
 		echo "-------------"
 		# Action prompt
-		echo $" Do you want to create a new VM? (c)"
-		printf $"  or run an existing one? (press anything)\n"
+		echo "$MSG_NEW (c)"
+		printf "$MSG_OR_RUN\n"
 		read -rn 1 -s start
 		case $start in
 			c )
@@ -488,17 +488,17 @@ Choose other language" | fzf --cycle)
 }
 
 	function quickget_download_os_release() {
-		printf $"\n Trying to download %s %s...\n\n" "$os" "$release"
+		printf $"\n $MSG_TRYING %s %s...\n\n" "$os" "$release"
 		"$portable_prefix"quickget "$os" "$release"
 	}
 
 	function quickget_download_os_release_edition() {
-		printf $"\n Trying to download %s %s %s...\n\n" "$os" "$release" "$edition"
+		printf $"\n $MSG_TRYING %s %s %s...\n\n" "$os" "$release" "$edition"
 		"$portable_prefix"quickget "$os" "$release" "$edition"
 	}
 
 	function quickget_download_windows() {
-		printf $"\n Trying to download Windows %s %s...\n\n" "$wrelease" "$wlang"
+		printf $"\n $MSG_TRYING %s %s...\n\n" "$wrelease" "$wlang"
 		"$portable_prefix"quickget "windows" "$wrelease" "$wlang"
 }
 
@@ -508,7 +508,7 @@ Choose other language" | fzf --cycle)
 	}
 
 	function virtual_machine_run() {
-			printf $"\n Starting %s...\n\n" "$choosed"
+			printf $"\n $MSG_STARTING %s...\n\n" "$choosed"
 			"$portable_prefix"quickemu -vm "$choosed.conf"
 	}
 
@@ -582,20 +582,20 @@ EOF
 	}
 
 	function TOOL_distrohopper_translate() {
-		echo $"Which language change? (en/cs)"
-		echo $"If you want create new one, insert two digit language code..."
+		echo "$MSG_LANG_CHANGE"
+		echo "$MSG_LANG_CODE"
 		read lang
-		echo $"Choosed language is: $lang"
-		echo $"Dumping language source..."
+		echo "$MSG_LANG: $lang"
+		echo "$MSG_DUMP"
 		bash --dump-po-strings dh > "$DH_CONFIG_DIR"/lang/dh-source.pot
-		echo $"Merging changes... (Do it yourself)"
+		echo "$MSG_MERGING"
 		meld "$DH_CONFIG_DIR"/lang/dh-source.pot "$DH_CONFIG_DIR"/lang/distrohopper-"$lang".pot
-		echo $"Generating .mo file..."
+		echo "$MSG_MO"
 		msgfmt -o "$DH_CONFIG_DIR"/lang/distrohopper-"$lang".mo "$DH_CONFIG_DIR"/lang/distrohopper-"$lang".pot
-		echo $"Do you want copy $lang translation to '/usr/share/local' as root? (y/n)"
+		echo "$MSG_COPY $lang $MSG_TRANSLATION '/usr/share/local' $MSG_AS_ROOT"
 		read response
 		if [[ "$response" =~ ^[YyAa]$ ]]; then
-			echo $"Copying translation to '/usr/share/local'..."
+			echo "$MSG_C_TRANSLATION '/usr/share/local'..."
 			sudo cp "$DH_CONFIG_DIR"/lang/distrohopper-"$lang".mo /usr/share/lang/"$lang"/LC_MESSAGES/distrohopper.mo
 		fi
 	}
@@ -605,7 +605,7 @@ EOF
 	variables_set
 
 	if [[ $# -eq 0 ]]; then
-	    printf $"No argumet provided!\n\n"
+	    printf "$MSG_NO\n\n"
 	    help_show
 	fi
 
@@ -622,52 +622,52 @@ EOF
 				shift
 				;;
 			i|install)
-				echo $"Starting installation..."
+				echo "$MSG_S_INSTALLATION"
 				installation_process
 				shift
 				;;
 			m|mode)
-				echo $"Switching to portable mode!"
+				echo "$MSG_MODE"
 				work_in_current_dir
 				shift
 				;;
 			s|supported)
-				echo $"Updating supported VMs..."
+				echo "$MSG_U_SUPPORTED"
 				virtual_machines_update_supported
 				shift
 				;;
 			r|ready)
-				echo $"Updating ready VMs..."
+				echo "$MSG_U_READY"
 				virtual_machines_update_ready
 				shift
 				;;
 			t|tui)
-				echo $"Running DistroHopper TUI..."
+				echo "$MSG_S_TUI"
 				distrohopper_run_tui
 				shift
 				;;
 			g|gui)
-				echo $"Starting DistroHopper GUI..."
+				echo "$MSG_S_GUI"
 				distrohopper_run_gui
 				shift
 				;;
 			a|add)
-				echo $"Adding new distro started..."
+				echo "$MSG_ADD_STARTED"
 				TOOL_quickget_add_distro
 				shift
 				;;
 			f|functions)
-				echo $"Sorting functions in template..."
+				echo "$MSG_SORTING"
 				TOOL_quickget_sort_functions
 				shift
 				;;
 			p|push)
-				echo $"Pushing changes to..."
+				echo "$MSG_PUSHING"
 				push_changes
 				shift
 				;;
 			c|copy)
-				echo $"Copying ISOs to dir. It will take some time..."
+				echo "$MSG_C_ISOS"
 				TOOL_copy_ISOs_to_dir
 				shift
 				;;
@@ -680,7 +680,7 @@ EOF
 				shift
 				;;
 			*)
-				echo $"Invalid option: $1"
+				echo "$MSG_INVALID: $1"
 				echo ""
 				help_show
 				exit 1
