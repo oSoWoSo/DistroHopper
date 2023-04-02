@@ -1,13 +1,20 @@
 #!/usr/bin/env bash
 # shellcheck disable=1078,1079,1091,2027,2034
 
-TEXTDOMAIN=distrohopper
-TEXTDOMAINDIR=/usr/share/locale
-export "TEXTDOMAINDIR" "TEXTDOMAIN"
+# shellcheck source=/dev/null
+if [[ -f "lang/${LANGUAGE}.cfg" ]]; then
+	source "lang/${LANGUAGE}.cfg"
+elif [[ -f "lang/${LANG:0:5}.cfg" ]]; then
+	source "lang/${LANG:0:5}.cfg"
+elif [[ -f "lang/${LANG:0:2}.cfg" ]]; then
+	source "lang/${LANG:0:2}.cfg"
+else
+	source "lang/en.cfg"
+fi
 
 trap 'exit' SIGINT SIGTERM SIGQUIT
 set -e
-echo $"DistroHopper is running... Press Ctrl-Q anytime to exit."
+echo "$MSG_RUNNING"
 
 while true
 do
@@ -65,14 +72,14 @@ do
 		DH_CONFIG_DIR="$(pwd)"
 		DH_ICON_DIR="$(pwd)/icons"
 		portable_prefix='./'
-		export "VMS_DIR" "DH_CONFIG_DIR" "DH_ICON_DIR" "TERMINAL" "replace" "portable_prefix"
+		#export "VMS_DIR" "DH_CONFIG_DIR" "DH_ICON_DIR" "TERMINAL" "replace" "portable_prefix"
 	}
 
 	function work_in_choosed_dir() {
 		# shellcheck source=distrohopper.conf
 		source "$DH_CONFIG"
 		portable_prefix=''
-		export "portable_prefix"
+		#export "portable_prefix"
 	}
 
 # installation ---------------------------------------------------------
@@ -99,7 +106,7 @@ do
 		TMP_DIR="/tmp"
 		TERMINAL="sakura"
 		replace='"!"'
-		export "DH_CONFIG_DIR" "DH_CONFIG" "replace" "DH_ICON_DIR" "PATH_PREFIX" "TMP_DIR" "TERMINAL"
+		#export "DH_CONFIG_DIR" "DH_CONFIG" "replace" "DH_ICON_DIR" "PATH_PREFIX" "TMP_DIR" "TERMINAL"
 		check_and_set_mode
 		# Set traps to catch the signals and exit gracefully
 		trap "exit" INT
@@ -158,8 +165,31 @@ EOF
 		VMS_DIR="$NEWDIR"
 		echo "VMS_DIR=\"$VMS_DIR\"
 		export \"VMS_DIR\"" >> "$DH_CONFIG"
-		export "VMS_DIR"
 	}
+
+	WIP2() {
+		if [ -f /etc/os-release ]; then
+			common_dependencies="bash coreutils fzf gettext grep jq lsb procps python3 usbutils util-linux sed wget xdg-user-dirs yad"
+			if grep -q arch /etc/os-release; then
+				install_command="sudo pacman -S $common_dependencies cdrtools edk2-ovmf spice-gtk xorg-xrandr"
+			elif [[ -f /etc/debian_version ]]; then
+				install_command="sudo apt install $common_dependencies cdrtools genisoimage spice-client-gtk unzip"
+			elif grep -q void /etc/os-release; then
+				install_command="sudo xbps-install -S $common_dependencies cdrtools procps-ng xrandr"
+			elif grep -q fedora /etc/os-release; then
+				install_command="sudo dnf install $common_dependencies cdrtools edk2-tools spice-gtk-tools"
+			elif grep -q nix /etc/os-release; then
+				echo "#TODO"
+				install_command="nix"
+			elif grep -q openSUSE /etc/os-release; then
+				# openSUSE supports dnf, but the default is zypper
+				if hash dnf 2>/dev/null; then
+					install_command="sudo dnf install $common_dependencies cdrtools edk2-tools spice-gtk-tools"
+				fi
+			fi
+		fi
+		$install_command
+}
 
 	function dependencies_install() {
 	# Find the current distribution and install dependecies
@@ -255,7 +285,7 @@ EOF
 			name="$vm_desktop"
 			comment='Quickly download, create and run VM of any#TODO operating system.'
 			version='0.77b'
-			execmd="sh -c 'cd ${VMS_DIR} && ${portable_prefix}quickemu -vm ${vm_conf}'"
+			execmd="$TERM -e sh -c 'cd ${VMS_DIR} && ${portable_prefix}quickemu -vm ${vm_conf};$SHELL'"
 			icon="$icon_file"
 			categories='System;Virtualization;'
 			desktop_entry_create
@@ -285,19 +315,15 @@ EOF
 			DESKTOP_FILE="$DH_CONFIG_DIR/supported/$vm_desktop.desktop"
 			type='Application'
 			name="$get_name"
-			releases=$releases
-			replace=$replace
 			if [ -z "$editions" ]; then
-				execmd="sh -c 'cd $VMS_DIR && yad --form --field=\"Release:CB\" \"${releases// /$replace}\" | cut -d\'|\' -f1 | xargs -I{} sh -c \"${portable_prefix}quickget $get_name {}\"'"
+				execmd="$TERM -e sh -c 'cd $VMS_DIR && yad --form --field=\"Release:CB\" \"${releases// /$replace}\" | cut -d\' | \' -f1 | xargs -I{} sh -c \"${portable_prefix}quickget $get_name {}\";$SHELL'"
 			elif [ "$interminal" == "yes" ]; then
 				terminal='true'
 			else
-				editions=$editions
-				execcmd="sh -c 'cd $VMS_DIR && yad --form --separator=\" \" --field=\"Release:CB\" \"${releases// /$replace}\" --field=\"Edition:CB\" \"${editions// /$replace}\" | xargs -I{} sh -c \"${portable_prefix}quickget $get_name {}\"'"
+				execmd="sh -c 'cd $VMS_DIR && yad --form --separator=\" \" --field=\"Release:CB\" \"${releases// /$replace}\" --field=\"Edition:CB\" \"${editions// /$replace}\" | xargs -I{} sh -c \"${portable_prefix}quickget $get_name {}\";$SHELL'"
 			fi
 			icon='hop'
 			categories='System;Virtualization;'
-
 			desktop_entry_create
 		done < "$DH_CONFIG_DIR"/supported.md
 	}
@@ -312,20 +338,29 @@ EOF
 
 	function WIP() {
 		#define functions for buttons
-		ABOUT=distrohopper_about
-
-
-
-
-
+		ABOUT="distrohopper_about"
+		HELP="help_show"
+		DIR=""
+		LANG=""
+		INSTALL=""
+		MODE=""
+		SUPPORTED=""
+		READY=""
+		TUI=""
+		ADD=""
+		SORT=""
+		PUSH=""
+		COPY=""
+		TRANSLATE=""
+		TEST=""
 		dependencies_check_gui
 		key=$((RANDOM % 9000 + 1000))
 		yad --plug="$key" --tabnum=1 --monitor --icons --listen --read-dir="$DH_CONFIG_DIR"/ready --sort-by-name --borders=0 --icon-size=46 --item-width=76 &
 		yad --plug="$key" --tabnum=2 --monitor --icons --listen --read-dir="$DH_CONFIG_DIR"/supported --sort-by-name --borders=0 --icon-size=46 --item-width=76 &
-		yad --plug="$key" --tabnum=3 --monitor --icons --borders=0 --icon-size=46 --item-width=76 --form --text-align=center \
+		yad --plug="$key" --tabnum=3 --monitor --icons --borders=0 --icon-size=46 --item-width=76 --columns=2 --form --text-align=center \
  --field="Help!!Show this help and exit":fbtn "$HELP" \
- --field="Set VMs Directory!!Set default directory where VMs are stored":DIR "$DIR" \
- --field="!Enter new language string" "${lang:-$lang}" \
+ --field="Set VMs Directory!Set default directory where VMs are stored":DIR "$DIR" \
+ --field="Language!Enter new language string" "${lang:-$lang}" \
  --field="Install DistroHopper!!Install DistroHopper":fbtn "$INSTALL" \
  --field="Portable mode!Portable mode":fbtn "$MODE" \
  --field="Supported!!Update supported VMs":fbtn "$SUPPORTED" \
@@ -552,16 +587,16 @@ EOF
 		read lang
 		echo $"Choosed language is: $lang"
 		echo $"Dumping language source..."
-		bash --dump-po-strings dh > "$DH_CONFIG_DIR"/locale/dh-source.pot
+		bash --dump-po-strings dh > "$DH_CONFIG_DIR"/lang/dh-source.pot
 		echo $"Merging changes... (Do it yourself)"
-		meld "$DH_CONFIG_DIR"/locale/dh-source.pot "$DH_CONFIG_DIR"/locale/distrohopper-"$lang".pot
+		meld "$DH_CONFIG_DIR"/lang/dh-source.pot "$DH_CONFIG_DIR"/lang/distrohopper-"$lang".pot
 		echo $"Generating .mo file..."
-		msgfmt -o "$DH_CONFIG_DIR"/locale/distrohopper-"$lang".mo "$DH_CONFIG_DIR"/locale/distrohopper-"$lang".pot
+		msgfmt -o "$DH_CONFIG_DIR"/lang/distrohopper-"$lang".mo "$DH_CONFIG_DIR"/lang/distrohopper-"$lang".pot
 		echo $"Do you want copy $lang translation to '/usr/share/local' as root? (y/n)"
 		read response
 		if [[ "$response" =~ ^[YyAa]$ ]]; then
 			echo $"Copying translation to '/usr/share/local'..."
-			sudo cp "$DH_CONFIG_DIR"/locale/distrohopper-"$lang".mo /usr/share/locale/"$lang"/LC_MESSAGES/distrohopper.mo
+			sudo cp "$DH_CONFIG_DIR"/lang/distrohopper-"$lang".mo /usr/share/lang/"$lang"/LC_MESSAGES/distrohopper.mo
 		fi
 	}
 
@@ -627,7 +662,7 @@ EOF
 				shift
 				;;
 			p|push)
-				echo $"Pushing changes to... #TODO"
+				echo $"Pushing changes to..."
 				push_changes
 				shift
 				;;
