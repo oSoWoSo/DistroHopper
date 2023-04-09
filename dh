@@ -161,7 +161,7 @@ EOF
 	}
 
 	function virtual_machines_directory_choose() {
-		NEWDIR="$(yad  --width=900 --height=900 --file --directory --title="Where to save VMs?")"
+		NEWDIR="$(yad --width=900 --height=900 --file --directory --title="Where to save VMs?")"
 		VMS_DIR="$NEWDIR"
 		echo "VMS_DIR=\"$VMS_DIR\"
 		export \"VMS_DIR\"" >> "$DH_CONFIG"
@@ -515,7 +515,7 @@ Choose other language" | fzf --cycle)
 # more -----------------------------------------------------------------
 
 	function TOOL_copy_ISOs_to_dir() {
-		yad  --width=900 --height=900 --file --directory > target
+		yad --width=900 --height=900 --file --directory > target
 		cd "$VMS_DIR" || exit 1
 		# shellcheck disable=2154
 		cp ./*glob*/*.iso "$target"
@@ -581,7 +581,7 @@ EOF
 		done
 	}
 
-	function TOOL_distrohopper_translate() {
+	function TOOL_dh_translate() {
 		echo "$MSG_LANG_CHANGE"
 		echo "$MSG_LANG_CODE"
 		read lang
@@ -600,13 +600,80 @@ EOF
 		fi
 	}
 
+	TOOL_set_default_terminal() {
+		echo "Choose a default terminal:"
+		select term in alacritty foot gnome-terminal kitty konsole mate-terminal roxterm sakura st tilix xfce4-terminal xterm custom; do
+			case $term in
+				alacritty)
+					export TERMINAL=alacritty
+					break
+					;;
+				foot)
+					export TERMINAL=foot
+					break
+					;;
+				gnome-terminal)
+					export TERMINAL=gnome-terminal
+					break
+					;;
+				kitty)
+					export TERMINAL=kitty
+					break
+					;;
+				konsole)
+					export TERMINAL=konsole
+					break
+					;;
+				mate-terminal)
+					export TERMINAL=mate-terminal
+					break
+					;;
+				roxterm)
+					export TERMINAL=roxterm
+					break
+					;;
+				sakura)
+					export TERMINAL=sakura
+					break
+					;;
+				st)
+					export TERMINAL=st
+					break
+					;;
+				tilix)
+					export TERMINAL=tilix
+					break
+					;;
+				xfce4-terminal)
+					export TERMINAL=xfce4-terminal
+					break
+					;;
+				xterm)
+					export TERMINAL=xterm
+					break
+					;;
+				custom)
+					read -p "Enter the command to launch your preferred terminal emulator: " custom_terminal
+					export TERMINAL=$custom_terminal
+					break
+					;;
+				*)
+					echo "Invalid option, please choose again."
+					;;
+			esac
+		done
+
+		echo "Default terminal set to $TERMINAL."
+	}
+
+
 # run ------------------------------------------------------------------
 
 	variables_set
 
 	if [[ $# -eq 0 ]]; then
-	    printf "$MSG_NO\n\n"
-	    help_show
+			printf "$MSG_NO\n\n"
+			help_show
 	fi
 
 	while [[ $# -gt 0 ]]
@@ -672,7 +739,7 @@ EOF
 				shift
 				;;
 			l|language)
-				TOOL_distrohopper_translate
+				TOOL_dh_translate
 				shift
 				;;
 			z)
