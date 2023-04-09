@@ -234,6 +234,8 @@ For
 
 #### [lazygit](https://github.com/jesseduffield/lazygit)
 
+#### [opencommit](https://github.com/di-sukharev/opencommit)
+
 - Editing
 
 #### [geany](https://geany.org/)
