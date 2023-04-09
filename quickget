@@ -430,6 +430,10 @@ function releases_gabeeos() {
     echo latest
 }
 
+function editions_gabeeos() {
+    echo qtile budgie
+}
+
 function releases_garuda() {
   echo latest
 }
@@ -1430,8 +1434,18 @@ function get_gabeeos() {
     local URL=""
     local TMPURL=""
 
-    TMPURL=$(wget -q -S -O- --max-redirect=0 "https://sourceforge.net/projects/gabeeos/files/latest/download" 2>&1 | grep -i Location | cut -d' ' -f4)
-    URL=${TMPURL%\?*}
+    case ${EDITION} in
+        qtile)
+          ISO="gabeeOSLinux-Qtile-x86_64-6.1.21_1-20230405.iso"
+          URL="https://sourceforge.net/projects/gabeeoslinux/files/Distro/Qtile/beta/${ISO}/download"
+          ;;
+        budgie)
+          ISO="gabeeos-live-BUDGIE-CALAMARES-x86_64-6.0.10_1-20221206.iso"
+          URL="https://sourceforge.net/projects/gabeeoslinux/files/Distro/Budgie/${ISO}/download"
+          ;;
+    esac
+#https://sourceforge.net/projects/gabeeoslinux/files/Distro/Budgie/gabeeos-live-BUDGIE-CALAMARES-x86_64-6.0.10_1-20221206.iso/download
+#https://sourceforge.net/projects/gabeeoslinux/files/Distro/Qtile/beta/gabeeOSLinux-Qtile-x86_64-6.1.21_1-20230405.iso/download
     echo "${URL} ${HASH}"
 }
 
@@ -1444,7 +1458,7 @@ function get_garuda() {
   ISO=${EDITION}/latest.iso
 
   HASH="$(wget -q -O- "${URL}/${ISO}.sha256" | cut -d' ' -f1)"
-  echo "${URL}/${ISO} ${HASH}"
+  echo "${URL} ${HASH}"
 }
 
 function get_gentoo() {
