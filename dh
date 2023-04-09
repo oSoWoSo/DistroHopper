@@ -169,7 +169,7 @@ EOF
 
 	WIP2() {
 		if [ -f /etc/os-release ]; then
-			common_dependencies="bash coreutils fzf gettext grep jq lsb procps python3 usbutils util-linux sed wget xdg-user-dirs yad"
+			common_dependencies="bash coreutils fzf grep jq lsb procps python3 usbutils util-linux sed wget xdg-user-dirs yad"
 			if grep -q arch /etc/os-release; then
 				install_command="sudo pacman -S $common_dependencies cdrtools edk2-ovmf spice-gtk xorg-xrandr"
 			elif [[ -f /etc/debian_version ]]; then
@@ -197,17 +197,17 @@ EOF
 			if grep -q arch /etc/os-release; then
 				sudo pacman -S cdrtools coreutils edk2-ovmf grep jq procps python3 qemu-full sed socat spice-gtk swtpm usbutils util-linux wget xdg-user-dirs xorg-xrandr zsync getext yad fzf
 			elif [[ -f /etc/debian_version ]]; then
-				sudo apt install qemu bash coreutils ovmf grep jq lsb procps python3 genisoimage usbutils util-linux sed spice-client-gtk swtpm wget xdg-user-dirs zsync unzip gettext yad fzf
+				sudo apt install qemu bash coreutils ovmf grep jq lsb procps python3 genisoimage usbutils util-linux sed spice-client-gtk swtpm wget xdg-user-dirs zsync unzip yad fzf
 			elif grep -q void /etc/os-release; then
-				sudo xbps-install -S qemu bash coreutils grep jq procps-ng python3 util-linux sed spice-gtk swtpm usbutils wget xdg-user-dirs xrandr unzip zsync socat gettext yad fzf
+				sudo xbps-install -S qemu bash coreutils grep jq procps-ng python3 util-linux sed spice-gtk swtpm usbutils wget xdg-user-dirs xrandr unzip zsync socat yad fzf
 			elif grep -q fedora /etc/os-release; then
-				sudo dnf install qemu bash coreutils edk2-tools grep jq lsb procps python3 genisoimage usbutils util-linux sed spice-gtk-tools swtpm wget xdg-user-dirs xrandr unzip gettext yad fzf
+				sudo dnf install qemu bash coreutils edk2-tools grep jq lsb procps python3 genisoimage usbutils util-linux sed spice-gtk-tools swtpm wget xdg-user-dirs xrandr unzip yad fzf
 			elif grep -q nix /etc/os-release; then
 				echo "#TODO"
 			elif grep -q openSUSE /etc/os-release; then
 				# openSUSE supports dnf, but the default is zypper
 				if hash dnf 2>/dev/null; then
-					sudo dnf install qemu bash coreutils edk2-tools grep jq lsb procps python3 genisoimage usbutils util-linux sed spice-gtk-tools swtpm wget xdg-user-dirs xrandr unzip gettext yad fzf
+					sudo dnf install qemu bash coreutils edk2-tools grep jq lsb procps python3 genisoimage usbutils util-linux sed spice-gtk-tools swtpm wget xdg-user-dirs xrandr unzip yad fzf
 				else
 					echo "$MSG_ERROR: $MSG_NO_DISTRO"
 					exit 1
