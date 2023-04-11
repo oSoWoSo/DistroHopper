@@ -228,7 +228,7 @@ EOF
 		echo "$MSG_C_ENTRIES"
 		cp -r ready "$DH_CONFIG_DIR/"
 		cp -r supported "$DH_CONFIG_DIR/"
-		cp -r locale "$DH_CONFIG_DIR/"
+		cp -r lang "$DH_CONFIG_DIR/"
 	}
 
 	function installation_process() {
