@@ -154,7 +154,7 @@ EOF
 		if [ "$interminal" == "yes" ]; then
 			terminal='true'
 		fi
-		icon='hop'
+		icon="$DH_ICON_DIR/hop.svg" 
 		categories='System;Virtualization;'
 		desktop_entry_create
 		sudo cp ${TMP_DIR}/dh.desktop /usr/share/applications/
@@ -322,7 +322,7 @@ EOF
 			else
 				execmd="sh -c 'cd $VMS_DIR && yad --form --separator=\" \" --field=\"Release:CB\" \"${releases// /$replace}\" --field=\"Edition:CB\" \"${editions// /$replace}\" | xargs -I{} sh -c \"${portable_prefix}quickget $get_name {}\";$SHELL'"
 			fi
-			icon='hop'
+			icon="$icon_file"
 			categories='System;Virtualization;'
 			desktop_entry_create
 		done < "$DH_CONFIG_DIR"/supported.md
@@ -376,7 +376,7 @@ EOF
  --button="Exit":0 &
 		yad --dynamic --notebook --key="$key" --monitor --listen --no-buttons \
 		--mouse --selectable-labels \
-		--window-icon="$DH_ICON_DIR"/hop.svg --width=900 --height=900 \
+		--window-icon="$DH_ICON_DIR/hop.svg" --width=900 --height=900 \
 		--title="DistroHopper" --tab="run VM" --tab="download VM" --tab="Options"
 		# posible: --undecorated --fixed ontop --buttons-layout=spread edge start end center --keep-icon-size --image=IMAGE --splash
 		VAR1="$?"
