@@ -1,7 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=netboot-latest
-Exec=sakura -e 'cd /home/zen/git/distrohopper && ./quickemu -vm netboot-latest.conf'
-Icon=/home/zen/git/distrohopper/icons/netboot.svg
-Categories=System;Virtualization;
-
