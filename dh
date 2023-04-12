@@ -167,30 +167,6 @@ EOF
 		export \"VMS_DIR\"" >> "$DH_CONFIG"
 	}
 
-	WIP2() {
-		if [ -f /etc/os-release ]; then
-			common_dependencies="bash coreutils fzf grep jq lsb procps python3 usbutils util-linux sed wget xdg-user-dirs yad"
-			if grep -q arch /etc/os-release; then
-				install_command="sudo pacman -S $common_dependencies cdrtools edk2-ovmf spice-gtk xorg-xrandr"
-			elif [[ -f /etc/debian_version ]]; then
-				install_command="sudo apt install $common_dependencies cdrtools genisoimage spice-client-gtk unzip"
-			elif grep -q void /etc/os-release; then
-				install_command="sudo xbps-install -S $common_dependencies cdrtools procps-ng xrandr"
-			elif grep -q fedora /etc/os-release; then
-				install_command="sudo dnf install $common_dependencies cdrtools edk2-tools spice-gtk-tools"
-			elif grep -q nix /etc/os-release; then
-				echo "#TODO"
-				install_command="nix"
-			elif grep -q openSUSE /etc/os-release; then
-				# openSUSE supports dnf, but the default is zypper
-				if hash dnf 2>/dev/null; then
-					install_command="sudo dnf install $common_dependencies cdrtools edk2-tools spice-gtk-tools"
-				fi
-			fi
-		fi
-		$install_command
-}
-
 	function dependencies_install() {
 	# Find the current distribution and install dependecies
 		if [ -f /etc/os-release ]; then
