@@ -72,7 +72,7 @@ do
 		DH_CONFIG_DIR="$(pwd)"
 		DH_ICON_DIR="$(pwd)/icons"
 		portable_prefix='./'
-		#export "VMS_DIR" "DH_CONFIG_DIR" "DH_ICON_DIR" "TERMINAL" "replace" "portable_prefix"
+		#export "VMS_DIR" "DH_CONFIG_DIR" "DH_ICON_DIR" "terminal" "replace" "portable_prefix"
 	}
 
 	function work_in_choosed_dir() {
@@ -104,9 +104,9 @@ do
 		DH_ICON_DIR="/usr/share/icons/distrohopper"
 		PATH_PREFIX="/usr/bin/"
 		TMP_DIR="/tmp"
-		TERMINAL="sakura"
+		terminal="sakura"
 		replace='"!"'
-		#export "DH_CONFIG_DIR" "DH_CONFIG" "replace" "DH_ICON_DIR" "PATH_PREFIX" "TMP_DIR" "TERMINAL"
+		#export "DH_CONFIG_DIR" "DH_CONFIG" "replace" "DH_ICON_DIR" "PATH_PREFIX" "TMP_DIR" "terminal"
 		check_and_set_mode
 		# Set traps to catch the signals and exit gracefully
 		trap "exit" INT
@@ -586,56 +586,56 @@ EOF
 		select term in alacritty foot gnome-terminal kitty konsole mate-terminal roxterm sakura st tilix xfce4-terminal xterm custom; do
 			case $term in
 				alacritty)
-					export TERMINAL=alacritty
+					export terminal=alacritty
 					break
 					;;
 				foot)
-					export TERMINAL=foot
+					export terminal=foot
 					break
 					;;
 				gnome-terminal)
-					export TERMINAL=gnome-terminal
+					export terminal=gnome-terminal
 					break
 					;;
 				kitty)
-					export TERMINAL=kitty
+					export terminal=kitty
 					break
 					;;
 				konsole)
-					export TERMINAL=konsole
+					export terminal=konsole
 					break
 					;;
 				mate-terminal)
-					export TERMINAL=mate-terminal
+					export terminal=mate-terminal
 					break
 					;;
 				roxterm)
-					export TERMINAL=roxterm
+					export terminal=roxterm
 					break
 					;;
 				sakura)
-					export TERMINAL=sakura
+					export terminal=sakura
 					break
 					;;
 				st)
-					export TERMINAL=st
+					export terminal=st
 					break
 					;;
 				tilix)
-					export TERMINAL=tilix
+					export terminal=tilix
 					break
 					;;
 				xfce4-terminal)
-					export TERMINAL=xfce4-terminal
+					export terminal=xfce4-terminal
 					break
 					;;
 				xterm)
-					export TERMINAL=xterm
+					export terminal=xterm
 					break
 					;;
 				custom)
 					read -p "Enter the command to launch your preferred terminal emulator: " custom_terminal
-					export TERMINAL=$custom_terminal
+					export terminal=$custom_terminal
 					break
 					;;
 				*)
@@ -644,7 +644,7 @@ EOF
 			esac
 		done
 
-		echo "Default terminal set to $TERMINAL."
+		echo "Default terminal set to $terminal."
 	}
 
 
