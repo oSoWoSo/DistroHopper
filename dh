@@ -319,7 +319,7 @@ EOF
 		yad --dynamic --notebook --key="$key" --monitor --listen --window-icon="$DH_ICON_DIR"/hop.svg --width=900 --height=900 --title="DistroHopper" --tab="run VM" --tab="download VM"
 	}
 
-	function WIP() {
+	function WIP_buttons() {
 		#define functions for buttons
 		ABOUT="distrohopper_about"
 		HELP="help_show"
@@ -581,6 +581,10 @@ EOF
 			echo "$MSG_C_TRANSLATION '/usr/share/local'..."
 			sudo cp "$DH_CONFIG_DIR"/lang/distrohopper-"$lang".mo /usr/share/lang/"$lang"/LC_MESSAGES/distrohopper.mo
 		fi
+	}
+
+	function WIP() {
+		echo ""
 	}
 
 	TOOL_set_default_terminal() {
