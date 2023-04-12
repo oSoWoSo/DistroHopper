@@ -241,6 +241,7 @@ EOF
 
 	function virtual_machines_update_ready() {
 		cd "$VMS_DIR" || exit 1
+		rm  "$DH_CONFIG_DIR"/ready/*.desktop
 	#	for files in "$VMS_DIR"/*; do
 	#	if [ ! -e *.conf ]; then
 	#		echo $"No .conf files found"
@@ -261,13 +262,13 @@ EOF
 			elif [ -z "$icon_file" ]; then
 				icon_file="$DH_ICON_DIR/tux.svg"
 			fi
-			DESKTOP_FILE="$DH_CONFIG_DIR/ready/$vm_desktop.desktop"
+			DESKTOP_FILE="${DH_CONFIG_DIR}/ready/${vm_desktop}.desktop"
 			type='Application'
-			name="$vm_desktop"
+			name="${vm_desktop}"
 			comment='Quickly download, create and run VM of any#TODO operating system.'
 			version='0.77b'
-			execmd="$TERM -e sh -c 'cd ${VMS_DIR} && ${portable_prefix}quickemu -vm ${vm_conf};$SHELL'"
-			icon="$icon_file"
+			execmd="sh -c 'cd ${VMS_DIR} && ${portable_prefix}quickemu -vm ${vm_conf};$SHELL'"
+			icon="${icon_file}"
 			categories='System;Virtualization;'
 			desktop_entry_create
 		done
@@ -295,14 +296,14 @@ EOF
 			echo ""
 			# Check if there are editions
 			DESKTOP_FILE="$DH_CONFIG_DIR/supported/$vm_desktop.desktop"
-			type='Application'
+			type="Application"
 			name="$get_name"
 			if [ -z "$editions" ]; then
-				execmd="$TERM -e sh -c 'cd $VMS_DIR && yad --form --field=\"Release:CB\" \"${releases// /$replace}\" | cut -d\' | \' -f1 | xargs -I{} sh -c \"${portable_prefix}quickget $get_name {}\";$SHELL'"
+				execmd="sh -c 'cd ${VMS_DIR} && yad --form --field=\"Release:CB\" \"${releases// /$replace}\" | cut -d\' | \' -f1 | xargs -I{} sh -c \"${portable_prefix}quickget ${get_name} {}\";$SHELL'"
 			elif [ "$interminal" == "yes" ]; then
-				terminal='true'
+				terminal="true"
 			else
-				execmd="sh -c 'cd $VMS_DIR && yad --form --separator=\" \" --field=\"Release:CB\" \"${releases// /$replace}\" --field=\"Edition:CB\" \"${editions// /$replace}\" | xargs -I{} sh -c \"${portable_prefix}quickget $get_name {}\";$SHELL'"
+				execmd="sh -c 'cd ${VMS_DIR} && yad --form --separator=\" \" --field=\"Release:CB\" \"${releases// /$replace}\" --field=\"Edition:CB\" \"${editions// /$replace}\" | xargs -I{} sh -c \"${portable_prefix}quickget ${get_name} {}\";$SHELL'"
 			fi
 			icon="$icon_file"
 			categories='System;Virtualization;'
