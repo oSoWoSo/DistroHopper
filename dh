@@ -274,7 +274,8 @@ EOF
 	}
 
 	function virtual_machines_update_supported() {
-		echo "$MSG_Q_INTERM"
+		rm  "$DH_CONFIG_DIR"/supported/*.desktop
+		echo "$MSG_INTERM"
 		run_in_terminal
 		# get supported VMs
 		"$portable_prefix"quickget | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' > "$DH_CONFIG_DIR/supported.md"
@@ -542,7 +543,7 @@ function get_$NAME() {
 }
 
 EOF
-		echo "Done"
+		echo "$MSG_DONE"
 		meld "${TMP_DIR}"/template.tmp "$DH_CONFIG_DIR"/quickget
 	}
 
@@ -582,7 +583,7 @@ EOF
 	}
 
 	TOOL_set_default_terminal() {
-		echo "Choose a default terminal:"
+		echo "$MSG_DEFAULT_TERMINAL:"
 		select term in alacritty foot gnome-terminal kitty konsole mate-terminal roxterm sakura st tilix xfce4-terminal xterm custom; do
 			case $term in
 				alacritty)
@@ -639,12 +640,12 @@ EOF
 					break
 					;;
 				*)
-					echo "Invalid option, please choose again."
+					echo "$MSG_INVALID_AGAIN"
 					;;
 			esac
 		done
 
-		echo "Default terminal set to $terminal."
+		echo "$MSG_TERMINAL_SET $terminal."
 	}
 
 
