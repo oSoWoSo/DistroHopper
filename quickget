@@ -52,6 +52,7 @@ function pretty_name() {
     gabeeos)            PRETTY_NAME="gabeeOS Linux";;
     garuda)             PRETTY_NAME="Garuda Linux";;
     ghostbsd)           PRETTY_NAME="GhostBSD";;
+    holoiso)            PRETTY_NAME="HoloISO";;
     kdeneon)            PRETTY_NAME="KDE Neon";;
     kolibrios)          PRETTY_NAME="KolibriOS";;
     linuxmint)          PRETTY_NAME="Linux Mint";;
@@ -64,6 +65,7 @@ function pretty_name() {
     nixos)              PRETTY_NAME="NixOS";;
     macos)              PRETTY_NAME="macOS";;
     openbsd)            PRETTY_NAME="OpenBSD";;
+    openindiana)        PRETTY_NAME="OpenIndiana";;
     opensuse)           PRETTY_NAME="openSUSE";;
     oraclelinux)        PRETTY_NAME="Oracle Linux";;
     popos)              PRETTY_NAME="Pop!_OS";;
@@ -71,15 +73,16 @@ function pretty_name() {
     rebornos)           PRETTY_NAME="RebornOS";;
     rockylinux)         PRETTY_NAME="Rocky Linux";;
     slitaz)             PRETTY_NAME="SliTaz GNU/Linux";;
-    steamos)            PRETTY_NAME="SteamOS HoloISO";;
     truenas-core)       PRETTY_NAME="TrueNAS Core";;
     truenas-scale)      PRETTY_NAME="TrueNAS Scale";;
     ubuntu-budgie)      PRETTY_NAME="Ubuntu Budgie";;
-    ubuntucinnamon)    PRETTY_NAME="Ubuntu Cinnamon";;
+    ubuntucinnamon)     PRETTY_NAME="Ubuntu Cinnamon";;
     ubuntukylin)        PRETTY_NAME="Ubuntu Kylin";;
     ubuntu-mate)        PRETTY_NAME="Ubuntu MATE";;
+    ubuntu-server)      PRETTY_NAME="Ubuntu Server";;
     ubuntustudio)       PRETTY_NAME="Ubuntu Studio";;
     ubuntu-unity)       PRETTY_NAME="Ubuntu Unity";;
+    vanillaos)          PRETTY_NAME="Vanilla OS";;
     ventoy)             PRETTY_NAME="Ventoy";;
     void)               PRETTY_NAME="Void Linux";;
     voidpup)            PRETTY_NAME="Void Puppy";;
@@ -98,6 +101,7 @@ function validate_release() {
 
   DISPLAY_NAME="$(pretty_name "${OS}")"
   case ${OS} in
+    *ubuntu-server*) RELEASE_GENERATOR="releases_ubuntu-server";;
     *ubuntu*) RELEASE_GENERATOR="releases_ubuntu";;
     *) RELEASE_GENERATOR="${1}";;
   esac
@@ -153,7 +157,9 @@ function list_csv() {
     for RELEASE in $("releases_${FUNC}"); do
       if [ "${OS}" == "macos" ]; then
         DOWNLOADER="macrecovery"
-      elif [ "${OS}" == "ubuntu" ] && [ "${RELEASE}" == "canary" ] && [ ${HAS_ZSYNC} -eq 1 ]; then
+      elif [ "${OS}" == "ubuntu" ] && [ "${RELEASE}" == "daily-canary" ] && [ ${HAS_ZSYNC} -eq 1 ]; then
+        DOWNLOADER="zsync"
+      elif [ "${OS}" == "ubuntu" ] && [ "${RELEASE}" == "daily-legacy" ] && [ ${HAS_ZSYNC} -eq 1 ]; then
         DOWNLOADER="zsync"
       elif [[ "${OS}" == *"ubuntu"* ]] && [ "${RELEASE}" == "devel" ] && [ ${HAS_ZSYNC} -eq 1 ]; then
         DOWNLOADER="zsync"
@@ -208,6 +214,7 @@ function os_support() {
     gentoo \
     ghostbsd \
     haiku \
+    holoiso \
     kali \
     kdeneon \
     kolibrios \
@@ -224,6 +231,7 @@ function os_support() {
     lubuntu \
     macos \
     openbsd \
+    openindiana \
     opensuse \
     oraclelinux \
     popos \
@@ -234,7 +242,6 @@ function os_support() {
     slackware \
     slitaz \
     solus \
-    steamos \
     tails \
     truenas-core \
     truenas-scale \
@@ -243,8 +250,10 @@ function os_support() {
     ubuntucinnamon \
     ubuntukylin \
     ubuntu-mate \
+    ubuntu-server \
     ubuntustudio \
     ubuntu-unity \
+    vanillaos \
     ventoy \
     void \
     voidpup \
@@ -304,15 +313,21 @@ function releases_batocera() {
 }
 
 function releases_blendos() {
-    curl -s https://api.github.com/repos/blend-os/blendOS/releases  |grep tag_name | grep -o -E '[[:digit:]]+\.[[:digit:]]+'
+    local RLIST
+    RLIST=$(curl -s https://api.github.com/repos/blend-os/blendOS/releases  |grep tag_name | grep -o -E '[[:digit:]]+\.[[:digit:]]+' | tr ' \r\n' ' ')
+    echo ${RLIST}
+}
+
+function editions_blendos() {
+    echo gnome kde
 }
 
 function releases_cachyos() {
-    echo latest
+    echo 2300305
 }
 
 function editions_cachyos() {
-    echo kde gnome cli
+    echo kde gnome
 }
 
 function releases_centos-stream() {
@@ -394,6 +409,7 @@ function releases_fedora() {
 
 function editions_fedora() {
   echo Workstation \
+  Budgie \
   Cinnamon \
   i3 \
   KDE \
@@ -402,6 +418,9 @@ function editions_fedora() {
   Mate \
   Xfce \
   Silverblue \
+  Sericea \
+  Kinoite \
+  Sway \
   Server
 }
 
@@ -461,6 +480,10 @@ function releases_haiku() {
 
 function editions_haiku() {
     echo x86_64 x86_gcc2h
+}
+
+function releases_holoiso() {
+    echo 4.0
 }
 
 function releases_kali() {
@@ -539,7 +562,7 @@ function releases_netbsd() {
 }
 
 function releases_nixos(){
-    echo 21.05 21.11 22.05 22.11
+    echo 21.05 21.11 22.05 22.11 23.05
 }
 
 function editions_nixos(){
@@ -549,6 +572,14 @@ function editions_nixos(){
 function releases_openbsd(){
     local OBSD_RELEASES=$(curl -sL https://mirror.leaseweb.com/pub/OpenBSD/|grep -e '6\.[8-9]/' -e '[7-9]\.'|cut -d\" -f4|tr -d '/')
     echo ${OBSD_RELEASES}
+}
+
+function releases_openindiana(){
+    echo 20230421
+}
+
+function editions_openindiana(){
+    echo gui text minimal
 }
 
 function releases_opensuse(){
@@ -582,13 +613,11 @@ function get_rebornos() {
 }
 
 function releases_rockylinux() {
-    echo 8.3 8.4 8.5 9.0 9.1
+    echo 8.3 8.4 8.5 8.6 8.7 9.0 9.1
 }
 
-# Rocky have renamed dvd1 -> dvd at 9.0
 function editions_rockylinux() {
-    echo minimal \
-    "dvd (dvd1 prior to 9.0)"
+    echo minimal dvd boot
 }
 
 function releases_siduction() {
@@ -615,10 +644,6 @@ function editions_solus() {
     echo Budgie GNOME MATE Plasma
 }
 
-function releases_steamos() {
-    echo 4.0
-}
-
 function releases_tails() {
     echo stable
 }
@@ -640,7 +665,7 @@ function releases_truenas-scale() {
 
 function releases_ubuntu() {
     local LTS_SUPPORT="14.04 16.04 18.04 20.04 22.04"
-    local INTERIM_SUPPORT="22.10 23.04"
+    local INTERIM_SUPPORT="23.04"
 
     case "${OS}" in
         kubuntu|lubuntu|ubuntukylin|\
@@ -656,11 +681,10 @@ function releases_ubuntu() {
         INTERIM_SUPPORT="${INTERIM_SUPPORT}"
         ;;
         ubuntucinnamon)
-        INTERIM_SUPPORT="${INTERIM_SUPPORT/22.10 /}"
+        INTERIM_SUPPORT="${INTERIM_SUPPORT}"
         ;;
     esac
 
-    #INTERIM_SUPPORT="${INTERIM_SUPPORT/22.10 /}"
 
     if [ "${OS}" == "ubuntu-unity" ]  ||  [ "${OS}" == "ubuntucinnamon" ]; then
         echo ${INTERIM_SUPPORT} \
@@ -674,6 +698,7 @@ function releases_ubuntu() {
             jammy-daily \
             daily-live \
             daily-canary \
+            daily-legacy \
             eol-4.10 \
             eol-5.04 \
             eol-5.10 \
@@ -713,20 +738,28 @@ function releases_ubuntu() {
     fi
 }
 
+function releases_ubuntu-server() {
+   local LTS_SUPPORT="18.04 20.04 22.04"
+   local INTERIM_SUPPORT="23.04"
+    echo ${LTS_SUPPORT} \
+         ${INTERIM_SUPPORT} \
+         daily-live
+}
+
+function releases_vanillaos() {
+    echo 22.10
+}
+
 function releases_ventoy() {
     echo latest
 }
 
 function releases_void() {
-    echo current 20221001 20210316 20210930 20210218 20191109 20190526 20190217 20181111 20171007 20170825 20170220
+    echo current
 }
 
 function editions_void() {
-    echo base base-musl cinnamon cinnamon-musl enlightenment enlightenment-musl gnome gnome-musl lxde lxde-musl lxqt lxqt-musl mate mate-musl xfce xfce-musl
-}
-
-function releases_voidpup() {
-    echo latest
+    echo glibc musl xfce-glibc xfce-musl
 }
 
 function releases_vxlinux() {
@@ -738,48 +771,7 @@ function editions_vxlinux() {
 }
 
 function releases_windows() {
-    echo 8 10 11
-}
-
-function languages_windows() {
-    LANGS=(Arabic
-    "Brazilian Portuguese"
-    Bulgarian
-    "Chinese (Simplified)"
-    "Chinese (Traditional)"
-    Croatian
-    Czech
-    Danish
-    Dutch
-    English
-    "English International"
-    Estonian
-    Finnish
-    French
-    "French Canadian"
-    German
-    Greek
-    Hebrew
-    Hungarian
-    Italian
-    Japanese
-    Korean
-    Latvian
-    Lithuanian
-    Norwegian
-    Polish
-    Portuguese
-    Romanian
-    Russian
-    "Serbian Latin"
-    Slovak
-    Slovenian
-    Spanish
-    "Spanish (Mexico)"
-    Swedish
-    Thai
-    Turkish
-    Ukrainian)
+    echo 10 11
 }
 
 function releases_xerolinux() {
@@ -838,7 +830,7 @@ function web_get() {
     fi
 
     if command -v aria2c &>/dev/null; then
-        if ! aria2c --stderr -x16 --continue=true --summary-interval=0 --download-result=hide --console-log-level=error "${URL}" -o "${DIR}/${FILE}"; then
+        if ! aria2c --stderr -x16 --continue=true --summary-interval=0 --download-result=hide --console-log-level=error "${URL}" --dir "${DIR}" -o "${FILE}"; then
           echo #Necessary as aria2c in suppressed mode does not have new lines
           echo "ERROR! Failed to download ${URL} with aria2c. Try running 'quickget' again."
           exit 1
@@ -927,6 +919,9 @@ function make_vm_config() {
         openbsd)
             GUEST="openbsd"
             IMAGE_TYPE="iso";;
+        openindiana)
+            GUEST="solaris"
+            IMAGE_TYPE="iso";;
         reactos)
             GUEST="reactos"
             IMAGE_TYPE="iso";;
@@ -963,7 +958,10 @@ EOF
 
         # OS specific tweaks
         case ${OS} in
-          alma|centos-stream|endless|oraclelinux|popos|rockylinux|nixos)
+          alma|centos-stream|endless|nixos|oraclelinux|popos|rockylinux)
+            echo "disk_size=\"32G\"" >> "${CONF_FILE}";;
+          openindiana)
+            echo "boot=\"legacy\"" >> "${CONF_FILE}"
             echo "disk_size=\"32G\"" >> "${CONF_FILE}";;
           batocera)
             echo "disk_size=\"8G\"" >> "${CONF_FILE}";;
@@ -994,13 +992,25 @@ EOF
             echo "ram=\"512M\"" >> "${CONF_FILE}"
             ;;
           truenas-scale|truenas-core)
-            echo
             echo "boot=\"legacy\"" >> "${CONF_FILE}"
            # the rest is non-functional
            # echo "bootdrive_size=\"5G\"" >> "${CONF_FILE}" # boot drive
            # echo "1stdrive_size=\"20G\"" >> "${CONF_FILE}" # for testing
            # echo "2nddrive_size=\"20G\"" >> "${CONF_FILE}" # again, for testing
             ;;
+          ubuntu-server)
+            # 22.04+ fails on LVM build if disk size is < 10G
+            # 22.04.1 fails on auto-install if TPM is disabled
+            echo "disk_size=\"10G\"" >> "${CONF_FILE}"
+            echo "ram=\"4G\"" >> "${CONF_FILE}"
+            if [[ "${RELEASE}" == *"22.04"* ]]; then
+            echo "tpm=\"on\"" >> "${CONF_FILE}"
+            fi
+            ;;
+          vanillaos)
+          ## Minimum 50G for abroot
+           echo "disk_size=\"64G\"" >> "${CONF_FILE}"
+           ;;
           zorin)
             case  ${EDITION} in
               education64|edulite64)
@@ -1021,6 +1031,10 @@ EOF
             ;;
         esac
 
+        if [ "${OS}" == "ubuntu" ] && [[ ${RELEASE} == *"daily"*  ]]; then
+        # wont install  lobster testing with less than 18GB
+          echo "disk_size=\"32G\"" >> "${CONF_FILE}"
+        fi
         # Enable TPM for Windows 11
         if [ "${OS}" == "windows" ] && [ "${RELEASE}" -ge 11 ]; then
             echo "tpm=\"on\"" >> "${CONF_FILE}"
@@ -1067,7 +1081,7 @@ function get_alma() {
     local EDITION="${1:-}"
     local HASH=""
     local ISO="AlmaLinux-${RELEASE}-x86_64-${EDITION}.iso"
-    local URL="http://lon.mirror.rackspace.com/almalinux/${RELEASE/beta-1/beta}/isos/x86_64/"
+    local URL="https://mirror.rackspace.com/almalinux/${RELEASE/beta-1/beta}/isos/x86_64/"
     HASH="$(wget -q -O- "${URL}/CHECKSUM" | grep "(${ISO}" | cut -d' ' -f4)"
     echo "${URL}/${ISO} ${HASH}"
 }
@@ -1139,9 +1153,41 @@ function get_arcolinux() {
 }
 
 function get_blendos() {
+    local EDITION="${1:-}"
     local HASH=""
-    local URL="$(curl -s https://api.github.com/repos/blend-os/blendOS/releases  |grep 'browser_download_url'|grep ${RELEASE} | grep -o '\"http.*\.iso\"'| cut -d\" -f 2| head -1)"
-    HASH=$(curl -s "${URL}.sha256sum" | cut -d' ' -f1)
+    local URL=""
+    case ${RELEASE} in
+      23.01)
+        URL="$(curl -s https://api.github.com/repos/blend-os/blendOS/releases  |grep 'browser_download_url'|grep ${RELEASE} | grep -o '\"http.*\.iso\"'| cut -d\" -f 2| head -1)"
+        HASH=$(curl -s "${URL}.sha256sum" | cut -d' ' -f1)
+        ;;
+      23.04)
+        case ${EDITION} in
+          gnome)
+            TMPURL=$(wget -q -S -O- --max-redirect=0 "https://sourceforge.net/projects/blendos/files/23.04-1/${EDITION^^}/blendOS-2023.04.22-x86_64-${EDITION,,}.iso/download" 2>&1 | grep -i Location | cut -d' ' -f4)
+            URL=${TMPURL%\?*}
+            HASH=$(curl -s https://sourceforge.net/projects/blendos/files/${RELEASE}-1/${EDITION:-GNOME}/|grep  -o -E '\"sha1\":\".*\"'|cut -d\" -f4)
+            ;;
+          kde|plasma)
+            local ED_DE="Plasma"
+            TMPURL=$(wget -q -S -O- --max-redirect=0 "https://sourceforge.net/projects/blendos/files/23.04-1/${ED_DE^}/blendOS-2023.04.22-x86_64-${ED_DE,,}.iso/download" 2>&1 | grep -i Location | cut -d' ' -f4)
+            URL=${TMPURL%\?*}
+            HASH=$(curl -s https://sourceforge.net/projects/blendos/files/${RELEASE}-1/Plasma/|grep  -o -E '\"sha1\":\".*\"'|cut -d\" -f4)
+            ;;
+        esac
+        ;;
+    esac
+    echo "${URL} ${HASH}"
+}
+
+function get_vanillaos() {
+  # maybe use github api and dynamism for R2.0 but for 22.10 just
+  # hit their CDN
+  #
+  # https://cdn.vanillaos.org/assets/ISO/22.10-r8/VanillaOS-22.10-all.20230226.md5.txt
+  # https://cdn.vanillaos.org/assets/ISO/22.10-r8/VanillaOS-22.10-all.20230226.sha256.txt
+    local HASH=$(curl -s "https://cdn.vanillaos.org/assets/ISO/22.10-r8/VanillaOS-22.10-all.20230226.sha256.txt" | cut -d' ' -f1)
+    local URL="https://cdn.vanillaos.org/assets/ISO/22.10-r8/VanillaOS-22.10-all.20230226.iso"
     echo "${URL} ${HASH}"
 }
 
@@ -1380,7 +1426,7 @@ function get_fedora() {
     local VARIANT=""
 
     case ${EDITION} in
-      Server|Silverblue|Workstation) VARIANT="${EDITION}";;
+      Server|Kinoite|Silverblue|Sericea|Workstation) VARIANT="${EDITION}";;
       *) VARIANT="Spins";;
     esac
 
@@ -1458,7 +1504,7 @@ function get_garuda() {
   ISO=${EDITION}/latest.iso
 
   HASH="$(wget -q -O- "${URL}/${ISO}.sha256" | cut -d' ' -f1)"
-  echo "${URL} ${HASH}"
+  echo "${URL}/${ISO} ${HASH}"
 }
 
 function get_gentoo() {
@@ -1549,7 +1595,7 @@ function get_macos() {
     local CWD=""
     local MACRECOVERY=""
     local MLB="00000000000000000"
-    local OS_TYPE="latest"
+    local OS_TYPE="default"
 
     case ${RELEASE} in
         lion)           #10.7
@@ -1608,8 +1654,8 @@ function get_macos() {
     # Get firmware
     web_get "https://github.com/kholia/OSX-KVM/raw/master/OpenCore/OpenCore.qcow2" "${VM_PATH}"
     web_get "https://github.com/kholia/OSX-KVM/raw/master/OVMF_CODE.fd" "${VM_PATH}"
-    if [ ! -e "${VM_PATH}/OVMF_VARS-1024x768.fd" ]; then
-        web_get "https://github.com/kholia/OSX-KVM/raw/master/OVMF_VARS-1024x768.fd" "${VM_PATH}"
+    if [ ! -e "${VM_PATH}/OVMF_VARS-1920x1080.fd" ]; then
+        web_get "https://github.com/kholia/OSX-KVM/raw/master/OVMF_VARS-1920x1080.fd" "${VM_PATH}"
     fi
 
     if [ ! -e "${VM_PATH}/RecoveryImage.chunklist" ]; then
@@ -1711,6 +1757,16 @@ function get_openbsd() {
     echo "${URL}/${ISO} ${HASH}"
 }
 
+function get_openindiana(){
+    local HASH=""
+    local ISO=""
+    local URL=""
+    URL="https://dlc.openindiana.org/isos/hipster/${RELEASE}"
+    ISO="OI-hipster-${EDITION}-${RELEASE}.iso"
+    HASH=$(wget -q -O- "${URL}/${ISO}.sha256" |cut -d' ' -f1)
+    echo "${URL}/${ISO} ${HASH}"
+}
+
 function get_opensuse() {
     local HASH=""
     local ISO=""
@@ -1776,13 +1832,18 @@ function get_rebornos() {
 
 function get_rockylinux() {
     local EDITION="${1:-}"
+    if [[ "${RELEASE}" =~ ^8. ]] && [[ "${EDITION}" == "dvd" ]]
+    then
+      EDITION="dvd1"
+    fi
     local HASH=""
     local ISO="Rocky-${RELEASE}-x86_64-${EDITION}.iso"
     local URL=""
 
     case ${RELEASE} in
-      9.1) URL="https://download.rockylinux.org/pub/rocky/${RELEASE}/isos/x86_64";;
-      *)   URL="http://dl.rockylinux.org/vault/rocky/${RELEASE}/isos/x86_64/";;
+      9.1) URL="https://download.rockylinux.org/pub/rocky/9/isos/x86_64";;
+      8.7) URL="https://download.rockylinux.org/pub/rocky/8/isos/x86_64";;
+      *)   URL="http://dl.rockylinux.org/vault/rocky/${RELEASE}/isos/x86_64";;
     esac
     HASH=$(wget -q -O- "${URL}/CHECKSUM" | grep "SHA256" | grep "${ISO})" | cut -d' ' -f4)
     echo "${URL}/${ISO} ${HASH}"
@@ -1830,7 +1891,7 @@ function get_solus() {
     echo "${URL}/${ISO} ${HASH}"
 }
 
-function get_steamos() {
+function get_holoiso() {
     local HASH=""
     local DATE="20221211"
     local ISO="HoloISO_${RELEASE}_OfflineInstaller-${DATE}_1636-x86_64.iso"
@@ -1875,6 +1936,33 @@ function get_truenas-core() {
     echo "${URL} ${HASH}"
 }
 
+function get_ubuntu-server() {
+
+      local HASH=""
+      local ISO=""
+      local URL="https://releases.ubuntu.com/${RELEASE}"
+
+      if wget -q --spider "${URL}/SHA256SUMS"; then
+          ISO=$(wget -q -O- "${URL}/SHA256SUMS" | grep 'live-server' | grep amd64 | grep iso | cut -d'*' -f2)
+          HASH=$(wget -q -O- "${URL}/SHA256SUMS" | grep 'live-server' | grep amd64 | grep iso |cut -d' ' -f1)
+      else
+          ISO=$(wget -q -O- "${URL}/MD5SUMS" | grep 'live-server' | grep amd64 | grep iso | cut -d' ' -f3)
+          HASH=$(wget -q -O- "${URL}/MD5SUMS" | grep 'live-server' | grep amd64 | grep iso | cut -d' ' -f1)
+      fi
+
+      if [[ "${RELEASE}" == *"daily"* ]] || [ "${RELEASE}" == "dvd" ]; then
+          URL="https://cdimage.ubuntu.com/${OS}/${RELEASE}/current"
+          ISO=$(wget -q -O- "${URL}/SHA256SUMS" | grep 'live-server' | grep amd64 | grep iso | cut -d'*' -f2)
+          HASH=$(wget -q -O- "${URL}/SHA256SUMS" | grep 'live-server' | grep amd64 | grep iso |cut -d' ' -f1)
+          zsync_get "${URL}/${ISO}" "${VM_PATH}" "${OS}-devel.iso"
+          make_vm_config "${OS}-devel.iso"
+      else
+          web_get "${URL}/${ISO}" "${VM_PATH}"
+          check_hash "${ISO}" "${HASH}"
+          make_vm_config "${ISO}"
+      fi
+}
+
 function get_ubuntu() {
     local ISO=""
     local HASH=""
@@ -1886,6 +1974,9 @@ function get_ubuntu() {
     elif [ "${RELEASE}" == "daily-canary" ] && [ "${OS}" != "ubuntu" ]; then
         # daily-canary is only available for Ubuntu, switch flavours to daily-live
         RELEASE="daily-live"
+    elif [ "${RELEASE}" == "daily-legacy" ] && [ "${OS}" != "ubuntu" ]; then
+        # daily-legacy is only available for Ubuntu, switch flavours to daily-live
+        RELEASE="daily-live"
     fi
 
     if [[ "${RELEASE}" == "eol-"* ]]; then
@@ -1893,10 +1984,12 @@ function get_ubuntu() {
     elif [[ "${RELEASE}" == "jammy-daily" ]]; then
         URL="https://cdimage.ubuntu.com/${OS}/jammy/daily-live/current"
         VM_PATH="${OS}-jammy-live"
-
+    elif [[ "${RELEASE}" == "daily-legacy" ]]; then
+        URL="https://cdimage.ubuntu.com/${RELEASE}/current"
+        VM_PATH="${OS}-${RELEASE}"
     elif [[ "${RELEASE}" == *"daily"* ]] || [ "${RELEASE}" == "dvd" ]; then
         URL="https://cdimage.ubuntu.com/${OS}/${RELEASE}/current"
-        VM_PATH="${OS}-daily-live"
+        VM_PATH="${OS}-${RELEASE}"
     elif [ "${OS}" == "ubuntu" ]; then
         URL="https://releases.ubuntu.com/${RELEASE}"
     else
@@ -1910,7 +2003,6 @@ function get_ubuntu() {
         ISO=$(wget -q -O- "${URL}/MD5SUMS" | grep 'desktop\|dvd\|install' | grep amd64 | grep iso | cut -d' ' -f3)
         HASH=$(wget -q -O- "${URL}/MD5SUMS" | grep 'desktop\|dvd\|install' | grep amd64 | grep iso | cut -d' ' -f1)
     fi
-    #echo "${URL}/${ISO} ${HASH}"
 
     if [[ "${RELEASE}" == *"daily"* ]] || [ "${RELEASE}" == "dvd" ]; then
         zsync_get "${URL}/${ISO}" "${VM_PATH}" "${OS}-devel.iso"
@@ -1935,35 +2027,15 @@ function get_void() {
     local EDITION="${1:-}"
     local HASH=""
     local ISO=""
-    local URL="https://alpha.de.repo.voidlinux.org/live/${RELEASE}"
-    if [[ "${RELEASE}" == "current" ]]; then
-        DATE=$(wget -q -O- "${URL}/sha256sum.txt" | head -n1 | cut -d'.' -f1 | cut -d'-' -f4)
-        case ${EDITION} in
-            base)      ISO="void-live-x86_64-${DATE}-base.iso";;
-            base-musl) ISO="void-live-x86_64-musl-${DATE}-base.iso";;
-            xfce)      ISO="void-live-x86_64-${DATE}-xfce.iso";;
-            xfce-musl) ISO="void-live-x86_64-musl-${DATE}-xfce.iso";;
-        esac
-    else
-        case ${EDITION} in
-            cinnamon)           ISO="void-live-x86_64-${RELEASE}-cinnamon.iso";;
-            cinnamon-musl)      ISO="void-live-x86_64-musl-${RELEASE}-cinnamon.iso";;
-            enlightenment)      ISO="void-live-x86_64-${RELEASE}-enlightenment.iso";;
-            enlightenment-musl) ISO="void-live-x86_64-musl-${RELEASE}-enlightenment.iso";;
-            gnome)              ISO="void-live-x86_64-${RELEASE}-gnome.iso";;
-            gnome-musl)         ISO="void-live-x86_64-musl-${RELEASE}-gnome.iso";;
-            lxde)               ISO="void-live-x86_64-${RELEASE}-lxde.iso";;
-            lxde-musl)          ISO="void-live-x86_64-musl-${RELEASE}-lxde.iso";;
-            lxqt)               ISO="void-live-x86_64-${RELEASE}-lxqt.iso";;
-            lxqt-musl)          ISO="void-live-x86_64-musl-${RELEASE}-lxqt.iso";;
-            mate)               ISO="void-live-x86_64-${RELEASE}-mate.iso";;
-            mate-musl)          ISO="void-live-x86_64-musl-${RELEASE}-mate.iso";;
-            xfce)               ISO="void-live-x86_64-${RELEASE}-xfce.iso";;
-            xfce-musl)          ISO="void-live-x86_64-musl-${RELEASE}-xfce.iso";;
-            base)               ISO="void-live-x86_64-${RELEASE}.iso";;
-            base-musl)          ISO="void-live-x86_64-musl-${RELEASE}.iso";;
-        esac
-    fi
+    local URL="https://alpha.de.repo.voidlinux.org/live/current"
+
+    DATE=$(wget -q -O- "${URL}/sha256sum.txt" | head -n1 | cut -d'.' -f1 | cut -d'-' -f4)
+    case ${EDITION} in
+        glibc)      ISO="void-live-x86_64-${DATE}-base.iso";;
+        musl)       ISO="void-live-x86_64-musl-${DATE}-base.iso";;
+        xfce-glibc) ISO="void-live-x86_64-${DATE}-xfce.iso";;
+        xfce-musl)  ISO="void-live-x86_64-musl-${DATE}-xfce.iso";;
+    esac
     HASH="$(wget -q -O- "${URL}/sha256sum.txt" | grep "${ISO}" | cut -d' ' -f4)"
     echo "${URL}/${ISO} ${HASH}"
 }
@@ -2297,92 +2369,35 @@ function unattended_windows() {
 EOF
 }
 
-function dbg_windows() {
-  local DEBUG=0
-  if [ ${DEBUG} -eq 1 ]; then
-    echo "${1}"
-  fi
-}
 
-# Adapted from https://gist.github.com/hongkongkiwi/15a5bf16437315df256c118c163607cb
 function get_windows() {
-    # Use the API to automatically download a Windows .iso image
-    # The API we were using is unmaintained and not currently functional
+    # Use the iTechtics CDN to download the ISOs.
+    # - https://www.itechtics.com/windows-10-download-iso/
+    # - https://www.itechtics.com/windows-11-download-iso/
     #  0 : Prompt for a manual ISO download
-    #  1 : Use the API for automated download
-    local API_GUIDED_DOWNLOAD=0
-
-    local ARCH="x64"
-    local INDEX=0
-    local LANG_CODE="en"
-    local LANG_EDITION="${1}"
-    local LATEST_WINDOWS_VERSION=""
-    local WINDOWS_NAME=""
-    local WINDOWS_ISO_URL=""
-    local VERSION_ID=""
-    local EDITION_ID=""
-    local LANGUAGE_ID=""
-    local FILE_NAME=""
-    local ARCH_ID=""
-    local DOWNLOAD_INFO=""
-    local DOWNLOAD_ID=""
+    #  1 : Download automatically
+    local AUTO_DOWNLOAD=1
     local DOWNLOAD_URL=""
 
-    if [ ${API_GUIDED_DOWNLOAD} -eq 1 ]; then
+    if [ ${AUTO_DOWNLOAD} -eq 1 ]; then
         # Ignore the most recent Windows 10 release for now.
         case ${RELEASE} in
-        10) INDEX=0;;
-        11) INDEX=0;;
+            10) DOWNLOAD_URL="https://www.itechtics.com/?dl_id=173"
+                EDITION="22H2"
+                FILE_NAME="Win${RELEASE}_${EDITION}_EnglishInternational_x64v1.iso"
+                FILE_HASH="dc3982ad27e2d4e03b680630c28f824cb78bcd47"
+                ;;
+            11) DOWNLOAD_URL="https://www.itechtics.com/?dl_id=168"
+                EDITION="22H2"
+                FILE_NAME="Win${RELEASE}_${EDITION}_English_x64v1.iso"
+                FILE_HASH="c5341ba26e420684468fa4d4ab434823c9d1b61f"
+                ;;
         esac
 
-        echo "Getting Windows ${RELEASE} URL..."
-        WINDOWS_VERSIONS=$(wget -4 -q -O- "https://tb.rg-adguard.net/php/get_version.php?type_id=1" | jq '.versions | sort_by(-(.version_id | tonumber))')
-        dbg_windows "${WINDOWS_VERSIONS}"
-        LATEST_WINDOWS_VERSION=$(echo "${WINDOWS_VERSIONS}" | jq -c 'map(select(.name | contains("Windows '"${RELEASE}"'")))['${INDEX}']')
-        dbg_windows "${LATEST_WINDOWS_VERSION}"
-        WINDOWS_NAME=$(echo "${LATEST_WINDOWS_VERSION}" | jq -r .name)
-        dbg_windows "${WINDOWS_NAME}"
-        VERSION_ID=$(echo "${LATEST_WINDOWS_VERSION}" | jq -r .version_id)
-        dbg_windows "${VERSION_ID}"
-
-        case ${RELEASE} in
-            8) EDITION_ID=$(wget -4 -q -O- "https://tb.rg-adguard.net/php/get_edition.php?version_id=${VERSION_ID}&lang=name_${LANG_CODE}" | jq -r '.editions[] | select(.name_'${LANG_CODE}'=="Windows 8.1 Pro + Core").edition_id');;
-            10|11) EDITION_ID=$(wget -4 -q -O- "https://tb.rg-adguard.net/php/get_edition.php?version_id=${VERSION_ID}&lang=name_${LANG_CODE}" | jq -r '.editions[] | select(.name_'${LANG_CODE}'=="Windows '"${RELEASE}"'").edition_id');;
-        esac
-        dbg_windows "${EDITION_ID}"
-
-        LANGUAGE_ID=$(wget -4 -q -O- "https://tb.rg-adguard.net/php/get_language.php?edition_id=${EDITION_ID}&lang=name_${LANG_CODE}" | jq -r '.languages[] | select(.name_'${LANG_CODE}'=="'"${LANG_EDITION}"'").language_id')
-        dbg_windows "${LANGUAGE_ID}"
-        ARCH_INFO=$(wget -4 -q -O- "https://tb.rg-adguard.net/php/get_arch.php?language_id=${LANGUAGE_ID}")
-        dbg_windows "${ARCH_INFO}"
-        FILE_NAME=$(echo "${ARCH_INFO}" | jq -r '.archs[] | select(.name | contains("'${ARCH}'")).name')
-        dbg_windows "${FILE_NAME}"
-        ARCH_ID=$(echo "${ARCH_INFO}" | jq -r '.archs[] | select(.name | contains("'${ARCH}'")).arch_id')
-        dbg_windows "${ARCH_ID}"
-        DOWNLOAD_INFO=$(wget -4 -q -O- "https://tb.rg-adguard.net/dl.php?fileName=${ARCH_ID}&lang=en")
-        dbg_windows "${DOWNLOAD_INFO}"
-        DOWNLOAD_SHA1=$(echo "${DOWNLOAD_INFO}" | sed -e 's/<[^>]*>//g' | grep -o -P '(?<=SHA1: ).*(?= expire)' | sed 's/Link//')
-        dbg_windows "${DOWNLOAD_SHA1}"
-        DOWNLOAD_ID=$(echo "${DOWNLOAD_INFO}" | grep -oP '(?<=https:\/\/tb\.rg-adguard\.net/dl\.php\?go=)[0-9a-z]+')
-        dbg_windows "${DOWNLOAD_ID}"
-        REDIRECT_URL="https://tb.rg-adguard.net/dl.php?go=${DOWNLOAD_ID}"
-        dbg_windows "${REDIRECT_URL}"
-        DOWNLOAD_URL=$(curl --head --silent --write-out "%{redirect_url}\n" --output /dev/null "${REDIRECT_URL}")
-        dbg_windows "${DOWNLOAD_URL}"
-
-        MS_BASE_URL="https://software.download.prss.microsoft.com/"
-        if [[ ! ${DOWNLOAD_URL} =~ ^${MS_BASE_URL} ]]; then
-            echo "Download URL not leading to Microsoft CDN"
-            exit 1
-        fi
-
-        echo "Downloading ${WINDOWS_NAME}..."
+        echo "Downloading Windows ${RELEASE} ${EDITION}..."
         web_get "${DOWNLOAD_URL}" "${VM_PATH}" "${FILE_NAME}"
 
-        # Windows 10 doesn't include a SHA1, so only check the integrity if the SHA1 is available.
-        if [ -n "${DOWNLOAD_SHA1}" ]; then
-            check_hash "${FILE_NAME}" "${DOWNLOAD_SHA1}"
-        fi
+        check_hash "${FILE_NAME}" "${FILE_HASH}"
     else
         case ${RELEASE} in
             10) WINDOWS_ISO_URL="https://www.microsoft.com/software-download/windows10";;
@@ -2411,7 +2426,7 @@ function get_windows() {
             ;;
     esac
 
-    case "${API_GUIDED_DOWNLOAD}" in
+    case "${AUTO_DOWNLOAD}" in
         0) make_vm_config "windows-${RELEASE}.iso" "virtio-win.iso";;
         1) make_vm_config "${FILE_NAME}" "virtio-win.iso";;
     esac
@@ -2470,7 +2485,6 @@ if ((BASH_VERSINFO[0] < 4)); then
 fi
 
 LANGS=()
-languages_windows
 
 if [ -n "${1}" ]; then
     OS="${1,,}"
@@ -2599,6 +2613,11 @@ if [ -n "${2}" ]; then
         # macOS doesn't use create_vm()
         validate_release releases_macos
         get_macos
+    elif [[ "${OS}" == *"ubuntu-server"* ]]; then
+        # (Comes before regular Ubuntu, or the code tries to download the desktop) #
+        # Ubuntu doesn't use create_vm()
+        validate_release releases_ubuntu-server
+        get_ubuntu-server
     elif [[ "${OS}" == *"ubuntu"* ]]; then
         # Ubuntu doesn't use create_vm()
         validate_release releases_ubuntu
@@ -2608,20 +2627,9 @@ if [ -n "${2}" ]; then
         validate_release releases_deepin
         get_deepin
     elif [ "${OS}" == "windows" ]; then
-        LANG="English International"
-        if [ -n "${3}" ]; then
-            LANG="${3}"
-            if [[ ! ${LANGS[*]} =~ "${LANG}" ]]; then
-                echo -e "ERROR! ${LANG} is not a supported Windows language:\n"
-                for LANG in "${LANGS[@]}"; do
-                  echo -n "${LANG} "
-                done
-                exit 1
-            fi
-        fi
         # Windows doesn't use create_vm()
         validate_release releases_windows
-        get_windows "${LANG}"
+        get_windows
     else
         validate_release "releases_${OS}"
         create_vm "$("get_${OS}")"
@@ -2629,6 +2637,10 @@ if [ -n "${2}" ]; then
 else
     echo "ERROR! You must specify a release."
     case ${OS} in
+      *ubuntu-server*)
+        echo -n " - Releases: "
+        releases_ubuntu-server | sed -Ee 's/eol-\S+//g' # hide eol releases
+        ;;
       *ubuntu*)
         echo -n " - Releases: "
         releases_ubuntu | sed -Ee 's/eol-\S+//g' # hide eol releases
@@ -2647,4 +2659,3 @@ else
 fi
 
 # vim:tabstop=4:shiftwidth=4:expandtab
-
