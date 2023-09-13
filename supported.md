@@ -27,6 +27,7 @@ garuda
 gentoo
 ghostbsd
 haiku
+holoiso
 kali
 kdeneon
 kolibrios
@@ -43,6 +44,7 @@ nixos
 lubuntu
 macos
 openbsd
+openindiana
 opensuse
 oraclelinux
 popos
@@ -53,7 +55,6 @@ siduction
 slackware
 slitaz
 solus
-steamos
 tails
 truenas-core
 truenas-scale
@@ -62,8 +63,10 @@ ubuntu-budgie
 ubuntucinnamon
 ubuntukylin
 ubuntu-mate
+ubuntu-server
 ubuntustudio
 ubuntu-unity
+vanillaos
 ventoy
 void
 voidpup

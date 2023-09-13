@@ -758,8 +758,8 @@ function releases_void() {
     echo current
 }
 
-function editions_void() {
-    echo glibc musl xfce-glibc xfce-musl
+function releases_voidpup() {
+    echo current
 }
 
 function releases_vxlinux() {
