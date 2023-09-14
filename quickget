@@ -270,7 +270,11 @@ function os_support() {
 }
 
 function releases_agarimos() {
-    echo 20230305 20230303 20230225 20230216
+    echo latest
+}
+
+function editions_agarimos() {
+    echo plasma xfce lxqt gnome
 }
 
 function releases_alma() {
@@ -1064,22 +1068,22 @@ function get_agarimos() {
     local HASH=""
     local ISO=""
     local URL=""
-    case ${RELEASE} in
-        20230305)
+    case ${EDITION} in
+        gnome)
             URL="https://sourceforge.net/projects/agarimos/files/Gnome"
-            ISO="AgarimOS-Gnome-Catppuccin-Live-x86_64-6.1.14_1-20230305.iso"
+            ISO="AgarimOS-Gnome-Catppuccin-Live-x86_64-6.3.13_1-20230910.iso"
             ;;
-        20230303)
+        plasma)
             URL="https://sourceforge.net/projects/agarimos/files/Plasma"
-            ISO="AgarimOS-Plasma-Dracula-Live-x86_64-6.1.14_1-20230303.iso"
+            ISO="AgarimOS-Plasma-Dracula-Live-x86_64-6.3.13_1-20230913.iso"
             ;;
-        20230225)
+        xfce)
             URL="https://sourceforge.net/projects/agarimos/files/XFCE4"
-            ISO="AgarimOS-XFCE4-Catppuccin-Live-x86_64-6.1.12_1-20230216.iso"
+            ISO="AgarimOS-XFCE4-Catppuccin-Live-x86_64-6.3.13_1-20230903.iso"
             ;;
-        20230216)
-            URL="https://sourceforge.net/projects/agarimos/files/XFCE4"
-            ISO="AgarimOS-XFCE4-Catppuccin-Live-6.1.13_1-20230225.iso"
+        lxqt)
+            URL="https://sourceforge.net/projects/agarimos/files/LXQT-KWIN"
+            ISO="AgarimOS-LXQT-KWIN-Dracula-Live-x86_64-6.3.13_1-20230903.iso"
             ;;
     esac
 
