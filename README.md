@@ -30,29 +30,26 @@ Licensed under AGPL3
 # Still Beta version!
 <details>
   <summary>Click for screenshot</summary>
-![supported Operating systems](docs/distrohopper.png)
+<img src="docs/distrohopper.png">
 </details>
 
  As a base excellent [quickemu](https://github.com/quickemu-project/quickemu) (Link to project page)
-<details>
-  <summary>Click for Quickemu old video</summary>
+
 [![quickemu video: Replace VirtualBox with Bash &
 QEMU](https://img.youtube.com/vi/AOTYWEgw0hI/0.jpg)](https://www.youtube.com/watch?v=AOTYWEgw0hI)
-</details>
+
 
   You can download new distro with **few clicks** of a mouse
 
 # Features
- - GUI using yad
-<details>
-  <summary>Click for old video</summary>
+ - GUI using yad (on youtube)
+
 [![dh](https://img.youtube.com/vi/RrFQECcwLRA/0.jpg)](https://www.youtube.com/watch?v=RrFQECcwLRA)
-</details>
- - TUI using fzf
-<details>
-  <summary>Click for old video</summary>
+
+ - TUI using fzf (on youtube)
+
 [![tui](https://img.youtube.com/vi/gJ5hqYEskOw/0.jpg)](https://www.youtube.com/watch?v=gJ5hqYEskOw)
-</details>
+
  - Desktop(shortcuts) entries generator
 
  - Set dir where VMs will be stored
