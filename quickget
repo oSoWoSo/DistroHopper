@@ -75,6 +75,7 @@ function pretty_name() {
     slitaz)             PRETTY_NAME="SliTaz GNU/Linux";;
     truenas-core)       PRETTY_NAME="TrueNAS Core";;
     truenas-scale)      PRETTY_NAME="TrueNAS Scale";;
+    tuxedoos)           PRETTY_NAME="TuxedoOS";;
     ubuntu-budgie)      PRETTY_NAME="Ubuntu Budgie";;
     ubuntucinnamon)     PRETTY_NAME="Ubuntu Cinnamon";;
     ubuntukylin)        PRETTY_NAME="Ubuntu Kylin";;
@@ -243,6 +244,7 @@ function os_support() {
     tails \
     truenas-core \
     truenas-scale \
+    tuxedoos \
     ubuntu \
     ubuntu-budgie \
     ubuntucinnamon \
@@ -636,6 +638,10 @@ function releases_truenas-core() {
 
 function releases_truenas-scale() {
     echo 22.02 22.12
+}
+
+function releases_tuxedoos() {
+    echo 2
 }
 
 function releases_ubuntu() {
@@ -1895,6 +1901,16 @@ function get_truenas-core() {
     HASH=$(wget -q ${URL}.sha256 -O- | cut -d' ' -f1)
 
     echo "${URL} ${HASH}"
+}
+
+function get_tuxedoos() {
+    local DATE="202309111354"
+    local HASH=""
+    local ISO="TUXEDO-OS-${RELEASE}-${DATE}.iso"
+    local URL="https://os.tuxedocomputers.com/"
+
+    HASH=$(wget -q -O- "${URL}/checksums" | grep "${ISO}" | cut -d' ' -f1)
+    echo "${URL}/${ISO} ${HASH}"
 }
 
 function get_ubuntu-server() {
