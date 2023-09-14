@@ -474,7 +474,7 @@ function releases_gabeeos() {
 }
 
 function editions_gabeeos() {
-    echo qtile budgie
+    echo openbox qtile
 }
 
 function releases_garuda() {
@@ -1515,11 +1515,24 @@ function get_fvoid() {
 function get_gabeeos() {
     local HASH=""
     local URL=""
-    local TMPURL=""
+#    local TMPURL=""
 
-    TMPURL=$(wget -q -S -O- --max-redirect=0 "https://sourceforge.net/projects/gabeeos/files/latest/download" 2>&1 | grep -i Location | cut -d' ' -f4)
-    URL=${TMPURL%\?*}
-    echo "${URL} ${HASH}"
+#    TMPURL=$(wget -q -S -O- --max-redirect=0 "https://sourceforge.net/projects/gabeeos/files/latest/download" 2>&1 | grep -i Location | cut -d' ' -f4)
+
+    case ${EDITION} in
+      openbox)
+        ISO="gabeeOSLinux-Openbox-Cherry-x86_64-6.1.25_1-20230502.iso"
+        URL="https://sourceforge.net/projects/gabeeoslinux/files/Distro/Openbox/beta"
+        HASH=$(wget -q -O- ${URL}/SHA256 | grep "${ISO}" | cut -d' ' -f2)
+        ;;
+      qtile)
+        ISO="gabeeOSLinux-Qtile-x86_64-6.1.25_1-20230508.iso"
+        URL="https://sourceforge.net/projects/gabeeoslinux/files/Distro/Qtile/beta"
+        HASH=$(wget -q -O- ${URL}/SHA256 | grep "${ISO}" | cut -d' ' -f4)
+        ;;
+    esac
+
+    echo "${URL}/${ISO} ${HASH}"
 }
 
 function get_garuda() {
