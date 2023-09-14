@@ -37,6 +37,7 @@ function pretty_name() {
     archlinux)          PRETTY_NAME="Arch Linux";;
     archcraft)          PRETTY_NAME="Archcraft";;
     arcolinux)          PRETTY_NAME="Arco Linux";;
+    atheanos)           PRETTY_NAME="Athena OS";;
     biglinux)           PRETTY_NAME="BigLinux";;
     blendos)            PRETTY_NAME="BlendOS";;
     cachyos)            PRETTY_NAME="CachyOS";;
@@ -192,6 +193,7 @@ function os_support() {
     archlinux \
     archcraft \
     arcolinux \
+    athenaos \
     batocera \
     biglinux \
     blendos \
@@ -303,6 +305,11 @@ function releases_arcolinux() {
 function editions_arcolinux() {
     echo large small
 }
+
+function releases_athenaos() {
+    echo 23.06.23
+}
+
 
 function releases_batocera() {
   echo 32 33 34
@@ -1134,6 +1141,16 @@ function get_arcolinux() {
     local URL="https://ant.seedhost.eu/arcolinux/iso/${RELEASE}"
     HASH=$(wget -q -O- "${URL}/${ISO}.sha1" | cut -d' ' -f1)
     echo "${URL}/${ISO} ${HASH}"
+}
+
+function get_athenaos() {
+    local HASH=""
+    local URL=""
+    local TMPURL=""
+    local ISO="athena-2023.06.23-x86_64.iso"
+    TMPURL=$(wget -q -S -O- --max-redirect=0 "https://sourceforge.net/projects/athena-iso/files/v23.06.23/${ISO}/download" 2>&1 | grep -i Location | cut -d' ' -f4)
+    URL=${TMPURL%\?*}
+    echo "${URL} ${HASH}"
 }
 
 function get_batocera() {
