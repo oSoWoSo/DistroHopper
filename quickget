@@ -1012,7 +1012,7 @@ EOF
             fi
             ;;
           vanillaos)
-          ## Minimum 50G for abroot
+          ## Minimum is 50G for abroot, but a 64GB is allocated to give some headroom
            echo "disk_size=\"64G\"" >> "${CONF_FILE}"
            ;;
           zorin)
@@ -1036,7 +1036,7 @@ EOF
         esac
 
         if [ "${OS}" == "ubuntu" ] && [[ ${RELEASE} == *"daily"*  ]]; then
-        # wont install  lobster testing with less than 18GB
+        # Minimum to install lobster testing is 18GB but 32GB are allocated for headroom
           echo "disk_size=\"32G\"" >> "${CONF_FILE}"
         fi
         # Enable TPM for Windows 11
