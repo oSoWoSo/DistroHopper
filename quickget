@@ -78,6 +78,7 @@ function pretty_name() {
     rebornos)           PRETTY_NAME="RebornOS";;
     rockylinux)         PRETTY_NAME="Rocky Linux";;
     slitaz)             PRETTY_NAME="SliTaz GNU/Linux";;
+    tinycore)           PRETTY_NAME="Tiny Core Linux";;
     truenas-core)       PRETTY_NAME="TrueNAS Core";;
     truenas-scale)      PRETTY_NAME="TrueNAS Scale";;
     tuxedoos)           PRETTY_NAME="TuxedoOS";;
@@ -255,6 +256,7 @@ function os_support() {
     slitaz \
     solus \
     tails \
+    tinycore \
     truenas-core \
     truenas-scale \
     tuxedoos \
@@ -694,6 +696,14 @@ function releases_tails() {
     echo stable
 }
 
+function releases_tinycore() {
+    echo 14.0
+}
+
+function editions_tinycore() {
+    echo Core TinyCore CorePlus CorePure64 TinyCorePure64
+}
+
 function releases_truenas() {
   if [[ $OS == truenas ]] ; then
     echo "ERROR! The supported TrueNAS OS values are truenas-core or truenas-scale"
@@ -1022,7 +1032,7 @@ EOF
                 echo "boot=\"legacy\"" >> "${CONF_FILE}"
             fi
             ;;
-          dragonflybsd|haiku|openbsd|netbsd|slackware|slax|tails)
+          dragonflybsd|haiku|openbsd|netbsd|slackware|slax|tails|tinycore)
             echo "boot=\"legacy\"" >> "${CONF_FILE}";;
           deepin)
             echo "disk_size=\"64G\"" >> "${CONF_FILE}"
@@ -2037,6 +2047,21 @@ function get_tails() {
     URL=$(echo "${JSON}" | jq -r '.installations[0]."installation-paths"[]|select(.type=="iso")|."target-files"[0].url')
     HASH=$(echo "${JSON}" | jq -r '.installations[0]."installation-paths"[]|select(.type=="iso")|."target-files"[0].sha256')
     echo "${URL} ${HASH}"
+}
+
+function get_tinycore() {
+    local HASH=""
+    local ISO="${EDITION}-${RELEASE}.iso"
+    local URL=""
+
+    if [ "${EDITION}" == "Core" ] || [ "${EDITION}" == "TinyCore" ] || [ "${EDITION}" == "CorePlus" ]; then
+        URL="http://www.tinycorelinux.net/14.x/x86/release"
+    elif [ "${EDITION}" == "CorePure64" ] || [ "${EDITION}" == "TinyCorePure64" ]; then
+        URL="http://www.tinycorelinux.net/14.x/x86_64/release"
+    fi
+
+    HASH=$(wget -q -O- "${URL}/${ISO}.md5.txt" | cut -d' ' -f1)
+    echo "${URL}/${ISO} ${HASH}"
 }
 
 function get_truenas-scale() {
