@@ -251,6 +251,7 @@ function os_support() {
     rockylinux \
     siduction \
     slackware \
+    slax \
     slitaz \
     solus \
     tails \
@@ -669,6 +670,14 @@ function releases_slackware() {
     echo 14.2 15.0
 }
 
+function releases_slax() {
+    echo latest
+}
+
+function editions_slax() {
+    echo Debian Slackware
+}
+
 function releases_slitaz() {
     echo preferred core core64 loram core-5in1 preinit
 }
@@ -1013,7 +1022,7 @@ EOF
                 echo "boot=\"legacy\"" >> "${CONF_FILE}"
             fi
             ;;
-          dragonflybsd|haiku|openbsd|netbsd|slackware|tails)
+          dragonflybsd|haiku|openbsd|netbsd|slackware|slax|tails)
             echo "boot=\"legacy\"" >> "${CONF_FILE}";;
           deepin)
             echo "disk_size=\"64G\"" >> "${CONF_FILE}"
@@ -1975,6 +1984,22 @@ function get_slackware() {
     local ISO="slackware64-${RELEASE}-install-dvd.iso"
     local URL="https://slackware.nl/slackware/slackware-iso/slackware64-${RELEASE}-iso"
     HASH=$(wget -q -O- "${URL}/${ISO}.md5" |  cut -d' ' -f1)
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+function get_slax() {
+    local HASH=""
+    local ISO=""
+    local URL="https://slax.org/download-slax.php?a=64bit&b=${EDITION}"
+
+    case ${EDITION} in
+      Debian) ISO="slax-64bit-11.6.0.iso"
+          HASH="b3771211c4485fec2e4f2418b06125f3e53424c5"
+      ;;
+      Slackware) ISO="slax-64bit-15.0.1.iso"
+          HASH="4ec9dff930251fbae847a56b18d53505147faf84"
+      ;;
+    esac
     echo "${URL}/${ISO} ${HASH}"
 }
 
