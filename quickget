@@ -1124,7 +1124,7 @@ function get_agarimos() {
     case ${EDITION} in
         gnome)
             URL="https://sourceforge.net/projects/agarimos/files/Gnome"
-            ISO="AgarimOS-Gnome-Catppuccin-Live-x86_64-6.3.13_1-20230910.iso"
+            ISO="AgarimOS-Gnome-Catppuccin-Liv-x86_64-6.3.13_1-20230914.iso"
             ;;
         plasma)
             URL="https://sourceforge.net/projects/agarimos/files/Plasma"
@@ -1132,11 +1132,11 @@ function get_agarimos() {
             ;;
         xfce)
             URL="https://sourceforge.net/projects/agarimos/files/XFCE4"
-            ISO="AgarimOS-XFCE4-Catppuccin-Live-x86_64-6.3.13_1-20230903.iso"
+            ISO="AgarimOS-XFCE4-Catppuccin-Live-x86_64-6.3.13_1-20230916.iso"
             ;;
         lxqt)
             URL="https://sourceforge.net/projects/agarimos/files/LXQT-KWIN"
-            ISO="AgarimOS-LXQT-KWIN-Dracula-Live-x86_64-6.3.13_1-20230903.iso"
+            ISO="AgarimOS-LXQT-KWIN-Dracula-Live-x86_64-6.3.13_1-20230915.iso"
             ;;
     esac
 
