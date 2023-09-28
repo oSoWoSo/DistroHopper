@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=quickfzf
+Description=Quickly download, create and run VM of any#TODO operating system.
+version=0.3
+Exec=quickfzf
+Terminal=true
+Icon=quickfzf.svg
+Categories=System;Virtualization;
+
