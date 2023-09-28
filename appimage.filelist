@@ -1,0 +1,3488 @@
+.:
+AppRun	bin  etc  lib  libunionpreload.so  qemu.desktop  qemu_logo_no_text.svg
+sbin	usr  var
+
+./bin:
+bunzip2       bzcat   bzcmp   bzdiff  bzegrep  bzexe	bzfgrep  bzgrep  bzip2
+bzip2recover  bzless  bzmore  chacl   getfacl  setfacl	tar
+
+./etc:
+cron.d	     default	deluser.conf  dpkg	e2scrub.conf  gss    init.d
+ldap	     libnl-3	mke2fs.conf   pbuilder	profile.d     pulse  qemu
+qemu-ifdown  qemu-ifup	rmt	      wgetrc
+
+./etc/cron.d:
+e2scrub_all
+
+./etc/default:
+qemu-kvm
+
+./etc/dpkg:
+shlibs.default	shlibs.override
+
+./etc/gss:
+mech.d
+
+./etc/gss/mech.d:
+
+./etc/init.d:
+binfmt-support	qemu-guest-agent
+
+./etc/ldap:
+ldap.conf
+
+./etc/libnl-3:
+classid  pktloc
+
+./etc/pbuilder:
+buildd-config.sh
+
+./etc/profile.d:
+vte-2.91.sh  vte.csh
+
+./etc/pulse:
+client.conf  client.conf.d
+
+./etc/pulse/client.conf.d:
+
+./etc/qemu:
+fsfreeze-hook  fsfreeze-hook.d
+
+./etc/qemu/fsfreeze-hook.d:
+
+./lib:
+systemd  udev  x86_64-linux-gnu
+
+./lib/systemd:
+system
+
+./lib/systemd/system:
+binfmt-support.service	  e2scrub_all.service	e2scrub_all.timer
+e2scrub_fail@.service	  e2scrub_reap.service	e2scrub@.service
+qemu-guest-agent.service  qemu-kvm.service
+
+./lib/udev:
+rules.d
+
+./lib/udev/rules.d:
+60-qemu-guest-agent.rules  96-e2scrub.rules
+
+./lib/x86_64-linux-gnu:
+libblkid.so.1	      libblkid.so.1.1.0    libbrlapi.so.0.7
+libbrlapi.so.0.7.0    libbz2.so.1	   libbz2.so.1.0
+libbz2.so.1.0.4       libcap-ng.so.0	   libcap-ng.so.0.0.0
+libcap.so.2	      libcap.so.2.32	   libcrypt.so.1
+libcrypt.so.1.1.0     libkeyutils.so.1	   libkeyutils.so.1.8
+liblzma.so.5	      liblzma.so.5.2.4	   libmount.so.1
+libmount.so.1.1.0     libncursesw.so.6	   libncursesw.so.6.2
+libnl-3.so.200	      libnl-3.so.200.26.0  libpcre.so.3
+libpcre.so.3.13.3     libselinux.so.1	   libsystemd.so.0
+libsystemd.so.0.28.0  libtinfo.so.6	   libtinfo.so.6.2
+libudev.so.1	      libudev.so.1.6.17
+
+./sbin:
+badblocks    capsh     debugfs	    dumpe2fs  e2fsck	 e2image    e2label
+e2mmpstatus  e2scrub   e2scrub_all  e2undo    fsck.ext2  fsck.ext3  fsck.ext4
+getcap	     getpcaps  logsave	    mke2fs    mkfs.ext2  mkfs.ext3  mkfs.ext4
+resize2fs    setcap    tune2fs
+
+./usr:
+bin  include  lib  libexec  sbin  share
+
+./usr/bin:
+addr2line		    ar
+as			    c++filt
+chattr			    debuild-pbuilder
+dpkg-architecture	    dpkg-buildflags
+dpkg-buildpackage	    dpkg-checkbuilddeps
+dpkg-distaddfile	    dpkg-genbuildinfo
+dpkg-genchanges		    dpkg-gencontrol
+dpkg-gensymbols		    dpkg-mergechangelogs
+dpkg-name		    dpkg-parsechangelog
+dpkg-scanpackages	    dpkg-scansources
+dpkg-shlibdeps		    dpkg-source
+dpkg-vendor		    dwp
+elfedit			    gold
+gprof			    ivshmem-client
+ivshmem-server		    kvm
+kvm-spice		    ld
+ld.bfd			    ld.gold
+lsattr			    lzmainfo
+make			    make-first-existing-target
+nm			    objcopy
+objdump			    patch
+pdebuild		    qemu-aarch64
+qemu-aarch64_be		    qemu-aarch64_be-static
+qemu-aarch64-static	    qemu-alpha
+qemu-alpha-static	    qemu-arm
+qemu-armeb		    qemu-armeb-static
+qemu-arm-static		    qemu-cris
+qemu-cris-static	    qemu-hppa
+qemu-hppa-static	    qemu-i386
+qemu-i386-static	    qemu-img
+qemu-io			    qemu-m68k
+qemu-m68k-static	    qemu-microblaze
+qemu-microblazeel	    qemu-microblazeel-static
+qemu-microblaze-static	    qemu-mips
+qemu-mips64		    qemu-mips64el
+qemu-mips64el-static	    qemu-mips64-static
+qemu-mipsel		    qemu-mipsel-static
+qemu-mipsn32		    qemu-mipsn32el
+qemu-mipsn32el-static	    qemu-mipsn32-static
+qemu-mips-static	    qemu-nbd
+qemu-nios2		    qemu-nios2-static
+qemu-or1k		    qemu-or1k-static
+qemu-ppc		    qemu-ppc64
+qemu-ppc64abi32		    qemu-ppc64abi32-static
+qemu-ppc64le		    qemu-ppc64le-static
+qemu-ppc64-static	    qemu-ppc-static
+qemu-pr-helper		    qemu-riscv32
+qemu-riscv32-static	    qemu-riscv64
+qemu-riscv64-static	    qemu-s390x
+qemu-s390x-static	    qemu-sh4
+qemu-sh4eb		    qemu-sh4eb-static
+qemu-sh4-static		    qemu-sparc
+qemu-sparc32plus	    qemu-sparc32plus-static
+qemu-sparc64		    qemu-sparc64-static
+qemu-sparc-static	    qemu-system-aarch64
+qemu-system-alpha	    qemu-system-arm
+qemu-system-cris	    qemu-system-hppa
+qemu-system-i386	    qemu-system-lm32
+qemu-system-m68k	    qemu-system-microblaze
+qemu-system-microblazeel    qemu-system-mips
+qemu-system-mips64	    qemu-system-mips64el
+qemu-system-mipsel	    qemu-system-moxie
+qemu-system-nios2	    qemu-system-or1k
+qemu-system-ppc		    qemu-system-ppc64
+qemu-system-ppc64le	    qemu-system-riscv32
+qemu-system-riscv64	    qemu-system-s390x
+qemu-system-sh4		    qemu-system-sh4eb
+qemu-system-sparc	    qemu-system-sparc64
+qemu-system-tricore	    qemu-system-unicore32
+qemu-system-x86_64	    qemu-system-x86_64-spice
+qemu-system-xtensa	    qemu-system-xtensaeb
+qemu-tilegx		    qemu-tilegx-static
+qemu-x86_64		    qemu-x86_64-static
+qemu-xtensa		    qemu-xtensaeb
+qemu-xtensaeb-static	    qemu-xtensa-static
+ranlib			    readelf
+size			    strings
+strip			    unxz
+virtfs-proxy-helper	    wget
+x86_64-linux-gnu-addr2line  x86_64-linux-gnu-ar
+x86_64-linux-gnu-as	    x86_64-linux-gnu-c++filt
+x86_64-linux-gnu-dwp	    x86_64-linux-gnu-elfedit
+x86_64-linux-gnu-gold	    x86_64-linux-gnu-gprof
+x86_64-linux-gnu-ld	    x86_64-linux-gnu-ld.bfd
+x86_64-linux-gnu-ld.gold    x86_64-linux-gnu-nm
+x86_64-linux-gnu-objcopy    x86_64-linux-gnu-objdump
+x86_64-linux-gnu-ranlib     x86_64-linux-gnu-readelf
+x86_64-linux-gnu-size	    x86_64-linux-gnu-strings
+x86_64-linux-gnu-strip	    xz
+xzcat			    xzcmp
+xzdiff			    xzegrep
+xzfgrep			    xzgrep
+xzless			    xzmore
+
+./usr/include:
+gnumake.h
+
+./usr/lib:
+binfmt-support	compat-ld	  gold-ld  ipxe  mime  pbuilder  qemu  sasl2
+systemd		x86_64-linux-gnu
+
+./usr/lib/binfmt-support:
+run-detectors
+
+./usr/lib/compat-ld:
+ld
+
+./usr/lib/gold-ld:
+ld
+
+./usr/lib/ipxe:
+82540em.rom  e1000_82540.rom  eepro100.rom    ne.rom  ns8390.rom  pcnet32.rom
+qemu	     rtl8139.rom      virtio-net.rom
+
+./usr/lib/ipxe/qemu:
+compat-256k-efi-e1000.rom   compat-256k-efi-ne2k_pci.rom
+compat-256k-efi-pcnet.rom   compat-256k-efi-rtl8139.rom
+compat-256k-efi-virtio.rom  efi-e1000e.rom
+efi-e1000.rom		    efi-eepro100.rom
+efi-ne2k_pci.rom	    efi-pcnet.rom
+efi-rtl8139.rom		    efi-virtio.rom
+efi-vmxnet3.rom		    pxe-e1000e.rom
+pxe-e1000.rom		    pxe-eepro100.rom
+pxe-ne2k_isa.rom	    pxe-ne2k_pci.rom
+pxe-pcnet.rom		    pxe-rtl8139.rom
+pxe-virtio.rom		    pxe-vmxnet3.rom
+
+./usr/lib/mime:
+packages
+
+./usr/lib/mime/packages:
+tar
+
+./usr/lib/pbuilder:
+pbuilder-apt-config		  pbuilder-buildpackage
+pbuilder-buildpackage-funcs	  pbuilder-checkparams
+pbuilder-createbuildenv		  pbuilder-loadconfig
+pbuilder-modules		  pbuilder-runhooks
+pbuilder-satisfydepends		  pbuilder-satisfydepends-apt
+pbuilder-satisfydepends-aptitude  pbuilder-satisfydepends-checkparams
+pbuilder-satisfydepends-classic   pbuilder-satisfydepends-experimental
+pbuilder-satisfydepends-funcs	  pbuilder-satisfydepends-gdebi
+pbuilder-unshare-wrapper	  pbuilder-updatebuildenv
+pdebuild-checkparams		  pdebuild-internal
+
+./usr/lib/qemu:
+qemu-bridge-helper  vhost-user-gpu
+
+./usr/lib/sasl2:
+
+./usr/lib/systemd:
+user
+
+./usr/lib/systemd/user:
+vte-spawn-.scope.d
+
+./usr/lib/systemd/user/vte-spawn-.scope.d:
+defaults.conf
+
+./usr/lib/x86_64-linux-gnu:
+ceph			   e2fsprogs
+engines-1.1		   gio
+glib-2.0		   gstreamer1.0
+krb5			   ldscripts
+libacl.so.1		   libacl.so.1.1.2253
+libaio.so.1		   libaio.so.1.0.1
+libasn1.so.8		   libasn1.so.8.0.0
+libasyncns.so.0		   libasyncns.so.0.3.1
+libbfd-2.34-system.so	   libboost_iostreams.so.1.71.0
+libboost_thread.so.1.71.0  libbrotlidec.so.1
+libbrotlidec.so.1.0.7	   libbrotlienc.so.1
+libbrotlienc.so.1.0.7	   libcacard.so.0
+libcacard.so.0.0.0	   libcrypto.so.1.1
+libctf-nobfd.so.0	   libctf-nobfd.so.0.0.0
+libctf.so.0		   libctf.so.0.0.0
+libcurl-gnutls.so.3	   libcurl-gnutls.so.4
+libcurl-gnutls.so.4.6.0    libdb-5.3.so
+libepoxy.so.0		   libepoxy.so.0.0.0
+libfdt-1.5.0.so		   libfdt.so.1
+libffi.so.7		   libffi.so.7.1.0
+libFLAC.so.8		   libFLAC.so.8.3.0
+libformw.so.6		   libformw.so.6.2
+libgnutls.so.30		   libgnutls.so.30.27.0
+libgssapi_krb5.so.2	   libgssapi_krb5.so.2.2
+libgssapi.so.3		   libgssapi.so.3.0.0
+libgstallocators-1.0.so.0  libgstallocators-1.0.so.0.1602.0
+libgstapp-1.0.so.0	   libgstapp-1.0.so.0.1602.0
+libgstaudio-1.0.so.0	   libgstaudio-1.0.so.0.1602.0
+libgstbase-1.0.so.0	   libgstbase-1.0.so.0.1602.0
+libgstcheck-1.0.so.0	   libgstcheck-1.0.so.0.1602.0
+libgstcontroller-1.0.so.0  libgstcontroller-1.0.so.0.1602.0
+libgstcoreelements.so	   libgstcoretracers.so
+libgstfft-1.0.so.0	   libgstfft-1.0.so.0.1602.0
+libgstnet-1.0.so.0	   libgstnet-1.0.so.0.1602.0
+libgstpbutils-1.0.so.0	   libgstpbutils-1.0.so.0.1602.0
+libgstreamer-1.0.so.0	   libgstreamer-1.0.so.0.1602.0
+libgstriff-1.0.so.0	   libgstriff-1.0.so.0.1602.0
+libgstrtp-1.0.so.0	   libgstrtp-1.0.so.0.1602.0
+libgstrtsp-1.0.so.0	   libgstrtsp-1.0.so.0.1602.0
+libgstsdp-1.0.so.0	   libgstsdp-1.0.so.0.1602.0
+libgsttag-1.0.so.0	   libgsttag-1.0.so.0.1602.0
+libgstvideo-1.0.so.0	   libgstvideo-1.0.so.0.1602.0
+libgthread-2.0.so.0	   libgthread-2.0.so.0.6400.2
+libhcrypto.so.4		   libhcrypto.so.4.1.0
+libheimbase.so.1	   libheimbase.so.1.0.0
+libheimntlm.so.0	   libheimntlm.so.0.1.0
+libhogweed.so.5		   libhogweed.so.5.0
+libhx509.so.5		   libhx509.so.5.0.0
+libibverbs.so.1		   libibverbs.so.1.8.28.0
+libicudata.so.66	   libicudata.so.66.1
+libicui18n.so.66	   libicui18n.so.66.1
+libicuio.so.66		   libicuio.so.66.1
+libicutest.so.66	   libicutest.so.66.1
+libicutu.so.66		   libicutu.so.66.1
+libicuuc.so.66		   libicuuc.so.66.1
+libidn2.so.0		   libidn2.so.0.3.6
+libiscsi.so.7		   libiscsi.so.7.0.0
+libjpeg.so.8		   libjpeg.so.8.2.2
+libk5crypto.so.3	   libk5crypto.so.3.1
+libkrb5.so.26		   libkrb5.so.26.0.0
+libkrb5.so.3		   libkrb5.so.3.3
+libkrb5support.so.0	   libkrb5support.so.0.1
+liblber-2.4.so.2	   liblber-2.4.so.2.10.12
+libldap-2.4.so.2	   libldap_r-2.4.so.2
+libldap_r-2.4.so.2.10.12   liblz4.so.1
+liblz4.so.1.9.2		   libmenuw.so.6
+libmenuw.so.6.2		   libnettle.so.7
+libnettle.so.7.0	   libnghttp2.so.14
+libnghttp2.so.14.19.0	   libnl-route-3.so.200
+libnl-route-3.so.200.26.0  libnspr4.so
+libnuma.so.1		   libnuma.so.1.0.0
+libogg.so.0		   libogg.so.0.8.4
+libopcodes-2.34-system.so  libopus.so.0
+libopus.so.0.8.0	   liborc-0.4.so.0
+liborc-0.4.so.0.31.0	   liborc-test-0.4.so.0
+liborc-test-0.4.so.0.31.0  libpanelw.so.6
+libpanelw.so.6.2	   libpcre2-8.so.0
+libpcre2-8.so.0.9.0	   libpcreposix.so.3
+libpcreposix.so.3.13.3	   libpcsclite.so.1
+libpcsclite.so.1.0.0	   libpipeline.so.1
+libpipeline.so.1.5.2	   libpixman-1.so.0
+libpixman-1.so.0.38.4	   libplc4.so
+libplds4.so		   libpmem.so.1
+libpmem.so.1.0.0	   libpng16.so.16
+libpng16.so.16.37.0	   libpsl.so.5
+libpsl.so.5.3.2		   libpulsecommon-13.99.so
+libpulse-simple.so.0	   libpulse-simple.so.0.1.1
+libpulse.so.0		   libpulse.so.0.21.2
+librados.so.2		   librados.so.2.0.0
+librbd.so.1		   librbd.so.1.12.0
+librdmacm.so.1		   librdmacm.so.1.2.28.0
+libroken.so.18		   libroken.so.18.1.0
+librtmp.so.1		   libsasl2.so.2
+libsasl2.so.2.0.25	   libseccomp.so.2
+libseccomp.so.2.4.3	   libslirp.so.0
+libslirp.so.0.1.0	   libsndfile.so.1
+libsndfile.so.1.0.28	   libspice-server.so.1
+libspice-server.so.1.13.0  libsqlite3.so.0
+libsqlite3.so.0.8.6	   libssh.so.4
+libssh.so.4.8.4		   libssl.so.1.1
+libtic.so.6		   libtic.so.6.2
+libunistring.so.2	   libunistring.so.2.1.0
+libusbredirparser.so.1	   libusbredirparser.so.1.0.1
+libvirglrenderer.so.1	   libvirglrenderer.so.1.4.2
+libvorbisenc.so.2	   libvorbisenc.so.2.0.11
+libvorbis.so.0		   libvorbis.so.0.4.8
+libvte-2.91.so.0	   libvte-2.91.so.0.6000.1
+libwind.so.0		   libwind.so.0.0.0
+libwrap.so.0		   libwrap.so.0.7.6
+libzstd.so.1		   libzstd.so.1.4.4
+qemu			   rsocket
+sasl2
+
+./usr/lib/x86_64-linux-gnu/ceph:
+libceph-common.so.2
+
+./usr/lib/x86_64-linux-gnu/e2fsprogs:
+e2scrub_all_cron  e2scrub_fail
+
+./usr/lib/x86_64-linux-gnu/engines-1.1:
+afalg.so  capi.so  padlock.so
+
+./usr/lib/x86_64-linux-gnu/gio:
+modules
+
+./usr/lib/x86_64-linux-gnu/gio/modules:
+
+./usr/lib/x86_64-linux-gnu/glib-2.0:
+gio-launch-desktop  gio-querymodules  glib-compile-schemas
+
+./usr/lib/x86_64-linux-gnu/gstreamer1.0:
+gstreamer-1.0
+
+./usr/lib/x86_64-linux-gnu/gstreamer1.0/gstreamer-1.0:
+gst-plugin-scanner  gst-ptp-helper
+
+./usr/lib/x86_64-linux-gnu/krb5:
+plugins
+
+./usr/lib/x86_64-linux-gnu/krb5/plugins:
+libkrb5  preauth
+
+./usr/lib/x86_64-linux-gnu/krb5/plugins/libkrb5:
+
+./usr/lib/x86_64-linux-gnu/krb5/plugins/preauth:
+spake.so
+
+./usr/lib/x86_64-linux-gnu/ldscripts:
+elf32_x86_64.x	  elf32_x86_64.xbn   elf32_x86_64.xc	elf32_x86_64.xce
+elf32_x86_64.xd   elf32_x86_64.xdc   elf32_x86_64.xdce	elf32_x86_64.xde
+elf32_x86_64.xdw  elf32_x86_64.xdwe  elf32_x86_64.xe	elf32_x86_64.xn
+elf32_x86_64.xr   elf32_x86_64.xs    elf32_x86_64.xsc	elf32_x86_64.xsce
+elf32_x86_64.xse  elf32_x86_64.xsw   elf32_x86_64.xswe	elf32_x86_64.xu
+elf32_x86_64.xw   elf32_x86_64.xwe   elf_i386.x		elf_i386.xbn
+elf_i386.xc	  elf_i386.xce	     elf_i386.xd	elf_i386.xdc
+elf_i386.xdce	  elf_i386.xde	     elf_i386.xdw	elf_i386.xdwe
+elf_i386.xe	  elf_i386.xn	     elf_i386.xr	elf_i386.xs
+elf_i386.xsc	  elf_i386.xsce      elf_i386.xse	elf_i386.xsw
+elf_i386.xswe	  elf_i386.xu	     elf_i386.xw	elf_i386.xwe
+elf_iamcu.x	  elf_iamcu.xbn      elf_iamcu.xc	elf_iamcu.xce
+elf_iamcu.xd	  elf_iamcu.xdc      elf_iamcu.xdce	elf_iamcu.xde
+elf_iamcu.xdw	  elf_iamcu.xdwe     elf_iamcu.xe	elf_iamcu.xn
+elf_iamcu.xr	  elf_iamcu.xs	     elf_iamcu.xsc	elf_iamcu.xsce
+elf_iamcu.xse	  elf_iamcu.xsw      elf_iamcu.xswe	elf_iamcu.xu
+elf_iamcu.xw	  elf_iamcu.xwe      elf_k1om.x		elf_k1om.xbn
+elf_k1om.xc	  elf_k1om.xce	     elf_k1om.xd	elf_k1om.xdc
+elf_k1om.xdce	  elf_k1om.xde	     elf_k1om.xdw	elf_k1om.xdwe
+elf_k1om.xe	  elf_k1om.xn	     elf_k1om.xr	elf_k1om.xs
+elf_k1om.xsc	  elf_k1om.xsce      elf_k1om.xse	elf_k1om.xsw
+elf_k1om.xswe	  elf_k1om.xu	     elf_k1om.xw	elf_k1om.xwe
+elf_l1om.x	  elf_l1om.xbn	     elf_l1om.xc	elf_l1om.xce
+elf_l1om.xd	  elf_l1om.xdc	     elf_l1om.xdce	elf_l1om.xde
+elf_l1om.xdw	  elf_l1om.xdwe      elf_l1om.xe	elf_l1om.xn
+elf_l1om.xr	  elf_l1om.xs	     elf_l1om.xsc	elf_l1om.xsce
+elf_l1om.xse	  elf_l1om.xsw	     elf_l1om.xswe	elf_l1om.xu
+elf_l1om.xw	  elf_l1om.xwe	     elf_x86_64.x	elf_x86_64.xbn
+elf_x86_64.xc	  elf_x86_64.xce     elf_x86_64.xd	elf_x86_64.xdc
+elf_x86_64.xdce   elf_x86_64.xde     elf_x86_64.xdw	elf_x86_64.xdwe
+elf_x86_64.xe	  elf_x86_64.xn      elf_x86_64.xr	elf_x86_64.xs
+elf_x86_64.xsc	  elf_x86_64.xsce    elf_x86_64.xse	elf_x86_64.xsw
+elf_x86_64.xswe   elf_x86_64.xu      elf_x86_64.xw	elf_x86_64.xwe
+i386pep.x	  i386pep.xa	     i386pep.xbn	i386pep.xe
+i386pep.xn	  i386pep.xr	     i386pep.xu		i386pe.x
+i386pe.xa	  i386pe.xbn	     i386pe.xe		i386pe.xn
+i386pe.xr	  i386pe.xu
+
+./usr/lib/x86_64-linux-gnu/qemu:
+audio-pa.so  block-curl.so    block-iscsi.so  block-rbd.so  block-ssh.so
+ui-gtk.so    ui-spice-app.so
+
+./usr/lib/x86_64-linux-gnu/rsocket:
+librspreload.so  librspreload.so.1  librspreload.so.1.0.0
+
+./usr/lib/x86_64-linux-gnu/sasl2:
+libsasldb.so  libsasldb.so.2  libsasldb.so.2.0.25
+
+./usr/libexec:
+vte-urlencode-cwd
+
+./usr/sbin:
+addgroup	  adduser	debootstrap	       delgroup
+deluser		  e2freefrag	e4crypt		       e4defrag
+filefrag	  mklost+found	pbuilder	       qemubuilder
+qemu-debootstrap  qemu-ga	qemu-make-debian-root  rmt-tar
+tarcat		  tzconfig	update-binfmts
+
+./usr/share:
+AAVMF		  adduser	applications	  apport  bash-completion
+binfmts		  bug		debootstrap	  doc	  doc-base
+dpkg		  glib-2.0	gst-plugins-base  icons   info
+iso-codes	  lintian	locale		  man	  pbuilder
+perl5		  pkgconfig	pmdk		  qemu	  qemu-efi
+qemu-efi-aarch64  seabios	slof		  X11	  xml
+zoneinfo	  zoneinfo-icu
+
+./usr/share/AAVMF:
+AAVMF_CODE.fd  AAVMF_VARS.fd
+
+./usr/share/adduser:
+adduser.conf
+
+./usr/share/applications:
+qemu.desktop
+
+./usr/share/apport:
+package-hooks
+
+./usr/share/apport/package-hooks:
+source_qemu.py
+
+./usr/share/bash-completion:
+completions
+
+./usr/share/bash-completion/completions:
+pbuilder  qemubuilder
+
+./usr/share/binfmts:
+qemu-aarch64	  qemu-alpha	  qemu-arm	 qemu-armeb
+qemu-cris	  qemu-hppa	  qemu-m68k	 qemu-microblaze
+qemu-mips	  qemu-mips64	  qemu-mips64el  qemu-mipsel
+qemu-mipsn32	  qemu-mipsn32el  qemu-ppc	 qemu-ppc64
+qemu-ppc64abi32   qemu-ppc64le	  qemu-riscv32	 qemu-riscv64
+qemu-s390x	  qemu-sh4	  qemu-sh4eb	 qemu-sparc
+qemu-sparc32plus  qemu-sparc64	  qemu-xtensa	 qemu-xtensaeb
+
+./usr/share/bug:
+binutils  dpkg-dev  libdpkg-perl
+
+./usr/share/bug/binutils:
+presubj
+
+./usr/share/debootstrap:
+functions  scripts
+
+./usr/share/debootstrap/scripts:
+aequorea	 artful        ascii	 bartholomea	     beowulf
+bionic		 bookworm      breezy	 bullseye	     buster
+ceres		 chromodoris   cosmic	 dapper		     dasyatis
+debian-common	 disco	       edgy	 eoan		     etch
+etch-m68k	 feisty        focal	 gutsy		     hardy
+hoary		 hoary.buildd  intrepid  jaunty		     jessie
+jessie-kfreebsd  kali	       kali-dev  kali-last-snapshot  kali-rolling
+karmic		 lenny	       lucid	 maverick	     natty
+oldoldstable	 oldstable     oneiric	 potato		     precise
+quantal		 raring        sarge	 sarge.buildd	     sarge.fakechroot
+saucy		 sid	       squeeze	 stable		     stretch
+testing		 trusty        unstable  utopic		     vivid
+warty		 warty.buildd  wheezy	 wily		     woody
+woody.buildd	 xenial        yakkety	 zesty
+
+./usr/share/doc:
+acl				adduser		     binfmt-support
+binutils			binutils-common      binutils-x86-64-linux-gnu
+bzip2				debootstrap	     dpkg-dev
+e2fsprogs			gcc-10-base	     ipxe-qemu
+ipxe-qemu-256k-compat-efi-roms	iso-codes	     libacl1
+libaio1				libasn1-8-heimdal    libasyncns0
+libbinutils			libblkid1	     libboost-iostreams1.71.0
+libboost-thread1.71.0		libbrlapi0.7	     libbrotli1
+libbz2-1.0			libcacard0	     libcap2
+libcap2-bin			libcap-ng0	     libcom-err2
+libcrypt1			libctf0		     libctf-nobfd0
+libcurl3-gnutls			libdb5.3	     libdpkg-perl
+libepoxy0			libfdt1		     libffi7
+libflac8			libfribidi0	     libgcc-s1
+libglib2.0-0			libgmp10	     libgnutls30
+libgssapi3-heimdal		libgssapi-krb5-2     libgstreamer1.0-0
+libgstreamer-plugins-base1.0-0	libhcrypto4-heimdal  libheimbase1-heimdal
+libheimntlm0-heimdal		libhogweed5	     libhx509-5-heimdal
+libibverbs1			libicu66	     libidn2-0
+libiscsi7			libjpeg8	     libjpeg-turbo8
+libk5crypto3			libkeyutils1	     libkrb5-26-heimdal
+libkrb5-3			libkrb5support0      libldap-2.4-2
+libldap-common			liblz4-1	     liblzma5
+libmount1			libncursesw6	     libnettle7
+libnghttp2-14			libnl-3-200	     libnl-route-3-200
+libnspr4			libnuma1	     libogg0
+libopus0			liborc-0.4-0	     libp11-kit0
+libpcre2-8-0			libpcre3	     libpcsclite1
+libpipeline1			libpixman-1-0	     libpmem1
+libpng16-16			libpsl5		     libpulse0
+librados2			librbd1		     librdmacm1
+libroken18-heimdal		librtmp1	     libsasl2-2
+libsasl2-modules-db		libseccomp2	     libselinux1
+libslirp0			libsndfile1	     libspice-server1
+libsqlite3-0			libssh-4	     libssl1.1
+libsystemd0			libtinfo6	     libudev1
+libunistring2			libusb-1.0-0	     libusbredirparser1
+libuuid1			libvirglrenderer1    libvorbis0a
+libvorbisenc2			libvte-2.91-0	     libvte-2.91-common
+libwind0-heimdal		libwrap0	     libx11-6
+libx11-data			libzstd1	     logsave
+make				patch		     pbuilder
+qemu-block-extra		qemubuilder	     qemu-efi
+qemu-efi-aarch64		qemu-guest-agent     qemu-kvm
+qemu-slof			qemu-system	     qemu-system-arm
+qemu-system-common		qemu-system-data     qemu-system-gui
+qemu-system-mips		qemu-system-misc     qemu-system-ppc
+qemu-system-s390x		qemu-system-sparc    qemu-system-x86
+qemu-user			qemu-user-binfmt     qemu-user-static
+qemu-utils			seabios		     tar
+tzdata				wget		     xz-utils
+zlib1g
+
+./usr/share/doc/acl:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/adduser:
+changelog.gz  copyright  examples  TODO
+
+./usr/share/doc/adduser/examples:
+adduser.local  adduser.local.conf  adduser.local.conf.examples	INSTALL
+README.gz
+
+./usr/share/doc/adduser/examples/adduser.local.conf.examples:
+adduser.conf  bash.bashrc  profile  skel  skel.other
+
+./usr/share/doc/adduser/examples/adduser.local.conf.examples/skel:
+dot.bash_logout  dot.bash_profile  dot.bashrc
+
+./usr/share/doc/adduser/examples/adduser.local.conf.examples/skel.other:
+index.html
+
+./usr/share/doc/binfmt-support:
+changelog.Debian.gz  copyright	detectors  README.Debian  TODO.Debian
+
+./usr/share/doc/binutils:
+bfd		 changelog.Debian.gz	copyright  gas	gprof  ld  NEWS.gz
+README.cross.gz  test-summary-amd64.gz
+
+./usr/share/doc/binutils/bfd:
+PORTING.gz  TODO.gz
+
+./usr/share/doc/binutils/gas:
+NEWS.gz
+
+./usr/share/doc/binutils/gprof:
+bbconv.pl  TEST.gz  TODO.gz
+
+./usr/share/doc/binutils/ld:
+NEWS.gz  TODO.gz
+
+./usr/share/doc/binutils-common:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/bzip2:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/debootstrap:
+changelog.gz  copyright  README
+
+./usr/share/doc/dpkg-dev:
+AUTHORS			changelog.Debian.gz  copyright
+frontend.txt		README.api	     README.feature-removal-schedule.gz
+rootless-builds.txt.gz	THANKS.gz	     triggers.txt.gz
+usertags.gz
+
+./usr/share/doc/e2fsprogs:
+changelog.Debian.gz  copyright	NEWS.gz  README
+
+./usr/share/doc/gcc-10-base:
+changelog.Debian.gz  copyright	README.Debian.amd64.gz	TODO.Debian
+
+./usr/share/doc/ipxe-qemu:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/ipxe-qemu-256k-compat-efi-roms:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/iso-codes:
+changelog.Debian.gz  copyright	README.md.gz  TODO
+
+./usr/share/doc/libacl1:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libaio1:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libasn1-8-heimdal:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libasyncns0:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libblkid1:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libboost-iostreams1.71.0:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libboost-thread1.71.0:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libbrlapi0.7:
+changelog.Debian.gz  copyright	NEWS.Debian.gz
+
+./usr/share/doc/libbrotli1:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libbz2-1.0:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libcacard0:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libcap2:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libcap2-bin:
+changelog.Debian.gz  copyright	README.Debian
+
+./usr/share/doc/libcap-ng0:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libcom-err2:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libcrypt1:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libctf-nobfd0:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libcurl3-gnutls:
+changelog.Debian.gz  copyright	NEWS.Debian.gz
+
+./usr/share/doc/libdb5.3:
+build_signature_amd64.txt  changelog.Debian.gz	copyright
+
+./usr/share/doc/libdpkg-perl:
+AUTHORS      changelog.Debian.gz		 copyright
+README.api   README.feature-removal-schedule.gz  THANKS.gz
+usertags.gz
+
+./usr/share/doc/libepoxy0:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libfdt1:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libffi7:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libflac8:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libfribidi0:
+changelog.Debian.gz  copyright	NEWS.gz  README  THANKS  TODO
+
+./usr/share/doc/libglib2.0-0:
+changelog.Debian.gz  copyright	NEWS.gz  README.md.gz
+
+./usr/share/doc/libgmp10:
+changelog.Debian.gz  copyright	README.Debian
+
+./usr/share/doc/libgnutls30:
+AUTHORS.gz    changelog.Debian.gz  copyright  NEWS.Debian.gz  NEWS.gz
+README.md.gz  THANKS.gz
+
+./usr/share/doc/libgssapi3-heimdal:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libgssapi-krb5-2:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libgstreamer1.0-0:
+AUTHORS  changelog.Debian.gz  copyright  NEWS.gz  README.Debian  README.gz
+
+./usr/share/doc/libgstreamer-plugins-base1.0-0:
+AUTHORS  changelog.Debian.gz  copyright  NEWS.gz  README.Debian  README.gz
+
+./usr/share/doc/libhcrypto4-heimdal:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libheimbase1-heimdal:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libheimntlm0-heimdal:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libhx509-5-heimdal:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libibverbs1:
+changelog.Debian.gz  copyright	libibverbs.md
+
+./usr/share/doc/libicu66:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libidn2-0:
+AUTHORS  changelog.Debian.gz  copyright  NEWS.gz  README.md.gz
+
+./usr/share/doc/libiscsi7:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libjpeg8:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libjpeg-turbo8:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libk5crypto3:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libkeyutils1:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libkrb5-26-heimdal:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libkrb5-3:
+changelog.Debian.gz  copyright	README.Debian  README.gz
+
+./usr/share/doc/libkrb5support0:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libldap-2.4-2:
+changelog.Debian.gz  copyright	README.Debian
+
+./usr/share/doc/libldap-common:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/liblz4-1:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/liblzma5:
+AUTHORS  changelog.Debian.gz  copyright  NEWS.gz  THANKS
+
+./usr/share/doc/libmount1:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libnettle7:
+changelog.Debian.gz  copyright	NEWS.gz  README
+
+./usr/share/doc/libnghttp2-14:
+AUTHORS  changelog.Debian.gz  copyright  README.rst.gz
+
+./usr/share/doc/libnl-3-200:
+changelog.Debian.gz  copyright	README.Debian
+
+./usr/share/doc/libnl-route-3-200:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libnspr4:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libnuma1:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libogg0:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libopus0:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/liborc-0.4-0:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libp11-kit0:
+changelog.Debian.gz  copyright	examples
+
+./usr/share/doc/libp11-kit0/examples:
+pkcs11.conf.example
+
+./usr/share/doc/libpcre2-8-0:
+changelog.Debian.gz  copyright	README.Debian
+
+./usr/share/doc/libpcre3:
+AUTHORS  changelog.Debian.gz  copyright  NEWS.gz  README.Debian  README.gz
+
+./usr/share/doc/libpcsclite1:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libpipeline1:
+changelog.Debian.gz  copyright	NEWS.gz
+
+./usr/share/doc/libpixman-1-0:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libpmem1:
+changelog.Debian.gz  copyright	NEWS.Debian.gz
+
+./usr/share/doc/libpng16-16:
+ANNOUNCE  changelog.Debian.gz  copyright  libpng-manual.txt.gz	README.gz  TODO
+
+./usr/share/doc/libpsl5:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libpulse0:
+changelog.Debian.gz  copyright	NEWS.Debian.gz	NEWS.gz  README
+
+./usr/share/doc/librados2:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/librbd1:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/librdmacm1:
+changelog.Debian.gz  copyright	librdmacm.md
+
+./usr/share/doc/libroken18-heimdal:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/librtmp1:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libsasl2-2:
+changelog.Debian.gz  copyright	NEWS.Debian.gz	README.configure-options
+README.Debian
+
+./usr/share/doc/libsasl2-modules-db:
+changelog.Debian.gz  copyright	NEWS.Debian.gz
+
+./usr/share/doc/libseccomp2:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libselinux1:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libslirp0:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libsndfile1:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libspice-server1:
+changelog.Debian.gz  copyright	NEWS.gz  README
+
+./usr/share/doc/libsqlite3-0:
+changelog.Debian.gz  copyright	README.Debian
+
+./usr/share/doc/libssh-4:
+changelog.Debian.gz  copyright	README.Debian
+
+./usr/share/doc/libssl1.1:
+changelog.Debian.gz  copyright	NEWS.Debian.gz
+
+./usr/share/doc/libsystemd0:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libtinfo6:
+changelog.Debian.gz  copyright	FAQ  TODO.Debian
+
+./usr/share/doc/libudev1:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libunistring2:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libusb-1.0-0:
+changelog.Debian.gz  copyright	README
+
+./usr/share/doc/libusbredirparser1:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libuuid1:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libvirglrenderer1:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libvorbis0a:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libvorbisenc2:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libvte-2.91-0:
+changelog.Debian.gz  copyright	NEWS.gz  README.Debian
+
+./usr/share/doc/libvte-2.91-common:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libwind0-heimdal:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libwrap0:
+changelog.Debian.gz  copyright	README.Debian  README.gz
+
+./usr/share/doc/libx11-6:
+changelog.Debian.gz  copyright	NEWS.Debian.gz	NEWS.gz
+
+./usr/share/doc/libx11-data:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/libzstd1:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/logsave:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/make:
+ABOUT-NLS.gz	      AUTHORS	      changelog.Debian.gz  copyright
+Explanations.gz       NEWS.Debian.gz  NEWS.gz		   README.customs.gz
+README.Debian-Source  README.gz
+
+./usr/share/doc/patch:
+AUTHORS  changelog.Debian.gz  copyright  NEWS.Debian.gz  NEWS.gz  README
+
+./usr/share/doc/pbuilder:
+AUTHORS		      changelog.gz	 copyright
+examples	      NEWS.Debian.gz	 pbuilder-doc.de.html
+pbuilder-doc.fr.html  pbuilder-doc.html  pbuilder-doc.ja.html
+pbuilder-doc.pdf      README		 README.Debian
+THANKS		      TODO
+
+./usr/share/doc/pbuilder/examples:
+B20autopkgtest		  B90lintian		       B90list-missing
+B91debc			  B91dpkg-i		       B92test-pkg
+C10shell		  C11screen		       D10tmp
+D20addnonfree		  D65various-compiler-support  D80no-man-db-rebuild
+D90chrootmemo		  execute_installtest.sh       execute_paramtest.sh
+F90chrootmemo		  lvmpbuilder		       pbuildd
+pbuilder-distribution.sh  pbuilderrc.gz		       pbuilder-test
+rebuild
+
+./usr/share/doc/pbuilder/examples/lvmpbuilder:
+lib  lvmbuilder  README  STRATEGY
+
+./usr/share/doc/pbuilder/examples/lvmpbuilder/lib:
+lvmbuilder-checkparams	lvmbuilder-modules.gz  lvmbuilder-unimplemented
+
+./usr/share/doc/pbuilder/examples/pbuildd:
+buildd.sh  hookdir
+
+./usr/share/doc/pbuilder/examples/pbuildd/hookdir:
+A10dpkg-l.sh
+
+./usr/share/doc/pbuilder/examples/pbuilder-test:
+000_prepinstall  001_apprun  002_libfile  002_sample.c	003_makecheck  004_ldd
+README
+
+./usr/share/doc/pbuilder/examples/rebuild:
+buildall  getlist  README
+
+./usr/share/doc/qemu-block-extra:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/qemubuilder:
+changelog.gz  copyright  README.Debian.gz
+
+./usr/share/doc/qemu-efi:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/qemu-efi-aarch64:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/qemu-guest-agent:
+changelog.Debian.gz  copyright	qapi-schema.json.gz  qemu-ga-ref.html
+qemu-ga-ref.txt.gz
+
+./usr/share/doc/qemu-kvm:
+changelog.Debian.gz  copyright	NEWS.Debian.gz
+
+./usr/share/doc/qemu-slof:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/qemu-system:
+changelog.Debian.gz  copyright	NEWS.Debian.gz
+
+./usr/share/doc/qemu-system-arm:
+changelog.Debian.gz  common  copyright
+
+./usr/share/doc/qemu-system-common:
+changelog.Debian.gz  copyright		NEWS.Debian.gz	     qemu-doc.html
+qemu-doc.txt.gz      qemu-qmp-ref.html	qemu-qmp-ref.txt.gz
+
+./usr/share/doc/qemu-system-data:
+bootindex.txt		ccid.txt.gz	   changelog.Debian.gz
+config			copyright	   multiseat.txt.gz
+qdev-device-use.txt.gz	qemupciserial.inf  specs
+usb2.txt.gz		usb-storage.txt    virtio-balloon-stats.txt
+
+./usr/share/doc/qemu-system-data/config:
+ich9-ehci-uhci.cfg   mach-virt-graphical.cfg.gz   mach-virt-serial.cfg.gz
+q35-emulated.cfg.gz  q35-virtio-graphical.cfg.gz  q35-virtio-serial.cfg.gz
+
+./usr/share/doc/qemu-system-data/specs:
+acpi_cpu_hotplug.txt.gz  acpi_hw_reduced_hotplug.rst  acpi_mem_hotplug.txt.gz
+acpi_nvdimm.txt.gz	 acpi_pci_hotplug.txt	      conf.py
+edu.txt			 fw_cfg.txt.gz		      index.rst
+ivshmem-spec.txt.gz	 pci-ids.txt		      pci-serial.txt
+pci-testdev.txt		 ppc-spapr-hcalls.txt	      ppc-spapr-hotplug.txt.gz
+ppc-spapr-uv-hcalls.txt  ppc-spapr-xive.rst.gz	      ppc-xive.rst.gz
+pvpanic.txt		 rocker.txt.gz		      standard-vga.txt
+tpm.txt.gz		 vmcoreinfo.txt		      vmgenid.txt.gz
+vmw_pvscsi-spec.txt
+
+./usr/share/doc/qemu-system-gui:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/qemu-system-mips:
+changelog.Debian.gz  common  copyright
+
+./usr/share/doc/qemu-system-misc:
+changelog.Debian.gz  common  copyright
+
+./usr/share/doc/qemu-system-ppc:
+changelog.Debian.gz  common  copyright	README.Debian
+
+./usr/share/doc/qemu-system-s390x:
+changelog.Debian.gz  common  copyright
+
+./usr/share/doc/qemu-system-sparc:
+changelog.Debian.gz  common  copyright
+
+./usr/share/doc/qemu-system-x86:
+changelog.Debian.gz  common  copyright	NEWS.Debian.gz	README.Debian
+
+./usr/share/doc/qemu-user:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/qemu-user-static:
+changelog.Debian.gz  copyright	README.Debian
+
+./usr/share/doc/qemu-utils:
+changelog.Debian.gz  copyright	NEWS.Debian.gz	README.Debian
+
+./usr/share/doc/seabios:
+changelog.Debian.gz  copyright
+
+./usr/share/doc/tar:
+AUTHORS  changelog.Debian.gz  copyright  NEWS.gz  README.Debian  THANKS.gz
+
+./usr/share/doc/tzdata:
+changelog.Debian.gz  copyright	README.Debian
+
+./usr/share/doc/wget:
+AUTHORS  changelog.Debian.gz  copyright  MAILING-LIST  NEWS.gz	README
+
+./usr/share/doc/xz-utils:
+AUTHORS  changelog.Debian.gz  copyright  extra	 faq.txt.gz  history.txt.gz
+NEWS.gz  README.Debian	      README.gz  THANKS
+
+./usr/share/doc/xz-utils/extra:
+7z2lzma  scanlzma
+
+./usr/share/doc/xz-utils/extra/7z2lzma:
+7z2lzma.bash
+
+./usr/share/doc/xz-utils/extra/scanlzma:
+scanlzma.c
+
+./usr/share/doc/zlib1g:
+changelog.Debian.gz  copyright
+
+./usr/share/doc-base:
+libpng16  pbuilder  qemu-system-doc
+
+./usr/share/dpkg:
+architecture.mk       buildflags.mk	 buildtools.mk	    default.mk
+no-pie-compile.specs  no-pie-link.specs  pie-compile.specs  pie-link.specs
+pkg-info.mk	      vendor.mk
+
+./usr/share/glib-2.0:
+schemas
+
+./usr/share/glib-2.0/schemas:
+
+./usr/share/gst-plugins-base:
+1.0
+
+./usr/share/gst-plugins-base/1.0:
+license-translations.dict
+
+./usr/share/icons:
+hicolor
+
+./usr/share/icons/hicolor:
+128x128  22x22	24x24  256x256	32x32  48x48  512x512  64x64  scalable
+
+./usr/share/icons/hicolor/128x128:
+apps
+
+./usr/share/icons/hicolor/128x128/apps:
+
+./usr/share/icons/hicolor/22x22:
+apps
+
+./usr/share/icons/hicolor/22x22/apps:
+
+./usr/share/icons/hicolor/24x24:
+apps
+
+./usr/share/icons/hicolor/24x24/apps:
+
+./usr/share/icons/hicolor/256x256:
+apps
+
+./usr/share/icons/hicolor/256x256/apps:
+
+./usr/share/icons/hicolor/32x32:
+apps
+
+./usr/share/icons/hicolor/32x32/apps:
+
+./usr/share/icons/hicolor/48x48:
+apps
+
+./usr/share/icons/hicolor/48x48/apps:
+
+./usr/share/icons/hicolor/512x512:
+apps
+
+./usr/share/icons/hicolor/512x512/apps:
+
+./usr/share/icons/hicolor/64x64:
+apps
+
+./usr/share/icons/hicolor/64x64/apps:
+
+./usr/share/icons/hicolor/scalable:
+apps
+
+./usr/share/icons/hicolor/scalable/apps:
+qemu.svg
+
+./usr/share/info:
+wget.info.gz
+
+./usr/share/iso-codes:
+json
+
+./usr/share/iso-codes/json:
+iso_15924.json	   iso_3166-1.json     iso_3166-2.json	   iso_3166-3.json
+iso_4217.json	   iso_639-2.json      iso_639-3.json	   iso_639-5.json
+schema-15924.json  schema-3166-1.json  schema-3166-2.json  schema-3166-3.json
+schema-4217.json   schema-639-2.json   schema-639-3.json   schema-639-5.json
+
+./usr/share/lintian:
+overrides
+
+./usr/share/lintian/overrides:
+binutils		  binutils-common	 binutils-x86-64-linux-gnu
+e2fsprogs		  libasn1-8-heimdal	 libbinutils
+libboost-iostreams1.71.0  libboost-thread1.71.0  libbrotli1
+libcap2-bin		  libcurl3-gnutls	 libdb5.3
+libgcc-s1		  libglib2.0-0		 libgssapi3-heimdal
+libgssapi-krb5-2	  libhcrypto4-heimdal	 libheimbase1-heimdal
+libheimntlm0-heimdal	  libhx509-5-heimdal	 libicu66
+libidn2-0		  libjpeg-turbo8	 libkrb5-26-heimdal
+libkrb5-3		  libldap-2.4-2		 libnspr4
+libpixman-1-0		  librados2		 libroken18-heimdal
+libssh-4		  libvorbis0a		 libwind0-heimdal
+libx11-6		  qemu-system-data	 qemu-user-static
+
+./usr/share/locale:
+ab	    ace    ach	  af   ak  am	  an   ar   as	 ast  ay   az	ba
+bar	    be	   bg	  bi   bn  bn_IN  br   bs   byn  ca   ce   ch	chr
+ckb	    crh    cs	  csb  cv  cy	  da   de   dv	 dz   ee   el	en
+eo	    es	   et	  eu   fa  ff	  fi   fo   fr	 frp  fur  fy	ga
+gez	    gl	   gn	  gu   gv  ha	  haw  he   hi	 hr   ht   hu	hy
+ia	    id	   io	  is   it  iu	  ja   jam  ka	 kab  ki   kk	kl
+km	    kn	   ko	  kok  ku  kv	  kw   ky   lo	 lt   lv   mai	mhr
+mi	    mk	   ml	  mn   mo  mr	  ms   mt   my	 na   nah  nb	nb_NO
+ne	    nl	   nn	  nso  nv  oc	  or   pa   pap  pi   pl   ps	pt
+pt_BR	    ro	   ru	  rw   sc  sd	  si   sk   sl	 so   son  sq	sr
+sr@latin    sv	   sw	  ta   te  tg	  th   ti   tig  tk   tl   tr	tt
+tt@iqtelif  ug	   uk	  ur   uz  ve	  vi   wa   wal  wo   xh   yo	zh_CN
+zh_Hant     zh_HK  zh_TW  zu
+
+./usr/share/locale/ab:
+LC_MESSAGES
+
+./usr/share/locale/ab/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/ace:
+LC_MESSAGES
+
+./usr/share/locale/ace/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/ach:
+LC_MESSAGES
+
+./usr/share/locale/ach/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/af:
+LC_MESSAGES
+
+./usr/share/locale/af/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo  iso_639-2.mo  iso_639-3.mo
+iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/ak:
+LC_MESSAGES
+
+./usr/share/locale/ak/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/am:
+LC_MESSAGES
+
+./usr/share/locale/am/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo  iso_639-2.mo  iso_639-3.mo
+iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/an:
+LC_MESSAGES
+
+./usr/share/locale/an/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/ar:
+LC_MESSAGES
+
+./usr/share/locale/ar/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo  iso_4217.mo
+iso_639-2.mo  iso_639-3.mo   iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/as:
+LC_MESSAGES
+
+./usr/share/locale/as/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo  iso_639-2.mo  iso_639.mo
+
+./usr/share/locale/ast:
+LC_MESSAGES
+
+./usr/share/locale/ast/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo
+iso_3166.mo   iso_4217.mo    iso_639-2.mo   iso_639-3.mo   iso_639_3.mo
+iso_639-5.mo  iso_639_5.mo   iso_639.mo
+
+./usr/share/locale/ay:
+LC_MESSAGES
+
+./usr/share/locale/ay/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/az:
+LC_MESSAGES
+
+./usr/share/locale/az/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo  iso_3166.mo
+iso_639-2.mo   iso_639-3.mo   iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/ba:
+LC_MESSAGES
+
+./usr/share/locale/ba/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/bar:
+LC_MESSAGES
+
+./usr/share/locale/bar/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/be:
+LC_MESSAGES
+
+./usr/share/locale/be/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo
+iso_3166.mo   iso_4217.mo    iso_639-2.mo   iso_639-5.mo   iso_639_5.mo
+iso_639.mo
+
+./usr/share/locale/bg:
+LC_MESSAGES
+
+./usr/share/locale/bg/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo
+iso_3166.mo   iso_639-2.mo   iso_639-3.mo   iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/bi:
+LC_MESSAGES
+
+./usr/share/locale/bi/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/bn:
+LC_MESSAGES
+
+./usr/share/locale/bn/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo  iso_639-2.mo  iso_639-3.mo
+iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/bn_IN:
+LC_MESSAGES
+
+./usr/share/locale/bn_IN/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo
+
+./usr/share/locale/br:
+LC_MESSAGES
+
+./usr/share/locale/br/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo  iso_4217.mo
+iso_639-2.mo  iso_639-3.mo   iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/bs:
+LC_MESSAGES
+
+./usr/share/locale/bs/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo  iso_3166.mo
+iso_639-2.mo   iso_639-3.mo   iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/byn:
+LC_MESSAGES
+
+./usr/share/locale/byn/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo  iso_639-2.mo  iso_639-3.mo
+iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/ca:
+LC_MESSAGES
+
+./usr/share/locale/ca/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo
+iso_3166.mo   iso_4217.mo    iso_639-2.mo   iso_639-3.mo   iso_639_3.mo
+iso_639.mo
+
+./usr/share/locale/ce:
+LC_MESSAGES
+
+./usr/share/locale/ce/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/ch:
+LC_MESSAGES
+
+./usr/share/locale/ch/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/chr:
+LC_MESSAGES
+
+./usr/share/locale/chr/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/ckb:
+LC_MESSAGES
+
+./usr/share/locale/ckb/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/crh:
+LC_MESSAGES
+
+./usr/share/locale/crh/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo  iso_3166.mo
+iso_639-2.mo   iso_639-3.mo   iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/cs:
+LC_MESSAGES
+
+./usr/share/locale/cs/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo
+iso_3166.mo   iso_4217.mo    iso_639-2.mo   iso_639-3.mo   iso_639_3.mo
+iso_639.mo
+
+./usr/share/locale/csb:
+LC_MESSAGES
+
+./usr/share/locale/csb/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/cv:
+LC_MESSAGES
+
+./usr/share/locale/cv/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/cy:
+LC_MESSAGES
+
+./usr/share/locale/cy/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo  iso_639-2.mo
+iso_639-3.mo  iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/da:
+LC_MESSAGES
+
+./usr/share/locale/da/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo
+iso_3166.mo   iso_4217.mo    iso_639-2.mo   iso_639-3.mo   iso_639_3.mo
+iso_639-5.mo  iso_639_5.mo   iso_639.mo
+
+./usr/share/locale/de:
+LC_MESSAGES
+
+./usr/share/locale/de/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo
+iso_3166.mo   iso_4217.mo    iso_639-2.mo   iso_639-3.mo   iso_639_3.mo
+iso_639-5.mo  iso_639_5.mo   iso_639.mo
+
+./usr/share/locale/dv:
+LC_MESSAGES
+
+./usr/share/locale/dv/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/dz:
+LC_MESSAGES
+
+./usr/share/locale/dz/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo
+
+./usr/share/locale/ee:
+LC_MESSAGES
+
+./usr/share/locale/ee/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/el:
+LC_MESSAGES
+
+./usr/share/locale/el/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo
+iso_3166.mo   iso_4217.mo    iso_639-2.mo   iso_639-3.mo   iso_639_3.mo
+iso_639-5.mo  iso_639_5.mo   iso_639.mo
+
+./usr/share/locale/en:
+LC_MESSAGES
+
+./usr/share/locale/en/LC_MESSAGES:
+iso_3166-2.mo  iso_3166_2.mo
+
+./usr/share/locale/eo:
+LC_MESSAGES
+
+./usr/share/locale/eo/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo
+iso_3166.mo   iso_639-2.mo   iso_639-3.mo   iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/es:
+LC_MESSAGES
+
+./usr/share/locale/es/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo
+iso_3166.mo   iso_4217.mo    iso_639-2.mo   iso_639-3.mo   iso_639_3.mo
+iso_639.mo
+
+./usr/share/locale/et:
+LC_MESSAGES
+
+./usr/share/locale/et/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo
+iso_3166.mo   iso_4217.mo    iso_639-2.mo   iso_639-3.mo   iso_639_3.mo
+iso_639-5.mo  iso_639_5.mo   iso_639.mo
+
+./usr/share/locale/eu:
+LC_MESSAGES
+
+./usr/share/locale/eu/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo  iso_3166.mo
+iso_639-2.mo   iso_639-3.mo   iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/fa:
+LC_MESSAGES
+
+./usr/share/locale/fa/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo  iso_639-2.mo
+iso_639-3.mo  iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/ff:
+LC_MESSAGES
+
+./usr/share/locale/ff/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/fi:
+LC_MESSAGES
+
+./usr/share/locale/fi/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo
+iso_3166.mo   iso_4217.mo    iso_639-2.mo   iso_639-3.mo   iso_639_3.mo
+iso_639.mo
+
+./usr/share/locale/fo:
+LC_MESSAGES
+
+./usr/share/locale/fo/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo
+
+./usr/share/locale/fr:
+LC_MESSAGES
+
+./usr/share/locale/fr/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo
+iso_3166.mo   iso_4217.mo    iso_639-2.mo   iso_639-3.mo   iso_639_3.mo
+iso_639-5.mo  iso_639_5.mo   iso_639.mo
+
+./usr/share/locale/frp:
+LC_MESSAGES
+
+./usr/share/locale/frp/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/fur:
+LC_MESSAGES
+
+./usr/share/locale/fur/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/fy:
+LC_MESSAGES
+
+./usr/share/locale/fy/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/ga:
+LC_MESSAGES
+
+./usr/share/locale/ga/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo  iso_3166.mo
+iso_4217.mo    iso_639-2.mo   iso_639-3.mo   iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/gez:
+LC_MESSAGES
+
+./usr/share/locale/gez/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo  iso_639-2.mo  iso_639-3.mo
+iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/gl:
+LC_MESSAGES
+
+./usr/share/locale/gl/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo  iso_4217.mo
+iso_639-2.mo  iso_639-3.mo   iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/gn:
+LC_MESSAGES
+
+./usr/share/locale/gn/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/gu:
+LC_MESSAGES
+
+./usr/share/locale/gu/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo  iso_639-2.mo  iso_639-3.mo
+iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/gv:
+LC_MESSAGES
+
+./usr/share/locale/gv/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/ha:
+LC_MESSAGES
+
+./usr/share/locale/ha/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/haw:
+LC_MESSAGES
+
+./usr/share/locale/haw/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo
+
+./usr/share/locale/he:
+LC_MESSAGES
+
+./usr/share/locale/he/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo
+iso_3166.mo   iso_639-2.mo   iso_639-3.mo   iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/hi:
+LC_MESSAGES
+
+./usr/share/locale/hi/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo  iso_639-2.mo  iso_639-3.mo
+iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/hr:
+LC_MESSAGES
+
+./usr/share/locale/hr/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo   iso_4217.mo
+iso_639-2.mo  iso_639-3.mo   iso_639_3.mo   iso_639-5.mo  iso_639_5.mo
+iso_639.mo
+
+./usr/share/locale/ht:
+LC_MESSAGES
+
+./usr/share/locale/ht/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/hu:
+LC_MESSAGES
+
+./usr/share/locale/hu/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo
+iso_3166.mo   iso_4217.mo    iso_639-2.mo   iso_639-3.mo   iso_639_3.mo
+iso_639-5.mo  iso_639_5.mo   iso_639.mo
+
+./usr/share/locale/hy:
+LC_MESSAGES
+
+./usr/share/locale/hy/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo
+
+./usr/share/locale/ia:
+LC_MESSAGES
+
+./usr/share/locale/ia/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo
+
+./usr/share/locale/id:
+LC_MESSAGES
+
+./usr/share/locale/id/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo
+iso_3166.mo   iso_4217.mo    iso_639-2.mo   iso_639-3.mo   iso_639_3.mo
+iso_639-5.mo  iso_639_5.mo   iso_639.mo
+
+./usr/share/locale/io:
+LC_MESSAGES
+
+./usr/share/locale/io/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/is:
+LC_MESSAGES
+
+./usr/share/locale/is/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo
+iso_3166.mo   iso_4217.mo    iso_639-2.mo   iso_639-3.mo   iso_639_3.mo
+iso_639-5.mo  iso_639_5.mo   iso_639.mo
+
+./usr/share/locale/it:
+LC_MESSAGES
+
+./usr/share/locale/it/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo
+iso_3166.mo   iso_4217.mo    iso_639-2.mo   iso_639-3.mo   iso_639_3.mo
+iso_639-5.mo  iso_639_5.mo   iso_639.mo
+
+./usr/share/locale/iu:
+LC_MESSAGES
+
+./usr/share/locale/iu/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/ja:
+LC_MESSAGES
+
+./usr/share/locale/ja/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo
+iso_3166.mo   iso_4217.mo    iso_639-2.mo   iso_639-3.mo   iso_639_3.mo
+iso_639.mo
+
+./usr/share/locale/jam:
+LC_MESSAGES
+
+./usr/share/locale/jam/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/ka:
+LC_MESSAGES
+
+./usr/share/locale/ka/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo
+
+./usr/share/locale/kab:
+LC_MESSAGES
+
+./usr/share/locale/kab/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/ki:
+LC_MESSAGES
+
+./usr/share/locale/ki/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/kk:
+LC_MESSAGES
+
+./usr/share/locale/kk/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo
+
+./usr/share/locale/kl:
+LC_MESSAGES
+
+./usr/share/locale/kl/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/km:
+LC_MESSAGES
+
+./usr/share/locale/km/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo
+
+./usr/share/locale/kn:
+LC_MESSAGES
+
+./usr/share/locale/kn/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo  iso_639-2.mo  iso_639-3.mo
+iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/ko:
+LC_MESSAGES
+
+./usr/share/locale/ko/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo
+iso_3166.mo   iso_4217.mo    iso_639-2.mo   iso_639-3.mo   iso_639_3.mo
+iso_639.mo
+
+./usr/share/locale/kok:
+LC_MESSAGES
+
+./usr/share/locale/kok/LC_MESSAGES:
+iso_639-2.mo  iso_639-3.mo  iso_639_3.mo  iso_639.mo
+
+./usr/share/locale/ku:
+LC_MESSAGES
+
+./usr/share/locale/ku/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo
+
+./usr/share/locale/kv:
+LC_MESSAGES
+
+./usr/share/locale/kv/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/kw:
+LC_MESSAGES
+
+./usr/share/locale/kw/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/ky:
+LC_MESSAGES
+
+./usr/share/locale/ky/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166.mo
+
+./usr/share/locale/lo:
+LC_MESSAGES
+
+./usr/share/locale/lo/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/lt:
+LC_MESSAGES
+
+./usr/share/locale/lt/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo
+iso_3166.mo   iso_4217.mo    iso_639-2.mo   iso_639-3.mo   iso_639_3.mo
+iso_639.mo
+
+./usr/share/locale/lv:
+LC_MESSAGES
+
+./usr/share/locale/lv/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo
+iso_3166.mo   iso_4217.mo    iso_639-2.mo   iso_639-3.mo   iso_639_3.mo
+iso_639.mo
+
+./usr/share/locale/mai:
+LC_MESSAGES
+
+./usr/share/locale/mai/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/mhr:
+LC_MESSAGES
+
+./usr/share/locale/mhr/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/mi:
+LC_MESSAGES
+
+./usr/share/locale/mi/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo  iso_639-2.mo  iso_639-3.mo
+iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/mk:
+LC_MESSAGES
+
+./usr/share/locale/mk/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo  iso_639-2.mo  iso_639-3.mo
+iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/ml:
+LC_MESSAGES
+
+./usr/share/locale/ml/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo  iso_639-2.mo
+iso_639.mo
+
+./usr/share/locale/mn:
+LC_MESSAGES
+
+./usr/share/locale/mn/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo  iso_4217.mo	iso_639-2.mo
+iso_639-3.mo   iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/mo:
+LC_MESSAGES
+
+./usr/share/locale/mo/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/mr:
+LC_MESSAGES
+
+./usr/share/locale/mr/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo  iso_639-2.mo  iso_639-3.mo
+iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/ms:
+LC_MESSAGES
+
+./usr/share/locale/ms/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo  iso_639-2.mo  iso_639-3.mo
+iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/mt:
+LC_MESSAGES
+
+./usr/share/locale/mt/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo  iso_639-2.mo  iso_639-3.mo
+iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/my:
+LC_MESSAGES
+
+./usr/share/locale/my/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/na:
+LC_MESSAGES
+
+./usr/share/locale/na/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/nah:
+LC_MESSAGES
+
+./usr/share/locale/nah/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/nb:
+LC_MESSAGES
+
+./usr/share/locale/nb/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo  iso_4217.mo
+iso_639-2.mo  iso_639-3.mo   iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/nb_NO:
+LC_MESSAGES
+
+./usr/share/locale/nb_NO/LC_MESSAGES:
+iso_3166-2.mo  iso_3166_2.mo  iso_639-5.mo  iso_639_5.mo
+
+./usr/share/locale/ne:
+LC_MESSAGES
+
+./usr/share/locale/ne/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo
+
+./usr/share/locale/nl:
+LC_MESSAGES
+
+./usr/share/locale/nl/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo
+iso_3166.mo   iso_4217.mo    iso_639-2.mo   iso_639-3.mo   iso_639_3.mo
+iso_639-5.mo  iso_639_5.mo   iso_639.mo
+
+./usr/share/locale/nn:
+LC_MESSAGES
+
+./usr/share/locale/nn/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo  iso_4217.mo
+iso_639-2.mo  iso_639-3.mo   iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/nso:
+LC_MESSAGES
+
+./usr/share/locale/nso/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo  iso_3166.mo
+iso_639-2.mo   iso_639-3.mo   iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/nv:
+LC_MESSAGES
+
+./usr/share/locale/nv/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/oc:
+LC_MESSAGES
+
+./usr/share/locale/oc/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo
+iso_3166.mo   iso_4217.mo    iso_639-2.mo   iso_639-3.mo   iso_639_3.mo
+iso_639.mo
+
+./usr/share/locale/or:
+LC_MESSAGES
+
+./usr/share/locale/or/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo  iso_639-2.mo  iso_639-3.mo
+iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/pa:
+LC_MESSAGES
+
+./usr/share/locale/pa/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo  iso_639-2.mo  iso_639-3.mo
+iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/pap:
+LC_MESSAGES
+
+./usr/share/locale/pap/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/pi:
+LC_MESSAGES
+
+./usr/share/locale/pi/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/pl:
+LC_MESSAGES
+
+./usr/share/locale/pl/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo
+iso_3166.mo   iso_4217.mo    iso_639-2.mo   iso_639-3.mo   iso_639_3.mo
+iso_639-5.mo  iso_639_5.mo   iso_639.mo
+
+./usr/share/locale/ps:
+LC_MESSAGES
+
+./usr/share/locale/ps/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo  iso_639-2.mo  iso_639-3.mo
+iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/pt:
+LC_MESSAGES
+
+./usr/share/locale/pt/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo  iso_4217.mo
+iso_639-2.mo  iso_639-3.mo   iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/pt_BR:
+LC_MESSAGES
+
+./usr/share/locale/pt_BR/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo  iso_4217.mo
+iso_639-2.mo  iso_639-3.mo   iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/ro:
+LC_MESSAGES
+
+./usr/share/locale/ro/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo
+iso_3166.mo   iso_4217.mo    iso_639-2.mo   iso_639-3.mo   iso_639_3.mo
+iso_639.mo
+
+./usr/share/locale/ru:
+LC_MESSAGES
+
+./usr/share/locale/ru/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo  iso_4217.mo
+iso_639-2.mo  iso_639-3.mo   iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/rw:
+LC_MESSAGES
+
+./usr/share/locale/rw/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo  iso_4217.mo	iso_639-2.mo
+iso_639-3.mo   iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/sc:
+LC_MESSAGES
+
+./usr/share/locale/sc/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo
+iso_3166.mo   iso_4217.mo    iso_639-2.mo   iso_639-3.mo   iso_639_3.mo
+iso_639-5.mo  iso_639_5.mo   iso_639.mo
+
+./usr/share/locale/sd:
+LC_MESSAGES
+
+./usr/share/locale/sd/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/si:
+LC_MESSAGES
+
+./usr/share/locale/si/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo
+
+./usr/share/locale/sk:
+LC_MESSAGES
+
+./usr/share/locale/sk/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo
+iso_3166.mo   iso_4217.mo    iso_639-2.mo   iso_639-3.mo   iso_639_3.mo
+iso_639.mo
+
+./usr/share/locale/sl:
+LC_MESSAGES
+
+./usr/share/locale/sl/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo
+iso_3166.mo   iso_4217.mo    iso_639-2.mo   iso_639-3.mo   iso_639_3.mo
+iso_639.mo
+
+./usr/share/locale/so:
+LC_MESSAGES
+
+./usr/share/locale/so/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo
+
+./usr/share/locale/son:
+LC_MESSAGES
+
+./usr/share/locale/son/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/sq:
+LC_MESSAGES
+
+./usr/share/locale/sq/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo
+
+./usr/share/locale/sr:
+LC_MESSAGES
+
+./usr/share/locale/sr/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo
+iso_3166.mo   iso_4217.mo    iso_639-2.mo   iso_639-3.mo   iso_639_3.mo
+iso_639-5.mo  iso_639_5.mo   iso_639.mo
+
+./usr/share/locale/sr@latin:
+LC_MESSAGES
+
+./usr/share/locale/sr@latin/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo
+iso_3166.mo   iso_4217.mo    iso_639-2.mo   iso_639-3.mo   iso_639_3.mo
+iso_639-5.mo  iso_639_5.mo   iso_639.mo
+
+./usr/share/locale/sv:
+LC_MESSAGES
+
+./usr/share/locale/sv/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo
+iso_3166.mo   iso_4217.mo    iso_639-2.mo   iso_639-3.mo   iso_639_3.mo
+iso_639-5.mo  iso_639_5.mo   iso_639.mo
+
+./usr/share/locale/sw:
+LC_MESSAGES
+
+./usr/share/locale/sw/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo
+
+./usr/share/locale/ta:
+LC_MESSAGES
+
+./usr/share/locale/ta/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo  iso_639-2.mo  iso_639-3.mo
+iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/te:
+LC_MESSAGES
+
+./usr/share/locale/te/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo  iso_639-2.mo  iso_639.mo
+
+./usr/share/locale/tg:
+LC_MESSAGES
+
+./usr/share/locale/tg/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo  iso_639-2.mo  iso_639.mo
+
+./usr/share/locale/th:
+LC_MESSAGES
+
+./usr/share/locale/th/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo
+iso_3166.mo   iso_4217.mo    iso_639-2.mo   iso_639-3.mo   iso_639_3.mo
+iso_639.mo
+
+./usr/share/locale/ti:
+LC_MESSAGES
+
+./usr/share/locale/ti/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo  iso_639-2.mo  iso_639-3.mo
+iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/tig:
+LC_MESSAGES
+
+./usr/share/locale/tig/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo  iso_639-2.mo  iso_639-3.mo
+iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/tk:
+LC_MESSAGES
+
+./usr/share/locale/tk/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo
+
+./usr/share/locale/tl:
+LC_MESSAGES
+
+./usr/share/locale/tl/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo
+
+./usr/share/locale/tr:
+LC_MESSAGES
+
+./usr/share/locale/tr/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo
+iso_3166.mo   iso_4217.mo    iso_639-2.mo   iso_639-3.mo   iso_639_3.mo
+iso_639.mo
+
+./usr/share/locale/tt:
+LC_MESSAGES
+
+./usr/share/locale/tt/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo  iso_639-2.mo  iso_639-3.mo
+iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/tt@iqtelif:
+LC_MESSAGES
+
+./usr/share/locale/tt@iqtelif/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo  iso_639-2.mo  iso_639-3.mo
+iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/ug:
+LC_MESSAGES
+
+./usr/share/locale/ug/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo
+
+./usr/share/locale/uk:
+LC_MESSAGES
+
+./usr/share/locale/uk/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo
+iso_3166.mo   iso_4217.mo    iso_639-2.mo   iso_639-3.mo   iso_639_3.mo
+iso_639-5.mo  iso_639_5.mo   iso_639.mo
+
+./usr/share/locale/ur:
+LC_MESSAGES
+
+./usr/share/locale/ur/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/uz:
+LC_MESSAGES
+
+./usr/share/locale/uz/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/ve:
+LC_MESSAGES
+
+./usr/share/locale/ve/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo  iso_3166.mo
+iso_639-2.mo   iso_639-3.mo   iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/vi:
+LC_MESSAGES
+
+./usr/share/locale/vi/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo
+iso_3166.mo   iso_4217.mo    iso_639-2.mo   iso_639-3.mo   iso_639_3.mo
+iso_639.mo
+
+./usr/share/locale/wa:
+LC_MESSAGES
+
+./usr/share/locale/wa/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo  iso_3166.mo
+iso_639-2.mo   iso_639-3.mo   iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/wal:
+LC_MESSAGES
+
+./usr/share/locale/wal/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo
+
+./usr/share/locale/wo:
+LC_MESSAGES
+
+./usr/share/locale/wo/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo
+
+./usr/share/locale/xh:
+LC_MESSAGES
+
+./usr/share/locale/xh/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo  iso_639-2.mo  iso_639-3.mo
+iso_639_3.mo   iso_639.mo
+
+./usr/share/locale/yo:
+LC_MESSAGES
+
+./usr/share/locale/yo/LC_MESSAGES:
+iso_3166-1.mo  iso_3166.mo
+
+./usr/share/locale/zh_CN:
+LC_MESSAGES
+
+./usr/share/locale/zh_CN/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo
+iso_3166.mo   iso_4217.mo    iso_639-2.mo   iso_639-3.mo   iso_639_3.mo
+iso_639.mo
+
+./usr/share/locale/zh_Hant:
+LC_MESSAGES
+
+./usr/share/locale/zh_Hant/LC_MESSAGES:
+iso_639-5.mo  iso_639_5.mo
+
+./usr/share/locale/zh_HK:
+LC_MESSAGES
+
+./usr/share/locale/zh_HK/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo  iso_4217.mo
+iso_639-2.mo  iso_639.mo
+
+./usr/share/locale/zh_TW:
+LC_MESSAGES
+
+./usr/share/locale/zh_TW/LC_MESSAGES:
+iso_15924.mo  iso_3166-1.mo  iso_3166-2.mo  iso_3166_2.mo  iso_3166-3.mo
+iso_3166.mo   iso_4217.mo    iso_639-2.mo   iso_639-3.mo   iso_639_3.mo
+iso_639.mo
+
+./usr/share/locale/zu:
+LC_MESSAGES
+
+./usr/share/locale/zu/LC_MESSAGES:
+iso_3166-1.mo  iso_3166-3.mo  iso_3166.mo  iso_639-2.mo  iso_639-3.mo
+iso_639_3.mo   iso_639.mo
+
+./usr/share/man:
+da  de	es  fr	it  ja	man1  man3  man5  man7	man8  nl  pl  pt  ru  sv
+
+./usr/share/man/da:
+man5  man8
+
+./usr/share/man/da/man5:
+adduser.conf.5.gz  deluser.conf.5.gz
+
+./usr/share/man/da/man8:
+addgroup.8.gz  adduser.8.gz  delgroup.8.gz  deluser.8.gz
+
+./usr/share/man/de:
+man1  man5  man7  man8
+
+./usr/share/man/de/man1:
+dpkg-architecture.1.gz	   dpkg-buildflags.1.gz   dpkg-buildpackage.1.gz
+dpkg-checkbuilddeps.1.gz   dpkg-distaddfile.1.gz  dpkg-genbuildinfo.1.gz
+dpkg-genchanges.1.gz	   dpkg-gencontrol.1.gz   dpkg-gensymbols.1.gz
+dpkg-mergechangelogs.1.gz  dpkg-name.1.gz	  dpkg-parsechangelog.1.gz
+dpkg-scanpackages.1.gz	   dpkg-scansources.1.gz  dpkg-shlibdeps.1.gz
+dpkg-source.1.gz	   dpkg-vendor.1.gz
+
+./usr/share/man/de/man5:
+adduser.conf.5.gz     deb.5.gz		  deb822.5.gz
+deb-buildinfo.5.gz    deb-changelog.5.gz  deb-changes.5.gz
+deb-conffiles.5.gz    deb-control.5.gz	  deb-extra-override.5.gz
+deb-old.5.gz	      deb-origin.5.gz	  deb-override.5.gz
+deb-postinst.5.gz     deb-postrm.5.gz	  deb-preinst.5.gz
+deb-prerm.5.gz	      deb-shlibs.5.gz	  deb-split.5.gz
+deb-src-control.5.gz  deb-src-files.5.gz  deb-src-rules.5.gz
+deb-substvars.5.gz    deb-symbols.5.gz	  deb-triggers.5.gz
+deluser.conf.5.gz     dsc.5.gz
+
+./usr/share/man/de/man7:
+deb-version.7.gz
+
+./usr/share/man/de/man8:
+addgroup.8.gz  adduser.8.gz  delgroup.8.gz  deluser.8.gz
+
+./usr/share/man/es:
+man5  man8
+
+./usr/share/man/es/man5:
+adduser.conf.5.gz  deb-extra-override.5.gz  deb-old.5.gz  deb-override.5.gz
+deb-split.5.gz	   deluser.conf.5.gz
+
+./usr/share/man/es/man8:
+addgroup.8.gz  adduser.8.gz  delgroup.8.gz  deluser.8.gz
+
+./usr/share/man/fr:
+man1  man5  man7  man8
+
+./usr/share/man/fr/man1:
+dpkg-architecture.1.gz	   dpkg-buildflags.1.gz   dpkg-buildpackage.1.gz
+dpkg-checkbuilddeps.1.gz   dpkg-distaddfile.1.gz  dpkg-genbuildinfo.1.gz
+dpkg-genchanges.1.gz	   dpkg-gencontrol.1.gz   dpkg-gensymbols.1.gz
+dpkg-mergechangelogs.1.gz  dpkg-name.1.gz	  dpkg-parsechangelog.1.gz
+dpkg-scanpackages.1.gz	   dpkg-scansources.1.gz  dpkg-shlibdeps.1.gz
+dpkg-source.1.gz	   dpkg-vendor.1.gz
+
+./usr/share/man/fr/man5:
+adduser.conf.5.gz     deb.5.gz		  deb822.5.gz
+deb-buildinfo.5.gz    deb-changelog.5.gz  deb-changes.5.gz
+deb-conffiles.5.gz    deb-control.5.gz	  deb-extra-override.5.gz
+deb-old.5.gz	      deb-origin.5.gz	  deb-override.5.gz
+deb-postinst.5.gz     deb-postrm.5.gz	  deb-preinst.5.gz
+deb-prerm.5.gz	      deb-shlibs.5.gz	  deb-split.5.gz
+deb-src-control.5.gz  deb-src-files.5.gz  deb-src-rules.5.gz
+deb-substvars.5.gz    deb-symbols.5.gz	  deb-triggers.5.gz
+deluser.conf.5.gz     dsc.5.gz
+
+./usr/share/man/fr/man7:
+deb-version.7.gz
+
+./usr/share/man/fr/man8:
+addgroup.8.gz  adduser.8.gz  delgroup.8.gz  deluser.8.gz
+
+./usr/share/man/it:
+man5  man8
+
+./usr/share/man/it/man5:
+adduser.conf.5.gz  deb-extra-override.5.gz  deb-old.5.gz  deb-override.5.gz
+deb-split.5.gz	   deluser.conf.5.gz
+
+./usr/share/man/it/man8:
+addgroup.8.gz  adduser.8.gz  delgroup.8.gz  deluser.8.gz
+
+./usr/share/man/ja:
+man5
+
+./usr/share/man/ja/man5:
+deb-extra-override.5.gz  deb-old.5.gz  deb-override.5.gz  deb-split.5.gz
+
+./usr/share/man/man1:
+addr2line.1.gz			 ar.1.gz
+as.1.gz				 bunzip2.1.gz
+bzcat.1.gz			 bzcmp.1.gz
+bzdiff.1.gz			 bzegrep.1.gz
+bzexe.1.gz			 bzfgrep.1.gz
+bzgrep.1.gz			 bzip2.1.gz
+bzip2recover.1.gz		 bzless.1.gz
+bzmore.1.gz			 capsh.1.gz
+c++filt.1.gz			 chacl.1.gz
+chattr.1.gz			 debuild-pbuilder.1.gz
+dpkg-architecture.1.gz		 dpkg-buildflags.1.gz
+dpkg-buildpackage.1.gz		 dpkg-checkbuilddeps.1.gz
+dpkg-distaddfile.1.gz		 dpkg-genbuildinfo.1.gz
+dpkg-genchanges.1.gz		 dpkg-gencontrol.1.gz
+dpkg-gensymbols.1.gz		 dpkg-mergechangelogs.1.gz
+dpkg-name.1.gz			 dpkg-parsechangelog.1.gz
+dpkg-scanpackages.1.gz		 dpkg-scansources.1.gz
+dpkg-shlibdeps.1.gz		 dpkg-source.1.gz
+dpkg-vendor.1.gz		 dwp.1.gz
+elfedit.1.gz			 getfacl.1.gz
+getpcaps.1.gz			 gold.1.gz
+gprof.1.gz			 kvm.1.gz
+ld.1.gz				 ld.bfd.1.gz
+ld.gold.1.gz			 lsattr.1.gz
+lzmainfo.1.gz			 make.1.gz
+make-first-existing-target.1.gz  nm.1.gz
+objcopy.1.gz			 objdump.1.gz
+patch.1.gz			 pdebuild.1.gz
+qemu-aarch64.1.gz		 qemu-aarch64_be.1.gz
+qemu-aarch64_be-static.1.gz	 qemu-aarch64-static.1.gz
+qemu-alpha.1.gz			 qemu-alpha-static.1.gz
+qemu-arm.1.gz			 qemu-armeb.1.gz
+qemu-armeb-static.1.gz		 qemu-arm-static.1.gz
+qemu-cris.1.gz			 qemu-cris-static.1.gz
+qemu-debootstrap.1.gz		 qemu-hppa.1.gz
+qemu-hppa-static.1.gz		 qemu-i386.1.gz
+qemu-i386-static.1.gz		 qemu-img.1.gz
+qemu-io.1.gz			 qemu-m68k.1.gz
+qemu-m68k-static.1.gz		 qemu-microblaze.1.gz
+qemu-microblazeel.1.gz		 qemu-microblazeel-static.1.gz
+qemu-microblaze-static.1.gz	 qemu-mips.1.gz
+qemu-mips64.1.gz		 qemu-mips64el.1.gz
+qemu-mips64el-static.1.gz	 qemu-mips64-static.1.gz
+qemu-mipsel.1.gz		 qemu-mipsel-static.1.gz
+qemu-mipsn32.1.gz		 qemu-mipsn32el.1.gz
+qemu-mipsn32el-static.1.gz	 qemu-mipsn32-static.1.gz
+qemu-mips-static.1.gz		 qemu-nios2.1.gz
+qemu-nios2-static.1.gz		 qemu-or1k.1.gz
+qemu-or1k-static.1.gz		 qemu-ppc.1.gz
+qemu-ppc64.1.gz			 qemu-ppc64abi32.1.gz
+qemu-ppc64abi32-static.1.gz	 qemu-ppc64le.1.gz
+qemu-ppc64le-static.1.gz	 qemu-ppc64-static.1.gz
+qemu-ppc-static.1.gz		 qemu-riscv32.1.gz
+qemu-riscv32-static.1.gz	 qemu-riscv64.1.gz
+qemu-riscv64-static.1.gz	 qemu-s390x.1.gz
+qemu-s390x-static.1.gz		 qemu-sh4.1.gz
+qemu-sh4eb.1.gz			 qemu-sh4eb-static.1.gz
+qemu-sh4-static.1.gz		 qemu-sparc.1.gz
+qemu-sparc32plus.1.gz		 qemu-sparc32plus-static.1.gz
+qemu-sparc64.1.gz		 qemu-sparc64-static.1.gz
+qemu-sparc-static.1.gz		 qemu-system.1.gz
+qemu-system-aarch64.1.gz	 qemu-system-alpha.1.gz
+qemu-system-arm.1.gz		 qemu-system-cris.1.gz
+qemu-system-hppa.1.gz		 qemu-system-i386.1.gz
+qemu-system-lm32.1.gz		 qemu-system-m68k.1.gz
+qemu-system-microblaze.1.gz	 qemu-system-microblazeel.1.gz
+qemu-system-mips.1.gz		 qemu-system-mips64.1.gz
+qemu-system-mips64el.1.gz	 qemu-system-mipsel.1.gz
+qemu-system-moxie.1.gz		 qemu-system-nios2.1.gz
+qemu-system-or1k.1.gz		 qemu-system-ppc.1.gz
+qemu-system-ppc64.1.gz		 qemu-system-ppc64le.1.gz
+qemu-system-riscv32.1.gz	 qemu-system-riscv64.1.gz
+qemu-system-s390x.1.gz		 qemu-system-sh4.1.gz
+qemu-system-sh4eb.1.gz		 qemu-system-sparc.1.gz
+qemu-system-sparc64.1.gz	 qemu-system-tricore.1.gz
+qemu-system-unicore32.1.gz	 qemu-system-x86_64.1.gz
+qemu-system-xtensa.1.gz		 qemu-system-xtensaeb.1.gz
+qemu-tilegx.1.gz		 qemu-tilegx-static.1.gz
+qemu-user.1.gz			 qemu-user-static.1.gz
+qemu-x86_64.1.gz		 qemu-x86_64-static.1.gz
+qemu-xtensa.1.gz		 qemu-xtensaeb.1.gz
+qemu-xtensaeb-static.1.gz	 qemu-xtensa-static.1.gz
+ranlib.1.gz			 readelf.1.gz
+setfacl.1.gz			 size.1.gz
+strings.1.gz			 strip.1.gz
+tar.1.gz			 tarcat.1.gz
+unxz.1.gz			 virtfs-proxy-helper.1.gz
+wget.1.gz			 x86_64-linux-gnu-addr2line.1.gz
+x86_64-linux-gnu-ar.1.gz	 x86_64-linux-gnu-as.1.gz
+x86_64-linux-gnu-c++filt.1.gz	 x86_64-linux-gnu-dwp.1.gz
+x86_64-linux-gnu-elfedit.1.gz	 x86_64-linux-gnu-gold.1.gz
+x86_64-linux-gnu-gprof.1.gz	 x86_64-linux-gnu-ld.1.gz
+x86_64-linux-gnu-ld.bfd.1.gz	 x86_64-linux-gnu-ld.gold.1.gz
+x86_64-linux-gnu-nm.1.gz	 x86_64-linux-gnu-objcopy.1.gz
+x86_64-linux-gnu-objdump.1.gz	 x86_64-linux-gnu-ranlib.1.gz
+x86_64-linux-gnu-readelf.1.gz	 x86_64-linux-gnu-size.1.gz
+x86_64-linux-gnu-strings.1.gz	 x86_64-linux-gnu-strip.1.gz
+xz.1.gz				 xzcat.1.gz
+xzcmp.1.gz			 xzdiff.1.gz
+xzegrep.1.gz			 xzfgrep.1.gz
+xzgrep.1.gz			 xzless.1.gz
+xzmore.1.gz
+
+./usr/share/man/man3:
+Dpkg.3perl.gz			      Dpkg::Arch.3perl.gz
+Dpkg::Build::Env.3perl.gz	      Dpkg::BuildFlags.3perl.gz
+Dpkg::Build::Info.3perl.gz	      Dpkg::BuildOptions.3perl.gz
+Dpkg::BuildProfiles.3perl.gz	      Dpkg::Build::Types.3perl.gz
+Dpkg::Changelog.3perl.gz	      Dpkg::Changelog::Debian.3perl.gz
+Dpkg::Changelog::Entry.3perl.gz       Dpkg::Changelog::Entry::Debian.3perl.gz
+Dpkg::Changelog::Parse.3perl.gz       Dpkg::Checksums.3perl.gz
+Dpkg::Compression.3perl.gz	      Dpkg::Compression::FileHandle.3perl.gz
+Dpkg::Compression::Process.3perl.gz   Dpkg::Conf.3perl.gz
+Dpkg::Control.3perl.gz		      Dpkg::Control::Changelog.3perl.gz
+Dpkg::Control::Fields.3perl.gz	      Dpkg::Control::FieldsCore.3perl.gz
+Dpkg::Control::Hash.3perl.gz	      Dpkg::Control::HashCore.3perl.gz
+Dpkg::Control::Info.3perl.gz	      Dpkg::Control::Tests.3perl.gz
+Dpkg::Control::Tests::Entry.3perl.gz  Dpkg::Control::Types.3perl.gz
+Dpkg::Deps.3perl.gz		      Dpkg::Deps::AND.3perl.gz
+Dpkg::Deps::KnownFacts.3perl.gz       Dpkg::Deps::Multiple.3perl.gz
+Dpkg::Deps::OR.3perl.gz		      Dpkg::Deps::Simple.3perl.gz
+Dpkg::Deps::Union.3perl.gz	      Dpkg::Exit.3perl.gz
+Dpkg::Gettext.3perl.gz		      Dpkg::Index.3perl.gz
+Dpkg::Interface::Storable.3perl.gz    Dpkg::IPC.3perl.gz
+Dpkg::Path.3perl.gz		      Dpkg::Source::Format.3perl.gz
+Dpkg::Source::Package.3perl.gz	      Dpkg::Substvars.3perl.gz
+Dpkg::Vendor.3perl.gz		      Dpkg::Vendor::Debian.3perl.gz
+Dpkg::Vendor::Default.3perl.gz	      Dpkg::Vendor::Ubuntu.3perl.gz
+Dpkg::Version.3perl.gz		      pcrepattern.3.gz
+
+./usr/share/man/man5:
+acl.5.gz	      adduser.conf.5.gz   capability.conf.5.gz
+Compose.5.gz	      deb.5.gz		  deb822.5.gz
+deb-buildinfo.5.gz    deb-changelog.5.gz  deb-changes.5.gz
+deb-conffiles.5.gz    deb-control.5.gz	  deb-extra-override.5.gz
+deb-old.5.gz	      deb-origin.5.gz	  deb-override.5.gz
+deb-postinst.5.gz     deb-postrm.5.gz	  deb-preinst.5.gz
+deb-prerm.5.gz	      deb-shlibs.5.gz	  deb-split.5.gz
+deb-src-control.5.gz  deb-src-files.5.gz  deb-src-rules.5.gz
+deb-substvars.5.gz    deb-symbols.5.gz	  deb-triggers.5.gz
+deluser.conf.5.gz     dsc.5.gz		  e2fsck.conf.5.gz
+ext2.5.gz	      ext3.5.gz		  ext4.5.gz
+hosts_access.5.gz     hosts.allow.5.gz	  hosts.deny.5.gz
+hosts_options.5.gz    ldap.conf.5.gz	  mke2fs.conf.5.gz
+pbuilderrc.5.gz       poolset.5.gz	  XCompose.5.gz
+
+./usr/share/man/man7:
+deb-version.7.gz  qemu-block-drivers.7.gz  qemu-cpu-models.7.gz
+qemu-ga-ref.7.gz  qemu-qmp-ref.7.gz
+
+./usr/share/man/man8:
+addgroup.8.gz	  adduser.8.gz		      badblocks.8.gz
+debootstrap.8.gz  debugfs.8.gz		      delgroup.8.gz
+deluser.8.gz	  dumpe2fs.8.gz		      e2freefrag.8.gz
+e2fsck.8.gz	  e2image.8.gz		      e2label.8.gz
+e2mmpstatus.8.gz  e2scrub.8.gz		      e2scrub_all.8.gz
+e2undo.8.gz	  e4crypt.8.gz		      e4defrag.8.gz
+filefrag.8.gz	  fsck.ext2.8.gz	      fsck.ext3.8.gz
+fsck.ext4.8.gz	  getcap.8.gz		      getpcaps.8.gz
+logsave.8.gz	  mke2fs.8.gz		      mkfs.ext2.8.gz
+mkfs.ext3.8.gz	  mkfs.ext4.8.gz	      mklost+found.8.gz
+pam_cap.8.gz	  pbuilder.8.gz		      qemubuilder.8.gz
+qemu-ga.8.gz	  qemu-make-debian-root.8.gz  qemu-nbd.8.gz
+resize2fs.8.gz	  rmt-tar.8.gz		      setcap.8.gz
+tune2fs.8.gz	  update-binfmts.8.gz
+
+./usr/share/man/nl:
+man1  man5  man7
+
+./usr/share/man/nl/man1:
+dpkg-architecture.1.gz	   dpkg-buildflags.1.gz   dpkg-buildpackage.1.gz
+dpkg-checkbuilddeps.1.gz   dpkg-distaddfile.1.gz  dpkg-genbuildinfo.1.gz
+dpkg-genchanges.1.gz	   dpkg-gencontrol.1.gz   dpkg-gensymbols.1.gz
+dpkg-mergechangelogs.1.gz  dpkg-name.1.gz	  dpkg-parsechangelog.1.gz
+dpkg-scanpackages.1.gz	   dpkg-scansources.1.gz  dpkg-shlibdeps.1.gz
+dpkg-source.1.gz	   dpkg-vendor.1.gz
+
+./usr/share/man/nl/man5:
+deb.5.gz	    deb822.5.gz		     deb-buildinfo.5.gz
+deb-changelog.5.gz  deb-changes.5.gz	     deb-conffiles.5.gz
+deb-control.5.gz    deb-extra-override.5.gz  deb-old.5.gz
+deb-origin.5.gz     deb-override.5.gz	     deb-postinst.5.gz
+deb-postrm.5.gz     deb-preinst.5.gz	     deb-prerm.5.gz
+deb-shlibs.5.gz     deb-split.5.gz	     deb-src-control.5.gz
+deb-src-files.5.gz  deb-src-rules.5.gz	     deb-substvars.5.gz
+deb-symbols.5.gz    deb-triggers.5.gz	     dsc.5.gz
+
+./usr/share/man/nl/man7:
+deb-version.7.gz
+
+./usr/share/man/pl:
+man5  man8
+
+./usr/share/man/pl/man5:
+adduser.conf.5.gz  deb-extra-override.5.gz  deb-old.5.gz  deb-override.5.gz
+deb-split.5.gz	   deluser.conf.5.gz
+
+./usr/share/man/pl/man8:
+addgroup.8.gz  adduser.8.gz  delgroup.8.gz  deluser.8.gz
+
+./usr/share/man/pt:
+man5  man8
+
+./usr/share/man/pt/man5:
+adduser.conf.5.gz  deluser.conf.5.gz
+
+./usr/share/man/pt/man8:
+addgroup.8.gz  adduser.8.gz  delgroup.8.gz  deluser.8.gz
+
+./usr/share/man/ru:
+man5  man8
+
+./usr/share/man/ru/man5:
+adduser.conf.5.gz  deluser.conf.5.gz
+
+./usr/share/man/ru/man8:
+addgroup.8.gz  adduser.8.gz  delgroup.8.gz  deluser.8.gz
+
+./usr/share/man/sv:
+man1  man5  man8
+
+./usr/share/man/sv/man1:
+dpkg-gencontrol.1.gz  dpkg-gensymbols.1.gz
+
+./usr/share/man/sv/man5:
+adduser.conf.5.gz  deb-extra-override.5.gz  deb-old.5.gz  deb-override.5.gz
+deb-split.5.gz	   deluser.conf.5.gz
+
+./usr/share/man/sv/man8:
+addgroup.8.gz  adduser.8.gz  delgroup.8.gz  deluser.8.gz
+
+./usr/share/pbuilder:
+pbuilderrc
+
+./usr/share/perl5:
+Debian	Dpkg  Dpkg.pm
+
+./usr/share/perl5/Debian:
+AdduserCommon.pm
+
+./usr/share/perl5/Dpkg:
+Arch.pm     Build	      BuildFlags.pm  BuildOptions.pm  BuildProfiles.pm
+Changelog   Changelog.pm      Checksums.pm   Compression      Compression.pm
+Conf.pm     Control	      Control.pm     Deps	      Deps.pm
+Dist	    ErrorHandling.pm  Exit.pm	     File.pm	      Getopt.pm
+Gettext.pm  Index.pm	      Interface      IPC.pm	      Lock.pm
+OpenPGP.pm  Package.pm	      Path.pm	     Shlibs	      Shlibs.pm
+Source	    Substvars.pm      Vars.pm	     Vendor	      Vendor.pm
+Version.pm
+
+./usr/share/perl5/Dpkg/Build:
+Env.pm	Info.pm  Types.pm
+
+./usr/share/perl5/Dpkg/Changelog:
+Debian.pm  Entry  Entry.pm  Parse.pm
+
+./usr/share/perl5/Dpkg/Changelog/Entry:
+Debian.pm
+
+./usr/share/perl5/Dpkg/Compression:
+FileHandle.pm  Process.pm
+
+./usr/share/perl5/Dpkg/Control:
+Changelog.pm  FieldsCore.pm  Fields.pm	HashCore.pm  Hash.pm  Info.pm  Tests
+Tests.pm      Types.pm
+
+./usr/share/perl5/Dpkg/Control/Tests:
+Entry.pm
+
+./usr/share/perl5/Dpkg/Deps:
+AND.pm	KnownFacts.pm  Multiple.pm  OR.pm  Simple.pm  Union.pm
+
+./usr/share/perl5/Dpkg/Dist:
+Files.pm
+
+./usr/share/perl5/Dpkg/Interface:
+Storable.pm
+
+./usr/share/perl5/Dpkg/Shlibs:
+Cppfilt.pm  Objdump.pm	SymbolFile.pm  Symbol.pm
+
+./usr/share/perl5/Dpkg/Source:
+Archive.pm  BinaryFiles.pm  Format.pm  Functions.pm  Package  Package.pm
+Patch.pm    Quilt.pm
+
+./usr/share/perl5/Dpkg/Source/Package:
+V1.pm  V2.pm  V3
+
+./usr/share/perl5/Dpkg/Source/Package/V3:
+Bzr.pm	Custom.pm  Git.pm  Native.pm  Quilt.pm
+
+./usr/share/perl5/Dpkg/Vendor:
+Debian.pm  Default.pm  Ubuntu.pm
+
+./usr/share/pkgconfig:
+iso-codes.pc
+
+./usr/share/pmdk:
+pmdk.magic
+
+./usr/share/qemu:
+bamboo.dtb		  bios-microvm.bin  canyonlands.dtb
+firmware		  init		    keymaps
+kvmvapic.bin		  linuxboot.bin     linuxboot_dma.bin
+multiboot.bin		  openbios-ppc	    openbios-sparc32
+openbios-sparc64	  palcode-clipper   petalogix-ml605.dtb
+petalogix-s3adsp1800.dtb  ppc_rom.bin	    pvh.bin
+pxe-e1000.rom		  pxe-ne2k_isa.rom  pxe-pcnet32.rom
+pxe-rtl8139.rom		  pxe-virtio.rom    QEMU,cgthree.bin
+QEMU,tcx.bin		  QEMU,VGA.bin	    s390-ccw.img
+s390-netboot.img	  sgabios.bin	    skiboot.lid
+slof.bin		  spapr-rtas.bin    trace-events-all
+vhost-user
+
+./usr/share/qemu/firmware:
+60-edk2-aarch64.json
+
+./usr/share/qemu/init:
+qemu-kvm-init
+
+./usr/share/qemu/keymaps:
+ar     bepo  cz  da  de  de-ch	en-gb  en-us  es  et  fi  fo  fr  fr-be  fr-ca
+fr-ch  hr    hu  is  it  ja	lt     lv     mk  nl  no  pl  pt  pt-br  ru
+sl     sv    th  tr
+
+./usr/share/qemu/vhost-user:
+50-qemu-gpu.json
+
+./usr/share/qemu-efi:
+QEMU_EFI.fd
+
+./usr/share/qemu-efi-aarch64:
+QEMU_EFI.fd
+
+./usr/share/seabios:
+acpi-dsdt.aml	    bios-256k.bin    bios.bin		 extboot.bin
+kvmvapic.bin	    linuxboot.bin    linuxboot_dma.bin	 multiboot.bin
+optionrom	    vapic.bin	     vgabios-ati.bin	 vgabios-cirrus.bin
+vgabios-isavga.bin  vgabios-qxl.bin  vgabios-stdvga.bin  vgabios-virtio.bin
+vgabios-vmware.bin
+
+./usr/share/seabios/optionrom:
+extboot.bin  kvmvapic.bin  linuxboot.bin  multiboot.bin  vapic.bin
+
+./usr/share/slof:
+slof.bin  spapr-rtas.bin
+
+./usr/share/X11:
+locale	XErrorDB
+
+./usr/share/X11/locale:
+am_ET.UTF-8	  armscii-8	    C		      compose.dir
+cs_CZ.UTF-8	  el_GR.UTF-8	    en_US.UTF-8       fi_FI.UTF-8
+georgian-academy  georgian-ps	    ibm-cp1133	      iscii-dev
+isiri-3342	  iso8859-1	    iso8859-10	      iso8859-11
+iso8859-13	  iso8859-14	    iso8859-15	      iso8859-2
+iso8859-3	  iso8859-4	    iso8859-5	      iso8859-6
+iso8859-7	  iso8859-8	    iso8859-9	      iso8859-9e
+ja		  ja.JIS	    ja_JP.UTF-8       ja.SJIS
+km_KH.UTF-8	  ko		    koi8-c	      koi8-r
+koi8-u		  ko_KR.UTF-8	    locale.alias      locale.dir
+microsoft-cp1251  microsoft-cp1255  microsoft-cp1256  mulelao-1
+nokhchi-1	  pt_BR.UTF-8	    pt_PT.UTF-8       ru_RU.UTF-8
+sr_CS.UTF-8	  tatar-cyr	    th_TH	      th_TH.UTF-8
+tscii-0		  vi_VN.tcvn	    vi_VN.viscii      zh_CN
+zh_CN.gb18030	  zh_CN.gbk	    zh_CN.UTF-8       zh_HK.big5
+zh_HK.big5hkscs   zh_HK.UTF-8	    zh_TW	      zh_TW.big5
+zh_TW.UTF-8
+
+./usr/share/X11/locale/am_ET.UTF-8:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/armscii-8:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/C:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/cs_CZ.UTF-8:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/el_GR.UTF-8:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/en_US.UTF-8:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/fi_FI.UTF-8:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/georgian-academy:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/georgian-ps:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/ibm-cp1133:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/iscii-dev:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/isiri-3342:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/iso8859-1:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/iso8859-10:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/iso8859-11:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/iso8859-13:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/iso8859-14:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/iso8859-15:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/iso8859-2:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/iso8859-3:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/iso8859-4:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/iso8859-5:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/iso8859-6:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/iso8859-7:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/iso8859-8:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/iso8859-9:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/iso8859-9e:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/ja:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/ja.JIS:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/ja_JP.UTF-8:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/ja.SJIS:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/km_KH.UTF-8:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/ko:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/koi8-c:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/koi8-r:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/koi8-u:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/ko_KR.UTF-8:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/microsoft-cp1251:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/microsoft-cp1255:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/microsoft-cp1256:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/mulelao-1:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/nokhchi-1:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/pt_BR.UTF-8:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/pt_PT.UTF-8:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/ru_RU.UTF-8:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/sr_CS.UTF-8:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/tatar-cyr:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/th_TH:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/th_TH.UTF-8:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/tscii-0:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/vi_VN.tcvn:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/vi_VN.viscii:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/zh_CN:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/zh_CN.gb18030:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/zh_CN.gbk:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/zh_CN.UTF-8:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/zh_HK.big5:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/zh_HK.big5hkscs:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/zh_HK.UTF-8:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/zh_TW:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/zh_TW.big5:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/X11/locale/zh_TW.UTF-8:
+Compose  XI18N_OBJS  XLC_LOCALE
+
+./usr/share/xml:
+iso-codes
+
+./usr/share/xml/iso-codes:
+iso_15924.xml  iso_3166-1.xml  iso_3166-2.xml  iso_3166_2.xml  iso_3166-3.xml
+iso_3166.xml   iso_4217.xml    iso_639-2.xml   iso_639-3.xml   iso_639_3.xml
+iso_639-5.xml  iso_639_5.xml   iso_639.xml
+
+./usr/share/zoneinfo:
+Africa	   America    Antarctica   Arctic	      Asia	 Atlantic
+Australia  Brazil     Canada	   CET		      Chile	 CST6CDT
+Cuba	   EET	      Egypt	   Eire		      EST	 EST5EDT
+Etc	   Europe     Factory	   GB		      GB-Eire	 GMT
+GMT+0	   GMT-0      GMT0	   Greenwich	      Hongkong	 HST
+Iceland    Indian     Iran	   iso3166.tab	      Israel	 Jamaica
+Japan	   Kwajalein  leapseconds  leap-seconds.list  Libya	 localtime
+MET	   Mexico     MST	   MST7MDT	      Navajo	 NZ
+NZ-CHAT    Pacific    Poland	   Portugal	      posix	 posixrules
+PRC	   PST8PDT    right	   ROC		      ROK	 Singapore
+SystemV    Turkey     tzdata.zi    UCT		      Universal  US
+UTC	   WET	      W-SU	   zone1970.tab       zone.tab	 Zulu
+
+./usr/share/zoneinfo/Africa:
+Abidjan        Accra	     Addis_Ababa  Algiers   Asmara	Asmera
+Bamako	       Bangui	     Banjul	  Bissau    Blantyre	Brazzaville
+Bujumbura      Cairo	     Casablanca   Ceuta     Conakry	Dakar
+Dar_es_Salaam  Djibouti      Douala	  El_Aaiun  Freetown	Gaborone
+Harare	       Johannesburg  Juba	  Kampala   Khartoum	Kigali
+Kinshasa       Lagos	     Libreville   Lome	    Luanda	Lubumbashi
+Lusaka	       Malabo	     Maputo	  Maseru    Mbabane	Mogadishu
+Monrovia       Nairobi	     Ndjamena	  Niamey    Nouakchott	Ouagadougou
+Porto-Novo     Sao_Tome      Timbuktu	  Tripoli   Tunis	Windhoek
+
+./usr/share/zoneinfo/America:
+Adak	       Anchorage       Anguilla      Antigua	   Araguaina
+Argentina      Aruba	       Asuncion      Atikokan	   Atka
+Bahia	       Bahia_Banderas  Barbados      Belem	   Belize
+Blanc-Sablon   Boa_Vista       Bogota	     Boise	   Buenos_Aires
+Cambridge_Bay  Campo_Grande    Cancun	     Caracas	   Catamarca
+Cayenne        Cayman	       Chicago	     Chihuahua	   Coral_Harbour
+Cordoba        Costa_Rica      Creston	     Cuiaba	   Curacao
+Danmarkshavn   Dawson	       Dawson_Creek  Denver	   Detroit
+Dominica       Edmonton        Eirunepe      El_Salvador   Ensenada
+Fortaleza      Fort_Nelson     Fort_Wayne    Glace_Bay	   Godthab
+Goose_Bay      Grand_Turk      Grenada	     Guadeloupe    Guatemala
+Guayaquil      Guyana	       Halifax	     Havana	   Hermosillo
+Indiana        Indianapolis    Inuvik	     Iqaluit	   Jamaica
+Jujuy	       Juneau	       Kentucky      Knox_IN	   Kralendijk
+La_Paz	       Lima	       Los_Angeles   Louisville    Lower_Princes
+Maceio	       Managua	       Manaus	     Marigot	   Martinique
+Matamoros      Mazatlan        Mendoza	     Menominee	   Merida
+Metlakatla     Mexico_City     Miquelon      Moncton	   Monterrey
+Montevideo     Montreal        Montserrat    Nassau	   New_York
+Nipigon        Nome	       Noronha	     North_Dakota  Ojinaga
+Panama	       Pangnirtung     Paramaribo    Phoenix	   Port-au-Prince
+Porto_Acre     Port_of_Spain   Porto_Velho   Puerto_Rico   Punta_Arenas
+Rainy_River    Rankin_Inlet    Recife	     Regina	   Resolute
+Rio_Branco     Rosario	       Santa_Isabel  Santarem	   Santiago
+Santo_Domingo  Sao_Paulo       Scoresbysund  Shiprock	   Sitka
+St_Barthelemy  St_Johns        St_Kitts      St_Lucia	   St_Thomas
+St_Vincent     Swift_Current   Tegucigalpa   Thule	   Thunder_Bay
+Tijuana        Toronto	       Tortola	     Vancouver	   Virgin
+Whitehorse     Winnipeg        Yakutat	     Yellowknife
+
+./usr/share/zoneinfo/America/Argentina:
+Buenos_Aires  Catamarca  ComodRivadavia  Cordoba   Jujuy    La_Rioja  Mendoza
+Rio_Gallegos  Salta	 San_Juan	 San_Luis  Tucuman  Ushuaia
+
+./usr/share/zoneinfo/America/Indiana:
+Indianapolis  Knox  Marengo  Petersburg  Tell_City  Vevay  Vincennes  Winamac
+
+./usr/share/zoneinfo/America/Kentucky:
+Louisville  Monticello
+
+./usr/share/zoneinfo/America/North_Dakota:
+Beulah	Center	New_Salem
+
+./usr/share/zoneinfo/Antarctica:
+Casey	    Davis  DumontDUrville  Macquarie  Mawson  McMurdo  Palmer  Rothera
+South_Pole  Syowa  Troll	   Vostok
+
+./usr/share/zoneinfo/Arctic:
+Longyearbyen
+
+./usr/share/zoneinfo/Asia:
+Aden	      Almaty	   Amman	  Anadyr	 Aqtau
+Aqtobe	      Ashgabat	   Ashkhabad	  Atyrau	 Baghdad
+Bahrain       Baku	   Bangkok	  Barnaul	 Beirut
+Bishkek       Brunei	   Calcutta	  Chita		 Choibalsan
+Chongqing     Chungking    Colombo	  Dacca		 Damascus
+Dhaka	      Dili	   Dubai	  Dushanbe	 Famagusta
+Gaza	      Harbin	   Hebron	  Ho_Chi_Minh	 Hong_Kong
+Hovd	      Irkutsk	   Istanbul	  Jakarta	 Jayapura
+Jerusalem     Kabul	   Kamchatka	  Karachi	 Kashgar
+Kathmandu     Katmandu	   Khandyga	  Kolkata	 Krasnoyarsk
+Kuala_Lumpur  Kuching	   Kuwait	  Macao		 Macau
+Magadan       Makassar	   Manila	  Muscat	 Nicosia
+Novokuznetsk  Novosibirsk  Omsk		  Oral		 Phnom_Penh
+Pontianak     Pyongyang    Qatar	  Qostanay	 Qyzylorda
+Rangoon       Riyadh	   Saigon	  Sakhalin	 Samarkand
+Seoul	      Shanghai	   Singapore	  Srednekolymsk  Taipei
+Tashkent      Tbilisi	   Tehran	  Tel_Aviv	 Thimbu
+Thimphu       Tokyo	   Tomsk	  Ujung_Pandang  Ulaanbaatar
+Ulan_Bator    Urumqi	   Ust-Nera	  Vientiane	 Vladivostok
+Yakutsk       Yangon	   Yekaterinburg  Yerevan
+
+./usr/share/zoneinfo/Atlantic:
+Azores	 Bermuda    Canary	   Cape_Verde  Faeroe	  Faroe  Jan_Mayen
+Madeira  Reykjavik  South_Georgia  Stanley     St_Helena
+
+./usr/share/zoneinfo/Australia:
+ACT    Adelaide    Brisbane    Broken_Hill  Canberra   Currie	  Darwin
+Eucla  Hobart	   LHI	       Lindeman     Lord_Howe  Melbourne  North
+NSW    Perth	   Queensland  South	    Sydney     Tasmania   Victoria
+West   Yancowinna
+
+./usr/share/zoneinfo/Brazil:
+Acre  DeNoronha  East  West
+
+./usr/share/zoneinfo/Canada:
+Atlantic  Central  Eastern  Mountain  Newfoundland  Pacific  Saskatchewan
+Yukon
+
+./usr/share/zoneinfo/Chile:
+Continental  EasterIsland
+
+./usr/share/zoneinfo/Etc:
+GMT	GMT+0	GMT-0	GMT0	   GMT+1   GMT-1      GMT+10  GMT-10  GMT+11
+GMT-11	GMT+12	GMT-12	GMT-13	   GMT-14  GMT+2      GMT-2   GMT+3   GMT-3
+GMT+4	GMT-4	GMT+5	GMT-5	   GMT+6   GMT-6      GMT+7   GMT-7   GMT+8
+GMT-8	GMT+9	GMT-9	Greenwich  UCT	   Universal  UTC     Zulu
+
+./usr/share/zoneinfo/Europe:
+Amsterdam    Andorra	 Astrakhan  Athens	 Belfast    Belgrade
+Berlin	     Bratislava  Brussels   Bucharest	 Budapest   Busingen
+Chisinau     Copenhagen  Dublin     Gibraltar	 Guernsey   Helsinki
+Isle_of_Man  Istanbul	 Jersey     Kaliningrad  Kiev	    Kirov
+Lisbon	     Ljubljana	 London     Luxembourg	 Madrid     Malta
+Mariehamn    Minsk	 Monaco     Moscow	 Nicosia    Oslo
+Paris	     Podgorica	 Prague     Riga	 Rome	    Samara
+San_Marino   Sarajevo	 Saratov    Simferopol	 Skopje     Sofia
+Stockholm    Tallinn	 Tirane     Tiraspol	 Ulyanovsk  Uzhgorod
+Vaduz	     Vatican	 Vienna     Vilnius	 Volgograd  Warsaw
+Zagreb	     Zaporozhye  Zurich
+
+./usr/share/zoneinfo/Indian:
+Antananarivo  Chagos   Christmas  Cocos  Comoro  Kerguelen  Mahe  Maldives
+Mauritius     Mayotte  Reunion
+
+./usr/share/zoneinfo/Mexico:
+BajaNorte  BajaSur  General
+
+./usr/share/zoneinfo/Pacific:
+Apia	 Auckland     Bougainville  Chatham    Chuuk	 Easter
+Efate	 Enderbury    Fakaofo	    Fiji       Funafuti  Galapagos
+Gambier  Guadalcanal  Guam	    Honolulu   Johnston  Kiritimati
+Kosrae	 Kwajalein    Majuro	    Marquesas  Midway	 Nauru
+Niue	 Norfolk      Noumea	    Pago_Pago  Palau	 Pitcairn
+Pohnpei  Ponape       Port_Moresby  Rarotonga  Saipan	 Samoa
+Tahiti	 Tarawa       Tongatapu     Truk       Wake	 Wallis
+Yap
+
+./usr/share/zoneinfo/posix:
+Africa	   America    Antarctica  Arctic     Asia     Atlantic	Australia
+Brazil	   Canada     CET	  Chile      CST6CDT  Cuba	EET
+Egypt	   Eire       EST	  EST5EDT    Etc      Europe	Factory
+GB	   GB-Eire    GMT	  GMT+0      GMT-0    GMT0	Greenwich
+Hongkong   HST	      Iceland	  Indian     Iran     Israel	Jamaica
+Japan	   Kwajalein  Libya	  MET	     Mexico   MST	MST7MDT
+Navajo	   NZ	      NZ-CHAT	  Pacific    Poland   Portugal	PRC
+PST8PDT    ROC	      ROK	  Singapore  SystemV  Turkey	UCT
+Universal  US	      UTC	  WET	     W-SU     Zulu
+
+./usr/share/zoneinfo/posix/Africa:
+Abidjan        Accra	     Addis_Ababa  Algiers   Asmara	Asmera
+Bamako	       Bangui	     Banjul	  Bissau    Blantyre	Brazzaville
+Bujumbura      Cairo	     Casablanca   Ceuta     Conakry	Dakar
+Dar_es_Salaam  Djibouti      Douala	  El_Aaiun  Freetown	Gaborone
+Harare	       Johannesburg  Juba	  Kampala   Khartoum	Kigali
+Kinshasa       Lagos	     Libreville   Lome	    Luanda	Lubumbashi
+Lusaka	       Malabo	     Maputo	  Maseru    Mbabane	Mogadishu
+Monrovia       Nairobi	     Ndjamena	  Niamey    Nouakchott	Ouagadougou
+Porto-Novo     Sao_Tome      Timbuktu	  Tripoli   Tunis	Windhoek
+
+./usr/share/zoneinfo/posix/America:
+Adak	       Anchorage       Anguilla      Antigua	   Araguaina
+Argentina      Aruba	       Asuncion      Atikokan	   Atka
+Bahia	       Bahia_Banderas  Barbados      Belem	   Belize
+Blanc-Sablon   Boa_Vista       Bogota	     Boise	   Buenos_Aires
+Cambridge_Bay  Campo_Grande    Cancun	     Caracas	   Catamarca
+Cayenne        Cayman	       Chicago	     Chihuahua	   Coral_Harbour
+Cordoba        Costa_Rica      Creston	     Cuiaba	   Curacao
+Danmarkshavn   Dawson	       Dawson_Creek  Denver	   Detroit
+Dominica       Edmonton        Eirunepe      El_Salvador   Ensenada
+Fortaleza      Fort_Nelson     Fort_Wayne    Glace_Bay	   Godthab
+Goose_Bay      Grand_Turk      Grenada	     Guadeloupe    Guatemala
+Guayaquil      Guyana	       Halifax	     Havana	   Hermosillo
+Indiana        Indianapolis    Inuvik	     Iqaluit	   Jamaica
+Jujuy	       Juneau	       Kentucky      Knox_IN	   Kralendijk
+La_Paz	       Lima	       Los_Angeles   Louisville    Lower_Princes
+Maceio	       Managua	       Manaus	     Marigot	   Martinique
+Matamoros      Mazatlan        Mendoza	     Menominee	   Merida
+Metlakatla     Mexico_City     Miquelon      Moncton	   Monterrey
+Montevideo     Montreal        Montserrat    Nassau	   New_York
+Nipigon        Nome	       Noronha	     North_Dakota  Ojinaga
+Panama	       Pangnirtung     Paramaribo    Phoenix	   Port-au-Prince
+Porto_Acre     Port_of_Spain   Porto_Velho   Puerto_Rico   Punta_Arenas
+Rainy_River    Rankin_Inlet    Recife	     Regina	   Resolute
+Rio_Branco     Rosario	       Santa_Isabel  Santarem	   Santiago
+Santo_Domingo  Sao_Paulo       Scoresbysund  Shiprock	   Sitka
+St_Barthelemy  St_Johns        St_Kitts      St_Lucia	   St_Thomas
+St_Vincent     Swift_Current   Tegucigalpa   Thule	   Thunder_Bay
+Tijuana        Toronto	       Tortola	     Vancouver	   Virgin
+Whitehorse     Winnipeg        Yakutat	     Yellowknife
+
+./usr/share/zoneinfo/posix/America/Argentina:
+Buenos_Aires  Catamarca  ComodRivadavia  Cordoba   Jujuy    La_Rioja  Mendoza
+Rio_Gallegos  Salta	 San_Juan	 San_Luis  Tucuman  Ushuaia
+
+./usr/share/zoneinfo/posix/America/Indiana:
+Indianapolis  Knox  Marengo  Petersburg  Tell_City  Vevay  Vincennes  Winamac
+
+./usr/share/zoneinfo/posix/America/Kentucky:
+Louisville  Monticello
+
+./usr/share/zoneinfo/posix/America/North_Dakota:
+Beulah	Center	New_Salem
+
+./usr/share/zoneinfo/posix/Antarctica:
+Casey	    Davis  DumontDUrville  Macquarie  Mawson  McMurdo  Palmer  Rothera
+South_Pole  Syowa  Troll	   Vostok
+
+./usr/share/zoneinfo/posix/Arctic:
+Longyearbyen
+
+./usr/share/zoneinfo/posix/Asia:
+Aden	      Almaty	   Amman	  Anadyr	 Aqtau
+Aqtobe	      Ashgabat	   Ashkhabad	  Atyrau	 Baghdad
+Bahrain       Baku	   Bangkok	  Barnaul	 Beirut
+Bishkek       Brunei	   Calcutta	  Chita		 Choibalsan
+Chongqing     Chungking    Colombo	  Dacca		 Damascus
+Dhaka	      Dili	   Dubai	  Dushanbe	 Famagusta
+Gaza	      Harbin	   Hebron	  Ho_Chi_Minh	 Hong_Kong
+Hovd	      Irkutsk	   Istanbul	  Jakarta	 Jayapura
+Jerusalem     Kabul	   Kamchatka	  Karachi	 Kashgar
+Kathmandu     Katmandu	   Khandyga	  Kolkata	 Krasnoyarsk
+Kuala_Lumpur  Kuching	   Kuwait	  Macao		 Macau
+Magadan       Makassar	   Manila	  Muscat	 Nicosia
+Novokuznetsk  Novosibirsk  Omsk		  Oral		 Phnom_Penh
+Pontianak     Pyongyang    Qatar	  Qostanay	 Qyzylorda
+Rangoon       Riyadh	   Saigon	  Sakhalin	 Samarkand
+Seoul	      Shanghai	   Singapore	  Srednekolymsk  Taipei
+Tashkent      Tbilisi	   Tehran	  Tel_Aviv	 Thimbu
+Thimphu       Tokyo	   Tomsk	  Ujung_Pandang  Ulaanbaatar
+Ulan_Bator    Urumqi	   Ust-Nera	  Vientiane	 Vladivostok
+Yakutsk       Yangon	   Yekaterinburg  Yerevan
+
+./usr/share/zoneinfo/posix/Atlantic:
+Azores	 Bermuda    Canary	   Cape_Verde  Faeroe	  Faroe  Jan_Mayen
+Madeira  Reykjavik  South_Georgia  Stanley     St_Helena
+
+./usr/share/zoneinfo/posix/Australia:
+ACT    Adelaide    Brisbane    Broken_Hill  Canberra   Currie	  Darwin
+Eucla  Hobart	   LHI	       Lindeman     Lord_Howe  Melbourne  North
+NSW    Perth	   Queensland  South	    Sydney     Tasmania   Victoria
+West   Yancowinna
+
+./usr/share/zoneinfo/posix/Brazil:
+Acre  DeNoronha  East  West
+
+./usr/share/zoneinfo/posix/Canada:
+Atlantic  Central  Eastern  Mountain  Newfoundland  Pacific  Saskatchewan
+Yukon
+
+./usr/share/zoneinfo/posix/Chile:
+Continental  EasterIsland
+
+./usr/share/zoneinfo/posix/Etc:
+GMT	GMT+0	GMT-0	GMT0	   GMT+1   GMT-1      GMT+10  GMT-10  GMT+11
+GMT-11	GMT+12	GMT-12	GMT-13	   GMT-14  GMT+2      GMT-2   GMT+3   GMT-3
+GMT+4	GMT-4	GMT+5	GMT-5	   GMT+6   GMT-6      GMT+7   GMT-7   GMT+8
+GMT-8	GMT+9	GMT-9	Greenwich  UCT	   Universal  UTC     Zulu
+
+./usr/share/zoneinfo/posix/Europe:
+Amsterdam    Andorra	 Astrakhan  Athens	 Belfast    Belgrade
+Berlin	     Bratislava  Brussels   Bucharest	 Budapest   Busingen
+Chisinau     Copenhagen  Dublin     Gibraltar	 Guernsey   Helsinki
+Isle_of_Man  Istanbul	 Jersey     Kaliningrad  Kiev	    Kirov
+Lisbon	     Ljubljana	 London     Luxembourg	 Madrid     Malta
+Mariehamn    Minsk	 Monaco     Moscow	 Nicosia    Oslo
+Paris	     Podgorica	 Prague     Riga	 Rome	    Samara
+San_Marino   Sarajevo	 Saratov    Simferopol	 Skopje     Sofia
+Stockholm    Tallinn	 Tirane     Tiraspol	 Ulyanovsk  Uzhgorod
+Vaduz	     Vatican	 Vienna     Vilnius	 Volgograd  Warsaw
+Zagreb	     Zaporozhye  Zurich
+
+./usr/share/zoneinfo/posix/Indian:
+Antananarivo  Chagos   Christmas  Cocos  Comoro  Kerguelen  Mahe  Maldives
+Mauritius     Mayotte  Reunion
+
+./usr/share/zoneinfo/posix/Mexico:
+BajaNorte  BajaSur  General
+
+./usr/share/zoneinfo/posix/Pacific:
+Apia	 Auckland     Bougainville  Chatham    Chuuk	 Easter
+Efate	 Enderbury    Fakaofo	    Fiji       Funafuti  Galapagos
+Gambier  Guadalcanal  Guam	    Honolulu   Johnston  Kiritimati
+Kosrae	 Kwajalein    Majuro	    Marquesas  Midway	 Nauru
+Niue	 Norfolk      Noumea	    Pago_Pago  Palau	 Pitcairn
+Pohnpei  Ponape       Port_Moresby  Rarotonga  Saipan	 Samoa
+Tahiti	 Tarawa       Tongatapu     Truk       Wake	 Wallis
+Yap
+
+./usr/share/zoneinfo/posix/SystemV:
+AST4	 AST4ADT  CST6	   CST6CDT  EST5  EST5EDT  HST10  MST7	MST7MDT  PST8
+PST8PDT  YST9	  YST9YDT
+
+./usr/share/zoneinfo/posix/US:
+Alaska		Aleutian  Arizona   Central  Eastern	  East-Indiana	Hawaii
+Indiana-Starke	Michigan  Mountain  Pacific  Pacific-New  Samoa
+
+./usr/share/zoneinfo/right:
+Africa	   America    Antarctica  Arctic     Asia     Atlantic	Australia
+Brazil	   Canada     CET	  Chile      CST6CDT  Cuba	EET
+Egypt	   Eire       EST	  EST5EDT    Etc      Europe	Factory
+GB	   GB-Eire    GMT	  GMT+0      GMT-0    GMT0	Greenwich
+Hongkong   HST	      Iceland	  Indian     Iran     Israel	Jamaica
+Japan	   Kwajalein  Libya	  MET	     Mexico   MST	MST7MDT
+Navajo	   NZ	      NZ-CHAT	  Pacific    Poland   Portugal	PRC
+PST8PDT    ROC	      ROK	  Singapore  SystemV  Turkey	UCT
+Universal  US	      UTC	  WET	     W-SU     Zulu
+
+./usr/share/zoneinfo/right/Africa:
+Abidjan        Accra	     Addis_Ababa  Algiers   Asmara	Asmera
+Bamako	       Bangui	     Banjul	  Bissau    Blantyre	Brazzaville
+Bujumbura      Cairo	     Casablanca   Ceuta     Conakry	Dakar
+Dar_es_Salaam  Djibouti      Douala	  El_Aaiun  Freetown	Gaborone
+Harare	       Johannesburg  Juba	  Kampala   Khartoum	Kigali
+Kinshasa       Lagos	     Libreville   Lome	    Luanda	Lubumbashi
+Lusaka	       Malabo	     Maputo	  Maseru    Mbabane	Mogadishu
+Monrovia       Nairobi	     Ndjamena	  Niamey    Nouakchott	Ouagadougou
+Porto-Novo     Sao_Tome      Timbuktu	  Tripoli   Tunis	Windhoek
+
+./usr/share/zoneinfo/right/America:
+Adak	       Anchorage       Anguilla      Antigua	   Araguaina
+Argentina      Aruba	       Asuncion      Atikokan	   Atka
+Bahia	       Bahia_Banderas  Barbados      Belem	   Belize
+Blanc-Sablon   Boa_Vista       Bogota	     Boise	   Buenos_Aires
+Cambridge_Bay  Campo_Grande    Cancun	     Caracas	   Catamarca
+Cayenne        Cayman	       Chicago	     Chihuahua	   Coral_Harbour
+Cordoba        Costa_Rica      Creston	     Cuiaba	   Curacao
+Danmarkshavn   Dawson	       Dawson_Creek  Denver	   Detroit
+Dominica       Edmonton        Eirunepe      El_Salvador   Ensenada
+Fortaleza      Fort_Nelson     Fort_Wayne    Glace_Bay	   Godthab
+Goose_Bay      Grand_Turk      Grenada	     Guadeloupe    Guatemala
+Guayaquil      Guyana	       Halifax	     Havana	   Hermosillo
+Indiana        Indianapolis    Inuvik	     Iqaluit	   Jamaica
+Jujuy	       Juneau	       Kentucky      Knox_IN	   Kralendijk
+La_Paz	       Lima	       Los_Angeles   Louisville    Lower_Princes
+Maceio	       Managua	       Manaus	     Marigot	   Martinique
+Matamoros      Mazatlan        Mendoza	     Menominee	   Merida
+Metlakatla     Mexico_City     Miquelon      Moncton	   Monterrey
+Montevideo     Montreal        Montserrat    Nassau	   New_York
+Nipigon        Nome	       Noronha	     North_Dakota  Ojinaga
+Panama	       Pangnirtung     Paramaribo    Phoenix	   Port-au-Prince
+Porto_Acre     Port_of_Spain   Porto_Velho   Puerto_Rico   Punta_Arenas
+Rainy_River    Rankin_Inlet    Recife	     Regina	   Resolute
+Rio_Branco     Rosario	       Santa_Isabel  Santarem	   Santiago
+Santo_Domingo  Sao_Paulo       Scoresbysund  Shiprock	   Sitka
+St_Barthelemy  St_Johns        St_Kitts      St_Lucia	   St_Thomas
+St_Vincent     Swift_Current   Tegucigalpa   Thule	   Thunder_Bay
+Tijuana        Toronto	       Tortola	     Vancouver	   Virgin
+Whitehorse     Winnipeg        Yakutat	     Yellowknife
+
+./usr/share/zoneinfo/right/America/Argentina:
+Buenos_Aires  Catamarca  ComodRivadavia  Cordoba   Jujuy    La_Rioja  Mendoza
+Rio_Gallegos  Salta	 San_Juan	 San_Luis  Tucuman  Ushuaia
+
+./usr/share/zoneinfo/right/America/Indiana:
+Indianapolis  Knox  Marengo  Petersburg  Tell_City  Vevay  Vincennes  Winamac
+
+./usr/share/zoneinfo/right/America/Kentucky:
+Louisville  Monticello
+
+./usr/share/zoneinfo/right/America/North_Dakota:
+Beulah	Center	New_Salem
+
+./usr/share/zoneinfo/right/Antarctica:
+Casey	    Davis  DumontDUrville  Macquarie  Mawson  McMurdo  Palmer  Rothera
+South_Pole  Syowa  Troll	   Vostok
+
+./usr/share/zoneinfo/right/Arctic:
+Longyearbyen
+
+./usr/share/zoneinfo/right/Asia:
+Aden	      Almaty	   Amman	  Anadyr	 Aqtau
+Aqtobe	      Ashgabat	   Ashkhabad	  Atyrau	 Baghdad
+Bahrain       Baku	   Bangkok	  Barnaul	 Beirut
+Bishkek       Brunei	   Calcutta	  Chita		 Choibalsan
+Chongqing     Chungking    Colombo	  Dacca		 Damascus
+Dhaka	      Dili	   Dubai	  Dushanbe	 Famagusta
+Gaza	      Harbin	   Hebron	  Ho_Chi_Minh	 Hong_Kong
+Hovd	      Irkutsk	   Istanbul	  Jakarta	 Jayapura
+Jerusalem     Kabul	   Kamchatka	  Karachi	 Kashgar
+Kathmandu     Katmandu	   Khandyga	  Kolkata	 Krasnoyarsk
+Kuala_Lumpur  Kuching	   Kuwait	  Macao		 Macau
+Magadan       Makassar	   Manila	  Muscat	 Nicosia
+Novokuznetsk  Novosibirsk  Omsk		  Oral		 Phnom_Penh
+Pontianak     Pyongyang    Qatar	  Qostanay	 Qyzylorda
+Rangoon       Riyadh	   Saigon	  Sakhalin	 Samarkand
+Seoul	      Shanghai	   Singapore	  Srednekolymsk  Taipei
+Tashkent      Tbilisi	   Tehran	  Tel_Aviv	 Thimbu
+Thimphu       Tokyo	   Tomsk	  Ujung_Pandang  Ulaanbaatar
+Ulan_Bator    Urumqi	   Ust-Nera	  Vientiane	 Vladivostok
+Yakutsk       Yangon	   Yekaterinburg  Yerevan
+
+./usr/share/zoneinfo/right/Atlantic:
+Azores	 Bermuda    Canary	   Cape_Verde  Faeroe	  Faroe  Jan_Mayen
+Madeira  Reykjavik  South_Georgia  Stanley     St_Helena
+
+./usr/share/zoneinfo/right/Australia:
+ACT    Adelaide    Brisbane    Broken_Hill  Canberra   Currie	  Darwin
+Eucla  Hobart	   LHI	       Lindeman     Lord_Howe  Melbourne  North
+NSW    Perth	   Queensland  South	    Sydney     Tasmania   Victoria
+West   Yancowinna
+
+./usr/share/zoneinfo/right/Brazil:
+Acre  DeNoronha  East  West
+
+./usr/share/zoneinfo/right/Canada:
+Atlantic  Central  Eastern  Mountain  Newfoundland  Pacific  Saskatchewan
+Yukon
+
+./usr/share/zoneinfo/right/Chile:
+Continental  EasterIsland
+
+./usr/share/zoneinfo/right/Etc:
+GMT	GMT+0	GMT-0	GMT0	   GMT+1   GMT-1      GMT+10  GMT-10  GMT+11
+GMT-11	GMT+12	GMT-12	GMT-13	   GMT-14  GMT+2      GMT-2   GMT+3   GMT-3
+GMT+4	GMT-4	GMT+5	GMT-5	   GMT+6   GMT-6      GMT+7   GMT-7   GMT+8
+GMT-8	GMT+9	GMT-9	Greenwich  UCT	   Universal  UTC     Zulu
+
+./usr/share/zoneinfo/right/Europe:
+Amsterdam    Andorra	 Astrakhan  Athens	 Belfast    Belgrade
+Berlin	     Bratislava  Brussels   Bucharest	 Budapest   Busingen
+Chisinau     Copenhagen  Dublin     Gibraltar	 Guernsey   Helsinki
+Isle_of_Man  Istanbul	 Jersey     Kaliningrad  Kiev	    Kirov
+Lisbon	     Ljubljana	 London     Luxembourg	 Madrid     Malta
+Mariehamn    Minsk	 Monaco     Moscow	 Nicosia    Oslo
+Paris	     Podgorica	 Prague     Riga	 Rome	    Samara
+San_Marino   Sarajevo	 Saratov    Simferopol	 Skopje     Sofia
+Stockholm    Tallinn	 Tirane     Tiraspol	 Ulyanovsk  Uzhgorod
+Vaduz	     Vatican	 Vienna     Vilnius	 Volgograd  Warsaw
+Zagreb	     Zaporozhye  Zurich
+
+./usr/share/zoneinfo/right/Indian:
+Antananarivo  Chagos   Christmas  Cocos  Comoro  Kerguelen  Mahe  Maldives
+Mauritius     Mayotte  Reunion
+
+./usr/share/zoneinfo/right/Mexico:
+BajaNorte  BajaSur  General
+
+./usr/share/zoneinfo/right/Pacific:
+Apia	 Auckland     Bougainville  Chatham    Chuuk	 Easter
+Efate	 Enderbury    Fakaofo	    Fiji       Funafuti  Galapagos
+Gambier  Guadalcanal  Guam	    Honolulu   Johnston  Kiritimati
+Kosrae	 Kwajalein    Majuro	    Marquesas  Midway	 Nauru
+Niue	 Norfolk      Noumea	    Pago_Pago  Palau	 Pitcairn
+Pohnpei  Ponape       Port_Moresby  Rarotonga  Saipan	 Samoa
+Tahiti	 Tarawa       Tongatapu     Truk       Wake	 Wallis
+Yap
+
+./usr/share/zoneinfo/right/SystemV:
+AST4	 AST4ADT  CST6	   CST6CDT  EST5  EST5EDT  HST10  MST7	MST7MDT  PST8
+PST8PDT  YST9	  YST9YDT
+
+./usr/share/zoneinfo/right/US:
+Alaska		Aleutian  Arizona   Central  Eastern	  East-Indiana	Hawaii
+Indiana-Starke	Michigan  Mountain  Pacific  Pacific-New  Samoa
+
+./usr/share/zoneinfo/SystemV:
+AST4	 AST4ADT  CST6	   CST6CDT  EST5  EST5EDT  HST10  MST7	MST7MDT  PST8
+PST8PDT  YST9	  YST9YDT
+
+./usr/share/zoneinfo/US:
+Alaska		Aleutian  Arizona   Central  Eastern	  East-Indiana	Hawaii
+Indiana-Starke	Michigan  Mountain  Pacific  Pacific-New  Samoa
+
+./usr/share/zoneinfo-icu:
+44
+
+./usr/share/zoneinfo-icu/44:
+be  le
+
+./usr/share/zoneinfo-icu/44/be:
+metaZones.res  timezoneTypes.res  windowsZones.res  zoneinfo64.res
+
+./usr/share/zoneinfo-icu/44/le:
+metaZones.res  timezoneTypes.res  windowsZones.res  zoneinfo64.res
+
+./var:
+cache  lib
+
+./var/cache:
+pbuilder
+
+./var/cache/pbuilder:
+aptcache  build  ccache  pbuildd  pbuilder-mnt	result
+
+./var/cache/pbuilder/aptcache:
+
+./var/cache/pbuilder/build:
+
+./var/cache/pbuilder/ccache:
+
+./var/cache/pbuilder/pbuildd:
+
+./var/cache/pbuilder/pbuilder-mnt:
+
+./var/cache/pbuilder/result:
+
+./var/lib:
+binfmts
+
+./var/lib/binfmts:
