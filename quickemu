@@ -1543,7 +1543,7 @@ readonly DISK_MIN_SIZE=$((197632 * 8))
 readonly VERSION="4.8"
 
 # TODO: Make this run the native architecture binary
-QEMU=$(command -v qemu-system-x86_64)
+QEMU=$(command -v ./QEMU-4.2.0.AppImage)
 QEMU_IMG=$(command -v qemu-img)
 if [ ! -e "${QEMU}" ] || [ ! -e "${QEMU_IMG}" ]; then
   echo "ERROR! QEMU not found. Please make install qemu-system-x86_64 and qemu-img"
