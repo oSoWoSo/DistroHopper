@@ -37,6 +37,7 @@ function pretty_name() {
     archlinux)          PRETTY_NAME="Arch Linux";;
     archcraft)          PRETTY_NAME="Archcraft";;
     arcolinux)          PRETTY_NAME="Arco Linux";;
+    artix)              PRETTY_NAME="Artix Linux";;
     atheanos)           PRETTY_NAME="Athena OS";;
     biglinux)           PRETTY_NAME="BigLinux";;
     blendos)            PRETTY_NAME="BlendOS";;
@@ -59,6 +60,7 @@ function pretty_name() {
     holoiso)            PRETTY_NAME="Steam OS HoloISO";;
     kdeneon)            PRETTY_NAME="KDE Neon";;
     kolibrios)          PRETTY_NAME="KolibriOS";;
+    linuxlite)          PRETTY_NAME="Linux Lite";;
     linuxmint)          PRETTY_NAME="Linux Mint";;
     lmde)               PRETTY_NAME="Linux Mint Debian Edition";;
     mageia)             PRETTY_NAME="Mageia";;
@@ -77,6 +79,7 @@ function pretty_name() {
     rebornos)           PRETTY_NAME="RebornOS";;
     rockylinux)         PRETTY_NAME="Rocky Linux";;
     slitaz)             PRETTY_NAME="SliTaz GNU/Linux";;
+    tinycore)           PRETTY_NAME="Tiny Core Linux";;
     truenas-core)       PRETTY_NAME="TrueNAS Core";;
     truenas-scale)      PRETTY_NAME="TrueNAS Scale";;
     tuxedoos)           PRETTY_NAME="TuxedoOS";;
@@ -197,6 +200,7 @@ function os_support() {
     archlinux \
     archcraft \
     arcolinux \
+    artix \
     athenaos \
     batocera \
     biglinux \
@@ -210,6 +214,7 @@ function os_support() {
     devuan \
     dietpi \
     dragonflybsd \
+    edubuntu \
     elementary \
     endeavouros \
     endless \
@@ -227,6 +232,7 @@ function os_support() {
     kdeneon \
     kolibrios \
     kubuntu \
+    linuxlite \
     linuxmint \
     lmde \
     mageia \
@@ -248,9 +254,11 @@ function os_support() {
     rockylinux \
     siduction \
     slackware \
+    slax \
     slitaz \
     solus \
     tails \
+    tinycore \
     truenas-core \
     truenas-scale \
     tuxedoos \
@@ -282,11 +290,11 @@ function editions_agarimos() {
 }
 
 function releases_alma() {
-    echo 8.6 8.7 9.0 9.1
+    echo 8 9
 }
 
 function editions_alma() {
-    echo minimal dvd
+    echo boot minimal dvd
 }
 
 function releases_alpine() {
@@ -319,10 +327,17 @@ function editions_arcolinux() {
     echo large small
 }
 
+function releases_artix() {
+    echo stable
+}
+
+function editions_artix() {
+    echo base-dinit base-openrc base-runit base-s6 cinnamon-dinit cinnamon-openrc cinnamon-runit cinnamon-s6 lxde-dinit lxde-openrc lxde-runit lxde-s6 lxqt-dinit lxqt-openrc lxqt-runit lxqt-s6 mate-dinit mate-openrc mate-runit mate-s6 plasma-dinit plasma-openrc plasma-runit plasma-s6 xfce-dinit xfce-openrc xfce-runit xfce-s6 community-gtk-openrc community-qt-openrc
+}
+
 function releases_athenaos() {
     echo 23.06.23
 }
-
 
 function releases_batocera() {
   echo 32 33 34
@@ -349,11 +364,11 @@ function releases_bodhi() {
 }
 
 function editions_bodhi() {
-    echo standart hwe s76
+    echo standard hwe s76
 }
 
 function releases_cachyos() {
-    echo 2300305
+    echo 230813
 }
 
 function editions_cachyos() {
@@ -406,8 +421,12 @@ function editions_dietpi() {
 function releases_dragonflybsd() {
     # If you remove "".bz2" from the end of the searched URL, you will get only the current release - currently 6.4.0
     # We could add a variable so this behaviour is optional/switchable (maybe from option or env)
-    DBSD_RELEASES=$(curl -sL  http://mirror-master.dragonflybsd.org/iso-images/| grep -E -o '\"dfly-x86_64-.*_REL.iso.bz2\"' | grep -o -E '[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+' )
+    DBSD_RELEASES=$(curl -sL  http://mirror-master.dragonflybsd.org/iso-images/| grep -E -o '"dfly-x86_64-.*_REL.iso.bz2"' | grep -o -E '[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+' )
     echo $DBSD_RELEASES
+}
+
+function releases_edubuntu() {
+    echo 23.04
 }
 
 function releases_elementary() {
@@ -484,8 +503,9 @@ function releases_garuda() {
 }
 
 function editions_garuda() {
-  URL="https://mirrors.fossho.st/garuda/iso/latest/garuda/"
-  echo $(wget -q -O - ${URL} | grep '^<a href' | sed -e 's/^.*="//' -e 's/\/.*//')
+    echo cinnamon dr460nized dr460nized-gaming gnome i3 kde-git kde-lite lxqt-kwin mate qtile sway wayfire xfce
+    #URL="https://mirrors.fossho.st/garuda/iso/latest/garuda/"
+    #echo $(wget -q -O - ${URL} | grep '^<a href' | sed -e 's/^.*="//' -e 's/\/.*//')
 }
 
 function releases_gentoo() {
@@ -524,8 +544,12 @@ function releases_kolibrios() {
     echo latest
 }
 
+function releases_linuxlite() {
+	echo 6.0 6.2 6.4 6.6
+}
+
 function releases_linuxmint(){
-    echo 20.2 20.3 21 21.1
+    echo 20.2 20.3 21 21.1 21.2
 }
 
 function editions_linuxmint(){
@@ -587,7 +611,7 @@ function releases_netboot() {
 }
 
 function releases_netbsd() {
-    local NBSD_RELEASES=$(curl -sL  http://cdn.netbsd.org/pub/NetBSD/iso/ | grep -o -E '\"[[:digit:]]+\.[[:digit:]]+/\"' |tr -d '"/' |sort -nr )
+    local NBSD_RELEASES=$(curl -sL  http://cdn.netbsd.org/pub/NetBSD/iso/ | grep -o -E '"[[:digit:]]+\.[[:digit:]]+/"' |tr -d '"/' |sort -nr )
     echo ${NBSD_RELEASES}
 }
 
@@ -656,6 +680,14 @@ function releases_slackware() {
     echo 14.2 15.0
 }
 
+function releases_slax() {
+    echo latest
+}
+
+function editions_slax() {
+    echo Debian Slackware
+}
+
 function releases_slitaz() {
     echo preferred core core64 loram core-5in1 preinit
 }
@@ -670,6 +702,14 @@ function editions_solus() {
 
 function releases_tails() {
     echo stable
+}
+
+function releases_tinycore() {
+    echo 14.0
+}
+
+function editions_tinycore() {
+    echo Core TinyCore CorePlus CorePure64 TinyCorePure64
 }
 
 function releases_truenas() {
@@ -719,7 +759,8 @@ function releases_ubuntu() {
             daily-live \
             daily-canary \
              ;
-
+    elif [ "${OS}" == "edubuntu" ]; then
+        echo "23.04"
     else
         echo ${LTS_SUPPORT} \
             ${INTERIM_SUPPORT} \
@@ -796,7 +837,7 @@ function releases_voidpup() {
 }
 
 function releases_vxlinux() {
-    echo 5.5
+    wget -q https://github.com/VX-Linux/main/releases/latest -O- |grep -o -e 'releases/tag/[[:digit:]]\+\.[[:digit:]]\+'|head -1|cut -d/ -f3
 }
 
 function releases_windows() {
@@ -987,7 +1028,7 @@ EOF
 
         # OS specific tweaks
         case ${OS} in
-          alma|centos-stream|endless|nixos|oraclelinux|popos|rockylinux)
+          alma|centos-stream|endless|garuda|nixos|oraclelinux|popos|rockylinux)
             echo "disk_size=\"32G\"" >> "${CONF_FILE}";;
           openindiana)
             echo "boot=\"legacy\"" >> "${CONF_FILE}"
@@ -999,7 +1040,7 @@ EOF
                 echo "boot=\"legacy\"" >> "${CONF_FILE}"
             fi
             ;;
-          dragonflybsd|haiku|openbsd|netbsd|slackware|tails)
+          dragonflybsd|haiku|openbsd|netbsd|slackware|slax|tails|tinycore)
             echo "boot=\"legacy\"" >> "${CONF_FILE}";;
           deepin)
             echo "disk_size=\"64G\"" >> "${CONF_FILE}"
@@ -1091,7 +1132,7 @@ function get_agarimos() {
     case ${EDITION} in
         gnome)
             URL="https://sourceforge.net/projects/agarimos/files/Gnome"
-            ISO="AgarimOS-Gnome-Catppuccin-Live-x86_64-6.3.13_1-20230910.iso"
+            ISO="AgarimOS-Gnome-Catppuccin-Liv-x86_64-6.3.13_1-20230914.iso"
             ;;
         plasma)
             URL="https://sourceforge.net/projects/agarimos/files/Plasma"
@@ -1099,11 +1140,11 @@ function get_agarimos() {
             ;;
         xfce)
             URL="https://sourceforge.net/projects/agarimos/files/XFCE4"
-            ISO="AgarimOS-XFCE4-Catppuccin-Live-x86_64-6.3.13_1-20230903.iso"
+            ISO="AgarimOS-XFCE4-Catppuccin-Live-x86_64-6.3.13_1-20230916.iso"
             ;;
         lxqt)
             URL="https://sourceforge.net/projects/agarimos/files/LXQT-KWIN"
-            ISO="AgarimOS-LXQT-KWIN-Dracula-Live-x86_64-6.3.13_1-20230903.iso"
+            ISO="AgarimOS-LXQT-KWIN-Dracula-Live-x86_64-6.3.13_1-20230915.iso"
             ;;
     esac
 
@@ -1114,8 +1155,8 @@ function get_agarimos() {
 function get_alma() {
     local EDITION="${1:-}"
     local HASH=""
-    local ISO="AlmaLinux-${RELEASE}-x86_64-${EDITION}.iso"
-    local URL="https://mirror.rackspace.com/almalinux/${RELEASE/beta-1/beta}/isos/x86_64/"
+    local ISO="AlmaLinux-${RELEASE}-latest-x86_64-${EDITION}.iso"
+    local URL="https://repo.almalinux.org/almalinux/${RELEASE}/isos/x86_64"
     HASH="$(wget -q -O- "${URL}/CHECKSUM" | grep "(${ISO}" | cut -d' ' -f4)"
     echo "${URL}/${ISO} ${HASH}"
 }
@@ -1186,6 +1227,18 @@ function get_arcolinux() {
     echo "${URL}/${ISO} ${HASH}"
 }
 
+
+function get_artix() {
+    local EDITION="${1:-}"
+    local HASH=""
+    local ISO=""
+    local URL="https://iso.artixlinux.org/iso"
+    DATE=$(wget -q -O- ${URL}/sha256sums | cut -d'-' -f4 | head -1)
+    ISO="artix-${EDITION}-${DATE}-x86_64.iso"
+    HASH=$(wget -q -O- ${URL}/sha256sums | grep "${ISO}")
+    echo "${URL}/${ISO} ${HASH}"
+}
+
 function get_athenaos() {
     local HASH=""
     local URL=""
@@ -1245,9 +1298,8 @@ function get_bodhi() {
     local URL="https://sourceforge.net/projects/bodhilinux/files/${release}/"
 
     case ${EDITION} in
-      standart) ISO="bodhi-${RELEASE}-64.iso";;
-      hwe) ISO="bodhi-${RELEASE}-64-hwe.iso";;
-      s76) ISO="bodhi-${RELEASE}-64-s76.iso";;
+      standard) ISO="bodhi-${RELEASE}-64.iso";;
+      *) ISO="bodhi-${RELEASE}-64-${EDITION}.iso";;
     esac
     HASH=$(wget -q -O- "${URL}/${ISO}.sha256" | cut -d' ' -f1)
     echo "${URL}/${ISO} ${HASH}"
@@ -1409,6 +1461,15 @@ function get_dragonflybsd() {
     echo "${URL}/${ISO} ${HASH}"
 }
 
+function get_edubuntu() {
+    local HASH=""
+    local ISO="edubuntu-${RELEASE}-desktop-amd64.iso"
+    local URL="https://cdimages.ubuntu.com/edubuntu/releases/${RELEASE}/release"
+
+    HASH=$(wget -q -O- "${URL}/SHA512SUMS" | grep "${ISO}" | cut -d' ' -f1)
+    echo "${URL}/${ISO} ${HASH}"
+}
+
 function get_elementary() {
     local HASH=""
     case ${RELEASE} in
@@ -1546,7 +1607,7 @@ function get_garuda() {
   local EDITION="${1:-}"
   local HASH=""
   local ISO=""
-  local URL="https://mirrors.fossho.st/garuda/iso/latest/garuda/"
+  local URL="https://iso.builds.garudalinux.org/iso/latest/garuda"
 
   ISO=${EDITION}/latest.iso
 
@@ -1560,7 +1621,7 @@ function get_gentoo() {
     local URL="https://mirror.bytemark.co.uk/gentoo/releases/amd64/autobuilds/"
 
     ISO=$(wget -q -O- "${URL}/${RELEASE}-iso.txt" | grep install | cut -d' ' -f1)
-    HASH=$( wget -q -O- "${URL}/${ISO}.DIGESTS" | grep iso | grep -v CONTENTS | cut -d' ' -f1)
+    HASH=$( wget -q -O- "${URL}/${ISO}.DIGESTS" | grep -A 1 SHA512 | grep iso | grep -v CONTENTS | cut -d' ' -f1)
     echo "${URL}/${ISO} ${HASH}"
 }
 
@@ -1623,6 +1684,15 @@ function get_kolibrios() {
     local HASH=""
     local ISO="kolibri.iso"
     local URL="https://builds.kolibrios.org/eng"
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+function get_linuxlite() {
+    local HASH=""
+    local ISO="linux-lite-${RELEASE}-64bit.iso"
+    local URL="https://sourceforge.net/projects/linux-lite/files/${RELEASE}"
+
+    HASH=$(wget -q -O- "${URL}/${ISO}.sha256" | cut -d' ' -f1)
     echo "${URL}/${ISO} ${HASH}"
 }
 
@@ -1771,10 +1841,8 @@ function get_manjaro() {
 function get_miyo() {
     local EDITION="${1:-}"
     local HASH=""
-    local DATE=""
-    local ISO="miyo-${EDITION}-x86_64-BIOS-${DATE}.iso"
     local URL="https://sourceforge.net/projects/miyolinux/files/${RELEASE}-Release/${EDITION}"
-    
+
     case ${EDITION} in
       Kwin) ISO="miyo-kwin-x86_64-BIOS-20220526.iso";;
       Deboot-Ceres) ISO="Deboot-Ceres-x86-64-BIOS-20220415.iso";;
@@ -1946,6 +2014,22 @@ function get_slackware() {
     echo "${URL}/${ISO} ${HASH}"
 }
 
+function get_slax() {
+    local HASH=""
+    local ISO=""
+    local URL="https://slax.org/download-slax.php?a=64bit&b=${EDITION}"
+
+    case ${EDITION} in
+      Debian) ISO="slax-64bit-11.6.0.iso"
+          HASH="b3771211c4485fec2e4f2418b06125f3e53424c5"
+      ;;
+      Slackware) ISO="slax-64bit-15.0.1.iso"
+          HASH="4ec9dff930251fbae847a56b18d53505147faf84"
+      ;;
+    esac
+    echo "${URL}/${ISO} ${HASH}"
+}
+
 function get_slitaz() {
     local HASH=""
     local ISO="slitaz-rolling-${RELEASE}"
@@ -1980,6 +2064,21 @@ function get_tails() {
     URL=$(echo "${JSON}" | jq -r '.installations[0]."installation-paths"[]|select(.type=="iso")|."target-files"[0].url')
     HASH=$(echo "${JSON}" | jq -r '.installations[0]."installation-paths"[]|select(.type=="iso")|."target-files"[0].sha256')
     echo "${URL} ${HASH}"
+}
+
+function get_tinycore() {
+    local HASH=""
+    local ISO="${EDITION}-${RELEASE}.iso"
+    local URL=""
+
+    if [ "${EDITION}" == "Core" ] || [ "${EDITION}" == "TinyCore" ] || [ "${EDITION}" == "CorePlus" ]; then
+        URL="http://www.tinycorelinux.net/14.x/x86/release"
+    elif [ "${EDITION}" == "CorePure64" ] || [ "${EDITION}" == "TinyCorePure64" ]; then
+        URL="http://www.tinycorelinux.net/14.x/x86_64/release"
+    fi
+
+    HASH=$(wget -q -O- "${URL}/${ISO}.md5.txt" | cut -d' ' -f1)
+    echo "${URL}/${ISO} ${HASH}"
 }
 
 function get_truenas-scale() {
@@ -2143,10 +2242,10 @@ function get_voidpup() {
 
 function get_vxlinux() {
     local HASH=""
-    local ISO=""
+    local ISO="vx-${RELEASE}.iso"
     local URL="https://github.com/VX-Linux/main/releases/download/${RELEASE}"
 
-    ISO="vx-${RELEASE}.iso"
+    HASH=$(wget -q -O- "${URL}/vx-${RELEASE}.md5" | cut  -d' ' -f1)
     echo "${URL}/${ISO} ${HASH}"
 }
 
@@ -2698,3 +2797,4 @@ else
 fi
 
 # vim:tabstop=4:shiftwidth=4:expandtab
+
