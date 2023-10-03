@@ -5,7 +5,7 @@ Name=bodhi
 GenericName=
 Comment=
 Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --separator=" " --field="Release:CB" "7.0.0" --field="Edition:CB" "standard"!"hwe"!"s76" | xargs -I{} sh -c "./quickget bodhi {}";/usr/bin/fish'
-Icon=/home/zen/Git/DistroHopper/icons/tux.svg
+Icon=/home/zen/Git/DistroHopper/icons/bodhi.svg
 Terminal=sakura
 X-MultipleArgs=
 Type=Application

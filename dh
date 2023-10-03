@@ -18,6 +18,27 @@ echo "$MSG_RUNNING"
 
 while true
 do
+	function variables_set() {
+		# DEBUG mod
+		#bash -x ./dh 2>&1 | tee output.log
+		#progname="${progname:="${0##*/}"}"
+		progname="DistroHopper"
+		version="0.80"
+		#GTK_THEME="alt-dialog"
+		DH_CONFIG_DIR="$HOME/.config/distrohopper"
+		DH_CONFIG="$DH_CONFIG_DIR/distrohopper.conf"
+		DH_ICON_DIR="/usr/share/icons/distrohopper"
+		PATH_PREFIX="/usr/bin/"
+		TMP_DIR="/tmp"
+		terminal="sakura"
+		replace='"!"'
+		#export "DH_CONFIG_DIR" "DH_CONFIG" "replace" "DH_ICON_DIR" "PATH_PREFIX" "TMP_DIR" "terminal"
+		check_and_set_mode
+		# Set traps to catch the signals and exit gracefully
+		trap "exit" INT
+		trap "exit" EXIT
+	}
+
 	function bugs_notice_show() {
 		echo ""
 		echo "$MSG_DONE"
@@ -92,27 +113,6 @@ do
 		[ -f "$PATH_PREFIX/fzf" ] || echo "$MSG_FZF"
 	}
 
-	function variables_set() {
-		# DEBUG mod
-		#bash -x ./dh 2>&1 | tee output.log
-		#progname="${progname:="${0##*/}"}"
-		progname="DistroHopper"
-		version="0.80"
-		#GTK_THEME="alt-dialog"
-		DH_CONFIG_DIR="$HOME/.config/distrohopper"
-		DH_CONFIG="$DH_CONFIG_DIR/distrohopper.conf"
-		DH_ICON_DIR="/usr/share/icons/distrohopper"
-		PATH_PREFIX="/usr/bin/"
-		TMP_DIR="/tmp"
-		terminal="sakura"
-		replace='"!"'
-		#export "DH_CONFIG_DIR" "DH_CONFIG" "replace" "DH_ICON_DIR" "PATH_PREFIX" "TMP_DIR" "terminal"
-		check_and_set_mode
-		# Set traps to catch the signals and exit gracefully
-		trap "exit" INT
-		trap "exit" EXIT
-	}
-
 	function desktop_entry_create() {
 		cat <<EOF > ${DESKTOP_FILE}
 [Desktop Entry]
@@ -149,7 +149,7 @@ EOF
 		type='Application'
 		name='DistroHopper'
 		comment='Quickly download, create and run VM of any#TODO operating system.'
-		version='0.77b'
+		version="${version}"
 		execmd="sh -c 'cd ${VMS_DIR} && dh g'"
 		if [ "$interminal" == "yes" ]; then
 			terminal='true'
@@ -241,7 +241,38 @@ EOF
 
 	function virtual_machines_update_ready() {
 		cd "$VMS_DIR" || exit 1
-		rm  "$DH_CONFIG_DIR"/ready/*.desktop
+		rm "$DH_CONFIG_DIR"/ready/*.desktop 2>/dev/null
+		for vm_conf in $(pwd)
+		do
+			if [ "${vm_conf}" == "distrohopper.conf" ]; then
+				echo "continue" # skip processing distrohopper.conf
+			fi
+			echo "creating..."
+			vm_desktop=$(basename "$VMS_DIR/$vm_conf" .conf)
+			# Use fuzzy matching to find the best matching icon file (ready to run VMs)
+			icon_name=$(basename "$VMS_DIR/$vm_conf" .conf | cut -d'-' -f -2)
+			icon_file=$(find "$DH_ICON_DIR" -type f -iname "${icon_name// /}.*")
+			# If no icon was found, try shorter name (ready to run VMs)
+			if [ -z "$icon_file" ]; then
+				icon_name=$(basename "$VMS_DIR/$vm_conf" .conf | cut -d'-' -f1)
+				icon_file=$(find "$DH_ICON_DIR" -type f -iname "${icon_name// /}.*")
+			elif [ -z "$icon_file" ]; then
+				icon_file="$DH_ICON_DIR/tux.svg"
+			fi
+			DESKTOP_FILE="${DH_CONFIG_DIR}/ready/${vm_desktop}.desktop"
+			type='Application'
+			name="${vm_desktop}"
+			comment='Quickly download, create and run VM of any#TODO operating system.'
+			version="${version}"
+			execmd="sh -c 'cd ${VMS_DIR} && ${portable_prefix}quickemu -vm ${vm_conf};$SHELL'"
+			icon="${icon_file}"
+			categories='System;Virtualization;'
+			desktop_entry_create
+		done
+	}
+
+	function renew_ready() {
+		cd "$VMS_DIR" || exit 1
 	#	for files in "$VMS_DIR"/*; do
 	#	if [ ! -e *.conf ]; then
 	#		echo $"No .conf files found"
@@ -262,20 +293,21 @@ EOF
 			elif [ -z "$icon_file" ]; then
 				icon_file="$DH_ICON_DIR/tux.svg"
 			fi
-			DESKTOP_FILE="${DH_CONFIG_DIR}/ready/${vm_desktop}.desktop"
-			type='Application'
-			name="${vm_desktop}"
-			comment='Quickly download, create and run VM of any#TODO operating system.'
-			version='0.77b'
-			execmd="sh -c 'cd ${VMS_DIR} && ${portable_prefix}quickemu -vm ${vm_conf};$SHELL'"
-			icon="${icon_file}"
-			categories='System;Virtualization;'
-			desktop_entry_create
+			# content of desktop files (ready to run VMs)
+			cat <<EOF > "$DH_CONFIG_DIR"/ready/"$vm_desktop".desktop
+[Desktop Entry]
+Type=Application
+Name=$vm_desktop
+Exec=sh -c 'cd ${VMS_DIR} && ${portable_prefix}quickemu -vm ${vm_conf}'
+Icon=$icon_file
+Categories=System;Virtualization;
+
+EOF
 		done
 	}
 
 	function virtual_machines_update_supported() {
-		rm  "$DH_CONFIG_DIR"/supported/*.desktop
+		rm "$DH_CONFIG_DIR"/supported/*.desktop
 		echo "$MSG_INTERM"
 		run_in_terminal
 		# get supported VMs
@@ -692,7 +724,8 @@ EOF
 				;;
 			r|ready)
 				echo "$MSG_U_READY"
-				virtual_machines_update_ready
+				#virtual_machines_update_ready
+				renew_ready
 				shift
 				;;
 			t|tui)
