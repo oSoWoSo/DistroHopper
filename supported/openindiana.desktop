@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=0.77b
+Type=Application
+Name=openindiana
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --separator=" " --field="Release:CB" "20230421" --field="Edition:CB" "gui"!"text"!"minimal" | xargs -I{} sh -c "./quickget openindiana {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/tux.svg
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
+Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
+

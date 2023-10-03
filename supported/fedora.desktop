@@ -1,10 +1,16 @@
 [Desktop Entry]
+Version=0.77b
 Type=Application
 Name=fedora
-releases=33 34 35 36 37
-editions=Workstation Cinnamon i3 KDE LXDE LXQt Mate Xfce Silverblue Server
-replace="!"
-Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --separator=" " --field="Release:CB" "33"!"34"!"35"!"36"!"37" --field="Edition:CB" "Workstation"!"Cinnamon"!"i3"!"KDE"!"LXDE"!"LXQt"!"Mate"!"Xfce"!"Silverblue"!"Server" | xargs -I{} sh -c "./quickget fedora {}"'
-Icon=/home/zen/git/distrohopper/icons/fedora.svg
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --separator=" " --field="Release:CB" "33"!"34"!"35"!"36"!"37"!"38" --field="Edition:CB" "Workstation"!"Budgie"!"Cinnamon"!"i3"!"KDE"!"LXDE"!"LXQt"!"Mate"!"Xfce"!"Silverblue"!"Sericea"!"Kinoite"!"Sway"!"Server" | xargs -I{} sh -c "./quickget fedora {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/fedora.svg
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
 Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
 

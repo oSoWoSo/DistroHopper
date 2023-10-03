@@ -1,9 +1,16 @@
 [Desktop Entry]
+Version=0.77b
 Type=Application
 Name=devuan
-releases=beowulf chimaera
-replace="!"
-Exec=sh -c 'cd "/home/zen/git/distrohopper" && yad --form --field="Release:CB" "beowulf"!"chimaera" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget devuan {}"'
-Icon=/home/zen/git/distrohopper/icons/devuan.svg
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --field="Release:CB" "beowulf"!"chimaera"!"daedalus" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget devuan {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/devuan.svg
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
 Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
 

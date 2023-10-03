@@ -1,10 +1,16 @@
 [Desktop Entry]
+Version=0.77b
 Type=Application
 Name=dietpi
-releases=bios uefi
-editions=bookworm bookworm-installer bullseye bullseye-installer
-replace="!"
-Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --separator=" " --field="Release:CB" "bios"!"uefi" --field="Edition:CB" "bookworm"!"bookworm-installer"!"bullseye"!"bullseye-installer" | xargs -I{} sh -c "./quickget dietpi {}"'
-Icon=/home/zen/git/distrohopper/icons/dietpi.png
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --separator=" " --field="Release:CB" "bios"!"uefi" --field="Edition:CB" "bookworm"!"bookworm-installer"!"bullseye"!"bullseye-installer" | xargs -I{} sh -c "./quickget dietpi {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/dietpi.png
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
 Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
 

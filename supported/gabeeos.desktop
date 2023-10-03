@@ -1,9 +1,16 @@
 [Desktop Entry]
+Version=0.77b
 Type=Application
 Name=gabeeos
-releases=latest
-replace="!"
-Exec=sh -c 'cd "/home/zen/git/distrohopper" && yad --form --field="Release:CB" "latest" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget gabeeos {}"'
-Icon=/home/zen/git/distrohopper/icons/gabeeos.png
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --separator=" " --field="Release:CB" "latest" --field="Edition:CB" "openbox"!"qtile" | xargs -I{} sh -c "./quickget gabeeos {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/gabeeos.png
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
 Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
 

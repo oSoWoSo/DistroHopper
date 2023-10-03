@@ -1,10 +1,16 @@
 [Desktop Entry]
+Version=0.77b
 Type=Application
 Name=void
-releases=current 20221001 20210316 20210930 20210218 20191109 20190526 20190217 20181111 20171007 20170825 20170220
-editions=base base-musl cinnamon cinnamon-musl enlightenment enlightenment-musl gnome gnome-musl lxde lxde-musl lxqt lxqt-musl mate mate-musl xfce xfce-musl
-replace="!"
-Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --separator=" " --field="Release:CB" "current"!"20221001"!"20210316"!"20210930"!"20210218"!"20191109"!"20190526"!"20190217"!"20181111"!"20171007"!"20170825"!"20170220" --field="Edition:CB" "base"!"base-musl"!"cinnamon"!"cinnamon-musl"!"enlightenment"!"enlightenment-musl"!"gnome"!"gnome-musl"!"lxde"!"lxde-musl"!"lxqt"!"lxqt-musl"!"mate"!"mate-musl"!"xfce"!"xfce-musl" | xargs -I{} sh -c "./quickget void {}"'
-Icon=/home/zen/git/distrohopper/icons/void.svg
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --separator=" " --field="Release:CB" "current" --field="Edition:CB" "glibc"!"musl"!"xfce-glibc"!"xfce-musl" | xargs -I{} sh -c "./quickget void {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/void.svg
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
 Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
 

@@ -299,7 +299,7 @@ EOF
 			type="Application"
 			name="$get_name"
 			if [ -z "$editions" ]; then
-				execmd="sh -c 'cd ${VMS_DIR} && yad --form --field=\"Release:CB\" \"${releases// /$replace}\" | cut -d\' | \' -f1 | xargs -I{} sh -c \"${portable_prefix}quickget ${get_name} {}\";$SHELL'"
+				execmd="sh -c 'cd ${VMS_DIR} && yad --form --field=\"Release:CB\" \"${releases// /$replace}\" | cut -d\"|\" -f1 | xargs -I{} sh -c \"${portable_prefix}quickget ${get_name} {}\";$SHELL'"
 			elif [ "$interminal" == "yes" ]; then
 				terminal="true"
 			else

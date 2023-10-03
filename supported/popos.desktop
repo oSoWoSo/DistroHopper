@@ -1,10 +1,16 @@
 [Desktop Entry]
+Version=0.77b
 Type=Application
 Name=popos
-releases=20.04 21.10 22.04
-editions=intel nvidia
-replace="!"
-Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --separator=" " --field="Release:CB" "20.04"!"21.10"!"22.04" --field="Edition:CB" "intel"!"nvidia" | xargs -I{} sh -c "./quickget popos {}"'
-Icon=/home/zen/git/distrohopper/icons/popos.svg
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --separator=" " --field="Release:CB" "20.04"!"21.10"!"22.04" --field="Edition:CB" "intel"!"nvidia" | xargs -I{} sh -c "./quickget popos {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/popos.svg
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
 Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
 

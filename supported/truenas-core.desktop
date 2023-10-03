@@ -1,9 +1,16 @@
 [Desktop Entry]
+Version=0.77b
 Type=Application
 Name=truenas-core
-releases=12.0 13.0
-replace="!"
-Exec=sh -c 'cd "/home/zen/git/distrohopper" && yad --form --field="Release:CB" "12.0"!"13.0" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget truenas-core {}"'
-Icon=/home/zen/git/distrohopper/icons/truenas-core.svg
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --field="Release:CB" "12.0"!"13.0" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget truenas-core {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/truenas-core.svg
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
 Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
 

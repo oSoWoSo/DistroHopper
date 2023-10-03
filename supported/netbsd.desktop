@@ -1,9 +1,16 @@
 [Desktop Entry]
+Version=0.77b
 Type=Application
 Name=netbsd
-releases=9.0 9.1 9.2 9.3
-replace="!"
-Exec=sh -c 'cd "/home/zen/git/distrohopper" && yad --form --field="Release:CB" "9.0"!"9.1"!"9.2"!"9.3" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget netbsd {}"'
-Icon=/home/zen/git/distrohopper/icons/netbsd.svg
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --field="Release:CB" "9.3"!"9.2"!"9.1"!"9.0"!"8.2"!"8.1"!"8.0" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget netbsd {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/netbsd.svg
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
 Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
 

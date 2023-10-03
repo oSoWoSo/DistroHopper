@@ -1,9 +1,16 @@
 [Desktop Entry]
+Version=0.77b
 Type=Application
 Name=macos
-releases=high-sierra mojave catalina big-sur monterey ventura
-replace="!"
-Exec=sh -c 'cd "/home/zen/git/distrohopper" && yad --form --field="Release:CB" "high-sierra"!"mojave"!"catalina"!"big-sur"!"monterey"!"ventura" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget macos {}"'
-Icon=/home/zen/git/distrohopper/icons/macos.svg
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --field="Release:CB" "high-sierra"!"mojave"!"catalina"!"big-sur"!"monterey"!"ventura" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget macos {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/macos.svg
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
 Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
 

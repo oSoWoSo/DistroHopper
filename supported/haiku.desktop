@@ -1,10 +1,16 @@
 [Desktop Entry]
+Version=0.77b
 Type=Application
 Name=haiku
-releases=r1beta3 r1beta4
-editions=x86_64 x86_gcc2h
-replace="!"
-Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --separator=" " --field="Release:CB" "r1beta3"!"r1beta4" --field="Edition:CB" "x86_64"!"x86_gcc2h" | xargs -I{} sh -c "./quickget haiku {}"'
-Icon=/home/zen/git/distrohopper/icons/haiku.png
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --separator=" " --field="Release:CB" "r1beta3"!"r1beta4" --field="Edition:CB" "x86_64"!"x86_gcc2h" | xargs -I{} sh -c "./quickget haiku {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/haiku.png
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
 Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
 

@@ -1,9 +1,16 @@
 [Desktop Entry]
+Version=0.77b
 Type=Application
 Name=endeavouros
-releases=apollo_22_1 artemis-22_6 artemis_neo_22_7 artemis_neo_22_8 artemis_nova_22_9 atlantis-21_4 atlantis_neo-21_5 cassini_22_12
-replace="!"
-Exec=sh -c 'cd "/home/zen/git/distrohopper" && yad --form --field="Release:CB" "apollo_22_1"!"artemis-22_6"!"artemis_neo_22_7"!"artemis_neo_22_8"!"artemis_nova_22_9"!"atlantis-21_4"!"atlantis_neo-21_5"!"cassini_22_12" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget endeavouros {}"'
-Icon=/home/zen/git/distrohopper/icons/endeavouros.svg
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --field="Release:CB" "apollo_22_1"!"artemis-22_6"!"artemis_neo_22_7"!"artemis_neo_22_8"!"artemis_nova_22_9"!"atlantis-21_4"!"atlantis_neo-21_5"!"cassini_22_12" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget endeavouros {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/endeavouros.svg
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
 Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
 

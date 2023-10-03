@@ -1,9 +1,16 @@
 [Desktop Entry]
+Version=0.77b
 Type=Application
 Name=elementary
-releases=7.0
-replace="!"
-Exec=sh -c 'cd "/home/zen/git/distrohopper" && yad --form --field="Release:CB" "7.0" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget elementary {}"'
-Icon=/home/zen/git/distrohopper/icons/elementary.svg
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --field="Release:CB" "7.0" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget elementary {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/elementary.svg
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
 Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
 

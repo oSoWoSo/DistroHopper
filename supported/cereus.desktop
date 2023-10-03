@@ -1,10 +1,16 @@
 [Desktop Entry]
+Version=0.77b
 Type=Application
 Name=cereus
-releases=latest
-editions=lxqt xfce
-replace="!"
-Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --separator=" " --field="Release:CB" "latest" --field="Edition:CB" "lxqt"!"xfce" | xargs -I{} sh -c "./quickget cereus {}"'
-Icon=/home/zen/git/distrohopper/icons/cereus.svg
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --separator=" " --field="Release:CB" "latest" --field="Edition:CB" "base"!"lxqt"!"xfce" | xargs -I{} sh -c "./quickget cereus {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/cereus.svg
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
 Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
 

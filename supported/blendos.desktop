@@ -1,9 +1,16 @@
 [Desktop Entry]
+Version=0.77b
 Type=Application
 Name=blendos
-releases=23.01
-replace="!"
-Exec=sh -c 'cd "/home/zen/git/distrohopper" && yad --form --field="Release:CB" "23.01" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget blendos {}"'
-Icon=/home/zen/git/distrohopper/icons/blendos.svg
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --separator=" " --field="Release:CB" "plasma/1688424625"!"gnome/1688424211"!"deepin/1688423865"!"lxqt/1688423615"!"mate/1688423313"!"xfce/1688423053"!"cinnamon/1688422684"!"plasma/1687873468"!"gnome/1687872336"!"deepin/1687871428"!"lxqt/1687870883"!"mate/1687870186"!"xfce/1687869663"!"cinnamon/1687869060" --field="Edition:CB" "gnome"!"kde" | xargs -I{} sh -c "./quickget blendos {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/blendos.svg
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
 Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
 

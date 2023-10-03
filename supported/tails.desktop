@@ -1,9 +1,16 @@
 [Desktop Entry]
+Version=0.77b
 Type=Application
 Name=tails
-releases=stable
-replace="!"
-Exec=sh -c 'cd "/home/zen/git/distrohopper" && yad --form --field="Release:CB" "stable" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget tails {}"'
-Icon=/home/zen/git/distrohopper/icons/tails.svg
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --field="Release:CB" "stable" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget tails {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/tails.svg
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
 Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
 

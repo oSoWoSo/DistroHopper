@@ -1,10 +1,16 @@
 [Desktop Entry]
+Version=0.77b
 Type=Application
 Name=fvoid
-releases=latest 20230222 20230124 20221021 20220818
-editions=lxqt
-replace="!"
-Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --separator=" " --field="Release:CB" "latest"!"20230222"!"20230124"!"20221021"!"20220818" --field="Edition:CB" "lxqt" | xargs -I{} sh -c "./quickget fvoid {}"'
-Icon=/home/zen/git/distrohopper/icons/tux.svg
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --field="Release:CB" "latest" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget fvoid {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/tux.svg
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
 Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
 

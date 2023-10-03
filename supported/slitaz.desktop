@@ -1,9 +1,16 @@
 [Desktop Entry]
+Version=0.77b
 Type=Application
 Name=slitaz
-releases=preferred core core64 loram core-5in1 preinit
-replace="!"
-Exec=sh -c 'cd "/home/zen/git/distrohopper" && yad --form --field="Release:CB" "preferred"!"core"!"core64"!"loram"!"core-5in1"!"preinit" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget slitaz {}"'
-Icon=/home/zen/git/distrohopper/icons/slitaz.png
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --field="Release:CB" "preferred"!"core"!"core64"!"loram"!"core-5in1"!"preinit" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget slitaz {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/slitaz.png
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
 Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
 

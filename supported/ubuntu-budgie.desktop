@@ -1,9 +1,16 @@
 [Desktop Entry]
+Version=0.77b
 Type=Application
 Name=ubuntu-budgie
-releases=18.04 20.04 22.04 22.10 jammy-daily daily-live daily-canary
-replace="!"
-Exec=sh -c 'cd "/home/zen/git/distrohopper" && yad --form --field="Release:CB" "18.04"!"20.04"!"22.04"!"22.10"!"jammy-daily"!"daily-live"!"daily-canary" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget ubuntu-budgie {}"'
-Icon=/home/zen/git/distrohopper/icons/ubuntu-budgie.svg
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --field="Release:CB" "18.04"!"20.04"!"22.04"!"23.04"!"jammy-daily"!"daily-live"!"daily-canary"!"daily-legacy" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget ubuntu-budgie {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/ubuntu-budgie.svg
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
 Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
 

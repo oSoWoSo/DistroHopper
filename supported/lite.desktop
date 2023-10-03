@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=0.77b
+Type=Application
+Name=lite
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --field="Release:CB" "6.0"!"6.2"!"6.4"!"6.6" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget lite {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/tux.svg
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
+Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
+

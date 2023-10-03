@@ -1,9 +1,16 @@
 [Desktop Entry]
+Version=0.77b
 Type=Application
 Name=windows
-releases=8 10 11
-replace="!"
-Exec=sh -c 'cd "/home/zen/git/distrohopper" && yad --form --field="Release:CB" "8"!"10"!"11" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget windows {}"'
-Icon=/home/zen/git/distrohopper/icons/windows.svg
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --field="Release:CB" "10"!"11" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget windows {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/windows.svg
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
 Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
 

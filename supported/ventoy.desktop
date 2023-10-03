@@ -1,9 +1,16 @@
 [Desktop Entry]
+Version=0.77b
 Type=Application
 Name=ventoy
-releases=latest
-replace="!"
-Exec=sh -c 'cd "/home/zen/git/distrohopper" && yad --form --field="Release:CB" "latest" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget ventoy {}"'
-Icon=/home/zen/git/distrohopper/icons/ventoy.png
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --field="Release:CB" "1.0.95" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget ventoy {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/ventoy.png
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
 Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
 

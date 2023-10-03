@@ -1,10 +1,16 @@
 [Desktop Entry]
+Version=0.77b
 Type=Application
 Name=agarimos
-releases=latest
-editions=plasma gnome xfce
-replace="!"
-Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --separator=" " --field="Release:CB" "latest" --field="Edition:CB" "plasma"!"gnome"!"xfce" | xargs -I{} sh -c "./quickget agarimos {}"'
-Icon=/home/zen/git/distrohopper/icons/agarimos.png
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --separator=" " --field="Release:CB" "latest" --field="Edition:CB" "plasma"!"xfce"!"lxqt"!"gnome" | xargs -I{} sh -c "./quickget agarimos {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/agarimos.png
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
 Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
 

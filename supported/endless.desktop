@@ -1,10 +1,16 @@
 [Desktop Entry]
+Version=0.77b
 Type=Application
 Name=endless
-releases=5.0.0
-editions=base en fr pt_BR es
-replace="!"
-Exec=sh -c 'cd /home/zen/git/distrohopper && yad --form --separator=" " --field="Release:CB" "5.0.0" --field="Edition:CB" "base"!"en"!"fr"!"pt_BR"!"es" | xargs -I{} sh -c "./quickget endless {}"'
-Icon=/home/zen/git/distrohopper/icons/endless.svg
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --separator=" " --field="Release:CB" "5.0.0" --field="Edition:CB" "base"!"en"!"fr"!"pt_BR"!"es" | xargs -I{} sh -c "./quickget endless {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/endless.svg
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
 Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
 

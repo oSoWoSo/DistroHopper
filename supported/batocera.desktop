@@ -1,9 +1,16 @@
 [Desktop Entry]
+Version=0.77b
 Type=Application
 Name=batocera
-releases=32 33 34
-replace="!"
-Exec=sh -c 'cd "/home/zen/git/distrohopper" && yad --form --field="Release:CB" "32"!"33"!"34" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget batocera {}"'
-Icon=/home/zen/git/distrohopper/icons/batocera.svg
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --field="Release:CB" "32"!"33"!"34" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget batocera {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/batocera.svg
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
 Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
 

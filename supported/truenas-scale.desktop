@@ -1,9 +1,16 @@
 [Desktop Entry]
+Version=0.77b
 Type=Application
 Name=truenas-scale
-releases=22.02 22.12
-replace="!"
-Exec=sh -c 'cd "/home/zen/git/distrohopper" && yad --form --field="Release:CB" "22.02"!"22.12" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget truenas-scale {}"'
-Icon=/home/zen/git/distrohopper/icons/truenas-scale.svg
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --field="Release:CB" "22.02"!"22.12" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget truenas-scale {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/truenas-scale.svg
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
 Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
 
