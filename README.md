@@ -182,17 +182,94 @@ above requirements or their equivalents.
  Fell free to copy them anywhere you want...
 
 ### Currently supported Operating Systems and tools:
- - agarimos - alma - alpine - android - archlinux - archcraft - arcolinux
- - batocera - blendos - cachyos - centos-stream - cereus - debian - deepin
- - devuan - dietpi - dragonflybsd - elementary - endeavouros - endless
- - fedora - freebsd - freedos - fvoid - gabeeos - garuda - gentoo
- - ghostbsd - haiku - kali - kdeneon - kolibrios - kubuntu - linuxmint
- - lmde - mageia - manjaro - miyo - mxlinux - netboot - netbsd - nixos
- - lubuntu - macos - openbsd - opensuse - oraclelinux - popos - reactos
- - rebornos - rockylinux - siduction - slackware - slitaz - solus
- - steamos - tails - truenas-core - truenas-scale - ubuntu - ubuntu-budgie
- - ubuntukylin - ubuntu-mate - ubuntustudio - ubuntu-unity - ventoy - void
- - voidpup - vxlinux - windows - xerolinux - xubuntu - zorin
+agarimos
+alma
+alpine
+android
+arch
+archcraft
+arco
+artix
+athenaos
+batocera
+biglinux
+blendos
+bodhi
+cachyos
+centos-stream
+cereus
+chimera
+debian
+deepin
+devuan
+dietpi
+dragonflybsd
+edubuntu
+elementary
+endeavouros
+endless
+fedora
+freebsd
+freedos
+fvoid
+gabeeos
+garuda
+gentoo
+ghostbsd
+haiku
+holoiso
+kali
+kdeneon
+kolibrios
+kubuntu
+lite
+lmde
+mageia
+manjaro
+mint
+miyo
+mx
+netboot
+netbsd
+nixos
+lubuntu
+macos
+openbsd
+openindiana
+opensuse
+oracle
+popos
+reactos
+rebornos
+rocky
+siduction
+slackware
+slax
+slitaz
+solus
+tails
+tinycore
+truenas-core
+truenas-scale
+tuxedoos
+ubuntu
+ubuntu-budgie
+ubuntucinnamon
+ubuntukylin
+ubuntu-mate
+ubuntu-server
+ubuntustudio
+ubuntu-unity
+vanillaos
+ventoy
+void
+voidpup
+vx
+windows
+xero
+xubuntu
+zorin
+
 
 Also with posible planned: [in discusion](https://github.com/oSoWoSo/DistroHopper/discussions/9)
 
