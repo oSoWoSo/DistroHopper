@@ -65,6 +65,7 @@ slitaz
 solus
 tails
 tinycore
+trisquel
 truenas-core
 truenas-scale
 tuxedoos

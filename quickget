@@ -261,6 +261,7 @@ function os_support() {
     solus \
     tails \
     tinycore \
+    trisquel \
     truenas-core \
     truenas-scale \
     tuxedoos \
@@ -724,6 +725,14 @@ function releases_tinycore() {
 
 function editions_tinycore() {
     echo Core TinyCore CorePlus CorePure64 TinyCorePure64
+}
+
+function releases_trisquel() {
+   echo 10.0.1 11.0
+}
+
+function editions_trisquel() {
+    echo mate lxde kde sugar
 }
 
 function releases_truenas() {
@@ -2105,6 +2114,22 @@ function get_tinycore() {
     fi
 
     HASH=$(wget -q -O- "${URL}/${ISO}.md5.txt" | cut -d' ' -f1)
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+function get_trisquel() {
+    local EDITION="${1:-}"
+    local HASH=""
+    local ISO=""
+    local URL="https://mirrors.ocf.berkeley.edu/trisquel-images"
+
+    case ${EDITION} in
+        mate)  ISO="trisquel_${RELEASE}_amd64.iso";;
+        lxde)  ISO="trisquel-mini_${RELEASE}_amd64.iso";;
+        kde)   ISO="triskel_${RELEASE}_amd64.iso";;
+        sugar) ISO="trisquel-sugar_${RELEASE}_amd64.iso";;
+    esac
+    HASH=$(wget -q -O- "${URL}/${ISO}.sha1" | grep "${ISO}" | cut -d' ' -f1)
     echo "${URL}/${ISO} ${HASH}"
 }
 
