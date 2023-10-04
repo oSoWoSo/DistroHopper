@@ -278,7 +278,7 @@ Also with posible planned: [in discusion](https://github.com/oSoWoSo/DistroHoppe
 #### [discuss](https://github.com/oSoWoSo/DistroHopper/discussions) on github
 
 # Join DistroHopper chat group:
-[![SimpleX](docs/simplex.svg)](https://simplex.chat/contact#/?v=1-4&smp=smp%3A%2F%2FPQUV2eL0t7OStZOoAsPEV2QYWt4-xilbakvGUGOItUo%3D%40smp6.simplex.im%2Fhlw2RhZPAIvVMyA9k3vQefhFnyrzkv-z%23%2F%3Fv%3D1-2%26dh%3DMCowBQYDK2VuAyEAhNMv2SvGx4X5n7RPJFyIzj6IwJJ8qOSvFXnVqgIxdWU%253D%26srv%3Dbylepyau3ty4czmn77q4fglvperknl4bi2eb2fdy2bh4jxtf32kf73yd.onion&data=%7B%22type%22%3A%22group%22%2C%22groupLinkId%22%3A%225zlNMxViN-0SxlMAYqSSQA%3D%3D%22%7D) (click SimpleX logo)
+[![SimpleX](docs/simplex.svg)](https://simplex.chat/contact#/?v=1-4&smp=smp%3A%2F%2Fu2dS9sG8nMNURyZwqASV4yROM28Er0luVTx5X1CsMrU%3D%40smp4.simplex.im%2FnTkG5MBnhRsRTb4heK-8J9jo0Vqc43q2%23%2F%3Fv%3D1-2%26dh%3DMCowBQYDK2VuAyEA-Go_Cwwzp419dls_-cmYvePuTyKdZ6bsrXAy8K1Sizc%253D%26srv%3Do5vmywmrnaxalvz6wi3zicyftgio6psuvyniis6gco6bp6ekl4cqj4id.onion&data=%7B%22type%22%3A%22group%22%2C%22groupLinkId%22%3A%228L5-Gq789MCV_wUQuNtTLg%3D%3D%22%7D) (click SimpleX logo)
 
 (check the software! even if you don't want chat about DistroHopper)
 [Simplex website](https://simplex.chat)
