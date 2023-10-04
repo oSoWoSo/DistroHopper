@@ -16,6 +16,12 @@
 # **DistroHopper**
 Quickly download, create and run VM of any#TODO operating system.
 
+
+# For now yad not work under wayland correctly
+Until this will be solved upstream use just quickfzf TUI under wayland!
+It's even quicker and easier to use.
+But don't have that nice distro icons you never heard about.. (or no?)
+
 Linux![Tux](docs/tux23.png) required...
 
 ---
