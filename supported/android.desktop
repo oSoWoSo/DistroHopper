@@ -4,8 +4,8 @@ Type=Application
 Name=android
 GenericName=
 Comment=
-Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --separator=" " --field="Release:CB" "7.1"!"8.1"!"9.0" --field="Edition:CB" "x86"!"x86_64" | xargs -I{} sh -c "./quickget android {}";/usr/bin/fish'
-Icon=/home/zen/Git/DistroHopper/icons/android.svg
+Exec=sh -c 'cd ./ && yad --form --separator=" " --field="Release:CB" "7.1"!"8.1"!"9.0" --field="Edition:CB" "x86"!"x86_64" | xargs -I{} sh -c "./quickget android {}";/usr/bin/fish'
+Icon=./icons/android.svg
 Terminal=sakura
 X-MultipleArgs=
 Type=Application

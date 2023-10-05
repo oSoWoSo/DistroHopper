@@ -4,8 +4,8 @@ Type=Application
 Name=xero
 GenericName=
 Comment=
-Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --field="Release:CB" "kde" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget xero {}";/usr/bin/fish'
-Icon=/home/zen/Git/DistroHopper/icons/xero.svg
+Exec=sh -c 'cd ./ && yad --form --field="Release:CB" "kde" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget xero {}";/usr/bin/fish'
+Icon=./icons/xero.svg
 Terminal=sakura
 X-MultipleArgs=
 Type=Application

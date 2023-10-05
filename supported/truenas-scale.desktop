@@ -4,8 +4,8 @@ Type=Application
 Name=truenas-scale
 GenericName=
 Comment=
-Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --field="Release:CB" "22.02"!"22.12" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget truenas-scale {}";/usr/bin/fish'
-Icon=/home/zen/Git/DistroHopper/icons/truenas-scale.svg
+Exec=sh -c 'cd ./ && yad --form --field="Release:CB" "22.02"!"22.12" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget truenas-scale {}";/usr/bin/fish'
+Icon=./icons/truenas-scale.svg
 Terminal=sakura
 X-MultipleArgs=
 Type=Application

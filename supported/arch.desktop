@@ -4,8 +4,8 @@ Type=Application
 Name=arch
 GenericName=
 Comment=
-Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --field="Release:CB" "latest" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget arch {}";/usr/bin/fish'
-Icon=/home/zen/Git/DistroHopper/icons/arch.svg
+Exec=sh -c 'cd ./ && yad --form --field="Release:CB" "latest" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget arch {}";/usr/bin/fish'
+Icon=./icons/arch.svg
 Terminal=sakura
 X-MultipleArgs=
 Type=Application

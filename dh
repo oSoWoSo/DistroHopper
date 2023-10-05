@@ -89,9 +89,9 @@ do
 	}
 
 	function work_in_current_dir() {
-		VMS_DIR="$(pwd)"
-		DH_CONFIG_DIR="$(pwd)"
-		DH_ICON_DIR="$(pwd)/icons"
+		VMS_DIR="./"
+		DH_CONFIG_DIR="./"
+		DH_ICON_DIR="./icons"
 		portable_prefix='./'
 		#export "VMS_DIR" "DH_CONFIG_DIR" "DH_ICON_DIR" "terminal" "replace" "portable_prefix"
 	}

@@ -4,8 +4,8 @@ Type=Application
 Name=openindiana
 GenericName=
 Comment=
-Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --separator=" " --field="Release:CB" "20230421" --field="Edition:CB" "gui"!"text"!"minimal" | xargs -I{} sh -c "./quickget openindiana {}";/usr/bin/fish'
-Icon=/home/zen/Git/DistroHopper/icons/openindiana.svg
+Exec=sh -c 'cd ./ && yad --form --separator=" " --field="Release:CB" "20230421" --field="Edition:CB" "gui"!"text"!"minimal" | xargs -I{} sh -c "./quickget openindiana {}";/usr/bin/fish'
+Icon=./icons/openindiana.svg
 Terminal=sakura
 X-MultipleArgs=
 Type=Application
