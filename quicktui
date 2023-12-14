@@ -1,0 +1,1086 @@
+#!/usr/bin/bash
+# Author: zenobit
+# Description: Uses gum to provide a simple TUI for quickemu and quickget
+# License MIT
+
+define_variables() {
+    progname="${progname:="${0##*/}"}"
+    version='0.33'
+    configdir="$HOME/.config/$progname"
+    config="$HOME/.config/$progname/config"
+    path=$(pwd)
+    vms=(*.conf)
+    # Set traps to catch the signals and exit gracefully
+    trap 'exit' INT
+    trap 'exit' EXIT
+    if ! command -v quickemu >/dev/null 2>&1; then
+        echo 'You are missing quickemu!'
+    fi
+    QUICKGET=$(command -v quickget)
+    if ! command -v gum >/dev/null 2>&1; then
+        echo 'You are missing gum! Exiting...' && exit 1
+    fi
+    # use config file
+    source "$config"
+    BORDER="$borders_style"
+    if [ -z "$all_colors" ]; then
+        BORDERS_FOREGROUND="$borders_color"
+        GUM_FILTER_INDICATOR_FOREGROUND="$indicator_color"
+        GUM_SPIN_SPINNER_FOREGROUND="$spinner_color"
+        #GUM_CHOOSE_CURSOR_FOREGROUND=""
+        #GUM_CHOOSE_CURSOR_BORDER_FOREGROUND="$borders_color"
+        #GUM_CHOOSE_HEADER_FOREGROUND=""
+        #GUM_CHOOSE_HEADER_BORDER_FOREGROUND="$borders_color"
+        #GUM_CHOOSE_ITEM_FOREGROUND=""
+        #GUM_CHOOSE_ITEM_BORDER_FOREGROUND="$borders_color"
+        #GUM_CHOOSE_SELECTED_FOREGROUND=""
+        #GUM_CHOOSE_SELECTED_BORDER_FOREGROUND="$borders_color"
+        #GUM_CONFIRM_PROMPT_FOREGROUND=""
+        #GUM_CONFIRM_PROMPT_BORDER_FOREGROUND="$borders_color"
+        #GUM_CONFIRM_SELECTED_FOREGROUND=""
+        #GUM_CONFIRM_SELECTED_BORDER_FOREGROUND="$borders_color"
+        #GUM_CONFIRM_UNSELECTED_FOREGROUND=""
+        #GUM_CONFIRM_UNSELECTED_BORDER_FOREGROUND="$borders_color"
+        #GUM_FILE_CURSOR_FOREGROUND=""
+        #GUM_FILE_CURSOR_BORDER_FOREGROUND="$borders_color"
+        #GUM_FILE_SYMLINK_FOREGROUND=""
+        #GUM_FILE_SYMLINK_BORDER_FOREGROUND="$borders_color"
+        #GUM_FILE_DIRECTORY_FOREGROUND=""
+        #GUM_FILE_DIRECTORY_BORDER_FOREGROUND="$borders_color"
+        #GUM_FILE_FILE_FOREGROUND=""
+        #GUM_FILE_FILE_BORDER_FOREGROUND="$borders_color"
+        #GUM_FILE_PERMISSIONS_FOREGROUND=""
+        #GUM_FILE_PERMISSIONS_BORDER_FOREGROUND="$borders_color"
+        #GUM_FILE_SELECTED_FOREGROUND=""
+        #GUM_FILE_SELECTED_BORDER_FOREGROUND="$borders_color"
+        #GUM_FILE_FILE_SIZE_FOREGROUND=""
+        #GUM_FILE_FILE_SIZE_BORDER_FOREGROUND="$borders_color"
+        #GUM_FILTER_INDICATOR_FOREGROUND=""
+        #GUM_FILTER_INDICATOR_BORDER_FOREGROUND="$borders_color"
+        #GUM_FILTER_SELECTED_PREFIX_FOREGROUND=""
+        #GUM_FILTER_SELECTED_PREFIX_BORDER_FOREGROUND="$borders_color"
+        #GUM_FILTER_UNSELECTED_PREFIX_FOREGROUND=""
+        #GUM_FILTER_UNSELECTED_PREFIX_BORDER_FOREGROUND="$borders_color"
+        #GUM_FILTER_HEADER_FOREGROUND=""
+        #GUM_FILTER_HEADER_BORDER_FOREGROUND="$borders_color"
+        #GUM_FILTER_TEXT_FOREGROUND=""
+        #GUM_FILTER_TEXT_BORDER_FOREGROUND="$borders_color"
+        #GUM_FILTER_CURSOR_TEXT_FOREGROUND=""
+        #GUM_FILTER_CURSOR_TEXT_BORDER_FOREGROUND="$borders_color"
+        #GUM_FILTER_MATCH_FOREGROUND=""
+        #GUM_FILTER_MATCH_BORDER_FOREGROUND="$borders_color"
+        #GUM_FILTER_PROMPT_FOREGROUND=""
+        #GUM_FILTER_PROMPT_BORDER_FOREGROUND="$borders_color"
+        #GUM_INPUT_PROMPT_FOREGROUND=""
+        #GUM_INPUT_PROMPT_BORDER_FOREGROUND="$borders_color"
+        #GUM_INPUT_CURSOR_FOREGROUND=""
+        #GUM_INPUT_CURSOR_BORDER_FOREGROUND="$borders_color"
+        #GUM_INPUT_HEADER_FOREGROUND=""
+        #GUM_INPUT_HEADER_BORDER_FOREGROUND="$borders_color"
+        #GUM_LOG_LEVEL_FOREGROUND=""
+        #GUM_LOG_LEVEL_BORDER_FOREGROUND="$borders_color"
+        #GUM_LOG_TIME_FOREGROUND=""
+        #GUM_LOG_TIME_BORDER_FOREGROUND="$borders_color"
+        #GUM_LOG_PREFIX_FOREGROUND=""
+        #GUM_LOG_PREFIX_BORDER_FOREGROUND="$borders_color"
+        #GUM_LOG_MESSAGE_FOREGROUND=""
+        #GUM_LOG_MESSAGE_BORDER_FOREGROUND="$borders_color"
+        #GUM_LOG_KEY_FOREGROUND=""
+        #GUM_LOG_KEY_BORDER_FOREGROUND="$borders_color"
+        #GUM_LOG_VALUE_FOREGROUND=""
+        #GUM_LOG_VALUE_BORDER_FOREGROUND="$borders_color"
+        #GUM_LOG_SEPARATOR_FOREGROUND=""
+        #GUM_LOG_SEPARATOR_BORDER_FOREGROUND="$borders_color"
+        #GUM_PAGER_FOREGROUND=""
+        #GUM_PAGER_BORDER_FOREGROUND="$borders_color"
+        #GUM_PAGER_HELP_FOREGROUND=""
+        #GUM_PAGER_HELP_BORDER_FOREGROUND="$borders_color"
+        #GUM_PAGER_LINE_NUMBER_FOREGROUND=""
+        #GUM_PAGER_LINE_NUMBER_BORDER_FOREGROUND="$borders_color"
+        #GUM_PAGER_MATCH_FOREGROUND=""
+        #GUM_PAGER_MATCH_BORDER_FOREGROUND="$borders_color"
+        #GUM_PAGER_MATCH_HIGH_FOREGROUND=""
+        #GUM_PAGER_MATCH_HIGH_BORDER_FOREGROUND="$borders_color"
+        #GUM_SPIN_SPINNER_FOREGROUND=""
+        #GUM_SPIN_SPINNER_BORDER_FOREGROUND="$borders_color"
+        #GUM_SPIN_TITLE_FOREGROUND=""
+        #GUM_SPIN_TITLE_BORDER_FOREGROUND="$borders_color"
+        #FOREGROUND=""
+        #BORDER_FOREGROUND="$borders_color"
+        #GUM_TABLE_CELL_FOREGROUND=""
+        #GUM_TABLE_CELL_BORDER_FOREGROUND="$borders_color"
+        #GUM_TABLE_HEADER_FOREGROUND=""
+        #GUM_TABLE_HEADER_BORDER_FOREGROUND="$borders_color"
+        #GUM_TABLE_SELECTED_FOREGROUND=""
+        #GUM_TABLE_SELECTED_BORDER_FOREGROUND="$borders_color"
+        #GUM_WRITE_BASE_FOREGROUND=""
+        #GUM_WRITE_BASE_BORDER_FOREGROUND="$borders_color"
+        #GUM_WRITE_CURSOR_LINE_NUMBER_FOREGROUND=""
+        #GUM_WRITE_CURSOR_LINE_NUMBER_BORDER_FOREGROUND="$borders_color"
+        #GUM_WRITE_CURSOR_LINE_FOREGROUND=""
+        #GUM_WRITE_CURSOR_LINE_BORDER_FOREGROUND="$borders_color"
+        #GUM_WRITE_CURSOR_FOREGROUND=""
+        #GUM_WRITE_CURSOR_BORDER_FOREGROUND="$borders_color"
+        #GUM_WRITE_END_OF_BUFFER_FOREGROUND=""
+        #GUM_WRITE_END_OF_BUFFER_BORDER_FOREGROUND="$borders_color"
+        #GUM_WRITE_LINE_NUMBER_FOREGROUND=""
+        #GUM_WRITE_LINE_NUMBER_BORDER_FOREGROUND="$borders_color"
+        #GUM_WRITE_HEADER_FOREGROUND=""
+        #GUM_WRITE_HEADER_BORDER_FOREGROUND="$borders_color"
+        #GUM_WRITE_PLACEHOLDER_FOREGROUND=""
+        #GUM_WRITE_PLACEHOLDER_BORDER_FOREGROUND="$borders_color"
+        #GUM_WRITE_PROMPT_FOREGROUND=""
+        #GUM_WRITE_PROMPT_BORDER_FOREGROUND="$borders_color"
+    else
+        all_colors="$(cat $config | grep '=' | grep "$all_colors" | cut -d'=' -f2)"
+        BORDERS_FOREGROUND="$all_colors"
+        GUM_FILTER_INDICATOR_FOREGROUND="$all_colors"
+        GUM_SPIN_SPINNER_FOREGROUND="$all_colors"
+        #GUM_CHOOSE_CURSOR_FOREGROUND="$all_colors"
+        #GUM_CHOOSE_CURSOR_BORDER_FOREGROUND="$all_colors"
+        #GUM_CHOOSE_HEADER_FOREGROUND="$all_colors"
+        #GUM_CHOOSE_HEADER_BORDER_FOREGROUND="$all_colors"
+        #GUM_CHOOSE_ITEM_FOREGROUND="$all_colors"
+        #GUM_CHOOSE_ITEM_BORDER_FOREGROUND="$all_colors"
+        #GUM_CHOOSE_SELECTED_FOREGROUND="$all_colors"
+        #GUM_CHOOSE_SELECTED_BORDER_FOREGROUND="$all_colors"
+        #GUM_CONFIRM_PROMPT_FOREGROUND="$all_colors"
+        #GUM_CONFIRM_PROMPT_BORDER_FOREGROUND="$all_colors"
+        #GUM_CONFIRM_SELECTED_FOREGROUND="$all_colors"
+        #GUM_CONFIRM_SELECTED_BORDER_FOREGROUND="$all_colors"
+        #GUM_CONFIRM_UNSELECTED_FOREGROUND="$all_colors"
+        #GUM_CONFIRM_UNSELECTED_BORDER_FOREGROUND="$all_colors"
+        #GUM_FILE_CURSOR_FOREGROUND="$all_colors"
+        #GUM_FILE_CURSOR_BORDER_FOREGROUND="$all_colors"
+        #GUM_FILE_SYMLINK_FOREGROUND="$all_colors"
+        #GUM_FILE_SYMLINK_BORDER_FOREGROUND="$all_colors"
+        #GUM_FILE_DIRECTORY_FOREGROUND="$all_colors"
+        #GUM_FILE_DIRECTORY_BORDER_FOREGROUND="$all_colors"
+        #GUM_FILE_FILE_FOREGROUND="$all_colors"
+        #GUM_FILE_FILE_BORDER_FOREGROUND="$all_colors"
+        #GUM_FILE_PERMISSIONS_FOREGROUND="$all_colors"
+        #GUM_FILE_PERMISSIONS_BORDER_FOREGROUND="$all_colors"
+        #GUM_FILE_SELECTED_FOREGROUND="$all_colors"
+        #GUM_FILE_SELECTED_BORDER_FOREGROUND="$all_colors"
+        #GUM_FILE_FILE_SIZE_FOREGROUND="$all_colors"
+        #GUM_FILE_FILE_SIZE_BORDER_FOREGROUND="$all_colors"
+        #GUM_FILTER_INDICATOR_FOREGROUND="$all_colors"
+        #GUM_FILTER_INDICATOR_BORDER_FOREGROUND="$all_colors"
+        #GUM_FILTER_SELECTED_PREFIX_FOREGROUND="$all_colors"
+        #GUM_FILTER_SELECTED_PREFIX_BORDER_FOREGROUND="$all_colors"
+        #GUM_FILTER_UNSELECTED_PREFIX_FOREGROUND="$all_colors"
+        #GUM_FILTER_UNSELECTED_PREFIX_BORDER_FOREGROUND="$all_colors"
+        #GUM_FILTER_HEADER_FOREGROUND="$all_colors"
+        #GUM_FILTER_HEADER_BORDER_FOREGROUND="$all_colors"
+        #GUM_FILTER_TEXT_FOREGROUND="$all_colors"
+        #GUM_FILTER_TEXT_BORDER_FOREGROUND="$all_colors"
+        #GUM_FILTER_CURSOR_TEXT_FOREGROUND="$all_colors"
+        #GUM_FILTER_CURSOR_TEXT_BORDER_FOREGROUND="$all_colors"
+        #GUM_FILTER_MATCH_FOREGROUND="$all_colors"
+        #GUM_FILTER_MATCH_BORDER_FOREGROUND="$all_colors"
+        #GUM_FILTER_PROMPT_FOREGROUND="$all_colors"
+        #GUM_FILTER_PROMPT_BORDER_FOREGROUND="$all_colors"
+        #GUM_INPUT_PROMPT_FOREGROUND="$all_colors"
+        #GUM_INPUT_PROMPT_BORDER_FOREGROUND="$all_colors"
+        #GUM_INPUT_CURSOR_FOREGROUND="$all_colors"
+        #GUM_INPUT_CURSOR_BORDER_FOREGROUND="$all_colors"
+        #GUM_INPUT_HEADER_FOREGROUND="$all_colors"
+        #GUM_INPUT_HEADER_BORDER_FOREGROUND="$all_colors"
+        #GUM_LOG_LEVEL_FOREGROUND="$all_colors"
+        #GUM_LOG_LEVEL_BORDER_FOREGROUND="$all_colors"
+        #GUM_LOG_TIME_FOREGROUND="$all_colors"
+        #GUM_LOG_TIME_BORDER_FOREGROUND="$all_colors"
+        #GUM_LOG_PREFIX_FOREGROUND="$all_colors"
+        #GUM_LOG_PREFIX_BORDER_FOREGROUND="$all_colors"
+        #GUM_LOG_MESSAGE_FOREGROUND="$all_colors"
+        #GUM_LOG_MESSAGE_BORDER_FOREGROUND="$all_colors"
+        #GUM_LOG_KEY_FOREGROUND="$all_colors"
+        #GUM_LOG_KEY_BORDER_FOREGROUND="$all_colors"
+        #GUM_LOG_VALUE_FOREGROUND="$all_colors"
+        #GUM_LOG_VALUE_BORDER_FOREGROUND="$all_colors"
+        #GUM_LOG_SEPARATOR_FOREGROUND="$all_colors"
+        #GUM_LOG_SEPARATOR_BORDER_FOREGROUND="$all_colors"
+        #GUM_PAGER_FOREGROUND="$all_colors"
+        #GUM_PAGER_BORDER_FOREGROUND="$all_colors"
+        #GUM_PAGER_HELP_FOREGROUND="$all_colors"
+        #GUM_PAGER_HELP_BORDER_FOREGROUND="$all_colors"
+        #GUM_PAGER_LINE_NUMBER_FOREGROUND="$all_colors"
+        #GUM_PAGER_LINE_NUMBER_BORDER_FOREGROUND="$all_colors"
+        #GUM_PAGER_MATCH_FOREGROUND="$all_colors"
+        #GUM_PAGER_MATCH_BORDER_FOREGROUND="$all_colors"
+        #GUM_PAGER_MATCH_HIGH_FOREGROUND="$all_colors"
+        #GUM_PAGER_MATCH_HIGH_BORDER_FOREGROUND="$all_colors"
+        #GUM_SPIN_SPINNER_FOREGROUND="$all_colors"
+        #GUM_SPIN_SPINNER_BORDER_FOREGROUND="$all_colors"
+        #GUM_SPIN_TITLE_FOREGROUND="$all_colors"
+        #GUM_SPIN_TITLE_BORDER_FOREGROUND="$all_colors"
+        #FOREGROUND="$all_colors"
+        #BORDER_FOREGROUND="$all_colors"
+        #GUM_TABLE_CELL_FOREGROUND="$all_colors"
+        #GUM_TABLE_CELL_BORDER_FOREGROUND="$all_colors"
+        #GUM_TABLE_HEADER_FOREGROUND="$all_colors"
+        #GUM_TABLE_HEADER_BORDER_FOREGROUND="$all_colors"
+        #GUM_TABLE_SELECTED_FOREGROUND="$all_colors"
+        #GUM_TABLE_SELECTED_BORDER_FOREGROUND="$all_colors"
+        #GUM_WRITE_BASE_FOREGROUND="$all_colors"
+        #GUM_WRITE_BASE_BORDER_FOREGROUND="$all_colors"
+        #GUM_WRITE_CURSOR_LINE_NUMBER_FOREGROUND="$all_colors"
+        #GUM_WRITE_CURSOR_LINE_NUMBER_BORDER_FOREGROUND="$all_colors"
+        #GUM_WRITE_CURSOR_LINE_FOREGROUND="$all_colors"
+        #GUM_WRITE_CURSOR_LINE_BORDER_FOREGROUND="$all_colors"
+        #GUM_WRITE_CURSOR_FOREGROUND="$all_colors"
+        #GUM_WRITE_CURSOR_BORDER_FOREGROUND="$all_colors"
+        #GUM_WRITE_END_OF_BUFFER_FOREGROUND="$all_colors"
+        #GUM_WRITE_END_OF_BUFFER_BORDER_FOREGROUND="$all_colors"
+        #GUM_WRITE_LINE_NUMBER_FOREGROUND="$all_colors"
+        #GUM_WRITE_LINE_NUMBER_BORDER_FOREGROUND="$all_colors"
+        #GUM_WRITE_HEADER_FOREGROUND="$all_colors"
+        #GUM_WRITE_HEADER_BORDER_FOREGROUND="$all_colors"
+        #GUM_WRITE_PLACEHOLDER_FOREGROUND="$all_colors"
+        #GUM_WRITE_PLACEHOLDER_BORDER_FOREGROUND="$all_colors"
+        #GUM_WRITE_PROMPT_FOREGROUND="$all_colors"
+        #GUM_WRITE_PROMPT_BORDER_FOREGROUND="$all_colors"
+    fi
+    command="$command"
+    border_style="$border_style"
+    spinner_style="$spinner_style"
+    if [ -f "${configdir}/default_vm_config" ]; then
+        printf '\n   VMs default config:\n%s' "$(cat "${configdir}/default_vm_config")"
+    fi
+    gum_filter_cmd="gum filter --indicator.foreground $(( RANDOM % 255 + 1 )) --cursor-text.foreground $(( RANDOM % 255 + 1 ))"
+}
+
+check_updates() {
+    show_version_quickemu
+    https://github.com/quickemu-project/quickemu/releases/latest
+
+    show_version_qemu
+    https://download.qemu.org
+
+    show_version_gum
+    https://github.com/charmbracelet/gum/releases/latest
+
+    $version
+    https://github.com/oSoWoSo/quickemu/tags
+}
+
+dependencies_install() {
+	# Find the current distribution and install dependecies
+		if [ -f /etc/os-release ]; then
+			if [ -f "$PATH_PREFIX/pacman" ]; then
+				install_needed_pacman
+			elif [ -f "$PATH_PREFIX/apt" ]; then
+				install_needed_apt
+			elif [ -f "$PATH_PREFIX/xbps-install" ]; then
+				install_needed_xbps
+			elif [ -f "$PATH_PREFIX/dnf" ]; then
+				install_needed_dnf
+			else
+				echo "$MSG_ERROR: $MSG_NO_DISTRO"
+				exit 1
+			fi
+		fi
+}
+
+check_latest_github() {
+    echo "fetching latest version"
+    latest_version=`
+curl https://github.com/$owner/$repo/releases/latest --verbose 2>&1 |
+grep Location |
+sed -e "s|.*/v||"`
+
+    echo "version: $latest_version"
+}
+
+download_latest_github() {
+    check_latest_github
+    # if the version number is in the file name, append it
+    # example:
+    # file=somefile-$latest_version.ext
+    # file=$latest_version.tar.gz
+    link="https://github.com/$owner/$repo/releases/download/v$latest_version/$file"
+    echo "$link"
+    curl -o "/tmp/$file" -L "$link"
+}
+
+install_needed_apt() {
+	sudo apt install qemu bash coreutils ovmf grep jq lsb procps python3 genisoimage usbutils util-linux sed spice-client-gtk swtpm wget xdg-user-dirs zsync unzip gum
+}
+
+install_needed_pacman() {
+	sudo pacman -S cdrtools coreutils edk2-ovmf grep jq procps python3 qemu-full sed socat spice-gtk swtpm usbutils util-linux wget xdg-user-dirs xorg-xrandr zsync getext gum
+}
+
+install_needed_xbps() {
+	sudo xbps-install -S qemu bash coreutils grep jq procps-ng python3 util-linux sed spice-gtk swtpm usbutils wget xdg-user-dirs xrandr unzip zsync socat gum
+}
+
+install_needed_dnf() {
+	sudo dnf install qemu bash coreutils edk2-tools grep jq lsb procps python3 genisoimage usbutils util-linux sed spice-gtk-tools swtpm wget xdg-user-dirs xrandr unzip gum
+}
+
+quickemu_install() {
+    owner=quickemu-project
+    repo=quickemu
+    file=$latest_version.tar.gz
+	download_latest_github
+	#cp quickget quickemu macrecovery windowskey /usr/bin/ >/dev/null 2>&1 || sudo cp quickget quickemu macrecovery windowskey /usr/bin/
+}
+
+show_editor() {
+    if [ -z "$EDITOR" ]; then
+        echo '  editor Not set!'
+    else
+        echo "  editor $EDITOR"
+    fi
+}
+
+show_vms() {
+    if [ ${#vms[@]} -eq 0 ]; then
+        echo 'No VMs found.'
+    else
+        echo "${vms[@]%.*}" | tr " " "\n"
+    fi
+}
+
+show_custom() {
+    cat ${config}
+}
+
+show_version_quickemu() {
+    quickemu --version | grep "ERROR! QEMU not found" && echo "QEMU is missing!" || quickemu --version
+}
+
+show_version_qemu() {
+    qemu-x86_64 -version | sed 2d | cut -d' ' -f3
+}
+
+show_header() {
+    gum style --padding "0 1" --border="$borders_style" --border-foreground="$borders_color" "$header"
+}
+
+show_header_center() {
+    gum style --padding "0 1" --align=center --border="$borders_style" --border-foreground="$borders_color" "$header"
+}
+
+show_headers_small() {
+    distro=$(shuf -n 1 "$configdir"/supported)
+    homepage=$("$QUICKGET" -h "${distro}")
+
+    header1=$(header="
+  simple TUI for quickemu
+▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+█ █ ▄ ▄ ▄  ▄▄ ▄  ▄ █ ▄ ▄ ▄
+█ █ █ █ █ █   █▄▀  █ █ █ █
+█▄█ ▀▄█ █ █▄▄ █ ▀▄ █ █▄▀ █
+   ▀ $version     by zenobit"; show_header)
+
+    header2=$(header="Are you tried?
+$distro
+$homepage"; show_header_center)
+
+    header3=$(header="  ready VMs:
+$(echo "${vms[@]%.*}" | tr " " "\n")"; show_header)
+
+    header4=$(header="  workdir:
+$(pwd)
+$(show_custom)"; show_header)
+
+    header1_2=$(gum join --align bottom "$header1" "$header2")
+    header3_4=$(gum join --align top "$header3" "$header4")
+    gum join --vertical --align top "$header1_2" "$header3_4"
+    echo ''
+}
+
+show_headers_full() {
+    distro=$(shuf -n 1 "$configdir"/supported)
+    homepage=$("$QUICKGET" -h "${distro}")
+
+    header1=$(header="
+  simple TUI for quickemu
+▄▄▄ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+█ █ ▄ ▄ ▄  ▄▄ ▄  ▄ █ ▄ ▄ ▄
+█ █ █ █ █ █   █▄▀  █ █ █ █
+█▄█ ▀▄█ █ █▄▄ █ ▀▄ █ █▄▀ █
+   ▀ $version     by zenobit"; show_header)
+
+    header2=$(header="    qemu $(show_version_qemu)
+quickemu $(show_version_quickemu)
+$(show_editor)"; show_header)
+
+    header3=$(header="Are you tried?
+$distro
+$homepage"; show_header_center)
+
+    header4=$(header="  ready VMs:
+$(show_vms)"; show_header)
+
+    header5=$(header="  workdir:
+$(pwd)$(show_custom)"; show_header)
+
+    header1_2_3=$(gum join --align bottom "$header1" "$header2" "$header3")
+    header4_5=$(gum join "$header4" "$header5")
+
+    gum join --align center --vertical "$header1_2_3" "$header4_5"
+    echo ''
+}
+
+show_help() {
+    clear
+    show_headers_full
+    show_header
+}
+
+help_main() {
+    header="    $progname $version
+Uses gum to provide a simple TUI for quickemu and quickget 'https://github.com/quickemu-project/quickemu'
+ 'https://github.com/charmbracelet/gum'
+
+For menus you can use arrow keys or fuzzy filtering and then ENTER
+(e + ENTER for exit or b + ENTER for back to main menu)
+
+If is posible choose more options use TAB for highliting desired and then ENTER
+
+Config and temp files are stored at $configdir"
+}
+
+#template for functions
+#    header=""
+#    show_header
+
+gum_choose_os() {
+    header="Choose OS"
+    show_header
+    os=$(gum filter < "$configdir"/supported)
+    choices=$(cat "$configdir/distros/$os")
+}
+
+gum_choose_release() {
+    header="Choose release"
+    show_header
+    height=$(echo "$choices" | grep 'Releases:' | cut -d':' -f2 | grep -o '[^ ]*' | wc -l)
+    release=$(echo "$choices" | grep 'Releases:' | cut -d':' -f2 | grep -o '[^ ]*' | gum filter --sort --height="$height")
+}
+
+gum_choose_edition() {
+    header="Choose edition"
+    show_header
+    height=$(echo "$choices" | grep 'Editions:' | cut -d':' -f2 | grep -o '[^ ]*' | wc -l)
+    edition=$(echo "$choices" | grep 'Editions:' | cut -d':' -f2 | grep -o '[^ ]*' | gum filter --sort --height="$height")
+}
+
+gum_choose_VM() {
+    if ls | grep ".conf" ; then
+        header="Choose VM"
+        show_header
+        height=$(ls -1 | grep ".conf" | wc -l)
+        chosen=$(ls -1 | grep ".conf" | rev | cut -d'.' -f2- | rev | gum filter --height "$height")
+    else
+        echo "No VMs to run."
+    fi
+    #chosen=$(printf '%s\n' "${vms[@]%.conf}" | gum filter --height "$("${vms[@]%.conf}" | wc -l)" --header='Choose VM to run')
+}
+
+edit_default_VMs_config() {
+    header="Editing default VM's config..."
+    show_header
+    printf 'For example:\ncpu_cores="2"\nram="4G"\n'
+    header="CTRL+D to complete.  CTRL+C and esc will cancel"
+    show_header
+    gum write > "${configdir}"/default_vm_config
+}
+
+edit_VM_config() {
+    if [ -z "$EDITOR" ]; then
+        echo "Editor not set! Can't continue!"
+    else
+        header="Editing VM config"
+        show_header
+        height=$(ls -1 | grep ".conf" | wc -l)
+        ${EDITOR} "$(ls | grep ".conf" | gum filter --height "$height")"
+    fi
+}
+
+custom_quickemu_command() {
+    header="Define custom command"
+    show_header
+    custom=$(echo "edit delete" | grep -o '[^ ]*' | gum choose --header='Edit or delete custom command?')
+    if [ "$custom" = "edit" ]; then
+        header=$(quickemu | awk 'NR==6,/version/')
+        show_header
+        printf '\nEnter quickemu custom command:\n For example:--public-dir ~/Downloads\n:'
+        read -r command
+        mkdir -p "$configdir"
+        echo "$command" > "${configdir}/command"
+    elif [ "$custom" = "delete" ]; then
+        rm "${configdir}/command"
+    fi
+}
+
+run_VM() {
+    header="Starting $chosen..."
+    show_header
+    if [ -f "${configdir}/command" ]; then
+        quickemu < "${configdir}/command" -vm "$chosen.conf"
+    else
+            quickemu -vm "$chosen.conf"
+    fi
+}
+
+create_VM() {
+    gum_choose_os
+    if [ -z "$os" ]; then exit 100
+    elif [ "$(echo "$choices" | wc -l)" = 1 ]; then
+        clear
+        gum_choose_release
+        # spin currently broken
+        #gum spin -s "$spinner_style" --title="Downloading $os $release" --show-output -- bash -c "$QUICKGET $os $release"
+        echo "Downloading $os $release"
+        "$QUICKGET $os $release"
+        if [ -f "${configdir}/default_vm_config" ]; then
+            echo 'Adding default values to config...'
+            cat "${configdir}/default_vm_config" >> "$os-$release.conf"
+        fi
+    else
+        clear
+        gum_choose_release
+        gum_choose_edition
+        # spin currently broken
+        #gum spin -s "$spinner_style" --title="Downloading $os $release $edition" --show-output -- bash -c "$QUICKGET $os $release $edition"
+        echo "Downloading $os $release $edition"
+        "$QUICKGET $os $release $edition"
+        if [ -f "${configdir}/default_vm_config" ]; then
+            echo 'Adding default values to config...'
+            cat "${configdir}/default_vm_config" >> "$os-$release-$edition.conf"
+        fi
+    fi
+    echo "New VM not appear in ready VMs: yet #TODO"
+    echo "To start your new $os virtual machine use 'run VM' from menu"
+    show_headers_small
+}
+
+gum_choose_VM_to_delete() {
+    height=$(ls -1 | grep ".conf" | wc -l)
+    GUM_FILTER_HEADER="Choose VM to delete"
+    GUM_FILTER_HEADER_FOREGROUND="1"
+    if ls | grep ".conf" ; then
+        chosen=$(echo "${vms[@]%.*}" | tr " " "\n" | gum filter --height "$height" --no-limit)
+        gum confirm "Delete $chosen?" && rm -r "$chosen" && rm "$chosen".conf
+    else
+        echo "No VMs to delete"
+    fi
+    show_headers_small
+}
+# shellcheck disable=SC2016,2034,2153
+add_new_distro() {
+    header="Adding new distro..."
+    show_header
+    echo "add new OS, all lowercase"
+    NAME="$(gum input --header="NAME" --placeholder="arch")"
+    echo "add a pretty name for new OS *only if the catch all is not suitable*"
+    PRETTY_NAME="$(gum input --header="PRETTY_NAME" --placeholder="Arch Linux")"
+    echo "add a homepage for new OS"
+    HOMEPAGE="$(gum input --header="HOMEPAGE" --placeholder="https://voidlinux.org/")"
+    echo "current supported release versions"
+    RELEASES="$(gum input --header="RELEASES" --placeholder="8 9")"
+    echo "the editions if new OS has multiple flavours/editions"
+    EDITIONS="$(gum input --header="EDITIONS" --placeholder="kde gnome")"
+    echo "base URL for ISO download"
+    URL="$(gum input --header="URL" --placeholder="https://ddl.bunsenlabs.org/ddl")"
+    echo "Name of ISO"
+    ISO="$(gum input --header="ISO" --placeholder="GhostBSD-${RELEASE}-XFCE.iso")"
+    echo "name of hash file "
+    CHECKSUM="$(gum input --header="CHECKSUM" --placeholder='${ISO}.sha256sum')"
+    cat <<EOF > "$configdir/template"
+#line 58+
+
+$NAME)           PRETTY_NAME="$PRETTY_NAME";;
+
+#line 207+
+
+$NAME \\
+
+#line 292+
+
+        $NAME)              HOMEPAGE=$HOMEPAGE;;
+
+#line 374+
+
+function releases_$NAME() {
+echo $RELEASES
+}
+
+function editions_$NAME() {
+echo $EDITIONS
+}
+
+#line 1176+
+
+function get_$NAME() {
+local EDITION="\${1:-}"
+local HASH=""
+local ISO="$ISO"
+local URL="$URL"
+HASH="\$(wget -q -O- \${URL}/\$CHECKSUM | grep (\${ISO} | cut -d' ' -f4)"
+echo "\${URL}/\${ISO}" "\${HASH}"
+}
+
+EOF
+    diff "$configdir/template" "quickget"
+}
+
+test_ISOs_download() {
+    cd "$configdir/distros" || exit
+    echo "New run $(date)" > "$configdir/test_download"
+    while read -r get_name; do
+        printf '\n%s\n\n' "$get_name"
+        releases=$(cat "$configdir/distros/$get_name" | grep 'Releases:' | cut -d':' -f2 | grep -o '[^ ]*')
+        echo "$releases" > ../releases
+        editions=$(cat "$configdir/distros/$get_name" | grep 'Editions:' | cut -d':' -f2 | grep -o '[^ ]*')
+        echo "$editions" > ../editions
+        if [ -z "$editions" ]; then
+            for release in $releases; do
+                echo "$get_name ${release}"
+                timeout 10 "$QUICKGET" -t "$get_name" "${release}" >> "$configdir/test_download" || echo "ERROR testing of $get_name ${release} ${edition}"
+            done
+        else
+            while read -r release; do
+                for edition in $editions; do
+                    echo "$get_name ${release} ${edition}"
+                    timeout 10 "$QUICKGET" -t "$get_name" "${release}" "${edition}" >> "$configdir/test_download" || echo "ERROR testing of $get_name ${release} ${edition}"
+                done
+            done < ../releases
+        fi
+    done < "$configdir/supported"
+    printf "\nDone\n"
+    cd "$path"
+}
+
+show_ISOs_urls(){
+    cd "$configdir/distros" || exit
+    mkdir -p "$configdir/distros/tmp"
+    while read -r get_name; do
+        printf '\n%s\n\n' "$get_name"
+        releases=$(cat "$configdir/distros/$get_name" | grep 'Releases:' | cut -d':' -f2 | grep -o '[^ ]*')
+        echo "$releases" > ../releases
+        editions=$(cat "$configdir/distros/$get_name" | grep 'Editions:' | cut -d':' -f2 | grep -o '[^ ]*')
+        echo "$editions" > ../editions
+        if [ -z "$editions" ]; then
+            for release in $releases; do
+                echo "$get_name ${release}"
+                timeout 10 "$QUICKGET" -s "$get_name" "${release}" || echo "ERROR showing ISO url of $get_name ${release}"
+            done
+        else
+            while read -r release; do
+                for edition in $editions; do
+                    echo "$get_name ${release} ${edition}"
+                    timeout 10 "$QUICKGET" -s "$get_name" "${release}" "${edition}" || echo "ERROR showing ISO url of $get_name ${release} ${edition}"
+                done
+            done < ../releases
+        fi
+    done < "$configdir/supported"
+    printf "\nDone\n"
+    cd "$path"
+}
+
+generate_if_needed() {
+    if [ ! -f "${configdir}"/supported ]; then
+        generate_supported
+    fi
+}
+
+generate_supported(){
+    echo "Extracting OS Editions and Releases..."
+    rm -rf "$configdir/distros"
+    touch "$configdir/config"
+    mkdir -p "$configdir/distros"
+    "$QUICKGET" | awk 'NR==2,/zorin/' | cut -d':' -f2 | grep -o '[^ ]*' > "$configdir/supported"
+    while read -r get_name; do
+        supported=$($QUICKGET $get_name | sed 1d)
+        echo ${get_name}
+        echo "$supported"
+        echo "$supported" > "$configdir/distros/${get_name}"
+    done < "$configdir/supported"
+}
+
+open_distro_homepage(){
+    gum_choose_os
+    "$QUICKGET" -o "${os}" >/dev/null 2>&1 &
+}
+
+ssh_into() {
+    echo "#TODO"
+}
+
+change_config_item() {
+    if [ -f "$config" ]; then
+        sed -i "s/^$item_name=.*$/$item_name=\"$new_value\"/" "$config"
+    else
+         echo "$item_name=\"$new_value\"" > "$config"
+    fi
+}
+
+change_config() {
+old_value=$(cat $config | grep '=' | grep "$item_name" | cut -d'=' -f2)
+gum confirm "Really change $item_name
+ From $old_value
+ To $new_value ?" && change_config_item; . "$config"
+}
+
+change_style_borders() {
+    header="Changing borders style"
+    show_header
+    height=6
+    item_name=borders_style
+    new_value=$(echo "none
+hidden
+normal
+rounded
+thick
+double" | gum filter --height $height)
+    change_config
+}
+
+change_style_spinner() {
+    height=11
+    item_name=spinner_style
+    new_value=$(echo "line
+dot
+minidot
+jump
+pulse
+points
+globe
+moon
+monkey
+meter
+hamburger" | gum filter --height $height)
+    change_config
+}
+
+change_all_colors() {
+    if command -v yad >/dev/null 2>&1; then
+        header="Define all colors value, use color picker or choose random"
+        show_header
+        height=5
+        item_name=all_colors
+        start=$(echo "random
+color picker
+custom
+don't use
+EXIT $progname" | gum filter --height $height)
+        case $start in
+            'random' ) new_value='$(( RANDOM % 255 + 1 ))';;
+            'color picker' ) new_value="$(yad --color)";;
+            'custom' ) new_value=$(gum input --header="Enter color value");;
+            "don't use" ) new_value="";;
+            'show help' ) help_main; show_help;;
+            "EXIT $progname" ) exit 0;;
+        esac
+    else
+        header="Define all colors value or choose random"
+        show_header
+        new_value=$(echo 'random' | gum filter --no-strict GUM_FILTER_PLACEHOLDER="custom" --height 1)
+    fi
+    change_config
+}
+
+change_color_borders() {
+    if command -v yad >/dev/null 2>&1; then
+        header="Define color, use color picker or choose random"
+        show_header
+        height=4
+        item_name=borders_color
+        start=$(echo "random
+color picker
+custom
+EXIT $progname" | gum filter --height $height)
+        case $start in
+            'random' ) new_value='$(( RANDOM % 255 + 1 ))';;
+            'color picker' ) new_value="$(xcolor)" || new_value="$(yad --color)";;
+            'custom' ) new_value=$(gum input  --header="Enter color value");;
+            'show help' ) help_main; show_help;;
+            "EXIT $progname" ) exit 0;;
+        esac
+    else
+        header="Define color number or choose random"
+        show_header
+        new_value=$(echo 'random' | gum filter --no-strict GUM_FILTER_PLACEHOLDER="custom" --height 1)
+    fi
+    change_config
+}
+
+change_color_indicator() {
+    if command -v yad >/dev/null 2>&1; then
+        header="Define indicator color value, use color picker or choose random"
+        show_header
+        height=5
+        item_name=indicators_color
+        start=$(echo "random
+color picker
+custom
+EXIT $progname" | gum filter --height $height)
+        case $start in
+            'random' ) new_value='$(( RANDOM % 255 + 1 ))';;
+            'color picker' ) new_value="$(xcolor)" || new_value="$(yad --color)";;
+            'custom' ) new_value=$(gum input --header="Enter color value");;
+            'show help' ) help_main; show_help;;
+            "EXIT $progname" ) exit 0;;
+        esac
+    else
+        header="Define indicator color value or choose random"
+        show_header
+        new_value=$(echo 'random' | gum filter --no-strict GUM_FILTER_PLACEHOLDER="custom" --height 1)
+    fi
+    change_config
+}
+
+change_color_spinner() {
+    if command -v yad >/dev/null 2>&1; then
+        header="Define color, use color picker or choose random"
+        show_header
+        height=4
+        item_name=spinner_color
+        start=$(echo "random
+color picker
+custom
+EXIT $progname" | gum filter --height $height)
+        case $start in
+            'random' ) new_value='$(( RANDOM % 255 + 1 ))';;
+            'color picker' ) new_value="$(xcolor)" || new_value="$(yad --color)";;
+            'custom' ) new_value=$(gum input  --header="Enter color value");;
+            'show help' ) help_main; show_help;;
+            "EXIT $progname" ) exit 0;;
+        esac
+    else
+        header="Define color number or choose random"
+        show_header
+        new_value=$(echo 'random' | gum filter --no-strict GUM_FILTER_PLACEHOLDER="custom" --height 1)
+    fi
+    change_config
+}
+
+generate_desktop_files() {
+    mkdir -p "$configdir"/supported.desktop
+    rm "$configdir"/supported.desktop/*.desktop
+    echo "$MSG_INTERM"
+    run_in_terminal
+    while read -r get_name; do
+        vm_desktop=$(echo "$get_name" | tr ' ' '_')
+        releases=$("$portable_prefix"quickget "$vm_desktop" | grep 'Releases' | cut -d':' -f2 | sed 's/^ //' | sed 's/ *$//')
+        editions=$("$portable_prefix"quickget "$vm_desktop" | grep 'Editions' | cut -d':' -f2 | sed 's/^ //' | sed 's/ *$//')
+        icon_name="$ICON_DIR/$get_name"
+        if [ -f "$icon_name.svg" ]; then
+            icon_file="$icon_name.svg"
+        elif [ -f "$icon_name.png" ]; then
+            icon_file="$icon_name.png"
+        else
+            icon_file="$ICON_DIR/tux.svg"
+        fi
+        echo "$MSG_CREATING $vm_desktop $MSG_DESKTOP_ENTRY"
+        echo ""
+        # Check if there are editions
+        DESKTOP_FILE="$configdir/supported.desktop/$vm_desktop.desktop"
+        type="Application"
+        name="$get_name"
+        if [ -z "$editions" ]; then
+            execmd="sh -c 'cd ${path} && yad --form --field=\"Release:CB\" \"${releases// /$replace}\" | cut -d\"|\" -f1 | xargs -I{} sh -c \"${portable_prefix}quickget ${get_name} {}\";$SHELL'"
+        elif [ "$interminal" == "yes" ]; then
+            terminal="true"
+        else
+            execmd="sh -c 'cd ${path} && yad --form --separator=\" \" --field=\"Release:CB\" \"${releases// /$replace}\" --field=\"Edition:CB\" \"${editions// /$replace}\" | xargs -I{} sh -c \"${portable_prefix}quickget ${get_name} {}\";$SHELL'"
+        fi
+        icon="$icon_file"
+        categories='System;Virtualization;'
+        create_desktop_entry
+    done < "$configdir"/supported
+}
+# shellcheck disable=SC2154
+create_desktop_entry() {
+    cat <<EOF > "${DESKTOP_FILE}"
+[Desktop Entry]
+Version=$version
+Type=$type
+Name=$name
+GenericName=$progname
+Comment=$comment
+Exec=$execmd
+Icon=$icon
+Terminal=$terminal
+X-MultipleArgs=$args
+Type=$type
+Categories=$categories
+StartupNotify=$notify
+MimeType=$mime
+Keywords=$keyword
+
+EOF
+}
+
+# MENU
+
+#TODO ssh into VM
+#TODO Get ID of running VM (for killing)
+#TODO Kill VM
+#TODO Get distro icons
+
+show_menu_main() {
+    while true
+    do
+    height=10
+    start=$(echo "run VM
+create new VM
+ssh into $running
+open distro homepage
+delete VM
+advanced menu
+settings menu
+test menu
+show help
+EXIT $progname" | $gum_filter_cmd --height $height)
+    case $start in
+        'create new VM' ) create_VM;;
+        "ssh into $running" ) ssh_into;;
+        'advanced menu' ) show_menu_advanced;;
+        'settings menu' ) show_menu_settings;;
+        'run VM' ) gum_choose_VM && run_VM;;
+        'open distro homepage' ) open_distro_homepage;;
+        'delete VM' ) gum_choose_VM_to_delete;;
+        'test menu' ) show_menu_test;;
+        'show help' ) help_main; show_help;;
+        "EXIT $progname" ) exit 0;;
+    esac
+    done
+}
+
+show_menu_advanced() {
+    while true
+    do
+    header="advanced"
+    show_header
+    height=8
+    start=$(echo "test ISOs download
+show ISOs URLs
+set default config for VMs
+edit VM config
+custom quickemu command
+add new distro
+back to main menu
+EXIT $progname" | gum filter --height $height)
+    case $start in
+        'set default config for VMs' ) edit_default_VMs_config;;
+        'edit VM config' ) edit_VM_config;;
+        'custom quickemu command' ) custom_quickemu_command;;
+        'add new distro' ) add_new_distro;;
+        'test ISOs download' ) test_ISOs_download;;
+        'show ISOs URLs' ) show_ISOs_urls;;
+        'back to main menu') clear; show_headers_small; break;;
+        "EXIT $progname" ) exit 0;;
+    esac
+    done
+}
+
+show_menu_settings() {
+    while true
+    do
+    header="settings"
+    show_header
+    height=11
+    start=$(echo "update $progname
+regenerate supported
+generate desktop files
+change all colors
+change borders color
+change borders style
+change indicator color
+change spinner color
+change spinner style
+back to main menu
+EXIT $progname" | gum filter --height $height)
+    case $start in
+        "update $progname" ) update_quicktui;;
+        'regenerate supported' ) generate_supported;;
+        'change config' ) change_config;;
+        'generate desktop files' ) generate_desktop_files;;
+        'change all colors' ) change_all_colors;;
+        'change borders color' ) change_color_borders;;
+        'change borders style' ) change_style_borders;;
+        'change indicator color' ) change_color_indicator;;
+        'change spinner style' ) change_style_spinner;;
+        'change spinner color' ) change_color_spinner;;
+        'back to main menu') clear; show_headers_small; break;;
+        "EXIT $progname" ) exit 0;;
+    esac
+    done
+}
+
+show_menu_test() {
+    while true
+    do
+    header="dev (Not for use!)"
+    show_header
+    height=27
+    start=$(echo "add new distro
+change spinner
+choose vm to delete
+create vm
+create desktop entry
+custom quickemu command
+delete vm
+edit vm config
+edit default vms config
+generate if needed
+generate supported
+gum choose vm
+gum choose editions
+gum choose os
+gum choose release
+open distro homepage
+qemu version
+quickemu version
+run vm
+show isos urls
+show custom
+show editor
+show headers
+show vms
+test isos download
+back to main menu
+EXIT $progname" | gum filter --height $height)
+    case $start in
+        'add new distro' ) add_new_distro;;
+        'change spinner' ) change_spinner;;
+        'choose vm to delete' ) gum_choose_VM_to_delete;;
+        'create vm' ) create_VM;;
+        'create desktop entry' ) create_desktop_entry;;
+        'custom quickemu command' ) custom_quickemu_command;;
+        'delete vm' ) delete_VMe;;
+        'edit vm config' ) edit_VM_config;;
+        'edit default vms config' ) edit_default_VMs_config;;
+        'generate if needed' ) generate_if_needed;;
+        'generate supported' ) generate_supported;;
+        'gum choose vm' ) gum_choose_VM;;
+        'gum choose editions' ) gum_choose_edition;;
+        'gum choose os' ) gum_choose_os;;
+        'gum choose release' ) gum_choose_release;;
+        'open distro homepage' ) open_distro_homepage;;
+        'qemu version' ) show_version_qemu;;
+        'quickemu version' ) show_version_quickemu;;
+        'run vm' ) run_VM;;
+        'show isos urls' ) show_ISOs_urls;;
+        'show custom' ) show_custom;;
+        'show editor' ) show_editor;;
+        'show headers' ) show_headers;;
+        'show vms' ) show_vms;;
+        'test isos download' ) test_ISOs_download;;
+        'back to main menu') clear; show_headers_small; break;;
+        "EXIT $progname" ) exit 0;;
+    esac
+    done
+}
+# run
+#clear
+define_variables
+generate_if_needed
+show_headers_small
+show_menu_main
