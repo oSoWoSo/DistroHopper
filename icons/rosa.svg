@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="512"
+   height="512"
+   version="1.1"
+   id="svg20"
+   sodipodi:docname="rosa.svg"
+   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs24" />
+  <sodipodi:namedview
+     id="namedview22"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     showgrid="false"
+     inkscape:zoom="1.7050781"
+     inkscape:cx="251.30813"
+     inkscape:cy="256"
+     inkscape:window-width="3440"
+     inkscape:window-height="1417"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg20" />
+  <circle
+     style="opacity:0.2;stroke-width:8.77193"
+     cx="256.54446"
+     cy="261.84048"
+     r="245.61403"
+     id="circle2" />
+  <circle
+     style="fill:#3757a1;stroke-width:8.77193"
+     cx="256.54446"
+     cy="253.06856"
+     r="245.61403"
+     id="circle4" />
+  <path
+     style="opacity:0.1;fill:#ffffff;stroke-width:8.77193"
+     d="M 256.54446,7.454521 A 245.61404,245.61404 0 0 0 10.930419,253.06856 a 245.61404,245.61404 0 0 0 0.1886,5.14035 A 245.61404,245.61404 0 0 1 256.54446,16.226451 245.61404,245.61404 0 0 1 501.97428,256.70014 245.61404,245.61404 0 0 0 502.1585,253.06856 245.61404,245.61404 0 0 0 256.54446,7.454521 Z"
+     id="path6" />
+  <g
+     style="opacity:0.2;fill:none;stroke:#000000;stroke-width:3;stroke-linejoin:round"
+     id="g12"
+     transform="matrix(8.7719298,0,0,8.7719298,-24.157291,-27.633199)">
+    <path
+       d="m 48.5,33 c 0,9.113 -7.387,16.5 -16.5,16.5 -9.113,0 -16.5,-7.387 -16.5,-16.5 0,-9.113 7.387,-16.5 16.5,-16.5 4.556,0 16.5,0 16.5,0 0,0 0,11.944 0,16.5 z"
+       id="path8" />
+    <path
+       d="m 48.5,16.5 c 0,0 -1.5,9.5 -9.5,16 C 31,39 20,45 20,45 v 0 0"
+       id="path10" />
+  </g>
+  <g
+     style="fill:none;stroke:#ffffff;stroke-width:3;stroke-linejoin:round"
+     id="g18"
+     transform="matrix(8.7719298,0,0,8.7719298,-24.157291,-27.633199)">
+    <path
+       d="m 48.5,15.5 c 0,0 -1.5,9.5 -9.5,16 C 31,38 20,44 20,44 v 0 0"
+       id="path14" />
+    <path
+       d="m 48.5,32 c 0,9.113 -7.387,16.5 -16.5,16.5 -9.113,0 -16.5,-7.387 -16.5,-16.5 0,-9.113 7.387,-16.5 16.5,-16.5 4.556,0 16.5,0 16.5,0 0,0 0,11.944 0,16.5 z"
+       id="path16" />
+  </g>
+</svg>
