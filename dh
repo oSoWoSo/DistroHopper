@@ -16,8 +16,6 @@ trap 'exit' SIGINT SIGTERM SIGQUIT
 set -e
 echo "$MSG_RUNNING"
 
-while true
-do
 	function variables_set() {
 		# DEBUG mod
 		#bash -x ./dh 2>&1 | tee output.log
@@ -687,7 +685,8 @@ EOF
 
 
 # run ------------------------------------------------------------------
-
+while true
+do
 	variables_set
 
 	if [[ $# -eq 0 ]]; then
