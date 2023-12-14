@@ -55,15 +55,24 @@ function pretty_name() {
   local PRETTY_NAME=""
   SIMPLE_NAME="${1}"
   case ${SIMPLE_NAME} in
+    agarimos)           PRETTY_NAME="AgarimOS";;
     alma)               PRETTY_NAME="Alma Linux";;
     alpine)             PRETTY_NAME="Alpine Linux";;
     android)            PRETTY_NAME="Android x86";;
-    archlinux)          PRETTY_NAME="Arch Linux";;
     archcraft)          PRETTY_NAME="Archcraft";;
+    archlinux)          PRETTY_NAME="Arch Linux";;
     arcolinux)          PRETTY_NAME="Arco Linux";;
+    artixlinux)         PRETTY_NAME="Artix Linux";;
+    atheanos)           PRETTY_NAME="Athena OS";;
+    biglinux)           PRETTY_NAME="BigLinux";;
     blendos)            PRETTY_NAME="BlendOS";;
+    bodhi)              PRETTY_NAME="Bodhi Linux";;
     cachyos)            PRETTY_NAME="CachyOS";;
     centos-stream)      PRETTY_NAME="CentOS Stream";;
+    cereus)             PRETTY_NAME="Cereus Linux";;
+    chimera)            PRETTY_NAME="Chimera Linux";;
+    devuan)             PRETTY_NAME="Devuan";;
+    dietpi)             PRETTY_NAME="DietPi";;
     dragonflybsd)       PRETTY_NAME="DragonFlyBSD";;
     easyos)             PRETTY_NAME="EasyOS";;
     elementary)         PRETTY_NAME="elementary OS";;
@@ -71,6 +80,8 @@ function pretty_name() {
     endless)            PRETTY_NAME="Endless OS";;
     freebsd)            PRETTY_NAME="FreeBSD";;
     freedos)            PRETTY_NAME="FreeDOS";;
+    fvoid)              PRETTY_NAME="F-Void";;
+    gabeeos)            PRETTY_NAME="gabeeOS Linux";;
     garuda)             PRETTY_NAME="Garuda Linux";;
     ghostbsd)           PRETTY_NAME="GhostBSD";;
     holoiso)            PRETTY_NAME="SteamOS HoloISO";;
@@ -80,6 +91,7 @@ function pretty_name() {
     linuxmint)          PRETTY_NAME="Linux Mint";;
     lmde)               PRETTY_NAME="Linux Mint Debian Edition";;
     mageia)             PRETTY_NAME="Mageia";;
+    miyo)               PRETTY_NAME="Miyo Linux";;
     mxlinux)            PRETTY_NAME="MX Linux";;
     netboot)            PRETTY_NAME="netboot.xyz";;
     netbsd)             PRETTY_NAME="NetBSD";;
@@ -91,12 +103,17 @@ function pretty_name() {
     oraclelinux)        PRETTY_NAME="Oracle Linux";;
     peppermint)         PRETTY_NAME="PeppermintOS";;
     popos)              PRETTY_NAME="Pop!_OS";;
+    pureos)             PRETTY_NAME="PureOS";;
     reactos)            PRETTY_NAME="ReactOS";;
     rebornos)           PRETTY_NAME="RebornOS";;
     rockylinux)         PRETTY_NAME="Rocky Linux";;
+    slitaz)             PRETTY_NAME="SliTaz GNU/Linux";;
+    sparkylinux)        PRETTY_NAME="SparkyLinux";;
+    spiral)             PRETTY_NAME="SpiralLinux";;
     tinycore)           PRETTY_NAME="Tiny Core Linux";;
     truenas-core)       PRETTY_NAME="TrueNAS Core";;
     truenas-scale)      PRETTY_NAME="TrueNAS Scale";;
+    tuxedoos)           PRETTY_NAME="TuxedoOS";;
     ubuntu-budgie)      PRETTY_NAME="Ubuntu Budgie";;
     ubuntucinnamon)     PRETTY_NAME="Ubuntu Cinnamon";;
     ubuntukylin)        PRETTY_NAME="Ubuntu Kylin";;
@@ -105,7 +122,9 @@ function pretty_name() {
     ubuntustudio)       PRETTY_NAME="Ubuntu Studio";;
     ubuntu-unity)       PRETTY_NAME="Ubuntu Unity";;
     vanillaos)          PRETTY_NAME="Vanilla OS";;
+    ventoy)             PRETTY_NAME="Ventoy";;
     void)               PRETTY_NAME="Void Linux";;
+    voidpup)            PRETTY_NAME="Void Puppy";;
     vxlinux)            PRETTY_NAME="VX Linux";;
     xerolinux)          PRETTY_NAME="XeroLinux";;
     zorin)              PRETTY_NAME="Zorin OS";;
@@ -203,22 +222,31 @@ function list_csv() {
 }
 
 function os_support() {
-    echo alma \
+    echo agarimos \
+    alma \
     alpine \
     android \
     antix \
     archlinux \
     archcraft \
     arcolinux \
+    antix \
+    artixlinux \
+    athenaos \
     batocera \
+    bazzite \
+    biglinux \
     blendos \
     bodhi \
     bunsenlabs \
     cachyos \
     centos-stream \
+    cereus \
+    chimeralinux \
     debian \
     deepin \
     devuan \
+    dietpi \
     dragonflybsd \
     easyos \
     edubuntu \
@@ -228,6 +256,8 @@ function os_support() {
     fedora \
     freebsd \
     freedos \
+    fvoid \
+    gabeeos \
     garuda \
     gentoo \
     ghostbsd \
@@ -242,6 +272,7 @@ function os_support() {
     lmde \
     mageia \
     manjaro \
+    miyo \
     mxlinux \
     netboot \
     netbsd \
@@ -260,13 +291,17 @@ function os_support() {
     rockylinux \
     siduction \
     slackware \
+    slax \
+    slitaz \
     solus \
+    sparkylinux \
     spiral \
     tails \
     tinycore \
     trisquel \
     truenas-core \
     truenas-scale \
+    tuxedoos \
     ubuntu \
     ubuntu-budgie \
     ubuntucinnamon \
@@ -276,7 +311,9 @@ function os_support() {
     ubuntustudio \
     ubuntu-unity \
     vanillaos \
+    ventoy \
     void \
+    voidpup \
     vxlinux \
     windows \
     xerolinux \
@@ -289,6 +326,7 @@ function os_homepages(){
     local HOMEPAGE=""
     SIMPLE_NAME="${1}"
     case ${SIMPLE_NAME} in
+        agarimos)          HOMEPAGE="https://sourceforge.net/projects/agarimos/";;
         alma)              HOMEPAGE="https://almalinux.org/";;
         alpine)            HOMEPAGE="https://alpinelinux.org/";;
         android)           HOMEPAGE="https://www.android-x86.org/";;
@@ -296,15 +334,22 @@ function os_homepages(){
         archlinux)         HOMEPAGE="https://archlinux.org/";;
         archcraft)         HOMEPAGE="https://archcraft.io/";;
         arcolinux)         HOMEPAGE="https://arcolinux.com/";;
+        artixlinux)        HOMEPAGE="https://artixlinux.com/";;
+        athenaos)          HOMEPAGE="https://athenaos.org/";;
         batocera)          HOMEPAGE="https://batocera.org/";;
+        bazzite)           HOMEPAGE="https://bazzite.gg/";;
+        biglinux)          HOMEPAGE="https://www.biglinux.com.br/";;
         blendos)           HOMEPAGE="https://blendos.co/";;
         bodhi)             HOMEPAGE="https://www.bodhilinux.com/";;
         bunsenlabs)        HOMEPAGE="https://www.bunsenlabs.org/";;
         cachyos)           HOMEPAGE="https://cachyos.org/";;
         centos-stream)     HOMEPAGE="https://www.centos.org/centos-stream/";;
+        cereues)           HOMEPAGE="https://cereus-linux.sourceforge.io/";;
+        chimeralinux)      HOMEPAGE="https://chimera-linux.org/";;
         debian)            HOMEPAGE="https://www.debian.org/";;
         deepin)            HOMEPAGE="https://www.deepin.org/";;
         devuan)            HOMEPAGE="https://www.devuan.org/";;
+        dietpi)            HOMEPAGE="https://dietpi.com/";;
         dragonflybsd)      HOMEPAGE="https://www.dragonflybsd.org/";;
         easyos)            HOMEPAGE="https://easyos.org/";;
         edubuntu)          HOMEPAGE="https://www.edubuntu.org/";;
@@ -314,6 +359,8 @@ function os_homepages(){
         fedora)            HOMEPAGE="https://www.fedoraproject.org/";;
         freebsd)           HOMEPAGE="https://www.freebsd.org/";;
         freedos)           HOMEPAGE="https://freedos.org/";;
+        fvoid)             HOMEPAGE="https://f-void.sourceforge.io/";;
+        gabeeos)           HOMEPAGE="https://gabeeoslinux.sourceforge.io/";;
         garuda)            HOMEPAGE="https://garudalinux.org/";;
         gentoo)            HOMEPAGE="https://www.gentoo.org/";;
         ghostbsd)          HOMEPAGE="https://www.ghostbsd.org/";;
@@ -329,6 +376,7 @@ function os_homepages(){
         mageia)            HOMEPAGE="https://www.mageia.org/";;
         manjaro)           HOMEPAGE="https://manjaro.org/";;
         mxlinux)           HOMEPAGE="https://mxlinux.org/";;
+        miyo)              HOMEPAGE="https://miyolinux.sourceforge.io/";;
         netboot)           HOMEPAGE="https://netboot.xyz/";;
         netbsd)            HOMEPAGE="https://www.netbsd.org/";;
         nixos)             HOMEPAGE="https://nixos.org/";;
@@ -346,13 +394,17 @@ function os_homepages(){
         rockylinux)        HOMEPAGE="https://rockylinux.org/";;
         siduction)         HOMEPAGE="https://siduction.org/";;
         slackware)         HOMEPAGE="http://www.slackware.com/";;
+        slax)              HOMEPAGE="https://www.slax.org/";;
+        slitaz)            HOMEPAGE="https://www.slitaz.org/";;
         solus)             HOMEPAGE="https://getsol.us/";;
+        sparkylinux)       HOMEPAGE="https://sparkylinux.org/";;
         spiral)            HOMEPAGE="https://spirallinux.github.io/";;
         tails)             HOMEPAGE="https://tails.net/";;
         tinycore)          HOMEPAGE="http://www.tinycorelinux.net/";;
         trisquel)          HOMEPAGE="https://trisquel.info/";;
         truenas-core)      HOMEPAGE="https://www.truenas.com/truenas-core/";;
         truenas-scale)     HOMEPAGE="https://www.truenas.com/truenas-scale/";;
+        tuxedoos)          HOMEPAGE="https://www.tuxedocomputers.com/en/TUXEDO-OS_1.tuxedo";;
         ubuntu)            HOMEPAGE="https://ubuntu.com/";;
         ubuntu-budgie)     HOMEPAGE="https://ubuntubudgie.org/";;
         ubuntucinnamon)    HOMEPAGE="https://ubuntucinnamon.org/";;
@@ -362,7 +414,9 @@ function os_homepages(){
         ubuntustudio)      HOMEPAGE="https://ubuntustudio.org/";;
         ubuntu-unity)      HOMEPAGE="https://ubuntuunity.org/";;
         vanillaos)         HOMEPAGE="https://vanillaos.org/";;
+        ventoy)            HOMEPAGE="https://www.ventoy.net/";;
         void)              HOMEPAGE="https://voidlinux.org/";;
+        voidpup)           HOMEPAGE="https://sourceforge.net/projects/vpup/";;
         vxlinux)           HOMEPAGE="https://vxlinux.org/";;
         windows)           HOMEPAGE="https://www.microsoft.com/en-us/windows/";;
         xerolinux)         HOMEPAGE="https://xerolinux.xyz/";;
@@ -371,6 +425,138 @@ function os_homepages(){
     esac
     echo "${HOMEPAGE}"
 }
+
+# Not in upstream
+function releases_agarimos() {
+    echo latest
+}
+
+function editions_agarimos() {
+    echo plasma xfce lxqt gnome
+}
+
+function releases_artixlinux() {
+    echo stable
+}
+
+function editions_artixlinux() {
+    echo base-dinit base-openrc base-runit base-s6 cinnamon-dinit cinnamon-openrc cinnamon-runit cinnamon-s6 lxde-dinit lxde-openrc lxde-runit lxde-s6 lxqt-dinit lxqt-openrc lxqt-runit lxqt-s6 mate-dinit mate-openrc mate-runit mate-s6 plasma-dinit plasma-openrc plasma-runit plasma-s6 xfce-dinit xfce-openrc xfce-runit xfce-s6 community-gtk-openrc community-qt-openrc
+}
+
+function releases_athenaos() {
+    echo 23.06.23
+}
+
+function releases_batocera() {
+  echo latest
+}
+
+function releases_bazzite() {
+    echo $(wget -q -O- "https://api.github.com/repos/ublue-os/bazzite/releases" | grep 'download_url' | grep 'sum' | cut -d '/' -f8 | cut -d'v' -f2 | tr '\n' ' ')
+}
+
+function releases_biglinux() {
+    echo kde
+}
+
+function releases_blendos() {
+# Pull the rss feed
+wget -q https://sourceforge.net/projects/blendos/rss?path=/ISOs/ -O- | grep -E -o 'https://.*blendOS\.iso.*</media:hash' >/tmp/blendos-isos.rss
+
+    local RLIST
+    RLIST=$(grep -E -o 'https://.*blendOS\.iso.*</media:hash' /tmp/blendos-isos.rss | cut -d/ -f 8-9 | sort -r -t/  --key=2 |grep -e '16878' -e '168[8-9]')
+    echo ${RLIST}
+}
+
+function releases_bunsenlabs() {
+    echo latest
+}
+
+function releases_cereus() {
+    echo latest
+}
+
+function editions_cereus() {
+    echo base lxqt xfce
+}
+
+function releases_chimeralinux() {
+    echo latest
+}
+
+function editions_chimeralinux() {
+    echo base gnome
+}
+
+function releases_dietpi() {
+    echo bios uefi
+}
+
+function editions_dietpi() {
+    echo bookworm bookworm-installer bullseye bullseye-installer
+}
+
+function releases_fvoid() {
+    echo latest
+}
+
+function releases_gabeeos() {
+    echo latest
+}
+
+function editions_gabeeos() {
+    echo openbox qtile
+}
+
+function releases_miyo() {
+    echo 2022
+}
+
+function editions_miyo(){
+    echo Kwin Deboot-Ceres JWM Openbox MATE
+}
+
+function releases_pureos() {
+    echo 9.0 10.3
+}
+
+function editions_pureos() {
+    echo gnome plasma
+}
+
+function releases_slax() {
+    echo latest
+}
+
+function editions_slax() {
+    echo Debian Slackware
+}
+
+function releases_slitaz() {
+    echo preferred core core64 loram core-5in1 preinit
+}
+
+function releases_sparkylinux() {
+    echo 7.1 2023.07
+}
+
+function editions_sparkylinux() {
+    echo lxqt mate xfce kde minimalgui minimalcli gameover multimedia rescue
+}
+
+function releases_tuxedoos() {
+    echo 2
+}
+
+function releases_ventoy() {
+    echo 1.0.95
+}
+
+function releases_voidpup() {
+    echo latest
+}
+
+# QUICKEMU STANDARD
 
 function releases_alma() {
     echo 8 9
@@ -1096,6 +1282,11 @@ EOF
             echo "disk_size=\"2G\"" >> "${CONF_FILE}"
             echo "ram=\"128M\"" >> "${CONF_FILE}"
             ;;
+          slitaz)
+            echo "boot=\"legacy\"" >> "${CONF_FILE}"
+            echo "disk_size=\"4G\"" >> "${CONF_FILE}"
+            echo "ram=\"512M\"" >> "${CONF_FILE}"
+            ;;
           truenas-scale|truenas-core)
             echo "boot=\"legacy\"" >> "${CONF_FILE}"
            # the rest is non-functional
@@ -1152,6 +1343,366 @@ EOF
     echo
     exit 0
 }
+
+# QUICKEMU-EXTENDED ONLY DISTROS!
+
+function get_agarimos() {
+    local EDITION="${1:-}"
+    local HASH=""
+    local ISO=""
+    local URL=""
+    #local DATE=""
+    #local KERNEL=""
+    case ${EDITION} in
+        gnome)
+            URL="https://sourceforge.net/projects/agarimos/files/Gnome"
+            ISO="AgarimOS-Gnome-Catppuccin-Liv-x86_64-6.5.12_1-20231130.iso"
+            ;;
+        plasma)
+            URL="https://sourceforge.net/projects/agarimos/files/Plasma"
+            ISO="AgarimOS-Plasma-Dracula-Live-x86_64-6.5.11_1-20231120.iso"
+            ;;
+        xfce)
+            URL="https://sourceforge.net/projects/agarimos/files/XFCE4"
+            ISO="AgarimOS-XFCE4-Catppuccin-Live-x86_64-6.5.12_1-20231122.iso"
+            ;;
+        lxqt)
+            URL="https://sourceforge.net/projects/agarimos/files/LXQT-KWIN"
+            ISO="AgarimOS-LXQT-KWIN-Dracula-Live-x86_64-6.5.12_1-20231121.iso"
+            ;;
+    esac
+
+    HASH=$(wget -q -O- "${URL}/${ISO}.sha256" | cut -d' ' -f1)
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+function get_artixlinux() {
+    local EDITION="${1:-}"
+    local HASH=""
+    local ISO=""
+    local URL="https://iso.artixlinux.org/iso"
+    DATE=$(wget -q -O- ${URL}/sha256sums | cut -d'-' -f4 | head -1)
+    ISO="artix-${EDITION}-${DATE}-x86_64.iso"
+    HASH=$(wget -q -O- ${URL}/sha256sums | grep "${ISO}")
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+function get_athenaos() {
+    local HASH=""
+    local URL=""
+    local TMPURL=""
+    local ISO="athena-2023.06.23-x86_64.iso"
+    TMPURL=$(wget -q -S -O- --max-redirect=0 "https://sourceforge.net/projects/athena-iso/files/v23.06.23/${ISO}/download" 2>&1 | grep -i Location | cut -d' ' -f4)
+    URL=${TMPURL%\?*}
+    echo "${URL} ${HASH}"
+}
+
+function get_batocera() {
+    local HASH=""
+    local URL="https://mirrors.o2switch.fr/batocera/x86_64/stable/last"
+    local ISO="$(curl -sl ${URL}/ | grep -e 'batocera.*img.gz'|cut -d\" -f2)"
+     echo "${URL}/${ISO} ${HASH}"
+}
+
+function get_bazzite() {
+    local HASH=""
+    local ISO=""
+    local URL="https://github.com/ublue-os/bazzite/releases/download/v${RELEASE}"
+
+    ISO=$(wget -q -O- "https://api.github.com/repos/ublue-os/bazzite/releases" | grep 'download_url' | grep 'sum' | cut -d '"' -f4 | cut -d'.' -f1-5 | grep "${RELEASE}" | cut -d'/' -f9)
+    HASH=$(wget -q -O- "${URL}/${ISO}.sha256sum" | grep 'SHA256' | cut -d' ' -f4)
+     echo "${URL}/${ISO} ${HASH}"
+}
+
+function get_biglinux() {
+    local HASH=""
+    local ISO=""
+    local URL="https://iso.biglinux.com.br/"
+    ISO=$(grep -Eo 'biglinux_[0-9]{4}(-[0-9]{2}){2}_k[0-9]{2,3}.iso' <(wget -q -O- ${URL}) | sort -u | tail -n2 | head -n1)
+    HASH=$(curl -s ${URL}${ISO}.md5 | grep -Eo '[[:alnum:]]{32}')
+    echo "${URL}${ISO} ${HASH}"
+}
+
+function get_cereus() {
+    local EDITION="${1:-}"
+    local HASH=""
+    local DATE=""
+    local ISO=""
+    local URL="https://sourceforge.net/projects/cereus-linux/files/isos/beta/latest/${EDITION}"
+    DATE=$(wget -q -O- https://sourceforge.net/projects/cereus-linux/files/isos/beta/latest/base/SHA256SUM | grep 'x86_64-base' | rev | cut -d'-' -f1 | rev | cut -d'.' -f1-3)
+    ISO="cereus-beta-live-x86_64-${EDITION}-${DATE}.iso"
+    case ${EDITION} in
+      base) HASH=$(wget -q -O- "${URL}/SHA256SUM" | grep "${ISO}" | cut -d' ' -f1);;
+      *) HASH=$(wget -q -O- "${URL}/SHA256" | grep "${ISO}" | cut -d' ' -f1);;
+    esac
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+function get_chimeralinux() {
+    local EDITION="${1:-}"
+    local HASH=""
+    local DATE=""
+    local ISO=""
+    local URL="https://repo.chimera-linux.org/live/${RELEASE}"
+    DATE=$(wget -q -O- "${URL}/sha256sums.txt" | head -n1 | cut -d'-' -f5)
+    ISO="chimera-linux-x86_64-LIVE-${DATE}-${EDITION}.iso"
+    HASH=$(wget -q -O- "${URL}/sha256sums.txt" | grep 'x86_64-LIVE' | grep "${EDITION}" | cut -d' ' -f1)
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+function get_dietpi() {
+    local HASH=""
+    local ISO=""
+    local URL="https://dietpi.com/downloads/images"
+    case ${RELEASE} in
+      bios)
+        case ${EDITION} in
+          bookworm)
+            local ISO="DietPi_NativePC-BIOS-x86_64-Bookworm.7z"
+            ;;
+          bullseye)
+            local ISO="DietPi_NativePC-BIOS-x86_64-Bullseye.7z"
+            ;;
+          bookworm-installer)
+            local ISO="DietPi_NativePC-BIOS-x86_64-Bookworm_Installer.7z"
+            ;;
+          bullseye-installer)
+            local ISO="DietPi_NativePC-BIOS-x86_64-Bullseye_Installer.7z"
+            ;;
+        esac
+      ;;
+      uefi)
+        case ${EDITION} in
+          bookworm-installer)
+            local ISO="DietPi_NativePC-UEFI-x86_64-Bookworm_Installer.7z"
+            ;;
+          bullseye-installer)
+            local ISO="DietPi_NativePC-UEFI-x86_64-Bullseye_Installer.7z"
+            ;;
+        esac
+      ;;
+    esac
+    HASH=$(wget -q -O- "${URL}/SHASUMS.txt" | grep "${ISO}" | cut -d' ' -f1)
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+function get_fvoid() {
+    local HASH=""
+    local URL=""
+    local TMPURL=""
+    TMPURL=$(wget -q -S -O- --max-redirect=0 "https://sourceforge.net/projects/f-void/files/latest/download" 2>&1 | grep -i Location | cut -d' ' -f4)
+    URL=${TMPURL%\?*}
+    echo "${URL} ${HASH}"
+}
+
+function get_gabeeos() {
+    local HASH=""
+    local URL=""
+#    local TMPURL=""
+#    TMPURL=$(wget -q -S -O- --max-redirect=0 "https://sourceforge.net/projects/gabeeos/files/latest/download" 2>&1 | grep -i Location | cut -d' ' -f4)
+    case ${EDITION} in
+      openbox)
+        ISO="gabeeOSLinux-Openbox-Cherry-x86_64-6.1.25_1-20230502.iso"
+        URL="https://sourceforge.net/projects/gabeeoslinux/files/Distro/Openbox/beta"
+        HASH=$(wget -q -O- ${URL}/SHA256 | grep "${ISO}" | cut -d' ' -f2)
+        ;;
+      qtile)
+        ISO="gabeeOSLinux-Qtile-x86_64-6.1.25_1-20230508.iso"
+        URL="https://sourceforge.net/projects/gabeeoslinux/files/Distro/Qtile/beta"
+        HASH=$(wget -q -O- ${URL}/SHA256 | grep "${ISO}" | cut -d' ' -f4)
+        ;;
+    esac
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+function get_miyo() {
+    local EDITION="${1:-}"
+    local HASH=""
+    local URL="https://sourceforge.net/projects/miyolinux/files/${RELEASE}-Release/${EDITION}"
+
+    case ${EDITION} in
+      Kwin) ISO="miyo-kwin-x86_64-BIOS-20220526.iso";;
+      Deboot-Ceres) ISO="Deboot-Ceres-x86-64-BIOS-20220415.iso";;
+      JWM) ISO="miyolinux-jwm-x86_64-BIOS-20220226.iso";;
+      Openbox) ISO="MiyoLinux-x86_64-BIOS-20220129.iso";;
+      MATE) ISO="mate-minimal-x86_64-BIOS-20220107.iso";;
+    esac
+
+    HASH=$(wget -q -O- "${URL}/${ISO}.sha256" | cut -d' ' -f1)
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+function get_pureos() {
+    local EDITION="${1:-}"
+    local HASH=""
+    local ISO=""
+    local URL=""
+    case ${RELEASE} in
+      9)
+        URL="https://downloads.puri.sm/9/live/${EDITION}/2020-08-06"
+        ISO="pureos-${RELEASE}-${EDITION}-live_20200806-amd64.hybrid.iso"
+        HASH=$(wget -q -O- "${URL}/checksums.sha256sum" | grep "${ISO}" | cut -d' ' -f1)
+        ;;
+      10)
+        URL="https://downloads.puri.sm/10/${EDITION}/2023-06-14"
+        ISO="pureos-${RELEASE}-${EDITION}-live-20230614_amd64.iso"
+        HASH=$(wget -q -O- "${URL}/pureos-${RELEASE}-${EDITION}-live-20230614_amd64.checksums_sha256.txt" | head -1 | cut -d' ' -f1)
+    esac
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+function get_rebornos() {
+   local ISO=$(curl -s 'https://www.rebornos.org/download/' | grep -ohE 'https://pub-cb7a4d4f7a974896b3bf40c52d1defbc.r2.dev/RebornOS-ISO/(rebornos_xfce_minimal|rebornos_iso)-[0-9]{4}.[0-9]{2}.[0-9]{2}-x86_64.iso' | tail -n1)
+   local HASH=$(curl -s 'https://www.rebornos.org/download/' | grep -ozP 'Checksum MD5:.*[0-9a-fA-F]{32}' | grep -zoP '[0-9a-fA-F]{32}' | cut -d '' -f1)
+   echo "${ISO} ${HASH}"
+}
+
+function get_slax() {
+    local HASH=""
+    local ISO=""
+    local URL="https://slax.org/download-slax.php?a=64bit&b=${EDITION}"
+    case ${EDITION} in
+      Debian) ISO="slax-64bit-11.6.0.iso"
+          HASH="b3771211c4485fec2e4f2418b06125f3e53424c5"
+      ;;
+      Slackware) ISO="slax-64bit-15.0.1.iso"
+          HASH="4ec9dff930251fbae847a56b18d53505147faf84"
+      ;;
+    esac
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+function get_slitaz() {
+    local HASH=""
+    local ISO="slitaz-rolling-${RELEASE}"
+    local URL="http://mirror.slitaz.org/iso/rolling"
+    case ${RELEASE} in
+      preferred) ISO="slitaz-rolling";;
+      *)   ISO="slitaz-rolling-${RELEASE}";;
+    esac
+    HASH=$(wget -q -O- "${URL}/${ISO}.md5" |  cut -d' ' -f1)
+    echo "${URL}/${ISO}.iso ${HASH}"
+}
+
+function get_sparkylinux() {
+    local EDITION="${1:-}"
+    local HASH=""
+    local ISO=""
+    local URL=""
+    ISO="sparkylinux-${RELEASE}-x86_64-${EDITION}.iso"
+    case ${EDITION} in
+      minimalcli) URL="https://sourceforge.net/projects/sparkylinux/files/cli";;
+      minimalgui) URL="https://sourceforge.net/projects/sparkylinux/files/base";;
+      *)   URL="https://sourceforge.net/projects/sparkylinux/files/${EDITION}";;
+    esac
+    HASH=$(wget -q -O- ${URL}/${ISO}.allsums.txt | head -2 | grep 'iso' | cut -d' ' -f1)
+    echo "${URL}/${ISO}" "${HASH}"
+}
+
+function get_tuxedoos() {
+    local DATE="202309111354"
+    local HASH=""
+    local ISO="TUXEDO-OS-${RELEASE}-${DATE}.iso"
+    local URL="https://os.tuxedocomputers.com/"
+    HASH=$(wget -q -O- "${URL}/checksums" | grep "${ISO}" | cut -d' ' -f1)
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+function get_ventoy() {
+    local HASH=""
+    local ISO="ventoy-${RELEASE}-livecd.iso"
+    local URL="https://github.com/ventoy/Ventoy/releases/download/v${RELEASE}"
+    HASH="$(wget -q -O- "${URL}/sha256.txt" | grep "${ISO}" | cut -d' ' -f4)"
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+function get_voidpup() {
+    local HASH=""
+    local URL=""
+    local TMPURL=""
+    TMPURL=$(wget -q -S -O- --max-redirect=0 "https://sourceforge.net/projects/vpup/files/latest/download" 2>&1 | grep -i Location | cut -d' ' -f4)
+    URL=${TMPURL%\?*}
+    echo "${URL} ${HASH}"
+}
+
+function get_slax() {
+    local HASH=""
+    local ISO=""
+    local URL="https://slax.org/download-slax.php?a=64bit&b=${EDITION}"
+    case ${EDITION} in
+      Debian) ISO="slax-64bit-11.6.0.iso"
+          HASH="b3771211c4485fec2e4f2418b06125f3e53424c5"
+      ;;
+      Slackware) ISO="slax-64bit-15.0.1.iso"
+          HASH="4ec9dff930251fbae847a56b18d53505147faf84"
+      ;;
+    esac
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+function get_slitaz() {
+    local HASH=""
+    local ISO="slitaz-rolling-${RELEASE}"
+    local URL="http://mirror.slitaz.org/iso/rolling"
+    case ${RELEASE} in
+      preferred) ISO="slitaz-rolling";;
+      *)   ISO="slitaz-rolling-${RELEASE}";;
+    esac
+    HASH=$(wget -q -O- "${URL}/${ISO}.md5" |  cut -d' ' -f1)
+    echo "${URL}/${ISO}.iso ${HASH}"
+}
+
+function get_sparkylinux() {
+    local EDITION="${1:-}"
+    local HASH=""
+    local ISO=""
+    local URL=""
+    ISO="sparkylinux-${RELEASE}-x86_64-${EDITION}.iso"
+    case ${EDITION} in
+      minimalcli) URL="https://sourceforge.net/projects/sparkylinux/files/cli";;
+      minimalgui) URL="https://sourceforge.net/projects/sparkylinux/files/base";;
+      *)   URL="https://sourceforge.net/projects/sparkylinux/files/${EDITION}";;
+    esac
+    HASH=$(wget -q -O- ${URL}/${ISO}.allsums.txt | head -2 | grep 'iso' | cut -d' ' -f1)
+    echo "${URL}/${ISO}" "${HASH}"
+}
+
+function get_tuxedoos() {
+    local DATE="202309111354"
+    local HASH=""
+    local ISO="TUXEDO-OS-${RELEASE}-${DATE}.iso"
+    local URL="https://os.tuxedocomputers.com/"
+    HASH=$(wget -q -O- "${URL}/checksums" | grep "${ISO}" | cut -d' ' -f1)
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+function get_ventoy() {
+    local HASH=""
+    local ISO="ventoy-${RELEASE}-livecd.iso"
+    local URL="https://github.com/ventoy/Ventoy/releases/download/v${RELEASE}"
+    HASH="$(wget -q -O- "${URL}/sha256.txt" | grep "${ISO}" | cut -d' ' -f4)"
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+function get_voidpup() {
+    local HASH=""
+    local URL=""
+    local TMPURL=""
+    TMPURL=$(wget -q -S -O- --max-redirect=0 "https://sourceforge.net/projects/vpup/files/latest/download" 2>&1 | grep -i Location | cut -d' ' -f4)
+    URL=${TMPURL%\?*}
+    echo "${URL} ${HASH}"
+}
+
+function get_vxlinux() {
+    local HASH=""
+    local ISO="vx-${RELEASE}.iso"
+    local URL="https://github.com/VX-Linux/main/releases/download/${RELEASE}"
+
+    HASH=$(wget -q -O- "${URL}/vx-${RELEASE}.md5" | cut  -d' ' -f1)
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+# QUICKEMU STANDARD
 
 function get_alma() {
     local EDITION="${1:-}"
@@ -2714,7 +3265,10 @@ create_vm() {
         bzip2 -d  "${VM_PATH}/${ISO}"
         ISO="${ISO/.bz2/}"
     fi
-
+        if [ ${OS} == "dietpi" ] && [[ $ISO =~ ".7z" ]]; then
+        7zip x -o${VM_PATH} ${VM_PATH}/${ISO}
+        ISO=$(ls ${VM_PATH} | grep -i '.iso')
+    fi
     if [ ${OS} == "reactos" ] && [[ $ISO =~ ".zip" ]]; then
         unzip ${VM_PATH}/${ISO} -d ${VM_PATH}
         ISO=$(ls ${VM_PATH} | grep -i '.iso' | grep -v '.zip')
@@ -2782,8 +3336,15 @@ if [ -n "${2}" ]; then
                 exit 1
             fi
         fi
-
-        # Handle odd missing fedora cominations
+        # Handle odd missing dietpi combinations
+        if [[ $OS == dietpi ]] ; then
+            if [[ ${RELEASE} = "uefi"  &&  ${EDITION} = "bookworm"  ]] || [[  ${RELEASE} = "uefi"  &&  ${EDITION} = "bullseye"   ]] ; then
+                echo "ERROR! Unsupported combination"
+                echo "Only installers are supported for uefi, please choose another Release or Edition"
+                exit 1;
+            fi
+        fi
+        # Handle odd missing fedora combinations
         if [[ $OS == fedora ]] ; then
             if [[ ${RELEASE} = "33" && ${EDITION} = "i3" ]] || [[ ${RELEASE} = "34" && ${EDITION} = "Cinnamon" ]] || [[ "${RELEASE}" < "39" && ${EDITION} = "Onyx" ]]; then
                 echo "ERROR! Unsupported combination"
