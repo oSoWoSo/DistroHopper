@@ -399,7 +399,8 @@ function test_all() {
 }
 
 function os_support() {
-    echo alma \
+    echo agarimos \
+    alma \
     alpine \
     android \
     antix \
@@ -421,6 +422,7 @@ function os_support() {
     debian \
     deepin \
     devuan \
+    dietpi \
     dragonflybsd \
     easyos \
     edubuntu \
@@ -430,6 +432,8 @@ function os_support() {
     fedora \
     freebsd \
     freedos \
+    fvoid \
+    gabeeos \
     garuda \
     gentoo \
     ghostbsd \
@@ -449,6 +453,7 @@ function os_support() {
     macos \
     mageia \
     manjaro \
+    miyo \
     mxlinux \
     netboot \
     netbsd \
@@ -492,7 +497,9 @@ function os_support() {
     ubuntukylin \
     ubuntustudio \
     vanillaos \
+    ventoy \
     void \
+    voidpup \
     vxlinux \
     windows \
     windows-server \
@@ -1515,6 +1522,366 @@ EOF
     echo
     exit 0
 }
+
+# QUICKEMU-EXTENDED ONLY DISTROS!
+
+function get_agarimos() {
+    local EDITION="${1:-}"
+    local HASH=""
+    local ISO=""
+    local URL=""
+    #local DATE=""
+    #local KERNEL=""
+    case ${EDITION} in
+        gnome)
+            URL="https://sourceforge.net/projects/agarimos/files/Gnome"
+            ISO="AgarimOS-Gnome-Catppuccin-Liv-x86_64-6.5.12_1-20231130.iso"
+            ;;
+        plasma)
+            URL="https://sourceforge.net/projects/agarimos/files/Plasma"
+            ISO="AgarimOS-Plasma-Dracula-Live-x86_64-6.5.11_1-20231120.iso"
+            ;;
+        xfce)
+            URL="https://sourceforge.net/projects/agarimos/files/XFCE4"
+            ISO="AgarimOS-XFCE4-Catppuccin-Live-x86_64-6.5.12_1-20231122.iso"
+            ;;
+        lxqt)
+            URL="https://sourceforge.net/projects/agarimos/files/LXQT-KWIN"
+            ISO="AgarimOS-LXQT-KWIN-Dracula-Live-x86_64-6.5.12_1-20231121.iso"
+            ;;
+    esac
+
+    HASH=$(wget -q -O- "${URL}/${ISO}.sha256" | cut -d' ' -f1)
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+function get_artixlinux() {
+    local EDITION="${1:-}"
+    local HASH=""
+    local ISO=""
+    local URL="https://iso.artixlinux.org/iso"
+    DATE=$(wget -q -O- ${URL}/sha256sums | cut -d'-' -f4 | head -1)
+    ISO="artix-${EDITION}-${DATE}-x86_64.iso"
+    HASH=$(wget -q -O- ${URL}/sha256sums | grep "${ISO}")
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+function get_athenaos() {
+    local HASH=""
+    local URL=""
+    local TMPURL=""
+    local ISO="athena-2023.06.23-x86_64.iso"
+    TMPURL=$(wget -q -S -O- --max-redirect=0 "https://sourceforge.net/projects/athena-iso/files/v23.06.23/${ISO}/download" 2>&1 | grep -i Location | cut -d' ' -f4)
+    URL=${TMPURL%\?*}
+    echo "${URL} ${HASH}"
+}
+
+function get_batocera() {
+    local HASH=""
+    local URL="https://mirrors.o2switch.fr/batocera/x86_64/stable/last"
+    local ISO="$(curl -sl ${URL}/ | grep -e 'batocera.*img.gz'|cut -d\" -f2)"
+     echo "${URL}/${ISO} ${HASH}"
+}
+
+function get_bazzite() {
+    local HASH=""
+    local ISO=""
+    local URL="https://github.com/ublue-os/bazzite/releases/download/v${RELEASE}"
+
+    ISO=$(wget -q -O- "https://api.github.com/repos/ublue-os/bazzite/releases" | grep 'download_url' | grep 'sum' | cut -d '"' -f4 | cut -d'.' -f1-5 | grep "${RELEASE}" | cut -d'/' -f9)
+    HASH=$(wget -q -O- "${URL}/${ISO}.sha256sum" | grep 'SHA256' | cut -d' ' -f4)
+     echo "${URL}/${ISO} ${HASH}"
+}
+
+function get_biglinux() {
+    local HASH=""
+    local ISO=""
+    local URL="https://iso.biglinux.com.br/"
+    ISO=$(grep -Eo 'biglinux_[0-9]{4}(-[0-9]{2}){2}_k[0-9]{2,3}.iso' <(wget -q -O- ${URL}) | sort -u | tail -n2 | head -n1)
+    HASH=$(curl -s ${URL}${ISO}.md5 | grep -Eo '[[:alnum:]]{32}')
+    echo "${URL}${ISO} ${HASH}"
+}
+
+function get_cereus() {
+    local EDITION="${1:-}"
+    local HASH=""
+    local DATE=""
+    local ISO=""
+    local URL="https://sourceforge.net/projects/cereus-linux/files/isos/beta/latest/${EDITION}"
+    DATE=$(wget -q -O- https://sourceforge.net/projects/cereus-linux/files/isos/beta/latest/base/SHA256SUM | grep 'x86_64-base' | rev | cut -d'-' -f1 | rev | cut -d'.' -f1-3)
+    ISO="cereus-beta-live-x86_64-${EDITION}-${DATE}.iso"
+    case ${EDITION} in
+      base) HASH=$(wget -q -O- "${URL}/SHA256SUM" | grep "${ISO}" | cut -d' ' -f1);;
+      *) HASH=$(wget -q -O- "${URL}/SHA256" | grep "${ISO}" | cut -d' ' -f1);;
+    esac
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+function get_chimeralinux() {
+    local EDITION="${1:-}"
+    local HASH=""
+    local DATE=""
+    local ISO=""
+    local URL="https://repo.chimera-linux.org/live/${RELEASE}"
+    DATE=$(wget -q -O- "${URL}/sha256sums.txt" | head -n1 | cut -d'-' -f5)
+    ISO="chimera-linux-x86_64-LIVE-${DATE}-${EDITION}.iso"
+    HASH=$(wget -q -O- "${URL}/sha256sums.txt" | grep 'x86_64-LIVE' | grep "${EDITION}" | cut -d' ' -f1)
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+function get_dietpi() {
+    local HASH=""
+    local ISO=""
+    local URL="https://dietpi.com/downloads/images"
+    case ${RELEASE} in
+      bios)
+        case ${EDITION} in
+          bookworm)
+            local ISO="DietPi_NativePC-BIOS-x86_64-Bookworm.7z"
+            ;;
+          bullseye)
+            local ISO="DietPi_NativePC-BIOS-x86_64-Bullseye.7z"
+            ;;
+          bookworm-installer)
+            local ISO="DietPi_NativePC-BIOS-x86_64-Bookworm_Installer.7z"
+            ;;
+          bullseye-installer)
+            local ISO="DietPi_NativePC-BIOS-x86_64-Bullseye_Installer.7z"
+            ;;
+        esac
+      ;;
+      uefi)
+        case ${EDITION} in
+          bookworm-installer)
+            local ISO="DietPi_NativePC-UEFI-x86_64-Bookworm_Installer.7z"
+            ;;
+          bullseye-installer)
+            local ISO="DietPi_NativePC-UEFI-x86_64-Bullseye_Installer.7z"
+            ;;
+        esac
+      ;;
+    esac
+    HASH=$(wget -q -O- "${URL}/SHASUMS.txt" | grep "${ISO}" | cut -d' ' -f1)
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+function get_fvoid() {
+    local HASH=""
+    local URL=""
+    local TMPURL=""
+    TMPURL=$(wget -q -S -O- --max-redirect=0 "https://sourceforge.net/projects/f-void/files/latest/download" 2>&1 | grep -i Location | cut -d' ' -f4)
+    URL=${TMPURL%\?*}
+    echo "${URL} ${HASH}"
+}
+
+function get_gabeeos() {
+    local HASH=""
+    local URL=""
+#    local TMPURL=""
+#    TMPURL=$(wget -q -S -O- --max-redirect=0 "https://sourceforge.net/projects/gabeeos/files/latest/download" 2>&1 | grep -i Location | cut -d' ' -f4)
+    case ${EDITION} in
+      openbox)
+        ISO="gabeeOSLinux-Openbox-Cherry-x86_64-6.1.25_1-20230502.iso"
+        URL="https://sourceforge.net/projects/gabeeoslinux/files/Distro/Openbox/beta"
+        HASH=$(wget -q -O- ${URL}/SHA256 | grep "${ISO}" | cut -d' ' -f2)
+        ;;
+      qtile)
+        ISO="gabeeOSLinux-Qtile-x86_64-6.1.25_1-20230508.iso"
+        URL="https://sourceforge.net/projects/gabeeoslinux/files/Distro/Qtile/beta"
+        HASH=$(wget -q -O- ${URL}/SHA256 | grep "${ISO}" | cut -d' ' -f4)
+        ;;
+    esac
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+function get_miyo() {
+    local EDITION="${1:-}"
+    local HASH=""
+    local URL="https://sourceforge.net/projects/miyolinux/files/${RELEASE}-Release/${EDITION}"
+
+    case ${EDITION} in
+      Kwin) ISO="miyo-kwin-x86_64-BIOS-20220526.iso";;
+      Deboot-Ceres) ISO="Deboot-Ceres-x86-64-BIOS-20220415.iso";;
+      JWM) ISO="miyolinux-jwm-x86_64-BIOS-20220226.iso";;
+      Openbox) ISO="MiyoLinux-x86_64-BIOS-20220129.iso";;
+      MATE) ISO="mate-minimal-x86_64-BIOS-20220107.iso";;
+    esac
+
+    HASH=$(wget -q -O- "${URL}/${ISO}.sha256" | cut -d' ' -f1)
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+function get_pureos() {
+    local EDITION="${1:-}"
+    local HASH=""
+    local ISO=""
+    local URL=""
+    case ${RELEASE} in
+      9)
+        URL="https://downloads.puri.sm/9/live/${EDITION}/2020-08-06"
+        ISO="pureos-${RELEASE}-${EDITION}-live_20200806-amd64.hybrid.iso"
+        HASH=$(wget -q -O- "${URL}/checksums.sha256sum" | grep "${ISO}" | cut -d' ' -f1)
+        ;;
+      10)
+        URL="https://downloads.puri.sm/10/${EDITION}/2023-06-14"
+        ISO="pureos-${RELEASE}-${EDITION}-live-20230614_amd64.iso"
+        HASH=$(wget -q -O- "${URL}/pureos-${RELEASE}-${EDITION}-live-20230614_amd64.checksums_sha256.txt" | head -1 | cut -d' ' -f1)
+    esac
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+function get_rebornos() {
+   local ISO=$(curl -s 'https://www.rebornos.org/download/' | grep -ohE 'https://pub-cb7a4d4f7a974896b3bf40c52d1defbc.r2.dev/RebornOS-ISO/(rebornos_xfce_minimal|rebornos_iso)-[0-9]{4}.[0-9]{2}.[0-9]{2}-x86_64.iso' | tail -n1)
+   local HASH=$(curl -s 'https://www.rebornos.org/download/' | grep -ozP 'Checksum MD5:.*[0-9a-fA-F]{32}' | grep -zoP '[0-9a-fA-F]{32}' | cut -d '' -f1)
+   echo "${ISO} ${HASH}"
+}
+
+function get_slax() {
+    local HASH=""
+    local ISO=""
+    local URL="https://slax.org/download-slax.php?a=64bit&b=${EDITION}"
+    case ${EDITION} in
+      Debian) ISO="slax-64bit-11.6.0.iso"
+          HASH="b3771211c4485fec2e4f2418b06125f3e53424c5"
+      ;;
+      Slackware) ISO="slax-64bit-15.0.1.iso"
+          HASH="4ec9dff930251fbae847a56b18d53505147faf84"
+      ;;
+    esac
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+function get_slitaz() {
+    local HASH=""
+    local ISO="slitaz-rolling-${RELEASE}"
+    local URL="http://mirror.slitaz.org/iso/rolling"
+    case ${RELEASE} in
+      preferred) ISO="slitaz-rolling";;
+      *)   ISO="slitaz-rolling-${RELEASE}";;
+    esac
+    HASH=$(wget -q -O- "${URL}/${ISO}.md5" |  cut -d' ' -f1)
+    echo "${URL}/${ISO}.iso ${HASH}"
+}
+
+function get_sparkylinux() {
+    local EDITION="${1:-}"
+    local HASH=""
+    local ISO=""
+    local URL=""
+    ISO="sparkylinux-${RELEASE}-x86_64-${EDITION}.iso"
+    case ${EDITION} in
+      minimalcli) URL="https://sourceforge.net/projects/sparkylinux/files/cli";;
+      minimalgui) URL="https://sourceforge.net/projects/sparkylinux/files/base";;
+      *)   URL="https://sourceforge.net/projects/sparkylinux/files/${EDITION}";;
+    esac
+    HASH=$(wget -q -O- ${URL}/${ISO}.allsums.txt | head -2 | grep 'iso' | cut -d' ' -f1)
+    echo "${URL}/${ISO}" "${HASH}"
+}
+
+function get_tuxedoos() {
+    local DATE="202309111354"
+    local HASH=""
+    local ISO="TUXEDO-OS-${RELEASE}-${DATE}.iso"
+    local URL="https://os.tuxedocomputers.com/"
+    HASH=$(wget -q -O- "${URL}/checksums" | grep "${ISO}" | cut -d' ' -f1)
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+function get_ventoy() {
+    local HASH=""
+    local ISO="ventoy-${RELEASE}-livecd.iso"
+    local URL="https://github.com/ventoy/Ventoy/releases/download/v${RELEASE}"
+    HASH="$(wget -q -O- "${URL}/sha256.txt" | grep "${ISO}" | cut -d' ' -f4)"
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+function get_voidpup() {
+    local HASH=""
+    local URL=""
+    local TMPURL=""
+    TMPURL=$(wget -q -S -O- --max-redirect=0 "https://sourceforge.net/projects/vpup/files/latest/download" 2>&1 | grep -i Location | cut -d' ' -f4)
+    URL=${TMPURL%\?*}
+    echo "${URL} ${HASH}"
+}
+
+function get_slax() {
+    local HASH=""
+    local ISO=""
+    local URL="https://slax.org/download-slax.php?a=64bit&b=${EDITION}"
+    case ${EDITION} in
+      Debian) ISO="slax-64bit-11.6.0.iso"
+          HASH="b3771211c4485fec2e4f2418b06125f3e53424c5"
+      ;;
+      Slackware) ISO="slax-64bit-15.0.1.iso"
+          HASH="4ec9dff930251fbae847a56b18d53505147faf84"
+      ;;
+    esac
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+function get_slitaz() {
+    local HASH=""
+    local ISO="slitaz-rolling-${RELEASE}"
+    local URL="http://mirror.slitaz.org/iso/rolling"
+    case ${RELEASE} in
+      preferred) ISO="slitaz-rolling";;
+      *)   ISO="slitaz-rolling-${RELEASE}";;
+    esac
+    HASH=$(wget -q -O- "${URL}/${ISO}.md5" |  cut -d' ' -f1)
+    echo "${URL}/${ISO}.iso ${HASH}"
+}
+
+function get_sparkylinux() {
+    local EDITION="${1:-}"
+    local HASH=""
+    local ISO=""
+    local URL=""
+    ISO="sparkylinux-${RELEASE}-x86_64-${EDITION}.iso"
+    case ${EDITION} in
+      minimalcli) URL="https://sourceforge.net/projects/sparkylinux/files/cli";;
+      minimalgui) URL="https://sourceforge.net/projects/sparkylinux/files/base";;
+      *)   URL="https://sourceforge.net/projects/sparkylinux/files/${EDITION}";;
+    esac
+    HASH=$(wget -q -O- ${URL}/${ISO}.allsums.txt | head -2 | grep 'iso' | cut -d' ' -f1)
+    echo "${URL}/${ISO}" "${HASH}"
+}
+
+function get_tuxedoos() {
+    local DATE="202309111354"
+    local HASH=""
+    local ISO="TUXEDO-OS-${RELEASE}-${DATE}.iso"
+    local URL="https://os.tuxedocomputers.com/"
+    HASH=$(wget -q -O- "${URL}/checksums" | grep "${ISO}" | cut -d' ' -f1)
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+function get_ventoy() {
+    local HASH=""
+    local ISO="ventoy-${RELEASE}-livecd.iso"
+    local URL="https://github.com/ventoy/Ventoy/releases/download/v${RELEASE}"
+    HASH="$(wget -q -O- "${URL}/sha256.txt" | grep "${ISO}" | cut -d' ' -f4)"
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+function get_voidpup() {
+    local HASH=""
+    local URL=""
+    local TMPURL=""
+    TMPURL=$(wget -q -S -O- --max-redirect=0 "https://sourceforge.net/projects/vpup/files/latest/download" 2>&1 | grep -i Location | cut -d' ' -f4)
+    URL=${TMPURL%\?*}
+    echo "${URL} ${HASH}"
+}
+
+function get_vxlinux() {
+    local HASH=""
+    local ISO="vx-${RELEASE}.iso"
+    local URL="https://github.com/VX-Linux/main/releases/download/${RELEASE}"
+
+    HASH=$(wget -q -O- "${URL}/vx-${RELEASE}.md5" | cut  -d' ' -f1)
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+# QUICKEMU STANDARD
 
 function get_alma() {
     local HASH=""
