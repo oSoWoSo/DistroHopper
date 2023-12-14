@@ -1,24 +1,37 @@
-<h1 align="center">
-  <img src=".github/logo.png" alt="Quickemu" width="256" />
-  <br />
-  Quickemu
-</h1>
-
-<p align="center"><b>Quickly create and run optimised Windows, macOS and Linux desktop virtual machines.</b></p>
-<div align="center"><img src=".github/screenshot.png" alt="Quickemu Screenshot" /></div>
 <p align="center">Made with 💝 for <img src=".github/tux.png" align="top" width="18" /></p>
 
-## Introduction
+# This repository contains a multiple tools
+Can be used together with quickemu
+# Welcome ![hop120](https://github.com/quickemu-project/quickemu/assets/6384793/06713605-a335-4b8a-9f3d-2d3b390848e5) DistroHoppers
+## I made some user interfaces for quickemu...
+
+🦚
+[dh](https://github.com/oSoWoSo/DistroHopper/raw/all/dh) GUI and TUI using yad
+
+🕊️
+[quickfzf](https://github.com/oSoWoSo/DistroHopper/raw/all/quickfzf) TUI using fzf
+
+🐲
+[quicktui](https://github.com/oSoWoSo/DistroHopper/raw/all/quicktui) TUI using gum (🚧 usable but under heavy development)
+
+🐅
+[qrun](https://github.com/oSoWoSo/DistroHopper/raw/all/qrun) TUI using gum
+
+and
+
+## Extended version with more distros then upstream quickemu
+[quickget extended](https://github.com/oSoWoSo/DistroHopper/tree/quickemu-extended) 
+
+Enjoy...
+
+[repo](https://github.com/oSoWoSo/DistroHopper/)
+
+## quickemu Introduction
 
 Quickly create and run highly optimised desktop virtual machines for
-Linux, macOS and Windows; with just two commands. You decide what
-operating system you want to run and Quickemu will figure out the best
-way to do it for you. For example:
-
-``` bash
-quickget ubuntu-mate 22.04
-quickemu --vm ubuntu-mate-22.04.conf
-```
+Linux, macOS and Windows; with different user interfaces to choose from.
+You decide what operating system you want to run tool will figure out the best
+way to do it for you.
 
 The original objective of the project was to enable quick testing of
 Linux distributions where the virtual machine configurations can be
@@ -55,15 +68,6 @@ Windows**.
 Quickemu is a wrapper for the excellent [QEMU](https://www.qemu.org/)
 that attempts to automatically *"do the right thing"*, rather than
 expose exhaustive configuration options.
-
-We have a Discord for this project:
-[![Discord](https://img.shields.io/discord/712850672223125565?color=0C306A&label=WimpysWorld%20Discord&logo=Discord&logoColor=ffffff&style=flat-square)](https://discord.gg/sNmz3uw)
-
-See this (old) video where I explain some of my motivations for creating
-Quickemu.
-
-[![Replace VirtualBox with Bash &
-QEMU](https://img.youtube.com/vi/AOTYWEgw0hI/0.jpg)](https://www.youtube.com/watch?v=AOTYWEgw0hI)
 
 ## Requirements
 
@@ -129,10 +133,6 @@ graphical user interface is also available:
 -   **[Quickgui](https://github.com/quickgui/quickgui)** by [Mark
     Johnson](https://github.com/marxjohnson) and [Yannick
     Mauray](https://github.com/ymauray).
-
-Many thanks to [Luke Wesley-Holley](https://github.com/Lukewh) and
-[Philipp Kiemle](https://github.com/daPhipz) for creating the
-**[Quickemu icons](https://github.com/Lukewh/quickemu-icons)** 🎨
 
 ### Quickgui for Ubuntu
 
@@ -208,11 +208,6 @@ status](https://repology.org/badge/vertical-allrepos/quickgui.svg)](https://repo
 `quickget` will automatically download an Ubuntu release and create the
 virtual machine configuration.
 
-``` bash
-quickget ubuntu 22.04
-quickemu --vm ubuntu-22.04.conf
-```
-
 -   Complete the installation as normal.
 -   Post-install:
     -   Install the SPICE agent (`spice-vdagent`) in the guest to enable
@@ -226,11 +221,6 @@ quickemu --vm ubuntu-22.04.conf
 
 `quickget` can also download/refresh devel images via `zsync` for Ubuntu
 developers and testers.
-
-``` bash
-quickget ubuntu devel
-quickemu --vm ubuntu-devel.conf
-```
 
 You can run `quickget ubuntu devel` to refresh your daily development
 image as often as you like, it will even automatically switch to a new
@@ -256,14 +246,9 @@ with your preferred flavour.
 
 You can also use `quickget` with options to:
 
-``` shell
-    # show an OS ISO download URL for {os} {release} [edition] 
-    quickget --show-iso-url fedora 38 Silverblue   
-    # test if and OS ISO is available for {os} {release} [edition]
-    quickget --test-iso-url nixos 23.05 plasma5
+    # show an OS ISO download URL
+    # test if and OS ISO is available
     # open an OS distribution homepage in a browser
-    quickget --open-distro-homepage  ubuntu-mate
-```
 
 The `--show-iso-url` and `--test-iso-url` options **do not** work for
 `Windows` (`quickget` will begin downloading the requested release and
@@ -271,8 +256,7 @@ edition of windows)
 
 ## Other Operating Systems
 
-`quickget` also supports:
-
+also supports:
 -   `alma` (Alma Linux)
 -   `alpine` (Alpine Linux)
 -   `android` (Android x86)
@@ -342,20 +326,7 @@ Or you can download a Linux image and manually create a VM
 configuration.
 
 -   Download a .iso image of a Linux distribution
--   Create a VM configuration file; for example `debian-bullseye.conf`
-
-``` bash
-guest_os="linux"
-disk_img="debian-bullseye/disk.qcow2"
-iso="debian-bullseye/firmware-11.0.0-amd64-DVD-1.iso"
-```
-
--   Use `quickemu` to start the virtual machine:
-
-``` bash
-quickemu --vm debian-bullseye.conf
-```
-
+-   Create a VM configuration file
 -   Complete the installation as normal.
 -   Post-install:
     -   Install the SPICE agent (`spice-vdagent`) in the guest to enable
@@ -367,11 +338,6 @@ quickemu --vm debian-bullseye.conf
 
 `quickget` automatically downloads a macOS recovery image and creates a
 virtual machine configuration.
-
-``` bash
-quickget macos catalina
-quickemu --vm macos-catalina.conf
-```
 
 macOS `high-sierra`, `mojave`, `catalina`, `big-sur`, `monterey` and
 `ventura` are supported.
@@ -511,7 +477,7 @@ Now reboot, and the App Store should work.
 
 ## Windows 8, 10 & 11 Guests
 
-`quickget` can download
+can download
 [Windows10](https://www.microsoft.com/software-download/windows10) and
 [Windows 11](https://www.microsoft.com/software-download/windows11)
 automatically and create an optimised virtual machine configuration.
@@ -520,11 +486,6 @@ Windows](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/).
 
 Windows 8.1 is also supported but doesn't feature any automated
 installation or driver optimisation.
-
-``` bash
-quickget windows 11
-quickemu --vm windows-11.conf
-```
 
 -   Complete the installation as you normally would.
 -   All relevant drivers and services should be installed automatically.
