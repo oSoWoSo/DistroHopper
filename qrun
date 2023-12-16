@@ -30,7 +30,6 @@ _define_variables() {
 	export GUM_FILTER_PROMPT_FOREGROUND="$color"
 	export GUM_FILTER_SELECTED_PREFIX_FOREGROUND="$color"
 	export GUM_FILTER_SELECTED_PREFIX_BORDER_FOREGROUND="$color"
-
 }
 
 _generate_supported(){
@@ -109,7 +108,6 @@ show_headers() {
 			vms_run+="$running_logo$instance "
 		done
 	fi
-	#vms_not=($(comm -23 <(printf "%s\n" "${vms[@]}" | rev | cut -d'.' -f2-9 | rev | sort) <(printf "%s\n" "${vms_running[@]}" | sort)))
 	mapfile -t vms_not < <(comm -23 <(printf "%s\n" "${vms[@]}" | rev | cut -d'.' -f2-9 | rev | sort) <(printf "%s\n" "${vms_running[@]}" | sort))
 	vms_not_next=$(gum style < <(printf '%s\n' "${vms_not[@]}"))
 	if [ -n "$(find . -name '*.pid')" ]; then
@@ -222,25 +220,25 @@ kill_vm() {
 }
 # test
 kill_vms() {
-    gum_choose_runnings
-    if [ -n "$selected" ]; then
-        for vm_name in "${selected[@]}"; do
-            gum confirm "Really kill $vm_name?"
-            pid=$(cat "${vm_name}.pid")
-            kill "$pid"
-        done
-        show_headers
-    fi
+	gum_choose_runnings
+	if [ -n "$selected" ]; then
+		for vm_name in "${selected[@]}"; do
+			gum confirm "Really kill $vm_name?"
+			pid=$(cat "${vm_name}.pid")
+			kill "$pid"
+		done
+		show_headers
+	fi
 }
-# test
+
 gum_choose_VM_to_delete() {
-    if [ -n "$(echo *.conf)" ]; then
-        chosen=$(echo "${vms[@]%.*}" | tr " " "\n" | gum choose)
-        gum confirm "Really delete $chosen" && rm -r "$chosen" && rm "$chosen".conf
-        show_headers
-    else
-        gum style --foreground 1 "No VMs!"
-    fi
+	if [ -n "$(echo *.conf)" ]; then
+		chosen=$(echo "${vms[@]%.*}" | tr " " "\n" | gum choose --select-if-one)
+		gum confirm "Really delete $chosen" && rm -r "$chosen" && rm "$chosen".conf
+		show_headers
+	else
+		gum style --foreground 1 "No VMs!"
+	fi
 }
 
 open_distro_homepage(){
