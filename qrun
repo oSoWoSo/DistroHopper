@@ -142,6 +142,7 @@ gum_choose_VM() {
 	else
 		gum style --foreground 1 "Can't!"
 	fi
+	#chosen=$(printf '%s\n' "${vms[@]%.conf}" | gum filter --height "$("${vms[@]%.conf}" | wc -l)" --header='Choose VM to run')
 }
 
 create_VM() {
@@ -248,6 +249,12 @@ open_distro_homepage(){
 	"$QUICKGET" -o "${os}" >/dev/null 2>&1 &
 }
 # shellcheck disable=SC2015
+icons_or() {
+	gum confirm "   Use icons?
+need Nerd Fonts" && echo "yes" > /tmp/icons || rm /tmp/icons
+	show_headers
+}
+
 icons_or() {
 	gum confirm "   Use icons?
 need Nerd Fonts" && echo "yes" > /tmp/icons || rm /tmp/icons
