@@ -6,9 +6,16 @@
 _define_variables() {
 	color=$(( RANDOM % 255 + 1 ))
 	progname="${progname:="${0##*/}"}"
-	configdir="$HOME/.config/$progname"
+	#configdir="$HOME/.config/$progname"
 	version='0.2'
 	vms=(*.conf)
+	if ! command -v gum >/dev/null 2>&1; then
+		echo 'You are missing gum! Exiting...' && exit 1
+	fi
+	if ! command -v quickemu >/dev/null 2>&1; then
+		gum style --foreground 1 "You are missing quickemu!"
+	fi
+	QUICKGET=$(command -v quickget)
 	#export BORDER="rounded"
 	export BORDERS_FOREGROUND="$color"
 	export GUM_CHOOSE_CURSOR_FOREGROUND="$color"
@@ -23,13 +30,7 @@ _define_variables() {
 	export GUM_FILTER_PROMPT_FOREGROUND="$color"
 	export GUM_FILTER_SELECTED_PREFIX_FOREGROUND="$color"
 	export GUM_FILTER_SELECTED_PREFIX_BORDER_FOREGROUND="$color"
-	if ! command -v quickemu >/dev/null 2>&1; then
-		echo 'You are missing quickemu!'
-	fi
-	QUICKGET=$(command -v quickget)
-	if ! command -v gum >/dev/null 2>&1; then
-		echo 'You are missing gum! Exiting...' && exit 1
-	fi
+
 }
 
 _generate_supported(){
@@ -53,7 +54,7 @@ _if_needed() {
 
 show_vms() {
 	if [ ${#vms[@]} -eq 0 ]; then
-		echo 'No VMs found.'
+		gum style --foreground 1 "No VMs!"
 	else
 	echo "${vms[@]%.*}" | tr " " "\n"
 	fi
@@ -62,6 +63,11 @@ show_vms() {
 color2=$(( RANDOM % 255 + 1 ))
 
 show_headers() {
+	if [ -f /tmp/icons ]; then
+		icons=yes
+	else
+		icons=""
+	fi
 	logo_0=$(gum style " Simple VMs runner")
 	logo_1=$(gum style --foreground "$color2" "▄▄▄▄ ▄▄▄  ▄  ▄ ▄   ▄
 █  █ █  █ █  █ █▄  █
@@ -76,8 +82,8 @@ show_headers() {
 
 	tip_header=$(gum style --bold "Tip: ")
 	distro=$(shuf -n 1 /tmp/supported)
-	tip_distro=$(gum style --align left "$distro")
-	tip_temp=$(gum join --align top "$tip_header" "$tip_distro")
+	tip_distro=$(gum style "try $distro")
+	tip_temp=$(gum join "$tip_header" "$tip_distro")
 	homepage=$("$QUICKGET" -s "${distro}")
 	tip_homepage=$(gum style --align left "$homepage")
 	tip=$(gum join --vertical --align top "$tip_temp" "$tip_homepage")
@@ -89,16 +95,11 @@ show_headers() {
 	vms_not=()
 	vms_vm=$(gum style --bold "virtual machines:")
 	vms_run=""
-	if [ -n "$(find -name '*.pid')" ]; then
+	if [ -n "$(find . -name '*.pid')" ]; then
 		for pid_file in "${pid_files[@]}"; do
 			instance_name=$(basename "$pid_file" .pid)
 			vms_running+=("$instance_name")
 		done
-		if [ -f /tmp/icons ]; then
-			icons=yes
-		else
-			icons=""
-		fi
 		if [ "$icons" == yes ]; then
 			running_logo=$(gum style --foreground "$color" --bold ".")
 		else
@@ -108,9 +109,10 @@ show_headers() {
 			vms_run+="$running_logo$instance "
 		done
 	fi
-	vms_not=($(comm -23 <(printf "%s\n" "${vms[@]}" | rev | cut -d'.' -f2-9 | rev | sort) <(printf "%s\n" "${vms_running[@]}" | sort)))
+	#vms_not=($(comm -23 <(printf "%s\n" "${vms[@]}" | rev | cut -d'.' -f2-9 | rev | sort) <(printf "%s\n" "${vms_running[@]}" | sort)))
+	mapfile -t vms_not < <(comm -23 <(printf "%s\n" "${vms[@]}" | rev | cut -d'.' -f2-9 | rev | sort) <(printf "%s\n" "${vms_running[@]}" | sort))
 	vms_not_next=$(gum style < <(printf '%s\n' "${vms_not[@]}"))
-	if [ ! -z "$(find -name '*.pid')" ]; then
+	if [ -n "$(find . -name '*.pid')" ]; then
 		vms_run_next=$(echo "$vms_run" | tr " " "\n")
 		vms_header=$(gum join --vertical "$vms_vm" "$vms_run_next" "$vms_not_next")
 	else
@@ -118,7 +120,7 @@ show_headers() {
 	fi
 	vms_border=$(gum style --padding "0 1" --border=rounded --border-foreground $color "$vms_header")
 	header=$(gum join --align top "$logo_border" "$vms_border")
-	gum join --align center --vertical "$header" "$tip_border"
+	gum join --align center --vertical "$tip_border" "$header"
 }
 
 gum_filter_os() {
@@ -135,12 +137,11 @@ gum_filter_edition() {
 }
 
 gum_choose_VM() {
-	if find -maxdepth 1 -name '*.conf' >/dev/null 2>&1 ; then
-		chosen=$(find -maxdepth 1 -name '*.conf' | cut -d'/' -f2 | rev | cut -d'.' -f2-9 | rev | gum choose --select-if-one)
+	if find . -maxdepth 1 -name '*.conf' >/dev/null 2>&1 ; then
+		chosen=$(find . -maxdepth 1 -name '*.conf' | cut -d'/' -f2 | rev | cut -d'.' -f2-9 | rev | gum choose --select-if-one)
 	else
 		gum style --foreground 1 "Can't!"
 	fi
-	#chosen=$(printf '%s\n' "${vms[@]%.conf}" | gum filter --height "$("${vms[@]%.conf}" | wc -l)" --header='Choose VM to run')
 }
 
 create_VM() {
@@ -198,30 +199,31 @@ gum_choose_runnings() {
 }
 
 get_ssh_port() {
-	port=$(grep 'ssh' < ${selected}.ports | cut -d',' -f2)
+	port=$(grep 'ssh' < "$selected".ports | cut -d',' -f2)
 }
 
 ssh_into() {
 	gum_choose_running
-	if [ ! -z "$selected" ]; then
+	if [ -n "$selected" ]; then
 		get_ssh_port
 		username=$(gum input --prompt "$selected user? ")
-		ssh ${username}@localhost -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new -p ${port}
+		ssh "$username"@localhost -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new -p "$port"
+		show_headers
 	fi
 }
 
 kill_vm() {
 	gum_choose_running
-	if [ ! -z "$selected" ]; then
+	if [ -n "$selected" ]; then
 		echo "${selected}"
-		gum confirm "Really kill $selected?" && pid=$(cat ${selected}.pid) && kill "$pid"
+		gum confirm "Really kill $selected?" && pid=$(cat "$selected".pid) && kill "$pid"
 		show_headers
 	fi
 }
 # test
 kill_vms() {
     gum_choose_runnings
-    if [ ! -z "$selected" ]; then
+    if [ -n "$selected" ]; then
         for vm_name in "${selected[@]}"; do
             gum confirm "Really kill $vm_name?"
             pid=$(cat "${vm_name}.pid")
@@ -232,13 +234,12 @@ kill_vms() {
 }
 # test
 gum_choose_VM_to_delete() {
-    if ls | grep ".conf" >/dev/null 2>&1 ; then
-        chosen=$(echo ${vms[@]%.*} | tr " " "\n" | gum choose)
-        echo 'Removing config(s)...'
-        gum confirm "Really delete ${chosen}" && rm -r $chosen && rm $chosen.conf
+    if [ -n "$(echo *.conf)" ]; then
+        chosen=$(echo "${vms[@]%.*}" | tr " " "\n" | gum choose)
+        gum confirm "Really delete $chosen" && rm -r "$chosen" && rm "$chosen".conf
         show_headers
     else
-        echo "No VMs to delete"
+        gum style --foreground 1 "No VMs!"
     fi
 }
 
@@ -246,7 +247,7 @@ open_distro_homepage(){
 	gum_filter_os
 	"$QUICKGET" -o "${os}" >/dev/null 2>&1 &
 }
-
+# shellcheck disable=SC2015
 icons_or() {
 	gum confirm "   Use icons?
 need Nerd Fonts" && echo "yes" > /tmp/icons || rm /tmp/icons
