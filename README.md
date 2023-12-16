@@ -16,7 +16,7 @@ Can be used together with quickemu
 
 🐅
 [qrun](https://github.com/oSoWoSo/DistroHopper/raw/all/qrun) TUI using gum
-
+[![asciicast](https://asciinema.org/a/fPcYGWhF8aGoJJ5M30Q1CWdqe.svg)](https://asciinema.org/a/fPcYGWhF8aGoJJ5M30Q1CWdqe)
 and
 
 ## Extended version with more distros then upstream quickemu
