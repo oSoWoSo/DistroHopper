@@ -142,7 +142,6 @@ gum_choose_VM() {
 	else
 		gum style --foreground 1 "Can't!"
 	fi
-	#chosen=$(printf '%s\n' "${vms[@]%.conf}" | gum filter --height "$("${vms[@]%.conf}" | wc -l)" --header='Choose VM to run')
 }
 
 create_VM() {
