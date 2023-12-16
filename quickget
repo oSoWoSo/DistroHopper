@@ -349,7 +349,7 @@ function os_homepages(){
         bunsenlabs)        HOMEPAGE="https://www.bunsenlabs.org/";;
         cachyos)           HOMEPAGE="https://cachyos.org/";;
         centos-stream)     HOMEPAGE="https://www.centos.org/centos-stream/";;
-        cereues)           HOMEPAGE="https://cereus-linux.sourceforge.io/";;
+        cereues)           HOMEPAGE="https://sourceforge.net/projects/cereus-linux/";;
         chimeralinux)      HOMEPAGE="https://chimera-linux.org/";;
         debian)            HOMEPAGE="https://www.debian.org/";;
         deepin)            HOMEPAGE="https://www.deepin.org/";;
