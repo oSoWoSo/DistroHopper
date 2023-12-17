@@ -20,7 +20,7 @@ Can be used together with quickemu
 and
 
 ## Extended version with more distros then upstream quickemu
-[quickget extended](https://github.com/oSoWoSo/DistroHopper/tree/quickemu-extended) 
+[quickget extended](https://github.com/oSoWoSo/DistroHopper/tree/quickget-extended) 
 
 Enjoy...
 
