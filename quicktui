@@ -493,7 +493,6 @@ open distro homepage
 delete VM
 advanced menu
 settings menu
-test menu
 show help
 EXIT $progname" | gum filter --height $height)
     case $start in
@@ -503,7 +502,6 @@ EXIT $progname" | gum filter --height $height)
         'run VM' ) gum_choose_VM && run_VM;;
         'open distro homepage' ) open_distro_homepage;;
         'delete VM' ) gum_choose_VM_to_delete;;
-        'test menu' ) show_menu_test;;
         'show help' ) help_main; show_help;;
         "EXIT $progname" ) exit 0;;
     esac
@@ -562,70 +560,6 @@ EXIT $progname" | gum filter --height $height)
     done
 }
 
-show_menu_test() {
-    while true
-    do
-    title="test"
-    show_header
-    height=27
-    start=$(echo "add new distro
-change spinner
-choose vm to delete
-create vm
-create desktop entry
-custom quickemu command
-delete vm
-edit vm config
-edit default vms config
-generate if needed
-generate supported
-gum choose vm
-gum choose editions
-gum choose os
-gum choose release
-open distro homepage
-qemu version
-quickemu version
-run vm
-show isos urls
-show custom
-show editor
-show headers
-show vms
-test isos download
-back to main menu
-EXIT $progname" | gum filter --height $height)
-    case $start in
-        'add new distro' ) add_new_distro;;
-        'change spinner' ) change_spinner;;
-        'choose vm to delete' ) gum_choose_VM_to_delete;;
-        'create vm' ) create_VM;;
-        'create desktop entry' ) create_desktop_entry;;
-        'custom quickemu command' ) custom_quickemu_command;;
-        'delete vm' ) delete_VMe;;
-        'edit vm config' ) edit_VM_config;;
-        'edit default vms config' ) edit_default_VMs_config;;
-        'generate if needed' ) generate_if_needed;;
-        'generate supported' ) generate_supported;;
-        'gum choose vm' ) gum_choose_VM;;
-        'gum choose editions' ) gum_choose_edition;;
-        'gum choose os' ) gum_choose_os;;
-        'gum choose release' ) gum_choose_release;;
-        'open distro homepage' ) open_distro_homepage;;
-        'qemu version' ) show_version_qemu;;
-        'quickemu version' ) show_version_quickemu;;
-        'run vm' ) run_VM;;
-        'show isos urls' ) show_ISOs_urls;;
-        'show custom' ) show_custom;;
-        'show editor' ) show_editor;;
-        'show headers' ) show_headers;;
-        'show vms' ) show_vms;;
-        'test isos download' ) test_ISOs_download;;
-        'back to main menu') clear; show_headers_small; break;;
-        "EXIT $progname" ) exit 0;;
-    esac
-    done
-}
 # run
 clear
 define_variables
