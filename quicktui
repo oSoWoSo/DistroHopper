@@ -358,7 +358,8 @@ test_ISOs_download() {
     touch "$configdir/test"
     #"$QUICKGET" | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' > supported
     os=$(gum filter < "$configdir"/supported)
-    choices=$("$QUICKGET" "$os" | sed 1d)    while read -r get_name; do
+    choices=$("$QUICKGET" "$os" | sed 1d)
+        while read -r get_name; do
         echo "Trying $get_name..."
         mkdir -p "$configdir/_distros/$get_name" && cd "$configdir/_distros/$get_name" || exit
         releases=$("$QUICKGET" "$get_name" | grep 'Releases:' | cut -d':' -f2 | sed 's/^ //' | sed 's/ *$//')
