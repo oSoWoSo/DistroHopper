@@ -136,7 +136,7 @@ gum_filter_edition() {
 
 gum_choose_VM() {
 	if find . -maxdepth 1 -name '*.conf' >/dev/null 2>&1 ; then
-		chosen=$(find . -maxdepth 1 -name '*.conf' | cut -d'/' -f2 | rev | cut -d'.' -f2-9 | rev | gum choose --select-if-one)
+		chosen=$(find . -maxdepth 1 -name '*.conf' | cut -d'/' -f2 | rev | cut -d'.' -f2-9 | rev | gum filter --select-if-one)
 	else
 		gum style --foreground 1 "Can't!"
 	fi
@@ -288,7 +288,8 @@ ssh into
 kill
 delete
 icons
-exit $progname" | gum choose --selected '󰜎 run')
+exit $progname" | gum filter --height 6)
+# from choose:  --selected '󰜎 run'
 			case $start in
 				create ) create_VM;;
 				run ) gum_choose_VM && run_VM;;
