@@ -917,6 +917,135 @@ Keywords=$keyword
 EOF
 }
 
+test_ISOs_download() {
+    rm -r "$configdir"
+    mkdir -p "$configdir" && cd "$configdir" || exit
+    touch "$configdir/test"
+    #"$QUICKGET" | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' > supported
+    os=$(gum filter < "$configdir"/supported)
+    choices=$("$QUICKGET" "$os" | sed 1d)
+        while read -r get_name; do
+        echo "Trying $get_name..."
+        mkdir -p "$configdir/_distros/$get_name" && cd "$configdir/_distros/$get_name" || exit
+        releases=$("$QUICKGET" "$get_name" | grep 'Releases:' | cut -d':' -f2 | sed 's/^ //' | sed 's/ *$//')
+        echo "$releases" > releases
+        editions=$("$QUICKGET" "$get_name" | grep 'Editions:' | cut -d':' -f2 | sed 's/^ //' | sed 's/ *$//')
+        echo "$editions" > editions
+        if [ -z "$editions" ]; then
+            for release in $releases; do
+                echo "$get_name" >> "$configdir/test"
+                timeout 10 "$QUICKGET" -t "$get_name" "${release}" >> "$configdir/test"
+            done
+        else
+            while read -r release; do
+                for edition in $editions; do
+                    echo "$get_name" >> "$configdir/test"
+                    timeout 10 "$QUICKGET" -t "$get_name" "${release}" "${edition}" >> "$configdir/test"
+                done
+            done < releases
+        fi
+        cd "$configdir" || exit
+    done < supported
+    printf "\nDone"
+}
+
+show_ISOs_urls(){
+    rm -r "$configdir"
+    mkdir -p "$configdir" && cd "$configdir" || exit
+    touch "$configdir/test"
+    "$QUICKGET" | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' > supported
+    while read -r get_name; do
+        echo "Trying $get_name..."
+        mkdir -p "$configdir/_distros/$get_name" && cd "$configdir/_distros/$get_name" || exit
+        releases=$("$QUICKGET" "$get_name" | grep 'Releases' | cut -d':' -f2 | sed 's/^ //' | sed 's/ *$//')
+        echo "$releases" > releases
+        editions=$("$QUICKGET" "$get_name" | grep 'Editions' | cut -d':' -f2 | sed 's/^ //' | sed 's/ *$//')
+        echo "$editions" > editions
+        if [ -z "$editions" ]; then
+            for release in $releases; do
+                echo "$get_name" >> "$configdir/test"
+                timeout 5 "$QUICKGET" -s "$get_name" "${release}" >> "$configdir/test" #&& $(killall zsync >> /dev/null)
+            done
+        else
+            while read -r release; do
+                for edition in $editions; do
+                    echo "$get_name" >> "$configdir/test"
+                    timeout 5 "$QUICKGET" -s "$get_name" "${release}" "${edition}" >> "$configdir/test" #&& $(killall zsync >> /dev/null)
+                done
+            done < releases
+        fi
+        cd "$configdir" || exit
+    done < supported
+    printf "\nDone"
+}
+
+generate_if_needed() {
+    if [ ! -f "${configdir}"/supported ]; then
+        generate_supported
+    fi
+}
+
+generate_supported(){
+    echo "Extracting OS Editions and Releases..."
+    rm -r "$configdir/distro"
+    mkdir -p "$configdir/distro"
+    "$QUICKGET" | awk 'NR==2,/zorin/' | cut -d':' -f2 | grep -o '[^ ]*' > "$configdir/supported"
+    while read -r get_name; do
+        supported=$(gum spin --spinner $spinner --title="$get_name" -- "$QUICKGET" "$get_name" | sed 1d)
+        echo "$supported" > "$configdir/distro/${get_name}"
+    done < "$configdir/supported"
+}
+
+open_distro_homepage(){
+    gum_choose_os
+    "$QUICKGET" -o "${os}"
+}
+
+change_borders() {
+    title="Change borders style"
+    show_header
+    BORDER=$(echo "none
+hidden
+normal
+rounded
+thick
+double" | gum filter --height $height)
+    mkdir -p ${configdir}
+    touch "${configdir}"/border
+    echo $BORDER > "${configdir}"/border
+}
+
+change_color() {
+    title="Define color number or choose random"
+    show_header
+    BORDER_FOREGROUND=$(echo 'random' | gum filter --height 1 --prompt="Enter custom" --no-strict)
+    mkdir -p ${configdir}
+    touch "${configdir}"/color
+    echo $BORDER_FOREGROUND > "${configdir}"/color
+}
+
+use_color() {
+    if [ -f "${configdir}/color" ]; then
+        BORDER_FOREGROUND=$(cat ${configdir}/color)
+    fi
+}
+
+change_spinner() {
+    spinner=$(echo "line
+dot
+minidot
+jump
+pulse
+points
+globe
+moon
+monkey
+meter
+hamburger" | gum filter --height 11)
+    mkdir -p ${configdir}
+    touch "${configdir}"/spinner
+    echo "$spinner" > "${configdir}"/spinner
+}
 # MENU
 
 #TODO ssh into VM
