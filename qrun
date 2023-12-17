@@ -84,7 +84,7 @@ show_headers() {
 	tip_distro=$(gum style "try $distro")
 	tip_temp=$(gum join "$tip_header" "$tip_distro")
 	homepage=$("$QUICKGET" -s "${distro}")
-	tip_homepage=$(gum style --align left "$homepage")
+	tip_homepage=$(gum style "$homepage")
 	tip=$(gum join --vertical --align top "$tip_temp" "$tip_homepage")
 	tip_border=$(gum style --padding "0 1" --border=rounded --border-foreground $color "$tip")
 
@@ -92,7 +92,7 @@ show_headers() {
 	vms=(*.conf)
 	vms_running=()
 	vms_not=()
-	vms_vm=$(gum style --bold "virtual machines:")
+	vms_vm=$(gum style --bold "ready:")
 	vms_run=""
 	if [ -n "$(find . -name '*.pid')" ]; then
 		for pid_file in "${pid_files[@]}"; do
