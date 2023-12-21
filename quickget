@@ -1610,11 +1610,15 @@ function get_sparkylinux() {
 }
 
 function get_tuxedoos() {
-    local DATE="202309111354"
+    local DATE=""
     local HASH=""
-    local ISO="TUXEDO-OS-${RELEASE}-${DATE}.iso"
-    local URL="https://os.tuxedocomputers.com/"
-    HASH=$(wget -q -O- "${URL}/checksums" | grep "${ISO}" | cut -d' ' -f1)
+    local ISO=""
+    local URL="https://os.tuxedocomputers.com"
+
+    DATE=$(wget -q -O- "${URL}" | grep '.iso' | cut -d'-' -f4 | cut -d'.' -f1)
+    ISO="TUXEDO-OS-${RELEASE}-${DATE}.iso"
+
+    HASH=$(wget -q -O- "${URL}checksums/${ISO}.md5" | cut -d' ' -f1)
     echo "${URL}/${ISO} ${HASH}"
 }
 
