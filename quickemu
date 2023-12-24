@@ -1388,6 +1388,13 @@ function sound_card_param_check() {
     fi
 }
 
+function sound_card_param_check() {
+  if [ "${SOUND_CARD}" != "intel-hda" ] && [ "${SOUND_CARD}" != "ac97" ] && [ "${SOUND_CARD}" != "es1370" ] && [ "${SOUND_CARD}" != "sb16" ] && [ "${SOUND_CARD}" != "none" ]; then
+    echo "ERROR! Requested sound card '${SOUND_CARD}' is not recognised."
+    exit 1
+  fi
+}
+
 function viewer_param_check() {
     if [ "${VIEWER}" != "none" ] && [ "${VIEWER}" != "spicy" ] && [ "${VIEWER}" != "remote-viewer" ]; then
         echo "ERROR! Requested viewer '${VIEWER}' is not recognised."
@@ -1736,7 +1743,10 @@ if [ -n "${VM}" ] && [ -e "${VM}" ]; then
     VMPATH=$(realpath "$(dirname "${VM}")")
     VM_MONITOR_SOCKETPATH="${VMDIR}/${VMNAME}-monitor.socket"
     VM_SERIAL_SOCKETPATH="${VMDIR}/${VMNAME}-serial.socket"
-
+    if [ ! -f "${disk_img}" ]; then
+        cd "${VMPATH}"
+    fi
+    
     # Backwards compatibility for ${driver_iso}
     if [ -n "${driver_iso}" ] && [ -z "${fixed_iso}" ]; then
         fixed_iso="${driver_iso}"
