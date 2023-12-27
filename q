@@ -137,8 +137,8 @@ gum_choose_edition() {
 }
 
 gum_filter_os() {
-	os=$(gum filter < /tmp/supported)
-	choices=$(cat "/tmp/distros/$os")
+	os=$(gum filter < "$configdir/supported")
+	choices=$(cat "$configdir/distros/$os")
 }
 
 gum_filter_release() {
@@ -582,12 +582,12 @@ hamburger" | gum filter --height 11)
 # shellcheck disable=SC2015
 icons_or() {
 	gum confirm "   Use icons?
-need Nerd Fonts" && echo "yes" > /tmp/icons || rm /tmp/icons
+need Nerd Fonts" && echo "yes" > "$configdir/icons" || rm "$configdir/icons"
 	show_headers
 }
 
 use_icons() {
-	if [ -f /tmp/icons ]; then
+	if [ -f "$configdir/icons" ]; then
 		icons=yes
 	else
 		icons=""
@@ -687,7 +687,7 @@ show_header_vms() {
 show_header_tip() {
 	tip1=$(gum style --bold --foreground "$color2" "Tip: ")
 	tip2=$(gum style "try ")
-	tip3=$(shuf -n 1 /tmp/supported)
+	tip3=$(shuf -n 1 "$configdir/supported")
 	tip4=$(gum style --bold --foreground="$color" "$tip3")
 	tip5=$(gum join "$tip1" "$tip2" "$tip4")
 	tip6=$("$QUICKGET" -s "$tip3")
@@ -780,7 +780,6 @@ OS homepage
 ssh into
 kill
 delete
-icons
 advanced
 settings
 help
