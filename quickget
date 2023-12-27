@@ -117,6 +117,7 @@ function pretty_name() {
     oraclelinux)        PRETTY_NAME="Oracle Linux";;
     peppermint)         PRETTY_NAME="PeppermintOS";;
     popos)              PRETTY_NAME="Pop!_OS";;
+    primtux)            PRETTY_NAME="Primtux";;
     pureos)             PRETTY_NAME="PureOS";;
     reactos)            PRETTY_NAME="ReactOS";;
     rebornos)           PRETTY_NAME="RebornOS";;
@@ -302,6 +303,7 @@ function os_support() {
     peppermint \
     popos \
     porteus \
+    primtux \
     reactos \
     rebornos \
     rockylinux \
@@ -407,6 +409,7 @@ function os_homepage(){
         peppermint)        HOMEPAGE="https://peppermintos.com/";;
         popos)             HOMEPAGE="https://pop.system76.com/";;
         porteus)           HOMEPAGE="http://www.porteus.org/";;
+        primtux)           HOMEPAGE="https://primtux.fr/";;
         reactos)           HOMEPAGE="https://reactos.org/";;
         rebornos)          HOMEPAGE="https://rebornos.org/";;
         rockylinux)        HOMEPAGE="https://rockylinux.org/";;
@@ -926,6 +929,14 @@ function releases_porteus() {
 
 function editions_porteus() {
     echo cinnamon gnome kde lxde lxqt mate openbox xfce
+}
+
+function releases_primtux() {
+    echo 7
+}
+
+function editions_primtux() {
+    echo 2022-10
 }
 
 function releases_reactos() {
@@ -2554,6 +2565,17 @@ function get_porteus() {
     ISO="Porteus-${edition}-v${RELEASE}-x86_64.iso"
     URL="https://mirrors.dotsrc.org/porteus/x86_64/Porteus-v${RELEASE}"
     HASH=$(wget -q -O- "${URL}/sha256sums.txt" | grep "${ISO}" | cut -d' ' -f1)
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+function get_primtux() {
+    local HASH=""
+    local URL=""
+    local ISO=""
+
+    ISO="PrimTux${RELEASE}-amd64-${EDITION}.iso"
+    URL="https://sourceforge.net/projects/primtux/files/Distribution"
+    HASH=$(wget -q -O- "${URL}/${ISO}.md5" | grep "${ISO}" | cut -d' ' -f1)
     echo "${URL}/${ISO} ${HASH}"
 }
 
