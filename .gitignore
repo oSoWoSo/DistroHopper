@@ -16,3 +16,5 @@
 *.sock
 *.xml
 *.zs-old
+
+megalinter-reports/
