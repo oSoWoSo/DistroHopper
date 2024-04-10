@@ -1,0 +1,19 @@
+INFO=" |Zorin OS|Ubuntu||https://zorin.com/os/|Alternative to Windows and macOS designed to make your computer faster, more powerful, secure, and privacy-respecting.";;
+
+function releases_zorin() {
+    echo 17 16
+}
+
+function editions_zorin() {
+    echo core64 lite64 education64 edulite64
+}
+
+function get_zorin() {
+    local EDITION="${1:-}"
+    local HASH=""
+    local ISO=""
+    local URL=""
+
+    URL=$(curl -Lfs "https://zrn.co/${RELEASE}${EDITION}" -w %{url_effective} -o /this/is/a/nonexistent/directory/$RANDOM/$RANDOM)
+    echo "${URL} ${HASH}"
+}

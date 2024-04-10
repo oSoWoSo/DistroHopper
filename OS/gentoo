@@ -1,0 +1,9 @@
+INFO=" |Gentoo|Independent||https://www.gentoo.org/|Highly flexible, source-based Linux distribution.";;
+
+function releases_gentoo() {
+    echo latest
+}
+
+function editions_gentoo() {
+    echo minimal livegui
+}

@@ -1,0 +1,19 @@
+INFO="Slint|Slackware||https://slint.fr/|Slint is an easy-to-use, versatile, blind-friendly Linux distribution for 64-bit computers. Slint is based on Slackware and borrows tools from Salix. Maintainer: Didier Spaier.";;
+
+function releases_slint() {
+    echo 15.0 14.2.1
+}
+
+function get_slint() {
+    local HASH=""
+    local ISO=""
+    local URL=""
+
+    case ${RELEASE} in
+      14.2.1) ISO="slint64-14.2.1.4.iso";;
+      15.0) ISO="slint64-15.0-5.iso";;
+    esac
+    URL="https://slackware.uk/slint/x86_64/slint-${RELEASE}/iso"
+    HASH=$(wget -q -O- "${URL}"/${ISO}.sha256 | cut -d' ' -f4)
+    echo "${URL}/${ISO}" "${HASH}"
+}

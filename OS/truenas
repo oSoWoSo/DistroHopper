@@ -1,0 +1,6 @@
+function releases_truenas() {
+    if [[ $OS == truenas ]] ; then
+        echo "ERROR! The supported TrueNAS OS values are truenas-core or truenas-scale"
+        exit 1;
+    fi
+}

@@ -1,0 +1,17 @@
+INFO="KDE Neon|Debian,Ubuntu||https://neon.kde.org/|Latest and greatest of KDE community software packaged on a rock-solid base.";;
+
+function releases_kdeneon() {
+    echo user testing unstable developer
+}
+
+function get_kdeneon() {
+    local HASH=""
+    local ISO=""
+    local URL="https://files.kde.org/neon/images/${RELEASE}/current"
+
+    ISO=$(wget -q -O- "${URL}/neon-${RELEASE}-current.sha256sum" | cut -d' ' -f3-)
+    HASH=$(wget -q -O- "${URL}/neon-${RELEASE}-current.sha256sum" | cut_1)
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+functi

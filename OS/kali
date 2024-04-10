@@ -1,0 +1,15 @@
+INFO=" |Kali|Debian||https://www.kali.org/|The most advanced Penetration Testing Distribution.";;
+
+function releases_kali() {
+    echo current kali-weekly
+}
+
+function get_kali() {
+    local HASH=""
+    local ISO=""
+    local URL="https://cdimage.kali.org/${RELEASE}"
+
+    ISO=$(wget -q -O- "${URL}/?C=M;O=D" | grep -o ">kali-linux-.*-installer-amd64.iso" | head -n 1 | cut -c 2-)
+    HASH=$(wget -q -O- "${URL}/SHA256SUMS" | grep -v torrent | grep "${ISO}" | cut_1)
+    echo "${URL}/${ISO} ${HASH}"
+}

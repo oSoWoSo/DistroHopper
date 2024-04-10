@@ -1,9 +1,12 @@
 #!/usr/bin/bash
 # Author: zenobit
-# Description: Uses gum to provide a simple TUI for quickemu and quickget
+# Description: Uses gum to provide a simple TUI for VMs using qemu
+# Based of: https://github.com/quickemu-project/quickemu
 # License MIT
 
 ## NEEDED
+
+CHARACTERS="                                                                                                               "
 
 define_variables() {
 	color=$(( RANDOM % 255 + 1 ))
@@ -14,10 +17,6 @@ define_variables() {
 	if ! command -v gum >/dev/null 2>&1; then
 		echo 'You are missing gum! Exiting...' && exit 1
 	fi
-	if ! command -v quickemu >/dev/null 2>&1; then
-		gum style --foreground 1 "You are missing quickemu!"
-	fi
-	QUICKGET=$(command -v quickget)
 	#export BORDER="rounded"
 	color2=$(( RANDOM % 255 + 1 ))
 	export BORDERS_FOREGROUND="$color"
@@ -67,25 +66,6 @@ define_variables() {
 	fi
 }
 
-generate_supported(){
-	echo "Extracting OS Editions and Releases..."
-	rm -r "$configdir/distro"
-	mkdir -p "$configdir/distro"
-	"$QUICKGET" | awk 'NR==2,/zorin/' | cut -d':' -f2 | grep -o '[^ ]*' > "$configdir/supported"
-	while read -r get_name; do
-		supported=$(gum spin --spinner $spinner --title="$get_name" -- "$QUICKGET" "$get_name" | sed 1d)
-		echo "$get_name"
-		echo "$supported"
-		echo "$supported" > "$configdir/distro/${get_name}"
-	done < "$configdir/supported"
-}
-
-if_needed() {
-	if [ ! -f "${configdir}"/supported ]; then
-		generate_supported
-	fi
-}
-
 ## HELP
 
 show_help() {
@@ -119,8 +99,7 @@ As temp folder is used $TMP
 gum_choose_os() {
 	title="Choose OS"
 	show_header
-	os=$(gum filter < "$configdir"/supported)
-	choices=$("$QUICKGET" "$os" | sed 1d)
+	os=$(gum filter $(ls OS/* | cut -d'/' -f2))
 }
 
 gum_choose_release() {
@@ -951,7 +930,6 @@ show_menu_settings_icons() {
 # run
 #clear
 define_variables
-if_needed
 use_icons
 show_headers
 show_menus

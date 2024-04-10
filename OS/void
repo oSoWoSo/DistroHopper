@@ -1,0 +1,27 @@
+INFO=" |Void Linux|Independent|anon:voidlinux|https://voidlinux.org/|General purpose operating system. Its package system allows you to quickly install, update and remove software; software is provided in binary packages or can be built directly from sources.";;
+
+function releases_void() {
+    echo current
+}
+
+function editions_void() {
+    echo glibc musl xfce-glibc xfce-musl
+}
+
+function get_void() {
+    local DATE=""
+    local EDITION="${1:-}"
+    local HASH=""
+    local ISO=""
+    local URL="https://repo-default.voidlinux.org/live/current"
+
+    DATE=$(wget -q -O- "${URL}/sha256sum.txt" | head -n1 | cut -d'.' -f1 | cut -d'-' -f4)
+    case ${EDITION} in
+      glibc) ISO="void-live-x86_64-${DATE}-base.iso";;
+      musl) ISO="void-live-x86_64-musl-${DATE}-base.iso";;
+      xfce-glibc) ISO="void-live-x86_64-${DATE}-xfce.iso";;
+      xfce-musl) ISO="void-live-x86_64-musl-${DATE}-xfce.iso";;
+    esac
+    HASH="$(wget -q -O- "${URL}/sha256sum.txt" | grep "${ISO}" | cut -d' ' -f4)"
+    echo "${URL}/${ISO} ${HASH}"
+}

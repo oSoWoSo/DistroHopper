@@ -1,0 +1,9 @@
+INFO="Endless OS|Debian||https://www.endlessos.org/os|Completely Free, User-Friendly Operating System Packed with Educational Tools, Games, and More.";;
+
+function releases_endless() {
+    echo 5.0.0
+}
+
+function editions_endless() {
+    echo base en fr pt_BR es
+}

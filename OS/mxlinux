@@ -1,0 +1,24 @@
+INFO=" |MX Linux|Debian,Antix||https://mxlinux.org/|Designed to combine elegant and efficient desktops with high stability and solid performance.";;
+
+function releases_mxlinux(){
+    echo 21.3
+}
+
+function editions_mxlinux(){
+    echo Xfce KDE Fluxbox
+}
+
+function get_mxlinux() {
+    local EDITION="${1:-}"
+    local HASH=""
+    local ISO=""
+    local URL="https://sourceforge.net/projects/mx-linux/files/Final/${EDITION}"
+
+    case ${EDITION} in
+      Xfce) ISO="MX-${RELEASE}_x64.iso";;
+      KDE) ISO="MX-${RELEASE}_KDE_x64.iso";;
+      Fluxbox) ISO="MX-${RELEASE}_fluxbox_x64.iso";;
+    esac
+    HASH=$(wget -q -O- "${URL}/${ISO}.sha256" | cut_1)
+    echo "${URL}/${ISO} ${HASH}"
+}

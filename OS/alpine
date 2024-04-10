@@ -1,0 +1,21 @@
+INFO=" |Alpine Linux|Independent||https://alpinelinux.org/|Security-oriented, lightweight Linux distribution based on musl libc and busybox.";;
+
+function releases_alpine() {
+    echo latest 3.18 3.17 3.16 3.15 3.14 3.13 3.12
+}
+
+function get_alpine() {
+    local HASH=""
+    local ISO=""
+    local URL=""
+    local VERSION=""
+
+    case ${RELEASE} in
+      latest) URL="https://dl-cdn.alpinelinux.org/alpine/latest-stable/releases/x86_64";;
+      *) URL="https://dl-cdn.alpinelinux.org/alpine/v${RELEASE}/releases/x86_64";;
+    esac
+    VERSION=$(wget -qO- "${URL}/latest-releases.yaml" | awk '/"Xen"/{found=0} {if(found) print} /"Virtual"/{found=1}' | grep 'version:' | awk '{print $2}')
+    ISO="alpine-virt-${VERSION}-x86_64.iso"
+    HASH=$(wget -qO- "${URL}/latest-releases.yaml" | awk '/"Xen"/{found=0} {if(found) print} /"Virtual"/{found=1}' | grep 'sha256:' | awk '{print $2}')
+    echo "${URL}/${ISO} ${HASH}"
+}

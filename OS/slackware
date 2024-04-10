@@ -1,0 +1,14 @@
+INFO=" |Slackware|Independent||http://www.slackware.com/|Advanced Linux operating system, designed with the twin goals of ease of use and stability as top priorities.";;
+
+function releases_slackware() {
+    echo 15.0 14.2
+}
+
+function get_slackware() {
+    local HASH=""
+    local ISO="slackware64-${RELEASE}-install-dvd.iso"
+    local URL="https://slackware.nl/slackware/slackware-iso/slackware64-${RELEASE}-iso"
+
+    HASH=$(wget -q -O- "${URL}/${ISO}.md5" |  cut_1)
+    echo "${URL}/${ISO} ${HASH}"
+}

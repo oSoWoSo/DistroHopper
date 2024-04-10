@@ -1,0 +1,14 @@
+INFO="Bunsenlab|Debian||https://www.bunsenlabs.org/|Light-weight and easily customizable Openbox desktop. The project is a community continuation of CrunchBang Linux.";;
+
+function releases_bunsenlabs() {
+    echo latest
+}
+
+function get_bunsenlabs() {
+    local HASH=""
+    local ISO="beryllium-1-amd64.hybrid.iso"
+    local URL="https://ddl.bunsenlabs.org/ddl"
+
+    HASH=$(wget -q -O- "${URL}/release.sha256.txt" | head -1 | cut_1)
+    echo "${URL}/${ISO} ${HASH}"
+}

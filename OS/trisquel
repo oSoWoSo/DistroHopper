@@ -1,0 +1,25 @@
+INFO=" |Trisquel|Debian,Ubuntu||https://trisquel.info/|Fully free operating system for home users, small enterprises and educational centers.";;
+
+function releases_trisquel() {
+    echo 11.0 10.0.1
+}
+
+function editions_trisquel() {
+    echo mate lxde kde sugar
+}
+
+function get_trisquel() {
+    local EDITION="${1:-}"
+    local HASH=""
+    local ISO=""
+    local URL="https://mirrors.ocf.berkeley.edu/trisquel-images"
+
+    case ${EDITION} in
+      mate) ISO="trisquel_${RELEASE}_amd64.iso";;
+      lxde) ISO="trisquel-mini_${RELEASE}_amd64.iso";;
+      kde) ISO="triskel_${RELEASE}_amd64.iso";;
+      sugar) ISO="trisquel-sugar_${RELEASE}_amd64.iso";;
+    esac
+    HASH=$(wget -q -O- "${URL}/${ISO}.sha1" | grep "${ISO}" | cut_1)
+    echo "${URL}/${ISO} ${HASH}"
+}

@@ -1,0 +1,9 @@
+INFO="Haiku|Independent||https://www.haiku-os.org/|Specifically targets personal computing. Inspired by the BeOS, Haiku is fast, simple to use, easy to learn and yet very powerful.";;
+
+function releases_haiku() {
+    echo r1beta4 r1beta3
+}
+
+function editions_haiku() {
+    echo x86_64 x86_gcc2h
+}

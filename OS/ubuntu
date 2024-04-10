@@ -1,0 +1,93 @@
+INFO=" |Ubuntu|Debian||https://ubuntu.com/|Complete desktop Linux operating system, freely available with both community and professional support.";;
+
+function releases_ubuntu() {
+    local VERSION_DATA="$(IFS=$'\n' wget -qO- https://api.launchpad.net/devel/ubuntu/series | jq -r '.entries[]')"
+    local SUPPORTED_VERSIONS=($(IFS=$'\n' jq -r 'select(.status=="Supported" or .status=="Current Stable Release") | .version' <<<${VERSION_DATA} | sort))
+    local EOL_VERSIONS=($(IFS=$'\n' jq -r 'select(.status=="Obsolete") | .version' <<<${VERSION_DATA} | sort))
+    local LTS_SUPPORT=()
+    local INTERIM_SUPPORT=()
+
+    for i in "${SUPPORTED_VERSIONS[@]}"; do
+        if [[ $(expr ${i%.*} % 2) == 0 && ${i#*.} == "04" ]]; then
+            LTS_SUPPORT+=($i)
+        else
+            INTERIM_SUPPORT+=($i)
+        fi
+    done
+
+    case "${OS}" in
+      edubuntu|ubuntu-unity|ubuntucinnamon)
+        echo ${INTERIM_SUPPORT[@]} daily-live
+        ;;
+      kubuntu|lubuntu|ubuntukylin|ubuntu-mate|ubuntustudio|xubuntu)
+        ## after 14.04
+        echo ${LTS_SUPPORT[@]:1} ${INTERIM_SUPPORT[@]} daily-live jammy-daily #${EOL_VERSIONS[@]/#/eol-}
+        ;;
+      ubuntu-budgie)
+        #after 16.04
+        echo ${LTS_SUPPORT[@]:2} ${INTERIM_SUPPORT[@]} daily-live jammy-daily #${EOL_VERSIONS[@]/#/eol-}
+        ;;
+      ubuntu)
+        echo ${LTS_SUPPORT[@]} ${INTERIM_SUPPORT[@]} daily-live #${EOL_VERSIONS[@]/#/eol-}
+        ;;
+    esac
+}
+
+function get_ubuntu() {
+    local ISO=""
+    local HASH=""
+    local URL=""
+    local DATA=""
+
+    [[ $RELEASE = daily ]] && RELEASE=daily-live
+
+    if [[ "${RELEASE}" == "daily"* ]] && [ "${OS}" == "ubuntustudio" ]; then
+        # Ubuntu Studio daily-live images are in the dvd directory
+        RELEASE="dvd"
+    fi
+
+    if [[ "${RELEASE}" == "eol-"* ]]; then
+        URL="https://old-releases.ubuntu.com/releases/${RELEASE/eol-/}"
+    elif [[ "${RELEASE}" == "jammy-daily" ]]; then
+        if [[ "${OS}" == "ubuntustudio" ]]; then
+            URL="https://cdimage.ubuntu.com/${OS}/jammy/dvd/current"
+        else
+            URL="https://cdimage.ubuntu.com/${OS}/jammy/daily-live/current"
+        fi
+        VM_PATH="${OS}-jammy-live"
+    elif [[ "${RELEASE}" == "daily"* ]] || [ "${RELEASE}" == "dvd" ]; then
+        URL="https://cdimage.ubuntu.com/${OS}/${RELEASE}/current"
+        VM_PATH="${OS}-${RELEASE}"
+    elif [ "${OS}" == "ubuntu" ]; then
+        URL="https://releases.ubuntu.com/${RELEASE}"
+    else
+        URL="https://cdimage.ubuntu.com/${OS}/releases/${RELEASE}/release"
+    fi
+
+    if wget -q --spider "${URL}/SHA256SUMS"; then
+        DATA=$(wget -qO- "${URL}/SHA256SUMS" | grep 'desktop\|dvd\|install' | grep amd64 | grep iso | grep -v "+mac")
+        ISO=$(cut -d'*' -f2 <<<${DATA} | sed '1q;d')
+        HASH=$(cut_1 <<<${DATA} | sed '1q;d')
+    else
+        DATA=$(wget -qO- "${URL}/MD5SUMS" | grep 'desktop\|dvd\|install' | grep amd64 | grep iso | grep -v "+mac")
+        ISO=$(cut -d'*' -f2 <<<${DATA})
+        HASH=$(cut_1 <<<${DATA})
+    fi
+
+    if [ -z $ISO ] || [ -z $HASH ]; then
+        echo "$(pretty_name $OS) ${RELEASE} is currently unavailable. Please select other OS/Release combination"
+        exit 1
+    fi
+
+    if [[ "${RELEASE}" == "daily"* ]] || [ "${RELEASE}" == "dvd" ]; then
+        zsync_get "${URL}/${ISO}" "${VM_PATH}" "${OS}-devel.iso"
+        make_vm_config "${OS}-devel.iso"
+    elif [[ "${RELEASE}" == "jammy-daily" ]]; then
+        zsync_get "${URL}/${ISO}" "${VM_PATH}" "${OS}-jammy-live.iso"
+        make_vm_config "${OS}-jammy-live.iso"
+    else
+        web_get "${URL}/${ISO}" "${VM_PATH}"
+        check_hash "${ISO}" "${HASH}"
+        make_vm_config "${ISO}"
+    fi
+}

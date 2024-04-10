@@ -1,0 +1,28 @@
+INFO=" CentOS Stream|Fedora,RedHat||https://www.centos.org/centos-stream/|Continuously delivered distro that tracks just ahead of Red Hat Enterprise Linux (RHEL) development, positioned as a midstream between Fedora Linux and RHEL.";;
+
+function releases_centos-stream() {
+    echo 9 8
+}
+
+function editions_centos-stream() {
+    echo boot dvd1
+}
+
+function get_centos-stream() {
+    local HASH=""
+    local ISO=""
+
+    case ${RELEASE} in
+      8)
+        ISO="CentOS-Stream-${RELEASE}-x86_64-latest-${EDITION}.iso"
+        URL="https://mirrors.ocf.berkeley.edu/centos/8-stream/isos/x86_64"
+        HASH=$(wget -q -O- ${URL}/CHECKSUM | grep "SHA256 (${ISO}" | cut -d' ' -f4)
+        ;;
+      9)
+        ISO="CentOS-Stream-${RELEASE}-latest-x86_64-${EDITION}.iso"
+        URL="https://mirrors.ocf.berkeley.edu/centos-stream/9-stream/BaseOS/x86_64/iso"
+        HASH=$(wget -q -O- ${URL}/${ISO}.SHA256SUM | grep "SHA256 (${ISO}" | cut -d' ' -f4)
+        ;;
+    esac
+    echo "${URL}/${ISO} ${HASH}"
+}

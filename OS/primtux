@@ -1,0 +1,20 @@
+INFO="PrimTux|Ubuntu||https://primtux.fr/|Upgrade for obsolete equipment and benefiting the school or educational environment in the spirit of education.";;
+
+function releases_primtux() {
+    echo 7
+}
+
+function editions_primtux() {
+    echo 2022-10
+}
+
+function get_primtux() {
+    local HASH=""
+    local URL=""
+    local ISO=""
+
+    ISO="PrimTux${RELEASE}-amd64-${EDITION}.iso"
+    URL="https://sourceforge.net/projects/primtux/files/Distribution"
+    HASH=$(wget -q -O- "${URL}/${ISO}.md5" | grep "${ISO}" | cut -d' ' -f1)
+    echo "${URL}/${ISO} ${HASH}"
+}

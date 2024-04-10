@@ -1,0 +1,14 @@
+INFO="VX Linux|Void||https://vxlinux.org/|Pre-configured, secure systemd-free Plasma desktop with focus on convenience, performance and simplicity. Based on the excellent Void Linux.";;
+
+function releases_vxlinux() {
+    wget -q https://github.com/VX-Linux/main/releases/latest -O- | grep -o -e 'releases/tag/[[:digit:]]\+\.[[:digit:]]\+\.[[:digit:]]' | head -1 | cut -d/ -f3
+}
+
+function get_vxlinux() {
+    local HASH=""
+    local ISO="vx-${RELEASE}.iso"
+    local URL="https://github.com/VX-Linux/main/releases/download/${RELEASE}"
+
+    HASH=$(wget -q -O- "${URL}/vx-${RELEASE}.md5" | cut  -d' ' -f1)
+    echo "${URL}/${ISO} ${HASH}"
+}

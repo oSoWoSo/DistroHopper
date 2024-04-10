@@ -1,0 +1,23 @@
+INFO=" |Fedora|Independent||https://www.fedoraproject.org/|Innovative platform for hardware, clouds, and containers, built with love by you.";;
+
+function releases_fedora() {
+    echo 39 38
+}
+
+function editions_fedora() {
+    echo Workstation \
+    Budgie \
+    Cinnamon \
+    i3 \
+    KDE \
+    LXDE \
+    LXQt \
+    Mate \
+    Xfce \
+    Silverblue \
+    Sericea \
+    Kinoite \
+    Sway \
+    Server \
+    Onyx
+}

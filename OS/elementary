@@ -1,0 +1,5 @@
+INFO=" |elementary OS|Debian,Ubuntu||https://elementary.io/|Thoughtful, capable, and ethical replacement for Windows and macOS.";;
+
+function releases_elementary() {
+    echo 7.1 7.0
+}

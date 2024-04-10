@@ -1,0 +1,34 @@
+INFO=" |Debian|Independent||https://www.debian.org/|Complete Free Operating System with perfect level of ease of use and stability.";;
+
+function releases_debian() {
+    DEBCURRENT=$(wget -q https://cdimage.debian.org/debian-cd/ -O- |grep '\.[0-9]/'|cut -d\> -f9|cut -d\/ -f1)
+    local DEBOLD=$(wget -q https://cdimage.debian.org/cdimage/archive/ -O- |grep -e '>[1-9][0-9]\.'|grep -v 'live' | cut -d\> -f9|cut -d\/ -f1 )
+
+    echo ${DEBCURRENT} # ${DEBOLD}
+}
+
+function editions_debian() {
+    echo standard cinnamon gnome kde lxde lxqt mate xfce netinst
+}
+
+function get_debian() {
+    local EDITION="${1:-}"
+    local HASH=""
+    local ISO="debian-live-${RELEASE}-amd64-${EDITION}.iso"
+    local URL=""
+
+    DEBCURRENT=$(wget -q https://cdimage.debian.org/debian-cd/ -O- |grep '\.[0-9]/'|cut -d\> -f9|cut -d\/ -f1)
+    case ${RELEASE} in
+      "${DEBCURRENT}") URL="https://cdimage.debian.org/debian-cd/${RELEASE}-live/amd64/iso-hybrid";;
+      *) URL="https://cdimage.debian.org/cdimage/archive/${RELEASE}-live/amd64/iso-hybrid";;
+    esac
+
+    if [ "${EDITION}" == "netinst" ]; then
+        URL="${URL/-live/}"
+        URL="${URL/hybrid/cd}"
+        ISO="${ISO/-live/}"
+    fi
+
+    HASH=$(wget -q -O- "${URL}/SHA512SUMS" | grep "${ISO}" | cut_1)
+    echo "${URL}/${ISO} ${HASH}"
+}

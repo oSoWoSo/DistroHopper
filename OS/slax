@@ -1,0 +1,29 @@
+INFO="Slax|Debian Slackware||https://www.slax.org/|Compact, fast, and modern Linux operating system that combines sleek design with modular approach. With the ability to run directly from a USB flash drive without the need for installation, Slax is truly portable and fits easily in your pocket.";;
+
+function releases_slax() {
+    echo latest
+}
+
+function editions_slax() {
+    echo debian slackware
+}
+
+function get_slax() {
+    local HASH=""
+    local ISO=""
+    local URL=""
+
+    case ${EDITION} in
+      debian)
+        URL="https://ftp.fi.muni.cz/pub/linux/slax/Slax-12.x"
+        ISO=$(wget -q -O- "${URL}/md5.txt" | grep '64bit-' | cut -d' ' -f3 | tail -n1)
+        HASH=$(wget -q -O- "${URL}/md5.txt" | grep '64bit-' | cut_1 | tail -n1)
+        ;;
+      slackware)
+        URL="https://ftp.fi.muni.cz/pub/linux/slax/Slax-15.x"
+        ISO=$(wget -q -O- "${URL}/md5.txt" | grep '64bit-' | cut -d' ' -f3 | tail -n1)
+        HASH=$(wget -q -O- "${URL}/md5.txt" | grep '64bit-' | cut_1 | tail -n1)
+        ;;
+    esac
+    echo "${URL}/${ISO} ${HASH}"
+}

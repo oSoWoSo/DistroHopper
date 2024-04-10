@@ -1,0 +1,20 @@
+INFO=" |Arco Linux|Arch||https://arcolinux.com/|Is all about becoming an expert in linux.";;
+
+function releases_arco() {
+    local RLIST
+    RLIST=$(curl -s https://ant.seedhost.eu/arcolinux/iso/ | grep -o -E ">v[[:digit:]]{2}.[[:digit:]]{2}.[[:digit:]]{2}" | sed -e "s/>//" | tr '\r\n' ' ')
+    echo ${RLIST}
+}
+
+function editions_arco() {
+    echo large small
+}
+
+function get_arco() {
+    local EDITION="${1:-}"
+    local HASH=""
+    local ISO="arcolinux${EDITION:0:1}-${RELEASE}-x86_64.iso"
+    local URL="https://ant.seedhost.eu/arcolinux/iso/${RELEASE}"
+    HASH=$(wget -q -O- "${URL}/${ISO}.sha1" | cut_1)
+    echo "${URL}/${ISO} ${HASH}"
+}
