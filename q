@@ -12,7 +12,7 @@ define_variables() {
 	color=$(( RANDOM % 255 + 1 ))
 	progname="${progname:="${0##*/}"}"
 	configdir="$HOME/.config/$progname"
-	version='0.66'
+	version='0.67'
 	vms=(*.conf)
 	if ! command -v gum >/dev/null 2>&1; then
 		echo 'You are missing gum! Exiting...' && exit 1
@@ -99,7 +99,10 @@ As temp folder is used $TMP
 gum_choose_os() {
 	title="Choose OS"
 	show_header
-	os=$(gum filter $(ls OS/* | cut -d'/' -f2))
+	os=$(gum filter | awk 'NR==2,/zorin/' | cut -d':' -f2 | grep -o '[^ ]*')
+	choices=$("$QUICKGET" "$os")
+	# preparation for quickemu refactor
+	#os=$(gum filter $(ls OS/* | cut -d'/' -f2))
 }
 
 gum_choose_release() {
@@ -116,8 +119,11 @@ gum_choose_edition() {
 }
 
 gum_filter_os() {
-	os=$(gum filter < "$configdir/supported")
-	choices=$(cat "$configdir/distros/$os")
+	os=$("$QUICKGET" | awk 'NR==2,/zorin/' | cut -d':' -f2 | grep -o '[^ ]*')
+	choices=$("$QUICKGET" "$os")
+	#preparation for refactoring
+	#os=$(gum filter < "$configdir/supported")
+	#choices=$(cat "$configdir/distros/$os")
 }
 
 gum_filter_release() {
@@ -167,7 +173,7 @@ create_VM() {
 	show_headers
 }
 
-create_VM() {
+create_VM2() {
 	gum_choose_os
 	if [ -z "$os" ]; then exit 100
 	elif [ "$(echo "$choices" | wc -l)" = 1 ]; then
@@ -669,7 +675,7 @@ show_header_tip() {
 	tip3=$(shuf -n 1 "$configdir/supported")
 	tip4=$(gum style --bold --foreground="$color" "$tip3")
 	tip5=$(gum join "$tip1" "$tip2" "$tip4")
-	tip6=$("$QUICKGET" -s "$tip3")
+	tip6=$("$QUICKGET" -i "$tip3")
 	tip7=$(gum style "$tip6")
 	tip8=$(gum join --vertical --align top "$tip5" "$tip7")
 	header_tip=$(gum style --padding "0 1" --border="$BORDER" --border-foreground $color "$tip8")
