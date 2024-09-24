@@ -506,6 +506,14 @@ gum_choose_VM_to_delete() {
 
 ## SETTINGS
 
+update_quicktui() {
+	echo "Not yet implemented"
+}
+
+generate_supported() {
+	echo "Not yet implemented"
+}
+
 headers_small_or() {
 	printf '\n\nsmall:\n'
 	show_headers_small
@@ -675,7 +683,7 @@ show_header_tip() {
 	tip3=$(shuf -n 1 "$configdir/supported")
 	tip4=$(gum style --bold --foreground="$color" "$tip3")
 	tip5=$(gum join "$tip1" "$tip2" "$tip4")
-	tip6=$("$QUICKGET" -i "$tip3")
+	tip6=$("$QUICKGET" "$tip3")
 	tip7=$(gum style "$tip6")
 	tip8=$(gum join --vertical --align top "$tip5" "$tip7")
 	header_tip=$(gum style --padding "0 1" --border="$BORDER" --border-foreground $color "$tip8")
