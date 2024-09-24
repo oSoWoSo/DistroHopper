@@ -90,7 +90,6 @@ function os_info() {
       nitrux)           INFO="Nitrux||-|https://nxos.org/|Powered by Debian, KDE Plasma and Frameworks, and AppImages.";;
       nixos)            INFO="NixOS|Independent||https://nixos.org/|Linux distribution based on Nix package manager, tool that takes a unique approach to package management and system configuration.";;
       nwg-shell)        INFO="nwg-shell|Arch|nwg:nwg|https://nwg-piotr.github.io/nwg-shell/|Arch Linux ISO with nwg-shell for sway and Hyprland";;
-      macos)            INFO="macOS|proprietary||https://www.apple.com/macos/|Work and play on your Mac are even more powerful. Elevate your presence on video calls. Access information in all-new ways. Boost gaming performance. And discover even more ways to personalize your Mac.";;
       openbsd)          INFO="OpenBSD|Independent||https://www.openbsd.org/|FREE, multi-platform 4.4BSD-based UNIX-like operating system. Our efforts emphasize portability, standardization, correctness, proactive security and integrated cryptography.";;
       openindiana)      INFO="OpenIndiana|Solaris,OpenSolaris||https://www.openindiana.org/|Community supported illumos-based operating system.";;
       opensuse)         INFO="openSUSE|Independent||https://www.opensuse.org/|The makers choice for sysadmins, developers and desktop users.";;
@@ -130,8 +129,6 @@ function os_info() {
       void)             INFO="Void Linux|Independent|anon:voidlinux|https://voidlinux.org/|General purpose operating system. Its package system allows you to quickly install, update and remove software; software is provided in binary packages or can be built directly from sources.";;
       vxlinux)          INFO="VX Linux|Void||https://vxlinux.org/|Pre-configured, secure systemd-free Plasma desktop with focus on convenience, performance and simplicity. Based on the excellent Void Linux.";;
       whonix)           INFO="Whonix|Debian||https://www.whonix.org/|Superior Internet Privacy with Whonix™ As handy as an app - delivering maximum anonymity and security.";;
-      windows)          INFO="Windows|proprietary||https://www.microsoft.com/en-us/windows/|Whether you’re gaming, studying, running a business, or running a household, Windows helps you get it done.";;
-      windows-server)   INFO="Windows Server|proprietary||https://www.microsoft.com/en-us/windows-server/|Platform for building an infrastructure of connected applications, networks, and web services.";;
       xubuntu)          INFO="Xubuntu|Ubuntu||https://xubuntu.org/|Elegant and easy to use operating system. Xubuntu comes with Xfce, which is a stable, light and configurable desktop environment.";;
       zorin)            INFO="Zorin OS|Ubuntu||https://zorin.com/os/|Alternative to Windows and macOS designed to make your computer faster, more powerful, secure, and privacy-respecting.";;
     esac
@@ -214,13 +211,6 @@ function error_specify_release() {
         *ubuntu*)
             echo -en " - Releases:\t"
             releases_ubuntu
-            ;;
-        *windows*)
-            echo -en " - Releases:\t"
-            "releases_${OS}"
-            echo -en " - Languages:\t"
-            "languages_${OS}"
-            echo "${I18NS[@]}"
             ;;
         *)
             echo -en " - Releases:\t"
@@ -321,11 +311,6 @@ list_supported() {
                 for OPTION in $(editions_"${OS}"); do
                     echo "${OS} ${RELEASE} ${OPTION}"
                 done
-            elif [[ "${OS}" == "windows"* ]]; then
-                "languages_${OS}"
-                for OPTION in "${LANGS[@]}"; do
-                    echo "${OS} ${RELEASE} ${OPTION}"
-                done
             else
                 echo "${OS} ${RELEASE}"
             fi
@@ -358,18 +343,6 @@ list_isos() {
                         echo "${OS}|${RELEASE}|${OPTION}|${URL}"
                     fi
                 done
-            elif [[ "${OS}" == "windows"* ]]; then
-                "languages_${OS}"
-                for OPTION in "${LANGS[@]}"; do
-                    #URL=$(./quickget -u ${OS} ${RELEASE} ${OPTION})
-                    if [ -n "${URL}" ]; then
-                        echo "${OS}|${RELEASE}|${OPTION}|"
-                    else
-                        echo "${OS}|${RELEASE}|${OPTION}|Strange!"
-                    fi
-                done
-            elif [[ "${OS}" == "macos" ]]; then
-                echo "${OS}|${RELEASE}|${OPTION}|"
             else
                 URL=$(./quickget -u ${OS} ${RELEASE})
                 if [ -z "${URL}" ]; then
@@ -430,11 +403,6 @@ function csv_data() {
                 for OPTION in ${EDITIONS}; do
                     echo "${DISPLAY_NAME},${OS},${RELEASE},${OPTION},${DOWNLOADER},${PNG},${SVG}"
                 done
-            elif [[ "${OS}" == "windows"* ]]; then
-                "languages_${OS}"
-                for I18N in "${I18NS[@]}"; do
-                    echo "${DISPLAY_NAME},${OS},${RELEASE},${I18N},${DOWNLOADER},${PNG},${SVG}"
-                done
             else
                 echo "${DISPLAY_NAME},${OS},${RELEASE},,${DOWNLOADER},${PNG},${SVG}"
             fi
@@ -493,19 +461,6 @@ function test_all() {
                     test_result "${OS}" "${RELEASE}" "${EDITION}" "${URL}" "${CHECK}"
                 fi
             done
-        elif [[ "${OS}" == "windows"* ]]; then
-            "languages_${OS}"
-            for I18N in "${I18NS[@]}"; do
-                validate_release releases_"${OS}"
-                if [ "${OPERATION}" == "show" ]; then
-                    test_result "${OS}" "${RELEASE}" "${I18N}" ""
-                elif [ "${OPERATION}" == "test" ]; then
-                    test_result "${OS}" "${RELEASE}" "${I18N}" "${URL}" "SKIP"
-                fi
-            done
-        elif [[ "${OS}" == "macos" ]]; then
-            validate_release releases_macos
-            (get_macos)
         elif [ "${OS}" == "ubuntu-server" ]; then
             validate_release releases_ubuntu-server
             (get_ubuntu-server)
@@ -572,7 +527,6 @@ function os_support() {
     linuxmint \
     lmde \
     lubuntu \
-    macos \
     mageia \
     manjaro \
     mxlinux \
@@ -619,8 +573,6 @@ function os_support() {
     vanillaos \
     void \
     vxlinux \
-    windows \
-    windows-server \
     xubuntu \
     zorin
 }
@@ -977,10 +929,6 @@ function releases_lmde() {
     echo 6
 }
 
-function releases_macos() {
-    echo mojave catalina big-sur monterey ventura sonoma
-}
-
 function releases_mageia() {
     echo 9 8
 }
@@ -1273,25 +1221,6 @@ function releases_vxlinux() {
     echo $(web_pipe "https://github.com/VX-Linux/main/releases/latest" | grep -o -e 'releases/tag/[[:digit:]]\+\.[[:digit:]]\+\.[[:digit:]]' | sort -u | cut -d'/' -f 3)
 }
 
-function releases_windows() {
-    echo 11 10
-}
-
-function languages_windows() {
-    I18NS=("Arabic" "Brazilian Portuguese" "Bulgarian" "Chinese (Simplified)" "Chinese (Traditional)" "Croatian" "Czech" "Danish" "Dutch" \
-    "English (United States)" "English International" "Estonian" "Finnish" "French" "French Canadian" "German" "Greek" "Hebrew" "Hungarian" \
-    "Italian" "Japanese" "Korean" "Latvian" "Lithuanian" "Norwegian" "Polish" "Portuguese" "Romanian" "Russian" "Serbian Latin" "Slovak" \
-    "Slovenian" "Spanish" "Spanish (Mexico)" "Swedish" "Thai" "Turkish" "Ukrainian")
-}
-
-function releases_windows-server() {
-    echo 2022 2019 2016
-}
-
-function languages_windows-server() {
-    I18NS=("English (United States)" "Chinese (Simplified)" "French" "German" "Italian" "Japanese" "Russian" "Spanish")
-}
-
 function releases_zorin() {
     echo 17 16
 }
@@ -1504,9 +1433,6 @@ function make_vm_config() {
         kolibrios)
             GUEST="kolibrios"
             IMAGE_TYPE="iso";;
-        macos)
-            GUEST="macos"
-            IMAGE_TYPE="img";;
         netbsd)
             GUEST="netbsd"
             IMAGE_TYPE="iso";;
@@ -1532,12 +1458,6 @@ function make_vm_config() {
                 fi
             fi
             ;;
-        windows)
-            GUEST="windows"
-            IMAGE_TYPE="iso";;
-        windows-server)
-            GUEST="windows-server"
-            IMAGE_TYPE="iso";;
         *)
             GUEST="linux"
             IMAGE_TYPE="iso";;
@@ -1621,14 +1541,6 @@ EOF
                 echo "disk_size=\"12G\"" >> "${CONF_FILE}"
                 echo "ram=\"2048M\"" >> "${CONF_FILE}"
                 ;;
-            macos)
-                echo "disk_size=\"128G\"" >> "${CONF_FILE}"
-                echo "macos_release=\"${RELEASE}\"" >> "${CONF_FILE}"
-                # https://github.com/quickemu-project/quickemu/issues/438
-                if [ "${RELEASE}" == "monterey" ]; then
-                    echo "cpu_cores=2" >> "${CONF_FILE}"
-                fi
-                ;;
         esac
 
         if [ "${OS}" == "ubuntu" ] && [[ ${RELEASE} == *"daily"*  ]]; then
@@ -1636,15 +1548,6 @@ EOF
             echo "disk_size=\"32G\"" >> "${CONF_FILE}"
         fi
 
-        if [[ "${OS}" == "windows"* ]]; then
-            echo "disk_size=\"64G\"" >> "${CONF_FILE}"
-        fi
-
-        # Enable TPM for Windows 11 and Windows Server 2022
-        if [[ "${OS}" == "windows" && "${RELEASE}" == "11" || "${OS}" == "windows-server" && "${RELEASE}" == "2022" ]]; then
-            echo "tpm=\"on\"" >> "${CONF_FILE}"
-            echo "secureboot=\"off\"" >> "${CONF_FILE}"
-        fi
     fi
     echo -e "\nTo start your $(pretty_name "${OS}") virtual machine run:"
     if [ "${OS}" == "slint" ]; then
@@ -2314,124 +2217,6 @@ function generate_id() {
     echo "${macRecoveryID}"
 }
 
-function get_macos() {
-    local appleSession=""
-    local info=""
-    local downloadLink=""
-    local downloadSession=""
-    local chunkListLink=""
-    local chunkListSession=""
-    local BOARD_ID=""
-    local CWD=""
-    local CHECK=""
-    local CHUNKCHECK=""
-    local MLB="00000000000000000"
-    local OS_TYPE="default"
-
-    case ${RELEASE} in
-        lion|10.7)
-            BOARD_ID="Mac-2E6FAB96566FE58C"
-            MLB="00000000000F25Y00";;
-        mountainlion|10.8)
-            BOARD_ID="Mac-7DF2A3B5E5D671ED"
-            MLB="00000000000F65100";;
-        mavericks|10.9)
-            BOARD_ID="Mac-F60DEB81FF30ACF6"
-            MLB="00000000000FNN100";;
-        yosemite|10.10)
-            BOARD_ID="Mac-E43C1C25D4880AD6"
-            MLB="00000000000GDVW00";;
-        elcapitan|10.11)
-            BOARD_ID="Mac-FFE5EF870D7BA81A"
-            MLB="00000000000GQRX00";;
-        sierra|10.12)
-            BOARD_ID="Mac-77F17D7DA9285301"
-            MLB="00000000000J0DX00";;
-        high-sierra|10.13)
-            BOARD_ID="Mac-BE088AF8C5EB4FA2"
-            MLB="00000000000J80300";;
-        mojave|10.14)
-            BOARD_ID="Mac-7BA5B2DFE22DDD8C"
-            MLB="00000000000KXPG00";;
-        catalina|10.15)
-            BOARD_ID="Mac-00BE6ED71E35EB86";;
-        big-sur|11)
-            BOARD_ID="Mac-42FD25EABCABB274";;
-        monterey|12)
-            BOARD_ID="Mac-E43C1C25D4880AD6";;
-        ventura|13)
-            BOARD_ID="Mac-BE088AF8C5EB4FA2";;
-        sonoma|14)
-            BOARD_ID="Mac-53FDB3D8DB8CA971";;
-        *) echo "ERROR! Unknown release: ${RELEASE}"
-           releases_macos
-           exit 1;;
-    esac
-
-    CWD="$(dirname "${0}")"
-    if [ -x "${CWD}/chunkcheck" ]; then
-        CHUNKCHECK="${CWD}/chunkcheck"
-    elif [ -x "$(command -v chunkcheck)" ]; then
-        CHUNKCHECK="$(command -v chunkcheck)"
-    fi
-
-    appleSession=$(curl -v -H "Host: osrecovery.apple.com" \
-                           -H "Connection: close" \
-                           -A "InternetRecovery/1.0" https://osrecovery.apple.com/ 2>&1 | tr ';' '\n' | awk -F'session=|;' '{print $2}' | grep 1)
-    info=$(curl -s -X POST -H "Host: osrecovery.apple.com" \
-                           -H "Connection: close" \
-                           -A "InternetRecovery/1.0" \
-                           -b "session=\"${appleSession}\"" \
-                           -H "Content-Type: text/plain" \
-                           -d $'cid='"$(generate_id 16)"$'\nsn='${MLB}$'\nbid='${BOARD_ID}$'\nk='"$(generate_id 64)"$'\nfg='"$(generate_id 64)"$'\nos='${OS_TYPE} \
-                           https://osrecovery.apple.com/InstallationPayload/RecoveryImage | tr ' ' '\n')
-    downloadLink=$(echo "$info" | grep 'oscdn' | grep 'dmg')
-    downloadSession=$(echo "$info" | grep 'expires' | grep 'dmg')
-    chunkListLink=$(echo "$info" | grep 'oscdn' | grep 'chunklist')
-    chunkListSession=$(echo "$info" | grep 'expires' | grep 'chunklist')
-
-    if [ "${OPERATION}" == "show" ]; then
-        test_result "${OS}" "${RELEASE}" "" "${downloadLink}"
-        exit 0
-    elif [ "${OPERATION}" == "test" ]; then
-        CHECK=$(web_check "${downloadLink}" --header "Host: oscdn.apple.com" --header "Connection: close" --header "User-Agent: InternetRecovery/1.0" --header "Cookie: AssetToken=${downloadSession}" && echo "PASS" || echo "FAIL")
-        test_result "${OS}" "${RELEASE}" "" "${downloadLink}" "${CHECK}"
-        exit 0
-    elif [ "${OPERATION}" == "download" ]; then
-        echo "Downloading macOS (${RELEASE^}) RecoveryImage"
-        echo " - URL: ${downloadLink}"
-        web_get "${downloadLink}" "${VM_PATH}" RecoveryImage.dmg --header "Host: oscdn.apple.com" --header "Connection: close" --header "User-Agent: InternetRecovery/1.0" --header "Cookie: AssetToken=${downloadSession}"
-        web_get "${chunkListLink}" "${VM_PATH}" RecoveryImage.chunklist --header "Host: oscdn.apple.com" --header "Connection: close" --header "User-Agent: InternetRecovery/1.0" --header "Cookie: AssetToken=${chunkListSession}"
-        VM_PATH="$(pwd)"
-    else
-        if [ ! -e "${VM_PATH}/RecoveryImage.chunklist" ]; then
-            echo "Downloading macOS (${RELEASE^}) RecoveryImage"
-            echo " - URL: ${downloadLink}"
-            web_get "${downloadLink}" "${VM_PATH}" RecoveryImage.dmg --header "Host: oscdn.apple.com" --header "Connection: close" --header "User-Agent: InternetRecovery/1.0" --header "Cookie: AssetToken=${downloadSession}"
-            web_get "${chunkListLink}" "${VM_PATH}" RecoveryImage.chunklist --header "Host: oscdn.apple.com" --header "Connection: close" --header "User-Agent: InternetRecovery/1.0" --header "Cookie: AssetToken=${chunkListSession}"
-            if ! "${CHUNKCHECK}" "${VM_PATH}" 2> /dev/null; then
-                echo " - WARNING! Verification failed, continuing anyway"
-            else
-                echo " - Verification passed"
-            fi
-
-            if [ -e "${VM_PATH}/RecoveryImage.dmg" ] && [ ! -e "${VM_PATH}/RecoveryImage.img" ]; then
-                echo " - Converting RecoveryImage.dmg"
-                ${QEMU_IMG} convert "${VM_PATH}/RecoveryImage.dmg" -O raw "${VM_PATH}/RecoveryImage.img" 2>/dev/null
-            fi
-            rm "${VM_PATH}/RecoveryImage.dmg" "${VM_PATH}/RecoveryImage.chunklist"
-            echo " - RecoveryImage.img is ready."
-        fi
-        echo "Downloading OpenCore & UEFI firmware"
-        web_get "https://github.com/kholia/OSX-KVM/raw/master/OpenCore/OpenCore.qcow2" "${VM_PATH}"
-        web_get "https://github.com/kholia/OSX-KVM/raw/master/OVMF_CODE.fd" "${VM_PATH}"
-        if [ ! -e "${VM_PATH}/OVMF_VARS-1920x1080.fd" ]; then
-            web_get "https://github.com/kholia/OSX-KVM/raw/master/OVMF_VARS-1920x1080.fd" "${VM_PATH}"
-        fi
-    fi
-    make_vm_config RecoveryImage.img
-}
-
 function get_mageia() {
     local HASH=""
     local ISO=""
@@ -3003,620 +2788,6 @@ function get_zorin() {
     echo "${URL} ${HASH}"
 }
 
-function unattended_windows() {
-    mkdir -p "${1}/unattended" 2>/dev/null
-
-    cat << 'EOF' > "${1}/unattended/autounattend.xml"
-<?xml version="1.0" encoding="utf-8"?>
-<unattend xmlns="urn:schemas-microsoft-com:unattend"
-  xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <!--
-       For documentation on components:
-       https://docs.microsoft.com/en-us/windows-hardware/customize/desktop/unattend/
-  -->
-  <settings pass="offlineServicing">
-    <component name="Microsoft-Windows-LUA-Settings" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-      <EnableLUA>false</EnableLUA>
-    </component>
-    <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-      <ComputerName>*</ComputerName>
-    </component>
-  </settings>
-
-  <settings pass="generalize">
-    <component name="Microsoft-Windows-PnPSysprep" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
-      <PersistAllDeviceInstalls>true</PersistAllDeviceInstalls>
-    </component>
-    <component name="Microsoft-Windows-Security-SPP" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-      <SkipRearm>1</SkipRearm>
-    </component>
-  </settings>
-
-  <settings pass="specialize">
-    <component name="Microsoft-Windows-Security-SPP-UX" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-      <SkipAutoActivation>true</SkipAutoActivation>
-    </component>
-    <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-      <ComputerName>*</ComputerName>
-      <OEMInformation>
-        <Manufacturer>Quickemu Project</Manufacturer>
-        <Model>Quickemu</Model>
-        <SupportHours>24/7</SupportHours>
-        <SupportPhone></SupportPhone>
-        <SupportProvider>Quickemu Project</SupportProvider>
-        <SupportURL>https://github.com/quickemu-project/quickemu/issues</SupportURL>
-      </OEMInformation>
-      <OEMName>Quickemu Project</OEMName>
-      <ProductKey>W269N-WFGWX-YVC9B-4J6C9-T83GX</ProductKey>
-    </component>
-    <component name="Microsoft-Windows-SQMApi" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-      <CEIPEnabled>0</CEIPEnabled>
-    </component>
-  </settings>
-
-  <settings pass="windowsPE">
-    <component name="Microsoft-Windows-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-      <Diagnostics>
-        <OptIn>false</OptIn>
-      </Diagnostics>
-      <DiskConfiguration>
-        <Disk wcm:action="add">
-          <DiskID>0</DiskID>
-          <WillWipeDisk>true</WillWipeDisk>
-          <CreatePartitions>
-            <!-- Windows RE Tools partition -->
-            <CreatePartition wcm:action="add">
-              <Order>1</Order>
-              <Type>Primary</Type>
-              <Size>256</Size>
-            </CreatePartition>
-            <!-- System partition (ESP) -->
-            <CreatePartition wcm:action="add">
-              <Order>2</Order>
-              <Type>EFI</Type>
-              <Size>128</Size>
-            </CreatePartition>
-            <!-- Microsoft reserved partition (MSR) -->
-            <CreatePartition wcm:action="add">
-              <Order>3</Order>
-              <Type>MSR</Type>
-              <Size>128</Size>
-            </CreatePartition>
-            <!-- Windows partition -->
-            <CreatePartition wcm:action="add">
-              <Order>4</Order>
-              <Type>Primary</Type>
-              <Extend>true</Extend>
-            </CreatePartition>
-          </CreatePartitions>
-          <ModifyPartitions>
-            <!-- Windows RE Tools partition -->
-            <ModifyPartition wcm:action="add">
-              <Order>1</Order>
-              <PartitionID>1</PartitionID>
-              <Label>WINRE</Label>
-              <Format>NTFS</Format>
-              <TypeID>DE94BBA4-06D1-4D40-A16A-BFD50179D6AC</TypeID>
-            </ModifyPartition>
-            <!-- System partition (ESP) -->
-            <ModifyPartition wcm:action="add">
-              <Order>2</Order>
-              <PartitionID>2</PartitionID>
-              <Label>System</Label>
-              <Format>FAT32</Format>
-            </ModifyPartition>
-            <!-- MSR partition does not need to be modified -->
-            <ModifyPartition wcm:action="add">
-              <Order>3</Order>
-              <PartitionID>3</PartitionID>
-            </ModifyPartition>
-            <!-- Windows partition -->
-              <ModifyPartition wcm:action="add">
-              <Order>4</Order>
-              <PartitionID>4</PartitionID>
-              <Label>Windows</Label>
-              <Letter>C</Letter>
-              <Format>NTFS</Format>
-            </ModifyPartition>
-          </ModifyPartitions>
-        </Disk>
-      </DiskConfiguration>
-      <DynamicUpdate>
-        <Enable>true</Enable>
-        <WillShowUI>Never</WillShowUI>
-      </DynamicUpdate>
-      <ImageInstall>
-        <OSImage>
-          <InstallTo>
-            <DiskID>0</DiskID>
-            <PartitionID>4</PartitionID>
-          </InstallTo>
-          <InstallToAvailablePartition>false</InstallToAvailablePartition>
-        </OSImage>
-      </ImageInstall>
-      <RunSynchronous>
-        <RunSynchronousCommand wcm:action="add">
-          <Order>1</Order>
-          <Path>reg add HKLM\System\Setup\LabConfig /v BypassCPUCheck /t REG_DWORD /d 0x00000001 /f</Path>
-        </RunSynchronousCommand>
-        <RunSynchronousCommand wcm:action="add">
-          <Order>2</Order>
-          <Path>reg add HKLM\System\Setup\LabConfig /v BypassRAMCheck /t REG_DWORD /d 0x00000001 /f</Path>
-        </RunSynchronousCommand>
-        <RunSynchronousCommand wcm:action="add">
-          <Order>3</Order>
-          <Path>reg add HKLM\System\Setup\LabConfig /v BypassSecureBootCheck /t REG_DWORD /d 0x00000001 /f</Path>
-        </RunSynchronousCommand>
-        <RunSynchronousCommand wcm:action="add">
-          <Order>4</Order>
-          <Path>reg add HKLM\System\Setup\LabConfig /v BypassTPMCheck /t REG_DWORD /d 0x00000001 /f</Path>
-        </RunSynchronousCommand>
-      </RunSynchronous>
-      <UpgradeData>
-        <Upgrade>false</Upgrade>
-        <WillShowUI>Never</WillShowUI>
-      </UpgradeData>
-      <UserData>
-        <AcceptEula>true</AcceptEula>
-        <FullName>Quickemu</FullName>
-        <Organization>Quickemu Project</Organization>
-        <!-- https://docs.microsoft.com/en-us/windows-server/get-started/kms-client-activation-keys -->
-        <ProductKey>
-          <Key>W269N-WFGWX-YVC9B-4J6C9-T83GX</Key>
-          <WillShowUI>Never</WillShowUI>
-        </ProductKey>
-      </UserData>
-    </component>
-
-    <component name="Microsoft-Windows-PnpCustomizationsWinPE" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" processorArchitecture="amd64" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-      <!--
-           This makes the VirtIO drivers available to Windows, assuming that
-           the VirtIO driver disk is available as drive E:
-           https://github.com/virtio-win/virtio-win-pkg-scripts/blob/master/README.md
-      -->
-      <DriverPaths>
-        <PathAndCredentials wcm:action="add" wcm:keyValue="1">
-          <Path>E:\qemufwcfg\w10\amd64</Path>
-        </PathAndCredentials>
-        <PathAndCredentials wcm:action="add" wcm:keyValue="2">
-          <Path>E:\vioinput\w10\amd64</Path>
-        </PathAndCredentials>
-        <PathAndCredentials wcm:action="add" wcm:keyValue="3">
-          <Path>E:\vioscsi\w10\amd64</Path>
-        </PathAndCredentials>
-        <PathAndCredentials wcm:action="add" wcm:keyValue="4">
-          <Path>E:\viostor\w10\amd64</Path>
-        </PathAndCredentials>
-        <PathAndCredentials wcm:action="add" wcm:keyValue="5">
-          <Path>E:\vioserial\w10\amd64</Path>
-        </PathAndCredentials>
-        <PathAndCredentials wcm:action="add" wcm:keyValue="6">
-          <Path>E:\qxldod\w10\amd64</Path>
-        </PathAndCredentials>
-        <PathAndCredentials wcm:action="add" wcm:keyValue="7">
-          <Path>E:\amd64\w10</Path>
-        </PathAndCredentials>
-        <PathAndCredentials wcm:action="add" wcm:keyValue="8">
-          <Path>E:\viogpudo\w10\amd64</Path>
-        </PathAndCredentials>
-        <PathAndCredentials wcm:action="add" wcm:keyValue="9">
-          <Path>E:\viorng\w10\amd64</Path>
-        </PathAndCredentials>
-        <PathAndCredentials wcm:action="add" wcm:keyValue="10">
-          <Path>E:\NetKVM\w10\amd64</Path>
-        </PathAndCredentials>
-        <PathAndCredentials wcm:action="add" wcm:keyValue="11">
-          <Path>E:\viofs\w10\amd64</Path>
-        </PathAndCredentials>
-        <PathAndCredentials wcm:action="add" wcm:keyValue="12">
-          <Path>E:\Balloon\w10\amd64</Path>
-        </PathAndCredentials>
-      </DriverPaths>
-    </component>
-  </settings>
-
-  <settings pass="oobeSystem">
-    <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-      <AutoLogon>
-        <Password>
-          <Value>quickemu</Value>
-          <PlainText>true</PlainText>
-        </Password>
-        <Enabled>true</Enabled>
-        <Username>Quickemu</Username>
-      </AutoLogon>
-      <DisableAutoDaylightTimeSet>false</DisableAutoDaylightTimeSet>
-      <OOBE>
-        <HideEULAPage>true</HideEULAPage>
-        <HideLocalAccountScreen>true</HideLocalAccountScreen>
-        <HideOEMRegistrationScreen>true</HideOEMRegistrationScreen>
-        <HideOnlineAccountScreens>true</HideOnlineAccountScreens>
-        <HideWirelessSetupInOOBE>true</HideWirelessSetupInOOBE>
-        <NetworkLocation>Home</NetworkLocation>
-        <ProtectYourPC>3</ProtectYourPC>
-        <SkipUserOOBE>true</SkipUserOOBE>
-        <SkipMachineOOBE>true</SkipMachineOOBE>
-        <VMModeOptimizations>
-          <SkipWinREInitialization>true</SkipWinREInitialization>
-        </VMModeOptimizations>
-      </OOBE>
-      <UserAccounts>
-        <LocalAccounts>
-          <LocalAccount wcm:action="add">
-            <Password>
-              <Value>quickemu</Value>
-              <PlainText>true</PlainText>
-            </Password>
-            <Description>Quickemu</Description>
-            <DisplayName>Quickemu</DisplayName>
-            <Group>Administrators</Group>
-            <Name>Quickemu</Name>
-          </LocalAccount>
-        </LocalAccounts>
-      </UserAccounts>
-      <RegisteredOrganization>Quickemu Project</RegisteredOrganization>
-      <RegisteredOwner>Quickemu</RegisteredOwner>
-      <FirstLogonCommands>
-        <SynchronousCommand wcm:action="add">
-          <CommandLine>msiexec /i E:\guest-agent\qemu-ga-x86_64.msi /quiet /passive /qn</CommandLine>
-          <Description>Install Virtio Guest Agent</Description>
-          <Order>1</Order>
-        </SynchronousCommand>
-        <SynchronousCommand wcm:action="add">
-          <CommandLine>msiexec /i F:\spice-webdavd-x64-latest.msi /quiet /passive /qn</CommandLine>
-          <Description>Install spice-webdavd file sharing agent</Description>
-          <Order>2</Order>
-        </SynchronousCommand>
-        <SynchronousCommand wcm:action="add">
-          <CommandLine>msiexec /i F:\UsbDk_1.0.22_x64.msi /quiet /passive /qn</CommandLine>
-          <Description>Install usbdk USB sharing agent</Description>
-          <Order>3</Order>
-        </SynchronousCommand>
-        <SynchronousCommand wcm:action="add">
-          <CommandLine>msiexec /i F:\spice-vdagent-x64-0.10.0.msi /quiet /passive /qn</CommandLine>
-          <Description>Install spice-vdagent SPICE agent</Description>
-          <Order>4</Order>
-        </SynchronousCommand>
-        <SynchronousCommand wcm:action="add">
-          <CommandLine>Cmd /c POWERCFG -H OFF</CommandLine>
-          <Description>Disable Hibernation</Description>
-          <Order>5</Order>
-        </SynchronousCommand>
-      </FirstLogonCommands>
-    </component>
-  </settings>
-</unattend>
-EOF
-
-
-echo "Downloading Spice drivers..."
-web_get https://www.spice-space.org/download/windows/spice-webdavd/spice-webdavd-x64-latest.msi "${VM_PATH}/unattended"
-web_get https://www.spice-space.org/download/windows/vdagent/vdagent-win-0.10.0/spice-vdagent-x64-0.10.0.msi "${VM_PATH}/unattended"
-web_get https://www.spice-space.org/download/windows/usbdk/UsbDk_1.0.22_x64.msi "${VM_PATH}/unattended"
-
-echo "Making unattended.iso"
-mkisofs -quiet -l -o "${VM_PATH}/unattended.iso" "${VM_PATH}/unattended/"
-}
-
-function handle_curl_error() {
-    local error_code="$1"
-    local fatal_error_action=2
-    case "$error_code" in
-        6)
-            echo "Failed to resolve Microsoft servers! Is there an Internet connection? Exiting..."
-            return "$fatal_error_action"
-            ;;
-        7)
-            echo "Failed to contact Microsoft servers! Is there an Internet connection or is the server down?"
-            ;;
-        8)
-            echo "Microsoft servers returned a malformed HTTP response!"
-            ;;
-        22)
-            echo "Microsoft servers returned a failing HTTP status code!"
-            ;;
-        23)
-            echo "Failed at writing Windows media to disk! Out of disk space or permission error? Exiting..."
-            return "$fatal_error_action"
-            ;;
-        26)
-            echo "Ran out of memory during download! Exiting..."
-            return "$fatal_error_action"
-            ;;
-        36)
-            echo "Failed to continue earlier download!"
-            ;;
-        63)
-            echo "Microsoft servers returned an unexpectedly large response!"
-            ;;
-            # POSIX defines exit statuses 1-125 as usable by us
-            # https://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html#tag_18_08_02
-            $((error_code <= 125)))
-            # Must be some other server or network error (possibly with this specific request/file)
-            # This is when accounting for all possible errors in the curl manual assuming a correctly formed curl command and an HTTP(S) request, using only the curl features we're using, and a sane build
-            echo "Miscellaneous server or network error!"
-            ;;
-        126 | 127 )
-            echo "Curl command not found! Please install curl and try again. Exiting..."
-            return "$fatal_error_action"
-            ;;
-        # Exit statuses are undefined by POSIX beyond this point
-        *)
-            case "$(kill -l "$error_code")" in
-            # Signals defined to exist by POSIX:
-            # https://pubs.opengroup.org/onlinepubs/009695399/basedefs/signal.h.html
-            INT)
-                echo "Curl was interrupted!"
-                ;;
-            # There could be other signals but these are most common
-            SEGV | ABRT )
-                echo "Curl crashed! Failed exploitation attempt? Please report any core dumps to curl developers. Exiting..."
-                return "$fatal_error_action"
-                ;;
-            *)
-                echo "Curl terminated due to a fatal signal!"
-                ;;
-            esac
-    esac
-    return 1
-}
-
-function download_windows_server() {
-    local iso_download_page_html=""
-    # Copyright (C) 2024 Elliot Killick <contact@elliotkillick.com>
-    # This function is adapted from the Mido project:
-    # https://github.com/ElliotKillick/Mido
-
-    # Download enterprise evaluation Windows versions
-    local windows_version="$1"
-    local enterprise_type="$2"
-    local PRETTY_RELEASE=""
-
-    case "${RELEASE}" in
-        *) PRETTY_RELEASE="${RELEASE}";;
-    esac
-
-    echo "Downloading $(pretty_name "${OS}") ${PRETTY_RELEASE} (${I18N})"
-
-    local url="https://www.microsoft.com/en-us/evalcenter/download-$windows_version"
-
-    echo " - Parsing download page: ${url}"
-    iso_download_page_html="$(curl --silent --location --max-filesize 1M --fail --proto =https --tlsv1.2 --http1.1 -- "$url")" || {
-        handle_curl_error $?
-        return $?
-    }
-
-    if ! [ "$iso_download_page_html" ]; then
-        # This should only happen if there's been some change to where this download page is located
-        echo " - Windows server download page gave us an empty response"
-        return 1
-    fi
-
-    local CULTURE=""
-    local COUNTRY=""
-    case "${I18N}" in
-        "English (Great Britain)")
-            CULTURE="en-gb"
-            COUNTRY="GB";;
-        "Chinese (Simplified)")
-            CULTURE="zh-cn"
-            COUNTRY="CN";;
-        "Chinese (Traditional)")
-            CULTURE="zh-tw"
-            COUNTRY="TW";;
-        "French")
-            CULTURE="fr-fr"
-            COUNTRY="FR";;
-        "German")
-            CULTURE="de-de"
-            COUNTRY="DE";;
-        "Italian")
-            CULTURE="it-it"
-            COUNTRY="IT";;
-        "Japanese")
-            CULTURE="ja-jp"
-            COUNTRY="JP";;
-        "Korean")
-            CULTURE="ko-kr"
-            COUNTRY="KR";;
-        "Portuguese (Brazil)")
-            CULTURE="pt-br"
-            COUNTRY="BR";;
-        "Spanish")
-            CULTURE="es-es"
-            COUNTRY="ES";;
-        "Russian")
-            CULTURE="ru-ru"
-            COUNTRY="RU";;
-        *)
-            CULTURE="en-us"
-            COUNTRY="US";;
-    esac
-
-    echo " - Getting download link.."
-    iso_download_links="$(echo "$iso_download_page_html" | grep -o "https://go.microsoft.com/fwlink/p/?LinkID=[0-9]\+&clcid=0x[0-9a-z]\+&culture=${CULTURE}&country=${COUNTRY}")" || {
-        # This should only happen if there's been some change to the download endpoint web address
-        echo " - Windows server download page gave us no download link"
-        return 1
-    }
-
-    # Limit untrusted size for input validation
-    iso_download_links="$(echo "$iso_download_links" | head -c 1024)"
-
-    case "$enterprise_type" in
-        # Select x64 download link
-        "enterprise") iso_download_link=$(echo "$iso_download_links" | head -n 2 | tail -n 1) ;;
-        # Select x64 LTSC download link
-        "ltsc") iso_download_link=$(echo "$iso_download_links" | head -n 4 | tail -n 1) ;;
-        *) iso_download_link="$iso_download_links" ;;
-    esac
-
-    # Follow redirect so proceeding log message is useful
-    # This is a request we make this Fido doesn't
-    # We don't need to set "--max-filesize" here because this is a HEAD request and the output is to /dev/null anyway
-    iso_download_link="$(curl --silent --location --output /dev/null --silent --write-out "%{url_effective}" --head --fail --proto =https --tlsv1.2 --http1.1 -- "$iso_download_link")" || {
-        # This should only happen if the Microsoft servers are down
-        handle_curl_error $?
-        return $?
-    }
-
-    # Limit untrusted size for input validation
-    iso_download_link="$(echo "$iso_download_link" | head -c 1024)"
-
-    echo " - URL: $iso_download_link"
-
-    # Download ISO
-    FILE_NAME="${iso_download_link##*/}"
-    web_get "${iso_download_link}" "${VM_PATH}" "${FILE_NAME}"
-    OS="windows-server"
-}
-
-function download_windows_workstation() {
-    local HASH=""
-    local session_id=""
-    local iso_download_page_html=""
-    local product_edition_id=""
-    local language_skuid_table_html=""
-    local sku_id=""
-    local iso_download_link_html=""
-    local iso_download_link=""
-
-    echo "Downloading Windows ${RELEASE} (${I18N})"
-    # This function is adapted from the Mido project:
-    # https://github.com/ElliotKillick/Mido
-    # Download newer consumer Windows versions from behind gated Microsoft API
-
-    # Either 10, or 11
-    local windows_version="$1"
-
-    local url="https://www.microsoft.com/en-us/software-download/windows$windows_version"
-    case "$windows_version" in
-        10) url="${url}ISO";;
-    esac
-
-    local user_agent="Mozilla/5.0 (X11; Linux x86_64; rv:100.0) Gecko/20100101 Firefox/100.0"
-    session_id="$(uuidgen)"
-
-    # Get product edition ID for latest release of given Windows version
-    # Product edition ID: This specifies both the Windows release (e.g. 22H2) and edition ("multi-edition" is default, either Home/Pro/Edu/etc., we select "Pro" in the answer files) in one number
-    # This is the *only* request we make that Fido doesn't. Fido manually maintains a list of all the Windows release/edition product edition IDs in its script (see: $WindowsVersions array). This is helpful for downloading older releases (e.g. Windows 10 1909, 21H1, etc.) but we always want to get the newest release which is why we get this value dynamically
-    # Also, keeping a "$WindowsVersions" array like Fido does would be way too much of a maintenance burden
-    # Remove "Accept" header that curl sends by default
-    echo " - Parsing download page: ${url}"
-    iso_download_page_html="$(curl --silent --user-agent "$user_agent" --header "Accept:" --max-filesize 1M --fail --proto =https --tlsv1.2 --http1.1 -- "$url")" || {
-        handle_curl_error $?
-        return $?
-    }
-
-    echo -n " - Getting Product edition ID: "
-    # tr: Filter for only numerics to prevent HTTP parameter injection
-    # head -c was recently added to POSIX: https://austingroupbugs.net/view.php?id=407
-    product_edition_id="$(echo "$iso_download_page_html" | grep -Eo '<option value="[0-9]+">Windows' | cut -d '"' -f 2 | head -n 1 | tr -cd '0-9' | head -c 16)"
-    echo "$product_edition_id"
-
-    echo " - Permit Session ID: $session_id"
-    # Permit Session ID
-    # "org_id" is always the same value
-    curl --silent --output /dev/null --user-agent "$user_agent" --header "Accept:" --max-filesize 100K --fail --proto =https --tlsv1.2 --http1.1 -- "https://vlscppe.microsoft.com/tags?org_id=y6jn8c31&session_id=$session_id" || {
-        # This should only happen if there's been some change to how this API works
-        handle_curl_error $?
-        return $?
-    }
-
-    # Extract everything after the last slash
-    local url_segment_parameter="${url##*/}"
-
-    echo -n " - Getting language SKU ID: "
-    # Get language -> skuID association table
-    # SKU ID: This specifies the language of the ISO. We always use "English (United States)", however, the SKU for this changes with each Windows release
-    # We must make this request so our next one will be allowed
-    # --data "" is required otherwise no "Content-Length" header will be sent causing HTTP response "411 Length Required"
-    language_skuid_table_html="$(curl --silent --request POST --user-agent "$user_agent" --data "" --header "Accept:" --max-filesize 10K --fail --proto =https --tlsv1.2 --http1.1 -- "https://www.microsoft.com/en-US/api/controls/contentinclude/html?pageId=a8f8f489-4c7f-463a-9ca6-5cff94d8d041&host=www.microsoft.com&segments=software-download,$url_segment_parameter&query=&action=getskuinformationbyproductedition&sessionId=$session_id&productEditionId=$product_edition_id&sdVersion=2")" || {
-        handle_curl_error $?
-        return $?
-    }
-
-    # Limit untrusted size for input validation
-    language_skuid_table_html="$(echo "$language_skuid_table_html" | head -c 10240)"
-
-    # tr: Filter for only alphanumerics or "-" to prevent HTTP parameter injection
-    sku_id="$(echo "$language_skuid_table_html" | grep "${I18N}" | sed 's/&quot;//g' | cut -d ',' -f 1  | cut -d ':' -f 2 | tr -cd '[:alnum:]-' | head -c 16)"
-    echo "$sku_id"
-
-    echo " - Getting ISO download link..."
-    # Get ISO download link
-    # If any request is going to be blocked by Microsoft it's always this last one (the previous requests always seem to succeed)
-    # --referer: Required by Microsoft servers to allow request
-    iso_download_link_html="$(curl --silent --request POST --user-agent "$user_agent" --data "" --referer "$url" --header "Accept:" --max-filesize 100K --fail --proto =https --tlsv1.2 --http1.1 -- "https://www.microsoft.com/en-US/api/controls/contentinclude/html?pageId=6e2a1789-ef16-4f27-a296-74ef7ef5d96b&host=www.microsoft.com&segments=software-download,$url_segment_parameter&query=&action=GetProductDownloadLinksBySku&sessionId=$session_id&skuId=$sku_id&language=English&sdVersion=2")"
-
-    local failed=0
-
-    if ! [ "$iso_download_link_html" ]; then
-        # This should only happen if there's been some change to how this API works
-        echo " - Microsoft servers gave us an empty response to our request for an automated download."
-        failed=1
-    fi
-
-    if echo "$iso_download_link_html" | grep -q "We are unable to complete your request at this time."; then
-        echo " - WARNING! Microsoft blocked the automated download request based on your IP address."
-        failed=1
-    fi
-
-    if [ ${failed} -eq 1 ]; then
-        echo "   Manually download the Windows ${windows_version} ISO using a web browser from: ${url}"
-        echo "   Save the downloaded ISO to: $(realpath "${VM_PATH}")"
-        echo "   Update the config file to reference the downloaded ISO: ./${VM_PATH}.conf"
-        echo "   Continuing with the VM creation process..."
-        return 1
-    fi
-
-    # Filter for 64-bit ISO download URL
-    # sed: HTML decode "&" character
-    # tr: Filter for only alphanumerics or punctuation
-    iso_download_link="$(echo "$iso_download_link_html" | grep -o "https://software.download.prss.microsoft.com.*IsoX64" | cut -d '"' -f 1 | sed 's/&amp;/\&/g' | tr -cd '[:alnum:][:punct:]')"
-
-    if ! [ "$iso_download_link" ]; then
-        # This should only happen if there's been some change to the download endpoint web address
-        echo " - Microsoft servers gave us no download link to our request for an automated download. Please manually download this ISO in a web browser: $url"
-        return 1
-    fi
-
-    echo " - URL: ${iso_download_link%%\?*}"
-
-    # Download ISO
-    FILE_NAME="$(echo "$iso_download_link" | cut -d'?' -f1 | cut -d'/' -f5)"
-    web_get "${iso_download_link}" "${VM_PATH}" "${FILE_NAME}"
-}
-
-function get_windows() {
-    if [ "${OS}" == "windows-server" ]; then
-        download_windows_server "windows-server-${RELEASE}"
-    else
-        download_windows_workstation "${RELEASE}"
-    fi
-
-    if [ "${OPERATION}" == "download" ]; then
-        exit 0
-    fi
-
-    echo "Downloading VirtIO drivers..."
-    web_get "https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso" "${VM_PATH}"
-
-    rm -f "${VM_PATH}/unattended.iso"
-    case ${RELEASE} in
-        10|11)
-            unattended_windows "${VM_PATH}"
-            ;;
-    esac
-
-    if [ -n "${FILE_NAME}" ]; then
-        make_vm_config "${FILE_NAME}" "virtio-win.iso"
-    else
-        make_vm_config "windows-${RELEASE}.iso" "virtio-win.iso"
-    fi
-}
-
 function open_homepage() {
     local URL=""
     local XDG_OPEN=""
@@ -3722,21 +2893,6 @@ function create_config() {
         *freebsd*) CUSTOM_OS="freebsd";;
         *kolibrios*) CUSTOM_OS="kolibrios";;
         *reactos*) CUSTOM_OS="reactos";;
-        *windows-server*|*eval_oemret_x*|*eval_x*) CUSTOM_OS="windows-server";;
-        *windows*|win*)
-            CUSTOM_OS="windows"
-            # Older windows 10 ISOs use the year followed by the month rather than the year & half). Match any text for language.
-            if [ "${3}" != "--disable-unattended" ] && ( [ "${3}" == "--unattended" ] || grep -E -q 'Win(10|11)_([0-9]{2}H(1|2)|[0-9]{4})_[^.]*?(x64|x32)(v[0-9])?.iso' <<< "${INPUT}" ); then
-                echo "Creating unattended Windows installation files. To disable, pass --disable-unattended"
-                echo
-                echo "Downloading VirtIO drivers..."
-                web_get "https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso" "${VM_PATH}"
-                FIXED_ISO="virtio-win.iso"
-                rm -f "${VM_PATH}/unattended.iso"
-                unattended_windows "${VM_PATH}"
-            fi
-            ;;
-
         *) CUSTOM_OS="linux";;
     esac
     echo -e "Selecting OS: ${CUSTOM_OS}. If this is incorrect, please modify the config file to include the correct OS.\n"
@@ -3933,18 +3089,6 @@ if [ -n "${2}" ]; then
         # Ubuntu doesn't use create_vm()
         validate_release releases_ubuntu
         get_ubuntu
-    elif [[ "${OS}" == "windows"* ]]; then
-        I18N="English International"
-        "languages_${OS}"
-        if [ -n "${3}" ]; then
-            I18N="${3}"
-            if [[ ! "${I18NS[*]}" = *"${I18N}"* ]]; then
-                error_not_supported_lang
-            fi
-            VM_PATH="$(echo "${OS}-${RELEASE}-${I18N// /-}" | tr -d '()')"
-        fi
-        validate_release "releases_${OS}"
-        get_windows
     else
         validate_release "releases_${OS}"
         create_vm "$("get_${OS}")"
