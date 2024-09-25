@@ -468,8 +468,9 @@ ssh_into() {
 }
 
 open_distro_homepage(){
-	gum_filter_os
-	"$QUICKGET" -o "${os}" >/dev/null 2>&1 &
+	os=$("$QUICKGET" | awk 'NR==2,/zorin/' | cut -d':' -f2 | grep -o '[^ ]*')
+	choice=$(gum filter ${os})
+	"$QUICKGET" --open-homepage "${choice}" 2>&1 &
 }
 
 kill_vm() {
