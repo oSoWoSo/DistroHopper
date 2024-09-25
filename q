@@ -512,7 +512,7 @@ update_quicktui() {
 }
 
 generate_supported() {
-	echo "Not yet implemented"
+	$QUICKGET --list | tee "$configdir/supported"
 }
 
 headers_small_or() {
