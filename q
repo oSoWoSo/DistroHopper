@@ -99,7 +99,7 @@ As temp folder is used $TMP
 gum_choose_os() {
 	title="Choose OS"
 	show_header
-	os=$(gum filter | awk 'NR==2,/zorin/' | cut -d':' -f2 | grep -o '[^ ]*')
+	os=$(gum choose $($QUICKGET | awk 'NR==2,/zorin/' | cut -d':' -f2 | grep -o '[^ ]*'))
 	choices=$("$QUICKGET" "$os")
 	# preparation for quickemu refactor
 	#os=$(gum filter $(ls OS/* | cut -d'/' -f2))
@@ -115,11 +115,11 @@ gum_choose_release() {
 gum_choose_edition() {
 	title="Choose edition"
 	show_header
-	edition=$(echo "$choices" | grep 'Editions' | cut -d':' -f2 | grep -o '[^ ]*' | gum filter --prompt='Choose edition' --sort)
+	edition=$(gum filter --prompt='Choose edition' --sort $(echo "$choices" | grep 'Editions' | cut -d':' -f2 | grep -o '[^ ]*'))
 }
 
 gum_filter_os() {
-	os=$("$QUICKGET" | awk 'NR==2,/zorin/' | cut -d':' -f2 | grep -o '[^ ]*')
+	os=$(gum filter $($QUICKGET | awk 'NR==2,/zorin/' | cut -d':' -f2 | grep -o '[^ ]*'))
 	choices=$("$QUICKGET" "$os")
 	#preparation for refactoring
 	#os=$(gum filter < "$configdir/supported")
@@ -142,7 +142,7 @@ gum_choose_VM() {
 	fi
 }
 
-gum_choose_VM() {
+gum_choose_VM2() {
 	if ls | grep ".conf" ; then
 		height=$(ls -1 | grep ".conf" | wc -l)
 		title="Choose VM"
@@ -158,16 +158,11 @@ create_VM() {
 	gum_filter_os
 	if [ -z "$os" ]; then exit 100
 	elif [ "$(echo "$choices" | wc -l)" = 1 ]; then
-		clear
 		gum_filter_release
-		clear
 		"$QUICKGET" "$os" "$release"
 	else
-		clear
 		gum_filter_release
-		clear
 		gum_filter_edition
-		clear
 		"$QUICKGET" "$os" "$release" "$edition"
 	fi
 	show_headers
