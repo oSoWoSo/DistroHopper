@@ -36,104 +36,107 @@ function os_info() {
     local INFO=""
     SIMPLE_NAME="${1}"
     case ${SIMPLE_NAME} in
-      alma)             INFO="Alma Linux|Fedora,RedHat||https://almalinux.org/|Community owned and governed, forever-free enterprise Linux distribution, focused on long-term stability, providing a robust production-grade platform. AlmaLinux OS is binary compatible with RHEL®.";;
-      alpine)           INFO="Alpine Linux|Independent||https://alpinelinux.org/|Security-oriented, lightweight Linux distribution based on musl libc and busybox.";;
-      android)          INFO="Android x86|Independent||https://www.android-x86.org/|Port Android Open Source Project to x86 platform.";;
-      antix)            INFO="Antix|Debian||https://antixlinux.com/|Fast, lightweight and easy to install systemd-free linux live CD distribution based on Debian Stable for Intel-AMD x86 compatible systems.";;
-      artixlinux)       INFO="Artix Linux|Arch||https://artixlinux.org/|The Art of Linux. Simple. Fast. Systemd-free.";;
-      archlinux)        INFO="Arch Linux|Independent||https://archlinux.org/|Lightweight and flexible Linux® distribution that tries to Keep It Simple.";;
-      archcraft)        INFO="Archcraft|Arch||https://archcraft.io/|Yet another minimal Linux distribution, based on Arch Linux.";;
-      arcolinux)        INFO="Arco Linux|Arch||https://arcolinux.com/|Is all about becoming an expert in linux.";;
-      athenaos)         INFO="Athena OS|Arch||https://athenaos.org/|Offer a different experience than the most used pentesting distributions by providing only tools that fit with the user needs and improving the access to hacking resources and learning materials.";;
-      batocera)         INFO="Batocera|Independent||https://batocera.org/|Retro-gaming distribution with the aim of turning any computer/nano computer into a gaming console during a game or permanently.";;
-      bazzite)          INFO="bazzite|Fedora,SteamOS||https://github.com/ublue-os/bazzite/|Container native gaming and a ready-to-game SteamOS like.";;
-      biglinux)         INFO="BigLinux|-|https://www.biglinux.com.br/|Is the right choice if you want to have an easy and enriching experience with Linux. It has been perfected over more than 19 years, following our motto: 'In search of the perfect system'.";;
-      blendos)          INFO="BlendOS|Arch||https://blendos.co/|A seamless blend of all Linux distributions. Allows you to have an immutable, atomic and declarative Arch Linux system, with application support from several Linux distributions & Android.";;
-      bodhi)            INFO="Bodhi|Debian,Ubuntu||https://www.bodhilinux.com/|Lightweight distribution featuring the fast & fully customizable Moksha Desktop.";;
-      bunsenlabs)       INFO="Bunsenlab|Debian||https://www.bunsenlabs.org/|Light-weight and easily customizable Openbox desktop. The project is a community continuation of CrunchBang Linux.";;
-      cachyos)          INFO="CachyOS|Arch||https://cachyos.org/|Designed to deliver lightning-fast speeds and stability, ensuring a smooth and enjoyable computing experience every time you use it.";;
-      centos-stream)    INFO="CentOS Stream|Fedora,RedHat||https://www.centos.org/centos-stream/|Continuously delivered distro that tracks just ahead of Red Hat Enterprise Linux (RHEL) development, positioned as a midstream between Fedora Linux and RHEL.";;
+      #name)            INFO="PrettyName|based of|Credentials|Homepage|Info";;
+      alma)             INFO="AlmaLinux|Fedora,RedHat|-|https://almalinux.org/|Community owned and governed, forever-free enterprise Linux distribution, focused on long-term stability, providing a robust production-grade platform. AlmaLinux OS is binary compatible with RHEL®.";;
+      alpine)           INFO="Alpine Linux|Independent|-|https://alpinelinux.org/|Security-oriented, lightweight Linux distribution based on musl libc and busybox.";;
+      android)          INFO="Android x86|Independent|-|https://www.android-x86.org/|Port Android Open Source Project to x86 platform.";;
+      antix)            INFO="Antix|Debian|-|https://antixlinux.com/|Fast, lightweight and easy to install systemd-free linux live CD distribution based on Debian Stable for Intel-AMD x86 compatible systems.";;
+      archcraft)        INFO="Archcraft|Arch|-|https://archcraft.io/|Yet another minimal Linux distribution, based on Arch Linux.";;
+      archlinux)        INFO="Arch Linux|Independent|-|https://archlinux.org/|Lightweight and flexible Linux® distribution that tries to Keep It Simple.";;
+      arcolinux)        INFO="Arco Linux|Arch|-|https://arcolinux.com/|Is all about becoming an expert in linux.";;
+      artixlinux)       INFO="Artix Linux|Arch|-|https://artixlinux.org/|The Art of Linux. Simple. Fast. Systemd-free.";;
+      athenaos)         INFO="Athena OS|Arch|-|https://athenaos.org/|Offer a different experience than the most used pentesting distributions by providing only tools that fit with the user needs and improving the access to hacking resources and learning materials.";;
+      batocera)         INFO="Batocera|Independent|-|https://batocera.org/|Retro-gaming distribution with the aim of turning any computer/nano computer into a gaming console during a game or permanently.";;
+      bazzite)          INFO="bazzite|Fedora,SteamOS|-|https://github.com/ublue-os/bazzite/|Container native gaming and a ready-to-game SteamOS like.";;
+      biglinux)         INFO="BigLinux|Manjaro|-|https://www.biglinux.com.br/|Is the right choice if you want to have an easy and enriching experience with Linux. It has been perfected over more than 19 years, following our motto: 'In search of the perfect system'.";;
+      blendos)          INFO="BlendOS|Arch|-|https://blendos.co/|A seamless blend of all Linux distributions. Allows you to have an immutable, atomic and declarative Arch Linux system, with application support from several Linux distributions & Android.";;
+      bodhi)            INFO="Bodhi|Debian,Ubuntu|-|https://www.bodhilinux.com/|Lightweight distribution featuring the fast & fully customizable Moksha Desktop.";;
+      bunsenlabs)       INFO="Bunsenlab|Debian|-|https://www.bunsenlabs.org/|Light-weight and easily customizable Openbox desktop. The project is a community continuation of CrunchBang Linux.";;
+      cachyos)          INFO="CachyOS|Arch|-|https://cachyos.org/|Designed to deliver lightning-fast speeds and stability, ensuring a smooth and enjoyable computing experience every time you use it.";;
+      centos-stream)    INFO="CentOS Stream|Fedora,RedHat|-|https://www.centos.org/centos-stream/|Continuously delivered distro that tracks just ahead of Red Hat Enterprise Linux (RHEL) development, positioned as a midstream between Fedora Linux and RHEL.";;
       chimeralinux)     INFO="Chimera Linux|Independent|anon:chimera root:chimera|https://chimera-linux.org/|Modern, general-purpose non-GNU Linux distribution.";;
-      crunchbang++)     INFO="#!++|Debian||https://www.crunchbangplusplus.org/|The classic minimal crunchbang feel, now with debian 12 bookworm.";;
-      debian)           INFO="Debian|Independent||https://www.debian.org/|Complete Free Operating System with perfect level of ease of use and stability.";;
-      deepin)           INFO="Deepin|Debian||https://www.deepin.org/|Beautiful UI design, intimate human-computer interaction, and friendly community environment make you feel at home.";;
-      devuan)           INFO="Devuan|Debian||https://www.devuan.org/|Fork of Debian without systemd that allows users to reclaim control over their system by avoiding unnecessary entanglements and ensuring Init Freedom.";;
-      dragonflybsd)     INFO="DragonFlyBSD|FreeBSD||https://www.dragonflybsd.org/|Provides an opportunity for the BSD base to grow in an entirely different direction from the one taken in the FreeBSD, NetBSD, and OpenBSD series.";;
-      easyos)           INFO="EasyOS|Independent||https://easyos.org/|Experimental distribution designed from scratch to support containers.";;
-      edubuntu)         INFO="Edubuntu|Ubuntu||https://www.edubuntu.org/|Stable, secure and privacy concious option for schools.";;
-      elementary)       INFO="elementary OS|Debian,Ubuntu||https://elementary.io/|Thoughtful, capable, and ethical replacement for Windows and macOS.";;
-      endeavouros)      INFO="EndeavourOS|Arch||https://endeavouros.com/|Provides an Arch experience without the hassle of installing it manually for both x86_64 and ARM systems.";;
-      endless)          INFO="Endless OS|Debian||https://www.endlessos.org/os|Completely Free, User-Friendly Operating System Packed with Educational Tools, Games, and More.";;
-      fedora)           INFO="Fedora|Independent||https://www.fedoraproject.org/|Innovative platform for hardware, clouds, and containers, built with love by you.";;
-      freebsd)          INFO="FreeBSD|Independent||https://www.freebsd.org/|Operating system used to power modern servers, desktops, and embedded platforms.";;
-      freedos)          INFO="FreeDOS|Independent||https://freedos.org/|DOS-compatible operating system that you can use to play classic DOS games, run legacy business software, or develop embedded systems.";;
-      garuda)           INFO="Garuda Linux|Arch||https://garudalinux.org/|Feature rich and easy to use Linux distribution.";;
-      gentoo)           INFO="Gentoo|Independent||https://www.gentoo.org/|Highly flexible, source-based Linux distribution.";;
-      ghostbsd)         INFO="GhostBSD|FreeBSD||https://www.ghostbsd.org/|Simple, elegant desktop BSD Operating System.";;
-      gnomeos)          INFO="GNOME OS|-|https://os.gnome.org/|Alpha nightly bleeding edge distro of GNOME";;
-      guix)             INFO="Guix|-|https://guix.gnu.org/|Distribution of the GNU operating system developed by the GNU Project—which respects the freedom of computer users.";;
-      haiku)            INFO="Haiku|Independent||https://www.haiku-os.org/|Specifically targets personal computing. Inspired by the BeOS, Haiku is fast, simple to use, easy to learn and yet very powerful.";;
-      holoiso)          INFO="SteamOS HoloISO|Arch,SteamOS||https://github.com/HoloISO/holoiso|Bring the Steam Decks SteamOS Holo redistribution and provide a close-to-official SteamOS experience.";;
-      kali)             INFO="Kali|Debian||https://www.kali.org/|The most advanced Penetration Testing Distribution.";;
-      kdeneon)          INFO="KDE Neon|Debian,Ubuntu||https://neon.kde.org/|Latest and greatest of KDE community software packaged on a rock-solid base.";;
-      kolibrios)        INFO="KolibriOS|Independent||http://kolibrios.org/en/|Tiny yet incredibly powerful and fast operating system.";;
-      kubuntu)          INFO="Kubuntu|Ubuntu||https://kubuntu.org/|Free, complete, and open-source alternative to Microsoft Windows and Mac OS X which contains everything you need to work, play, or share.";;
-      linuxlite)        INFO="Linux Lite|Debian,Ubuntu||https://www.linuxliteos.com/|Your first simple, fast and free stop in the world of Linux.";;
-      linuxmint)        INFO="Linux Mint|Debian,Ubuntu||https://linuxmint.com/|Designed to work out of the box and comes fully equipped with the apps most people need.";;
-      lmde)             INFO="Linux Mint Debian Edition|Debian||https://www.linuxmint.com/download_lmde.php|Aims to be as similar as possible to Linux Mint, but without using Ubuntu. The package base is provided by Debian instead.";;
-      lubuntu)          INFO="Lubuntu|Ubuntu||https://lubuntu.me/|Complete Operating System that ships the essential apps and services for daily use: office applications, PDF reader,  image editor, music and video players, etc. Using lightwave lxde/lxqt.";;
-      mageia)           INFO="Mageia|Independent||https://www.mageia.org/|Stable, secure operating system for desktop & server.";;
-      manjaro)          INFO="Manjaro|Arch||https://manjaro.org/|Versatile, free, and open-source Linux operating system designed with a strong focus on safeguarding user privacy and offering extensive control over hardware.";;
-      mxlinux)          INFO="MX Linux|Debian,Antix||https://mxlinux.org/|Designed to combine elegant and efficient desktops with high stability and solid performance.";;
-      netboot)          INFO="netboot.xyz|iPXE||https://netboot.xyz/|Your favorite operating systems in one place.";;
-      netbsd)           INFO="NetBSD|Independent||https://www.netbsd.org/|Free, fast, secure, and highly portable Unix-like Open Source operating system. It is available for a wide range of platforms, from large-scale servers and powerful desktop systems to handheld and embedded devices.";;
-      nitrux)           INFO="Nitrux||-|https://nxos.org/|Powered by Debian, KDE Plasma and Frameworks, and AppImages.";;
-      nixos)            INFO="NixOS|Independent||https://nixos.org/|Linux distribution based on Nix package manager, tool that takes a unique approach to package management and system configuration.";;
+      crunchbang++)     INFO="Crunchbangplusplus|Debian|-|https://www.crunchbangplusplus.org/|The classic minimal crunchbang feel, now with debian 12 bookworm.";;
+      debian)           INFO="Debian|Independent|-|https://www.debian.org/|Complete Free Operating System with perfect level of ease of use and stability.";;
+      deepin)           INFO="Deepin|Debian|-|https://www.deepin.org/|Beautiful UI design, intimate human-computer interaction, and friendly community environment make you feel at home.";;
+      devuan)           INFO="Devuan|Debian|-|https://www.devuan.org/|Fork of Debian without systemd that allows users to reclaim control over their system by avoiding unnecessary entanglements and ensuring Init Freedom.";;
+      dragonflybsd)     INFO="DragonFlyBSD|FreeBSD|-|https://www.dragonflybsd.org/|Provides an opportunity for the BSD base to grow in an entirely different direction from the one taken in the FreeBSD, NetBSD, and OpenBSD series.";;
+      easyos)           INFO="EasyOS|Independent|-|https://easyos.org/|Experimental distribution designed from scratch to support containers.";;
+      edubuntu)         INFO="Edubuntu|Ubuntu|-|https://www.edubuntu.org/|Stable, secure and privacy concious option for schools.";;
+      elementary)       INFO="elementary OS|Debian,Ubuntu|-|https://elementary.io/|Thoughtful, capable, and ethical replacement for Windows and macOS.";;
+      endeavouros)      INFO="EndeavourOS|Arch|-|https://endeavouros.com/|Provides an Arch experience without the hassle of installing it manually for both x86_64 and ARM systems.";;
+      endless)          INFO="Endless OS|Debian|-|https://www.endlessos.org/os|Completely Free, User-Friendly Operating System Packed with Educational Tools, Games, and More.";;
+      fedora)           INFO="Fedora|Independent|-|https://www.fedoraproject.org/|Innovative platform for hardware, clouds, and containers, built with love by you.";;
+      freebsd)          INFO="FreeBSD|Independent|-|https://www.freebsd.org/|Operating system used to power modern servers, desktops, and embedded platforms.";;
+      freedos)          INFO="FreeDOS|Independent|-|https://freedos.org/|DOS-compatible operating system that you can use to play classic DOS games, run legacy business software, or develop embedded systems.";;
+      garuda)           INFO="Garuda Linux|Arch|-|https://garudalinux.org/|Feature rich and easy to use Linux distribution.";;
+      gentoo)           INFO="Gentoo|Independent|-|https://www.gentoo.org/|Highly flexible, source-based Linux distribution.";;
+      ghostbsd)         INFO="GhostBSD|FreeBSD|-|https://www.ghostbsd.org/|Simple, elegant desktop BSD Operating System.";;
+      gnomeos)          INFO="GNOME OS|Independent|-|https://os.gnome.org/|Alpha nightly bleeding edge distro of GNOME";;
+      guix)             INFO="Guix|Independent|-|https://guix.gnu.org/|Distribution of the GNU operating system developed by the GNU Project—which respects the freedom of computer users.";;
+      haiku)            INFO="Haiku|Independent|-|https://www.haiku-os.org/|Specifically targets personal computing. Inspired by the BeOS, Haiku is fast, simple to use, easy to learn and yet very powerful.";;
+      holoiso)          INFO="SteamOS HoloISO|Arch,SteamOS|-|https://github.com/HoloISO/holoiso|Bring the Steam Decks SteamOS Holo redistribution and provide a close-to-official SteamOS experience.";;
+      kali)             INFO="Kali|Debian|-|https://www.kali.org/|The most advanced Penetration Testing Distribution.";;
+      kdeneon)          INFO="KDE Neon|Debian,Ubuntu|-|https://neon.kde.org/|Latest and greatest of KDE community software packaged on a rock-solid base.";;
+      kolibrios)        INFO="KolibriOS|Independent|-|http://kolibrios.org/en/|Tiny yet incredibly powerful and fast operating system.";;
+      kubuntu)          INFO="Kubuntu|Ubuntu|-|https://kubuntu.org/|Free, complete, and open-source alternative to Microsoft Windows and Mac OS X which contains everything you need to work, play, or share.";;
+      linuxlite)        INFO="Linux Lite|Debian,Ubuntu|-|https://www.linuxliteos.com/|Your first simple, fast and free stop in the world of Linux.";;
+      linuxmint)        INFO="Linux Mint|Debian,Ubuntu|-|https://linuxmint.com/|Designed to work out of the box and comes fully equipped with the apps most people need.";;
+      lmde)             INFO="Linux Mint Debian Edition|Debian|-|https://www.linuxmint.com/download_lmde.php|Aims to be as similar as possible to Linux Mint, but without using Ubuntu. The package base is provided by Debian instead.";;
+      lubuntu)          INFO="Lubuntu|Ubuntu|-|https://lubuntu.me/|Complete Operating System that ships the essential apps and services for daily use: office applications, PDF reader,  image editor, music and video players, etc. Using lightwave lxde/lxqt.";;
+      maboxlinux)       INFO="Mabox Linux|Manjaro|-|https://maboxlinux.org/|Lightweight, functional and easy to customize Openbox desktop";;
+      mageia)           INFO="Mageia|Independent|-|https://www.mageia.org/|Stable, secure operating system for desktop & server.";;
+      manjaro)          INFO="Manjaro|Arch|-|https://manjaro.org/|Versatile, free, and open-source Linux operating system designed with a strong focus on safeguarding user privacy and offering extensive control over hardware.";;
+      mxlinux)          INFO="MX Linux|Debian,Antix|-|https://mxlinux.org/|Designed to combine elegant and efficient desktops with high stability and solid performance.";;
+      netboot)          INFO="netboot.xyz|iPXE|-|https://netboot.xyz/|Your favorite operating systems in one place.";;
+      netbsd)           INFO="NetBSD|Independent|-|https://www.netbsd.org/|Free, fast, secure, and highly portable Unix-like Open Source operating system. It is available for a wide range of platforms, from large-scale servers and powerful desktop systems to handheld and embedded devices.";;
+      nitrux)           INFO="Nitrux|Debian,Ubuntu|-|https://nxos.org/|Powered by Debian, KDE Plasma and Frameworks, and AppImages.";;
+      nixos)            INFO="NixOS|Independent|-|https://nixos.org/|Linux distribution based on Nix package manager, tool that takes a unique approach to package management and system configuration.";;
       nwg-shell)        INFO="nwg-shell|Arch|nwg:nwg|https://nwg-piotr.github.io/nwg-shell/|Arch Linux ISO with nwg-shell for sway and Hyprland";;
-      macos)            INFO="macOS|proprietary||https://www.apple.com/macos/|Work and play on your Mac are even more powerful. Elevate your presence on video calls. Access information in all-new ways. Boost gaming performance. And discover even more ways to personalize your Mac.";;
-      openbsd)          INFO="OpenBSD|Independent||https://www.openbsd.org/|FREE, multi-platform 4.4BSD-based UNIX-like operating system. Our efforts emphasize portability, standardization, correctness, proactive security and integrated cryptography.";;
-      openindiana)      INFO="OpenIndiana|Solaris,OpenSolaris||https://www.openindiana.org/|Community supported illumos-based operating system.";;
-      opensuse)         INFO="openSUSE|Independent||https://www.opensuse.org/|The makers choice for sysadmins, developers and desktop users.";;
-      oraclelinux)      INFO="Oracle Linux|RedHat||https://www.oracle.com/linux/|Linux with everything required to deploy, optimize, and manage applications on-premises, in the cloud, and at the edge.";;
+      macos)            INFO="macOS|proprietary|-|https://www.apple.com/macos/|Work and play on your Mac are even more powerful. Elevate your presence on video calls. Access information in all-new ways. Boost gaming performance. And discover even more ways to personalize your Mac.";;
+      openbsd)          INFO="OpenBSD|Independent|-|https://www.openbsd.org/|FREE, multi-platform 4.4BSD-based UNIX-like operating system. Our efforts emphasize portability, standardization, correctness, proactive security and integrated cryptography.";;
+      openindiana)      INFO="OpenIndiana|Solaris,OpenSolaris|-|https://www.openindiana.org/|Community supported illumos-based operating system.";;
+      opensuse)         INFO="openSUSE|Independent|-|https://www.opensuse.org/|The makers choice for sysadmins, developers and desktop users.";;
+      oraclelinux)      INFO="Oracle Linux|RedHat|-|https://www.oracle.com/linux/|Linux with everything required to deploy, optimize, and manage applications on-premises, in the cloud, and at the edge.";;
       parrotsec)        INFO="Parrot Security|Debian|parrot:parrot|https://www.parrotsec.org/|Provides a huge arsenal of tools, utilities and libraries that IT and security professionals can use to test and assess the security of their assets in a reliable, compliant and reproducible way.";;
-      peppermint)       INFO="PeppermintOS|Debian,Devuan||https://peppermintos.com/|Provides a user with the opportunity to build the system that best fits their needs. While at the same time providing a functioning OS with minimum hassle out of the box.";;
-      popos)            INFO="Pop!_OS|Ubuntu||https://pop.system76.com/|Operating system for STEM and creative professionals who use their computer as a tool to discover and create.";;
-      porteus)          INFO="Porteus|Slackware||http://www.porteus.org/|Complete linux operating system that is optimized to run from CD, USB flash drive, hard drive, or other bootable storage media.";;
-      primtux)          INFO="PrimTux|Ubuntu||https://primtux.fr/|Upgrade for obsolete equipment and benefiting the school or educational environment in the spirit of education.";;
-      pureos)           INFO="PureOS||-|https://www.pureos.net/|A fully free/libre and open source GNU/Linux operating system, endorsed by the Free Software Foundation.";;
-      reactos)          INFO="ReactOS|Independent||https://reactos.org/|Imagine running your favorite Windows applications and drivers in an open-source environment you can trust.";;
-      rebornos)         INFO="RebornOS|Arch||https://rebornos.org/|Aiming to make Arch Linux as user friendly as possible by providing interface solutions to things you normally have to do in a terminal.";;
-      rockylinux)       INFO="Rocky Linux|RedHat||https://rockylinux.org/|Open-source enterprise operating system designed to be 100% bug-for-bug compatible with Red Hat Enterprise Linux®.";;
-      siduction)        INFO="Siduction|Debian||https://siduction.org/|Operating system based on the Linux kernel and the GNU project. In addition, there are applications and libraries from Debian.";;
-      slackware)        INFO="Slackware|Independent||http://www.slackware.com/|Advanced Linux operating system, designed with the twin goals of ease of use and stability as top priorities.";;
-      slax)             INFO="Slax|Debian Slackware||https://www.slax.org/|Compact, fast, and modern Linux operating system that combines sleek design with modular approach. With the ability to run directly from a USB flash drive without the need for installation, Slax is truly portable and fits easily in your pocket.";;
-      slint)            INFO="Slint|Slackware||https://slint.fr/|Slint is an easy-to-use, versatile, blind-friendly Linux distribution for 64-bit computers. Slint is based on Slackware and borrows tools from Salix. Maintainer: Didier Spaier.";;
-      slitaz)           INFO="SliTaz|Independent||https://www.slitaz.org/en/|Simple, fast and low resource Linux OS for servers & desktops.";;
-      solus)            INFO="Solus|Independent||https://getsol.us/|Designed for home computing. Every tweak enables us to deliver a cohesive computing experience.";;
-      sparkylinux)      INFO="SparkyLinux|Debian||https://sparkylinux.org/|Fast, lightweight and fully customizable operating system which offers several versions for different use cases.";;
-      spirallinux)      INFO="Spiral Linux|Debian||https://spirallinux.github.io/|Selection of Linux spins built from Debian GNU/Linux, with a focus on simplicity and out-of-the-box usability across all the major desktop environments.";;
-      tails)            INFO="Tails|Debian||https://tails.net/|Portable operating system that protects against surveillance and censorship.";;
-      tinycore)         INFO="Tiny Core Linux|Independent||http://www.tinycorelinux.net/|Highly modular based system with community build extensions.";;
-      trisquel)         INFO="Trisquel|Debian,Ubuntu||https://trisquel.info/|Fully free operating system for home users, small enterprises and educational centers.";;
-      truenas-core)     INFO="TrueNAS Core|FreeBSD||https://www.truenas.com/truenas-core/|World’s most popular storage OS because it gives you the power to build your own professional-grade storage system to use in a variety of data-intensive applications without any software costs.";;
-      truenas-scale)    INFO="TrueNAS Scale|Debian||https://www.truenas.com/truenas-scale/|Open Source Hyperconverged Infrastructure (HCI) solution. In addition to powerful scale-out storage capabilities, SCALE adds Linux Containers and VMs (KVM) so apps run closer to data.";;
-      tuxedo-os)        INFO="Tuxedo OS||-|https://www.tuxedocomputers.com/en/|KDE Ubuntu LTS designed to go with their Linux hardware.";;
-      ubuntu)           INFO="Ubuntu|Debian||https://ubuntu.com/|Complete desktop Linux operating system, freely available with both community and professional support.";;
-      ubuntu-budgie)    INFO="Ubuntu Budgie|Ubuntu||https://ubuntubudgie.org/|Community developed distribution, integrating the Budgie Desktop Environment with Ubuntu at its core.";;
-      ubuntucinnamon)   INFO="Ubuntu Cinnamon|Ubuntu||https://ubuntucinnamon.org/|Community-driven, featuring Linux Mint’s Cinnamon Desktop with Ubuntu at the core, packed fast and full of features, here is the most traditionally modern desktop you will ever love.";;
-      ubuntukylin)      INFO="Ubuntu Kylin|Ubuntu||https://ubuntukylin.com/|Universal desktop operating system for personal computers, laptops, and embedded devices. It is dedicated to bringing a smarter user experience to users all over the world.";;
-      ubuntu-mate)      INFO="Ubuntu MATE|Ubuntu||https://ubuntu-mate.org/|Stable, easy-to-use operating system with a configurable desktop environment. It is ideal for those who want the most out of their computers and prefer a traditional desktop metaphor. Using Mate desktop.";;
-      ubuntu-server)    INFO="Ubuntu Server|Ubuntu||https://ubuntu.com/server|Brings economic and technical scalability to your datacentre, public or private. Whether you want to deploy an OpenStack cloud, a Kubernetes cluster or a 50,000-node render farm, Ubuntu Server delivers the best value scale-out performance available.";;
-      ubuntustudio)     INFO="Ubuntu Studio|Ubuntu||https://ubuntustudio.org/|Comes preinstalled with a selection of the most common free multimedia applications available, and is configured for best performance for various purposes: Audio, Graphics, Video, Photography and Publishing.";;
-      ubuntu-unity)     INFO="Ubuntu Unity|Ubuntu||https://ubuntuunity.org/|Flavor of Ubuntu featuring the Unity7 desktop environment (the default desktop environment used by Ubuntu from 2010-2017).";;
-      vanillaos)        INFO="Vanilla OS|Debian,Ubuntu||https://vanillaos.org/|Designed to be a reliable and productive operating system for your daily work.";;
+      peppermint)       INFO="PeppermintOS|Debian,Devuan|-|https://peppermintos.com/|Provides a user with the opportunity to build the system that best fits their needs. While at the same time providing a functioning OS with minimum hassle out of the box.";;
+      popos)            INFO="Pop!_OS|Ubuntu|-|https://pop.system76.com/|Operating system for STEM and creative professionals who use their computer as a tool to discover and create.";;
+      porteus)          INFO="Porteus|Slackware|-|http://www.porteus.org/|Complete linux operating system that is optimized to run from CD, USB flash drive, hard drive, or other bootable storage media.";;
+      primtux)          INFO="PrimTux|Ubuntu|-|https://primtux.fr/|A complete and customizable GNU/Linux operating system intended for primary school students and suitable even for older hardware.";;
+      proxmox-ve)       INFO="Proxmox VE|Debian|-|https://proxmox.com/en/proxmox-virtual-environment/|Proxmox Virtual Environment is a complete, open-source server management platform for enterprise virtualization.";;
+      pureos)           INFO="PureOS|Debian|-|https://www.pureos.net/|A fully free/libre and open source GNU/Linux operating system, endorsed by the Free Software Foundation.";;
+      reactos)          INFO="ReactOS|Independent|-|https://reactos.org/|Imagine running your favorite Windows applications and drivers in an open-source environment you can trust.";;
+      rebornos)         INFO="RebornOS|Arch|-|https://rebornos.org/|Aiming to make Arch Linux as user friendly as possible by providing interface solutions to things you normally have to do in a terminal.";;
+      rockylinux)       INFO="Rocky Linux|RedHat|-|https://rockylinux.org/|Open-source enterprise operating system designed to be 100% bug-for-bug compatible with Red Hat Enterprise Linux®.";;
+      siduction)        INFO="Siduction|Debian|-|https://siduction.org/|Operating system based on the Linux kernel and the GNU project. In addition, there are applications and libraries from Debian.";;
+      slackware)        INFO="Slackware|Independent|-|http://www.slackware.com/|Advanced Linux operating system, designed with the twin goals of ease of use and stability as top priorities.";;
+      slax)             INFO="Slax|Debian Slackware|-|https://www.slax.org/|Compact, fast, and modern Linux operating system that combines sleek design with modular approach. With the ability to run directly from a USB flash drive without the need for installation, Slax is truly portable and fits easily in your pocket.";;
+      slint)            INFO="Slint|Slackware|-|https://slint.fr/|Slint is an easy-to-use, versatile, blind-friendly Linux distribution for 64-bit computers. Slint is based on Slackware and borrows tools from Salix. Maintainer: Didier Spaier.";;
+      slitaz)           INFO="SliTaz|Independent|-|https://www.slitaz.org/en/|Simple, fast and low resource Linux OS for servers & desktops.";;
+      solus)            INFO="Solus|Independent|-|https://getsol.us/|Designed for home computing. Every tweak enables us to deliver a cohesive computing experience.";;
+      sparkylinux)      INFO="SparkyLinux|Debian|-|https://sparkylinux.org/|Fast, lightweight and fully customizable operating system which offers several versions for different use cases.";;
+      spirallinux)      INFO="Spiral Linux|Debian|-|https://spirallinux.github.io/|Selection of Linux spins built from Debian GNU/Linux, with a focus on simplicity and out-of-the-box usability across all the major desktop environments.";;
+      tails)            INFO="Tails|Debian|-|https://tails.net/|Portable operating system that protects against surveillance and censorship.";;
+      tinycore)         INFO="Tiny Core Linux|Independent|-|http://www.tinycorelinux.net/|Highly modular based system with community build extensions.";;
+      trisquel)         INFO="Trisquel|Debian,Ubuntu|-|https://trisquel.info/|Fully free operating system for home users, small enterprises and educational centers.";;
+      truenas-core)     INFO="TrueNAS Core|FreeBSD|-|https://www.truenas.com/truenas-core/|World’s most popular storage OS because it gives you the power to build your own professional-grade storage system to use in a variety of data-intensive applications without any software costs.";;
+      truenas-scale)    INFO="TrueNAS Scale|Debian|-|https://www.truenas.com/truenas-scale/|Open Source Hyperconverged Infrastructure (HCI) solution. In addition to powerful scale-out storage capabilities, SCALE adds Linux Containers and VMs (KVM) so apps run closer to data.";;
+      tuxedo-os)        INFO="Tuxedo OS|Ubunu|-|https://www.tuxedocomputers.com/en/|KDE Ubuntu LTS designed to go with their Linux hardware.";;
+      ubuntu)           INFO="Ubuntu|Debian|-|https://ubuntu.com/|Complete desktop Linux operating system, freely available with both community and professional support.";;
+      ubuntu-budgie)    INFO="Ubuntu Budgie|Ubuntu|-|https://ubuntubudgie.org/|Community developed distribution, integrating the Budgie Desktop Environment with Ubuntu at its core.";;
+      ubuntucinnamon)   INFO="Ubuntu Cinnamon|Ubuntu|-|https://ubuntucinnamon.org/|Community-driven, featuring Linux Mint’s Cinnamon Desktop with Ubuntu at the core, packed fast and full of features, here is the most traditionally modern desktop you will ever love.";;
+      ubuntukylin)      INFO="Ubuntu Kylin|Ubuntu|-|https://ubuntukylin.com/|Universal desktop operating system for personal computers, laptops, and embedded devices. It is dedicated to bringing a smarter user experience to users all over the world.";;
+      ubuntu-mate)      INFO="Ubuntu MATE|Ubuntu|-|https://ubuntu-mate.org/|Stable, easy-to-use operating system with a configurable desktop environment. It is ideal for those who want the most out of their computers and prefer a traditional desktop metaphor. Using Mate desktop.";;
+      ubuntu-server)    INFO="Ubuntu Server|Ubuntu|-|https://ubuntu.com/server|Brings economic and technical scalability to your datacentre, public or private. Whether you want to deploy an OpenStack cloud, a Kubernetes cluster or a 50,000-node render farm, Ubuntu Server delivers the best value scale-out performance available.";;
+      ubuntustudio)     INFO="Ubuntu Studio|Ubuntu|-|https://ubuntustudio.org/|Comes preinstalled with a selection of the most common free multimedia applications available, and is configured for best performance for various purposes: Audio, Graphics, Video, Photography and Publishing.";;
+      ubuntu-unity)     INFO="Ubuntu Unity|Ubuntu|-|https://ubuntuunity.org/|Flavor of Ubuntu featuring the Unity7 desktop environment (the default desktop environment used by Ubuntu from 2010-2017).";;
+      vanillaos)        INFO="Vanilla OS|Debian,Ubuntu|-|https://vanillaos.org/|Designed to be a reliable and productive operating system for your daily work.";;
       void)             INFO="Void Linux|Independent|anon:voidlinux|https://voidlinux.org/|General purpose operating system. Its package system allows you to quickly install, update and remove software; software is provided in binary packages or can be built directly from sources.";;
-      vxlinux)          INFO="VX Linux|Void||https://vxlinux.org/|Pre-configured, secure systemd-free Plasma desktop with focus on convenience, performance and simplicity. Based on the excellent Void Linux.";;
-      whonix)           INFO="Whonix|Debian||https://www.whonix.org/|Superior Internet Privacy with Whonix™ As handy as an app - delivering maximum anonymity and security.";;
-      windows)          INFO="Windows|proprietary||https://www.microsoft.com/en-us/windows/|Whether you’re gaming, studying, running a business, or running a household, Windows helps you get it done.";;
-      windows-server)   INFO="Windows Server|proprietary||https://www.microsoft.com/en-us/windows-server/|Platform for building an infrastructure of connected applications, networks, and web services.";;
-      xubuntu)          INFO="Xubuntu|Ubuntu||https://xubuntu.org/|Elegant and easy to use operating system. Xubuntu comes with Xfce, which is a stable, light and configurable desktop environment.";;
-      zorin)            INFO="Zorin OS|Ubuntu||https://zorin.com/os/|Alternative to Windows and macOS designed to make your computer faster, more powerful, secure, and privacy-respecting.";;
+      vxlinux)          INFO="VX Linux|Void|-|https://vxlinux.org/|Pre-configured, secure systemd-free Plasma desktop with focus on convenience, performance and simplicity. Based on the excellent Void Linux.";;
+      whonix)           INFO="Whonix|Debian|-|https://www.whonix.org/|Superior Internet Privacy with Whonix™ As handy as an app - delivering maximum anonymity and security.";;
+      windows)          INFO="Windows|proprietary|-|https://www.microsoft.com/en-us/windows/|Whether you’re gaming, studying, running a business, or running a household, Windows helps you get it done.";;
+      windows-server)   INFO="Windows Server|proprietary|-|https://www.microsoft.com/en-us/windows-server/|Platform for building an infrastructure of connected applications, networks, and web services.";;
+      xubuntu)          INFO="Xubuntu|Ubuntu|-|https://xubuntu.org/|Elegant and easy to use operating system. Xubuntu comes with Xfce, which is a stable, light and configurable desktop environment.";;
+      zorin)            INFO="Zorin OS|Ubuntu|-|https://zorin.com/os/|Alternative to Windows and macOS designed to make your computer faster, more powerful, secure, and privacy-respecting.";;
     esac
     echo "${INFO}"
 }
@@ -141,9 +144,10 @@ function os_info() {
 function show_os_info() {
     echo
     echo -e "$(os_info "${1}" | cut -d'|' -f 1)"
-    echo -e " - Credentials:\t$(os_info "${1}" | cut -d'|' -f 2)"
-    echo -e " - Website:\t$(os_info "${1}" | cut -d'|' -f 3)"
-    echo -e " - Description:\t$(os_info "${1}" | cut -d'|' -f 4)"
+    echo -e " - based on:\t$(os_info "${1}" | cut -d'|' -f 2)"
+    echo -e " - Credentials:\t$(os_info "${1}" | cut -d'|' -f 3)"
+    echo -e " - Website:\t$(os_info "${1}" | cut -d'|' -f 4)"
+    echo -e " - Description:\t$(os_info "${1}" | cut -d'|' -f 5)"
 }
 
 function pretty_name() {
@@ -263,7 +267,13 @@ function handle_missing() {
     # Handle odd missing Fedora combinations
     case "${OS}" in
         fedora)
-            if [[ "${RELEASE}" -lt 40 && "${EDITION}" == "Onyx" ]] || [[ "${RELEASE}" -lt 40 && "${EDITION}" == "Sericea" ]]; then
+            # First we need to handle the Beta naming kludge
+            if [[ "${RELEASE}" == *"_Beta" ]]; then
+                NRELEASE="${RELEASE/_Beta/}"
+                else
+                NRELEASE="${RELEASE}"
+            fi
+            if [[ "${NRELEASE}" -lt 40 && "${EDITION}" == "Onyx" ]] || [[ "${NRELEASE}" -lt 40 && "${EDITION}" == "Sericea" ]]; then
                 echo "ERROR! Unsupported combination"
                 echo "       Fedora ${RELEASE} ${EDITION} is not available, please choose another Release or Edition"
                 exit 1
@@ -282,7 +292,6 @@ function validate_release() {
         *ubuntu*) RELEASE_GENERATOR="releases_ubuntu";;
         *) RELEASE_GENERATOR="${1}";;
     esac
-
     RELEASES=$(${RELEASE_GENERATOR})
     error_not_supported_release
 }
@@ -338,7 +347,6 @@ list_isos() {
     local FUNC
     local OPTION
     local OS
-
     echo "OS|Release|Edition|URL"
     for OS in $(os_support); do
         case ${OS} in
@@ -529,8 +537,8 @@ function os_support() {
     alpine \
     android \
     antix \
-    archlinux \
     archcraft \
+    archlinux \
     arcolinux \
     artixlinux \
     athenaos \
@@ -571,6 +579,7 @@ function os_support() {
     linuxmint \
     lmde \
     lubuntu \
+    maboxlinux \
     macos \
     mageia \
     manjaro \
@@ -589,6 +598,7 @@ function os_support() {
     popos \
     porteus \
     primtux \
+    proxmox-ve \
     pureos \
     reactos \
     rebornos \
@@ -609,12 +619,12 @@ function os_support() {
     tuxedo-os \
     ubuntu \
     ubuntu-budgie \
-    ubuntucinnamon \
-    ubuntukylin \
     ubuntu-mate \
     ubuntu-server \
-    ubuntustudio \
     ubuntu-unity \
+    ubuntucinnamon \
+    ubuntukylin \
+    ubuntustudio \
     vanillaos \
     void \
     vxlinux \
@@ -757,13 +767,8 @@ function editions_biglinux() {
 }
 
 function releases_blendos() {
-    #shellcheck disable=SC2046,SC2005
-    echo $(web_pipe "https://mirror.ico277.xyz/blendos/gnome/" | grep "\.iso" | cut -c81- | cut -d'"' -f2 | cut -d'-' -f2)
-}
-
-function editions_blendos() {
-    #shellcheck disable=SC2046,SC2005
-    echo $(web_pipe "https://mirror.ico277.xyz/blendos/" | grep "\[DIR\]" | cut -c81-90 | cut -d'/' -f1 | grep -v testing | sort -u)
+    # there is now just a single latest iso
+    echo latest
 }
 
 function releases_bodhi() {
@@ -779,12 +784,13 @@ function releases_bunsenlabs() {
 }
 
 function releases_cachyos() {
+    # new cdn setup 10/2024
     echo latest
 }
 
 function editions_cachyos() {
-    #shellcheck disable=SC2046,SC2005
-    echo $(web_pipe "https://mirror.cachyos.org/ISO/" | grep "title=" | grep -v testing | grep -v cli | cut -d'"' -f4 | cut -d '/' -f1 | sort)
+    # desktop version now installs different desktop environments
+    echo desktop handheld
 }
 
 function releases_centos-stream() {
@@ -843,22 +849,22 @@ function releases_dragonflybsd() {
     # If you remove "".bz2" from the end of the searched URL, you will get only the current release - currently 6.4.0
     # We could add a variable so this behaviour is optional/switchable (maybe from option or env)
     #shellcheck disable=SC2046,SC2005
-    echo $(web_pipe "http://mirror-master.dragonflybsd.org/iso-images/" | grep -E -o '"dfly-x86_64-.*_REL.iso.bz2"' | grep -o -E '[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+')
+    echo $(web_pipe "https://mirror-master.dragonflybsd.org/iso-images/" | grep -E -o '"dfly-x86_64-.*_REL.iso.bz2"' | grep -o -E '[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+')
 }
 
 function releases_easyos() {
-    #local Y2023=""
-    #local Y2024=""
-    #Y2024=$(web_pipe https://distro.ibiblio.org/easyos/amd64/releases/kirkstone/2024/ | grep "tr class" | tail -n +2 | cut -d'"' -f6 | cut -d'/' -f1 | sort -r)
-    #Y2023=$(web_pipe https://distro.ibiblio.org/easyos/amd64/releases/kirkstone/2023/ | grep "tr class" | tail -n +2 | cut -d'"' -f6 | cut -d'/' -f1 | sort -r)
-    #echo -n ${2024}
-    #echo ${Y2023}
-    # Not dynamic for now
-    echo 5.7 5.6.7 5.6.6 5.6.5 5.6.4 5.6.3 5.6.2 5.6.1
+    local ALL_RELEASES=""
+    local YEAR=""
+    # get the latest 2 years of releases so that when we hit next year we still have the latest 2 years
+    TWO_YEARS=$(web_pipe https://distro.ibiblio.org/easyos/amd64/releases/kirkstone/ | grep -o -E '[[:digit:]]{4}/' | sort -nr | tr -d /  | head -n 2 )
+    for YEAR in ${TWO_YEARS} ; do
+        ALL_RELEASES="${ALL_RELEASES} $(web_pipe https://distro.ibiblio.org/easyos/amd64/releases/kirkstone/${YEAR}/ | grep -o -E '[[:digit:]]+(\.[[:digit:]])+/' | tr -d / | sort -nr)"
+    done
+    echo ${ALL_RELEASES}
 }
 
 function releases_elementary() {
-    echo 7.1 7.0
+    echo 8.0 7.1 7.0
 }
 
 function releases_endeavouros() {
@@ -868,7 +874,7 @@ function releases_endeavouros() {
 }
 
 function releases_endless() {
-    echo 5.1.1
+    echo 6.0.4
 }
 
 function editions_endless() {
@@ -877,12 +883,16 @@ function editions_endless() {
 
 function releases_fedora() {
     #shellcheck disable=SC2046,SC2005
-    echo $(web_pipe "https://getfedora.org/releases.json" | jq -r 'map(.version) | unique | .[]' | sort -r)
+    echo $(web_pipe "https://getfedora.org/releases.json" | jq -r 'map(.version) | unique | .[]' | sed 's/ /_/g' | sort -r)
 }
 
 function editions_fedora() {
     #shellcheck disable=SC2046,SC2005
-    echo $(web_pipe "https://getfedora.org/releases.json" | jq -r 'map(select(.arch=="x86_64" and .variant!="Labs" and .variant!="IoT" and .variant!="Container" and .variant!="Cloud" and .variant!="Everything"  and .subvariant!="Security" and .subvariant!="Server_KVM" and .subvariant!="SoaS")) | map(.subvariant) | unique | .[]')
+    if [[ -z ${RELEASE} ]]; then
+          echo $(web_pipe "https://getfedora.org/releases.json" | jq -r "map(select(.arch==\"x86_64\" and .variant!=\"Labs\" and .variant!=\"IoT\" and .variant!=\"Container\" and .variant!=\"Cloud\" and .variant!=\"Everything\"  and .subvariant!=\"Security\" and .subvariant!=\"Server_KVM\" and .subvariant!=\"SoaS\")) | map(.subvariant) | unique | .[]")
+    else
+        echo $(web_pipe "https://getfedora.org/releases.json" | jq -r "map(select(.arch==\"x86_64\" and .version==\"${RELEASE/_/ }\" and .variant!=\"Labs\" and .variant!=\"IoT\" and .variant!=\"Container\" and .variant!=\"Cloud\" and .variant!=\"Everything\"  and .subvariant!=\"Security\" and .subvariant!=\"Server_KVM\" and .subvariant!=\"SoaS\")) | map(.subvariant) | unique | .[]")
+    fi
 }
 
 function releases_freebsd() {
@@ -933,7 +943,7 @@ function releases_guix() {
 }
 
 function releases_haiku() {
-    echo r1beta4 r1beta3
+    echo r1beta5 r1beta4 r1beta3
 }
 
 function editions_haiku() {
@@ -956,12 +966,16 @@ function releases_kolibrios() {
     echo latest
 }
 
+function editions_kolibrios() {
+    echo en_US  ru_RU  it_IT  es_ES
+}
+
 function releases_linuxlite() {
     echo 6.6 6.4 6.2 6.0
 }
 
 function releases_linuxmint() {
-    echo 21.3 21.2 21.1 21 20.3 20.2
+    echo 22 21.3 21.2 21.1 21 20.3 20.2
 }
 
 function editions_linuxmint() {
@@ -974,6 +988,10 @@ function editions_lmde() {
 
 function releases_lmde() {
     echo 6
+}
+
+function releases_maboxlinux() {
+    echo latest
 }
 
 function releases_macos() {
@@ -997,7 +1015,8 @@ function releases_manjaro() {
 }
 
 function releases_mxlinux() {
-    echo 23.3
+    # needs header, so not web_pipe:
+    curl -Ils "https://sourceforge.net/projects/mx-linux/files/latest/download" | grep -i 'location:' | cut -d? -f1 | cut -d_ -f1 | cut -d- -f3
 }
 
 function editions_mxlinux() {
@@ -1011,7 +1030,7 @@ function releases_netboot() {
 function releases_netbsd() {
     # V8 is EOL so filter it out
     #shellcheck disable=SC2046,SC2005
-    echo $(web_pipe "http://cdn.netbsd.org/pub/NetBSD/iso/" | grep -o -E '"[[:digit:]]+\.[[:digit:]]+/"' | tr -d '"/' | grep -v ^8 | sort -nr | head -n 4)
+    echo $(web_pipe "https://cdn.netbsd.org/pub/NetBSD/iso/" | grep -o -E '"[[:digit:]]+\.[[:digit:]]+/"' | tr -d '"/' | grep -v ^8 | sort -nr | head -n 4)
 }
 
 function releases_nitrux() {
@@ -1021,7 +1040,7 @@ function releases_nitrux() {
 function releases_nixos() {
     # Lists unstable plus the two most recent releases
     #shellcheck disable=SC2046
-    echo unstable $(web_pipe "https://nix-channels.s3.amazonaws.com/?delimiter=/" | grep -o -P '(?<=<Key>nixos-)[0-9]+.[0-9]+(?=</Key>)' | sort -nr | head -n +2)
+    echo unstable $(web_pipe "https://nix-channels.s3.amazonaws.com/?delimiter=/" | grep -o -E 'nixos-[[:digit:]]+\.[[:digit:]]+' | cut -d- -f2 | sort -nru | head -n +2)
 }
 
 function editions_nixos() {
@@ -1058,7 +1077,7 @@ function releases_oraclelinux() {
 
 function releases_parrotsec() {
     #shellcheck disable=SC2046,SC2005
-    echo $(web_pipe "https://download.parrot.sh/parrot/iso/" | grep -o -P '(?<=href=")[0-9].*(?=/")' | sort -nr | head -n 1)
+    echo $(web_pipe "https://download.parrot.sh/parrot/iso/" |  grep -o -E 'href="[[:digit:]]\.[[:digit:]]+' | sort -nr | head -n 3 | cut -d\" -f 2 )
 }
 
 function editions_parrotsec() {
@@ -1074,7 +1093,7 @@ function editions_peppermint() {
 }
 
 function releases_popos() {
-    echo 22.04 21.10 20.04
+    echo 22.04 20.04
 }
 
 function editions_popos() {
@@ -1095,6 +1114,11 @@ function releases_primtux() {
 
 function editions_primtux() {
     echo 2022-10
+}
+
+function releases_proxmox-ve() {
+    #shellcheck disable=SC2046,SC2005
+    echo $(web_pipe https://enterprise.proxmox.com/iso/ | grep proxmox-ve | grep -E -o '[0-9]+\.[0-9]+-[0-9]\.iso' | uniq | sort -ru | cut -d'.' -f 1-2)
 }
 
 function releases_pureos() {
@@ -1150,17 +1174,17 @@ function releases_slint() {
 
 function releases_slitaz() {
     #shellcheck disable=SC2046,SC2005
-    echo $(web_pipe "http://mirror.slitaz.org/iso/rolling/" | grep "class='iso'" | cut -d"'" -f4 | cut -d'-' -f3- | grep iso | cut -d'.' -f1 | sort -u)
+    echo $(web_pipe "https://mirror.slitaz.org/iso/rolling/" | grep "class='iso'" | cut -d"'" -f4 | cut -d'-' -f3- | grep iso | cut -d'.' -f1 | sort -u)
 }
 
 function releases_solus() {
     #shellcheck disable=SC2046,SC2005
-    echo $(web_pipe "https://getsol.us/download/" | grep "isos" | grep Download | cut -d'-' -f 2 | sort -ru)
+    echo $(web_pipe_json "https://downloads.getsol.us/isos/" | jq -r '.[].name[:-1]' | grep -E "^[0-9-]+$" | sort -u)
 }
 
 function editions_solus() {
     #shellcheck disable=SC2046,SC2005
-    echo $(web_pipe "https://getsol.us/download/" | grep "isos" | grep Download | cut -d'.' -f5 | cut -d'-' -f2- | sort -u)
+    echo $(web_pipe_json "https://downloads.getsol.us/isos/$(releases_solus | tail -n1)/" | jq -r '.[].name | sub("Solus-(?<e>.*)-Release-.*"; "\(.e)")' | sort -u)
 }
 
 function releases_sparkylinux() {
@@ -1175,7 +1199,6 @@ function editions_sparkylinux() {
     else
         echo $(web_pipe "https://sparkylinux.org/download/stable/" | grep -E -o "sparkylinux-${RELEASE}-.*\.iso\"" | cut -d'-' -f4 | cut -d'.' -f1 | sort -u)
     fi
-    
 }
 
 function releases_spirallinux() {
@@ -1218,7 +1241,7 @@ function releases_truenas-core() {
 }
 
 function releases_truenas-scale() {
-    echo 23
+    echo 24
 }
 
 function releases_tuxedo-os() {
@@ -1309,7 +1332,6 @@ function check_hash() {
         iso="${VM_PATH}/${1}"
     fi
     hash="${2}"
-
     # Guess the hash algorithm by the hash length
     case ${#hash} in
         32) hash_algo=md5sum;;
@@ -1319,7 +1341,6 @@ function check_hash() {
         *) echo "WARNING! Can't guess hash algorithm, not checking ${iso} hash."
             return;;
     esac
-
     echo -n "Checking ${iso} with ${hash_algo}... "
     if ! echo "${hash} ${iso}" | ${hash_algo} --check --status; then
         echo "ERROR!"
@@ -1333,6 +1354,11 @@ function check_hash() {
 # Download a file from the web and pipe it to stdout
 function web_pipe() {
     curl --silent --location "${1}"
+}
+
+# Download a JSON file from the web and pipe it to stdout
+function web_pipe_json() {
+     curl --silent --location --header "Accept: application/json" "${1}"
 }
 
 # Download a file from the web
@@ -1427,7 +1453,6 @@ function zsync_get() {
     local FILE="${1##*/}"
     local OUT=""
     local URL="${1}"
-
     # Test mode for ISO
     if [ "${OPERATION}" == "show" ]; then
         test_result "${OS}" "${RELEASE}" "${EDITION}" "${URL}"
@@ -1567,6 +1592,8 @@ EOF
                 echo "disk_size=\"32G\"" >> "${CONF_FILE}";;
             batocera)
                 echo "disk_size=\"8G\"" >> "${CONF_FILE}";;
+            bazzite)
+                echo "disk_size=\"64G\"" >> "${CONF_FILE}";;
             dragonflybsd|haiku|openbsd|netbsd|slackware|slax|tails|tinycore)
                 echo "boot=\"legacy\"" >> "${CONF_FILE}";;
             deepin)
@@ -1627,6 +1654,10 @@ EOF
                 if [ "${RELEASE}" == "monterey" ]; then
                     echo "cpu_cores=2" >> "${CONF_FILE}"
                 fi
+                ;;
+            proxmox-ve)
+                echo "disk_size=\"20G\"" >> "${CONF_FILE}"
+                echo "ram=\"4G\"" >> "${CONF_FILE}"
                 ;;
         esac
 
@@ -1886,6 +1917,7 @@ function get_archcraft() {
     local HASH=""
     local URL=""
     URL="https://sourceforge.net/projects/archcraft/files/${RELEASE}/download"
+    URL="$(web_redirect "${URL}" | cut -d? -f1)"
     echo "${URL} ${HASH}"
 }
 
@@ -1956,8 +1988,8 @@ function get_biglinux() {
 
 function get_blendos() {
     local HASH=""
-    local ISO="blendos-${RELEASE}-stable-${EDITION}.iso"
-    local URL="https://mirror.ico277.xyz/blendos/${EDITION}"
+    local ISO="blendOS.iso"
+    local URL="https://kc1.mirrors.199693.xyz/blend/isos/testing"
     echo "${URL}/${ISO} ${HASH}"
 }
 
@@ -1966,7 +1998,6 @@ function get_bodhi() {
     local HASH=""
     local ISO=""
     local URL="https://sourceforge.net/projects/bodhilinux/files/${RELEASE}"
-
     case ${EDITION} in
         standard) ISO="bodhi-${RELEASE}-64.iso";;
         *) ISO="bodhi-${RELEASE}-64-${EDITION}.iso";;
@@ -1985,12 +2016,10 @@ function get_bunsenlabs() {
 
 function get_cachyos() {
     local HASH=""
-    local REL=""
-    local URL="https://mirror.cachyos.org/ISO/${EDITION}/"
-    REL=$(web_pipe "${URL}" | grep -o '>[0-9]*/</a>' | grep -o '[0-9]*' | sort -ru | tail -n 1)
-    local ISO="cachyos-${EDITION}-linux-${REL}.iso"
-    HASH=$(web_pipe "${URL}/${REL}/${ISO}.sha256" | cut -d' ' -f1)
-    echo "${URL}/${REL}/${ISO} ${HASH}"
+    local URL=""
+    URL="$(web_pipe "https://cachyos.org/download/" | tr '&' '\n' | grep "ISO/${EDITION}" | grep -v 'iso.sha' | grep -v 'iso.sig' | cut -d';' -f2)"
+    HASH=$(web_pipe "${URL}.sha256" | cut -d' ' -f1)
+    echo "${URL} ${HASH}"
 }
 
 function get_centos-stream() {
@@ -2029,7 +2058,6 @@ function get_debian() {
     case "${RELEASE}" in
         "${DEBCURRENT}") URL="https://cdimage.debian.org/debian-cd/${RELEASE}-live/amd64/iso-hybrid";;
     esac
-
     if [ "${EDITION}" == "netinst" ]; then
         URL="${URL/-live/}"
         URL="${URL/hybrid/cd}"
@@ -2045,7 +2073,7 @@ function get_deepin() {
     # deepin-desktop-community-20.3-amd64.iso
     local URL="https://cdimage.deepin.com/releases/"${RELEASE}
     # Correct URL for 23-RC onwards which has architecture directories
-    if [[ "${RELEASE}" == *"23-RC"* ]] ; then
+    if [ "${RELEASE}" != "20.9" ]; then
         URL+="/amd64"
     fi
     local ISO="deepin-desktop-community-${REV}-amd64.iso"
@@ -2082,12 +2110,14 @@ function get_easyos() {
     local ISO=""
     local YEAR=""
     ISO="easy-${RELEASE}-amd64.img"
-    case ${RELEASE} in
-        5.6.5|5.6.4|5.6.3|5.6.2|5.6.1) YEAR="2023";;
-        5.7|5.6.7|5.6.6)               YEAR="2024";;
-    esac
-    URL="https://distro.ibiblio.org/easyos/amd64/releases/kirkstone/${YEAR}/${RELEASE}"
-    HASH=$(web_pipe "${URL}/md5.sum.txt" | cut -d' ' -f1)
+    TWO_YEARS=$(web_pipe https://distro.ibiblio.org/easyos/amd64/releases/kirkstone/ | grep -o -E '[[:digit:]]{4}/' | sort -nr | tr -d /  | head -n 2 )
+    for YEAR in ${TWO_YEARS} ; do
+        if web_check "https://distro.ibiblio.org/easyos/amd64/releases/kirkstone/${YEAR}/${RELEASE}/" ; then
+            URL="https://distro.ibiblio.org/easyos/amd64/releases/kirkstone/${YEAR}/${RELEASE}"
+            HASH=$(web_pipe "${URL}/md5.sum.txt" | cut -d' ' -f1)
+            break
+        fi
+    done
     echo "${URL}/${ISO} ${HASH}"
 }
 
@@ -2096,6 +2126,7 @@ function get_elementary() {
     case ${RELEASE} in
         7.0) STAMP="20230129rc";;
         7.1) STAMP="20230926rc";;
+        8.0) STAMP="20241122rc";;
     esac
     local ISO="elementaryos-${RELEASE}-stable.${STAMP}.iso"
     local URL="https://ams3.dl.elementary.io/download"
@@ -2119,17 +2150,16 @@ function get_endless() {
     #https://d1anzknqnc1kmb.cloudfront.net/eos-image-keyring.gpg
     # (4096R: CB50 0F7B C923 3FAD 32B4 E720 9E0C 1250 587A 279C)
     local FILE_TS=""
-
     # https://support.endlessos.org/en/installation/direct-download gives the info but computes the URLS in js
     # so parsing out the useful info is not happening tonight
     # Endless edition names are "base" for the small minimal one or the Language for the large full release
     # The isos are stamped as they are finished so ....
     case ${EDITION} in
-        base)  FILE_TS="240103-025438";;
-        en)    FILE_TS="240103-025437";;
-        es)    FILE_TS="240103-025438";;
-        fr)    FILE_TS="240103-025438";;
-        pt_BR) FILE_TS="240103-030103";;
+        base)  FILE_TS="241023-183516";;
+        en)    FILE_TS="241023-200926";;
+        es)    FILE_TS="241023-184649";;
+        fr)    FILE_TS="241023-191212";;
+        pt_BR) FILE_TS="241023-191427";;
     esac
     URL="https://images-dl.endlessm.com/release/${RELEASE}/eos-amd64-amd64/${EDITION}"
     ISO="eos-eos${RELEASE:0:3}-amd64-amd64.${FILE_TS}.${EDITION}.iso"
@@ -2143,13 +2173,19 @@ function get_fedora() {
     local JSON=""
     local URL=""
     local VARIANT=""
-
     case ${EDITION} in
         Server|Kinoite|Onyx|Silverblue|Sericea|Workstation) VARIANT="${EDITION}";;
         *) VARIANT="Spins";;
     esac
+    # The naming of 41 Beta with a space is problematic so we replaced it with an underscore
+    # but we need to convert it back to a space for the URL search in the JSON
     #shellcheck disable=SC2086
-    JSON=$(web_pipe "https://getfedora.org/releases.json" | jq '.[] | select(.variant=="'${VARIANT}'" and .subvariant=="'"${EDITION}"'" and .arch=="x86_64" and .version=="'"${RELEASE}"'" and .sha256 != null)')
+    # if RELEASE contains an underscore, replace it with a space
+     if [[ "${RELEASE}" == *"_"* ]]; then
+        RELEASE="${RELEASE/_/ }"
+    fi
+    # shellcheck disable=SC2086
+    JSON=$(web_pipe "https://getfedora.org/releases.json" | jq '.[] | select(.variant=="'${VARIANT}'" and .subvariant=="'"${EDITION}"'" and .arch=="x86_64" and .version=="'"${RELEASE}"'" and (.link | endswith(".iso")))')
     URL=$(echo "${JSON}" | jq -r '.link' | head -n1)
     HASH=$(echo "${JSON}" | jq -r '.sha256' | head -n1)
     echo "${URL} ${HASH}"
@@ -2167,8 +2203,7 @@ function get_freebsd() {
 function get_freedos() {
     local HASH=""
     local ISO=""
-    local URL="http://www.ibiblio.org/pub/micro/pc-stuff/freedos/files/distributions/${RELEASE}/official"
-
+    local URL="https://www.ibiblio.org/pub/micro/pc-stuff/freedos/files/distributions/${RELEASE}/official"
     case ${RELEASE} in
         1.2) ISO="FD12CD.iso"
              HASH=$(web_pipe "${URL}/FD12.sha" | grep "${ISO}" | cut -d' ' -f1);;
@@ -2204,7 +2239,6 @@ function get_ghostbsd() {
     local ISO=""
     local URL="https://download.ghostbsd.org/releases/amd64/${RELEASE}"
     local HASH=""
-
     case ${EDITION} in
         mate) ISO="GhostBSD-${RELEASE}.iso";;
         xfce) ISO="GhostBSD-${RELEASE}-XFCE.iso";;
@@ -2272,8 +2306,8 @@ function get_kdeneon() {
 
 function get_kolibrios() {
     local HASH=""
-    local ISO="kolibri.iso"
-    local URL="https://builds.kolibrios.org/eng"
+    local ISO="latest-iso.7z"
+    local URL="http://builds.kolibrios.org/${EDITION}"
     echo "${URL}/${ISO} ${HASH}"
 }
 
@@ -2301,6 +2335,14 @@ function get_lmde() {
     local URL="https://mirror.bytemark.co.uk/linuxmint/debian"
     HASH=$(web_pipe "${URL}/sha256sum.txt" | grep "${ISO}" | cut -d' ' -f1)
     echo "${URL}/${ISO} ${HASH}"
+}
+
+function get_maboxlinux() {
+    local HASH=""
+    local URL=""
+    URL="https://sourceforge.net/projects/mabox-linux/files/${RELEASE}/download"
+    URL="$(web_redirect "${URL}" | cut -d? -f1)"
+    echo "${URL} ${HASH}"
 }
 
 function generate_id() {
@@ -2475,7 +2517,6 @@ function get_mxlinux() {
     local HASH=""
     local ISO=""
     local URL="https://sourceforge.net/projects/mx-linux/files/Final/${EDITION}"
-
     case ${EDITION} in
         Xfce) ISO="MX-${RELEASE}_x64.iso";;
         KDE) ISO="MX-${RELEASE}_KDE_x64.iso";;
@@ -2507,7 +2548,6 @@ function get_nitrux() {
     local URL=""
     local ISONAME=""
     local ISO=""
-
     URLBASE="https://sourceforge.net/projects/nitruxos/files/Release"
     URL="${URLBASE}/ISO"
     ISO=$(web_pipe 'https://sourceforge.net/projects/nitruxos/rss?path=/Release/ISO' | grep '.iso' | head -n 1 | cut -d']' -f1 | cut -d '/' -f4)
@@ -2554,7 +2594,6 @@ function get_openindiana() {
     local HASH=""
     local ISO=""
     local URL=""
-
     URL="https://dlc.openindiana.org/isos/hipster/${RELEASE}"
     ISO="OI-hipster-${EDITION}-${RELEASE}.iso"
     HASH=$(web_pipe "${URL}/${ISO}.sha256" |cut -d' ' -f1)
@@ -2565,7 +2604,6 @@ function get_opensuse() {
     local HASH=""
     local ISO=""
     local URL=""
-
     if [ "${RELEASE}" == "tumbleweed" ]; then
         ISO="openSUSE-Tumbleweed-DVD-x86_64-Current.iso"
         URL="https://download.opensuse.org/tumbleweed/iso"
@@ -2605,7 +2643,6 @@ function get_parrotsec() {
     local HASH=""
     local ISO=""
     local URL=""
-
     ISO="Parrot-${EDITION}-${RELEASE}_amd64.iso"
     URL="https://download.parrot.sh/parrot/iso/${RELEASE}"
     HASH="$(web_pipe "${URL}/signed-hashes.txt" | grep "${ISO}" | cut -d' ' -f1)"
@@ -2617,7 +2654,6 @@ function get_peppermint() {
     local HASH=""
     local ISO=""
     local URL="https://sourceforge.net/projects/peppermintos/files/isos"
-
     case ${EDITION} in
         devuan-xfce)
             ISO="PeppermintOS-devuan_64_xfce.iso"
@@ -2652,7 +2688,6 @@ function get_porteus() {
     local HASH=""
     local ISO=""
     local URL=""
-
     edition="${EDITION~~}"
     ISO="Porteus-${edition}-v${RELEASE}-x86_64.iso"
     URL="https://mirrors.dotsrc.org/porteus/x86_64/Porteus-v${RELEASE}"
@@ -2664,10 +2699,19 @@ function get_primtux() {
     local HASH=""
     local URL=""
     local ISO=""
-
     ISO="PrimTux${RELEASE}-amd64-${EDITION}.iso"
     URL="https://sourceforge.net/projects/primtux/files/Distribution"
     HASH=$(web_pipe "${URL}/${ISO}.md5" | grep "${ISO}" | cut -d' ' -f1)
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+function get_proxmox-ve() {
+    local HASH=""
+    local ISO=""
+    local URL=""
+    ISO="proxmox-ve_${RELEASE}.iso"
+    URL="https://enterprise.proxmox.com/iso"
+    HASH=$(web_pipe "${URL}/SHA256SUMS" | grep "${ISO}" | cut -d' ' -f1)
     echo "${URL}/${ISO} ${HASH}"
 }
 
@@ -2712,7 +2756,7 @@ function get_rockylinux() {
     local HASH=""
     local ISO="Rocky-${RELEASE}-x86_64-${EDITION}.iso"
     local URL=""
-    URL="http://dl.rockylinux.org/vault/rocky/${RELEASE}/isos/x86_64"
+    URL="https://dl.rockylinux.org/vault/rocky/${RELEASE}/isos/x86_64"
     HASH=$(web_pipe "${URL}/CHECKSUM" | grep "SHA256" | grep "${ISO})" | cut -d' ' -f4)
     echo "${URL}/${ISO} ${HASH}"
 }
@@ -2740,7 +2784,6 @@ function get_slax() {
     local HASH=""
     local ISO=""
     local URL=""
-
     case ${EDITION} in
         debian)
             URL="https://ftp.fi.muni.cz/pub/linux/slax/Slax-12.x"
@@ -2774,7 +2817,7 @@ function get_slitaz() {
 function get_solus() {
     local EDITION="${1:-}"
     local HASH=""
-    local ISO="Solus-${RELEASE}-${EDITION}.iso"
+    local ISO="Solus-${EDITION}-Release-${RELEASE}.iso"
     local URL="https://downloads.getsol.us/isos/${RELEASE}"
     HASH=$(web_pipe "${URL}/${ISO}.sha256sum" | cut -d' ' -f1)
     echo "${URL}/${ISO} ${HASH}"
@@ -2785,7 +2828,6 @@ function get_sparkylinux() {
     local HASH=""
     local ISO=""
     local URL=""
-
     ISO="sparkylinux-${RELEASE}-x86_64-${EDITION}.iso"
     case ${EDITION} in
         minimalcli) URL="https://sourceforge.net/projects/sparkylinux/files/cli";;
@@ -2833,7 +2875,6 @@ function get_trisquel() {
     local HASH=""
     local ISO=""
     local URL="https://mirrors.ocf.berkeley.edu/trisquel-images"
-
     case ${EDITION} in
         mate) ISO="trisquel_${RELEASE}_amd64.iso";;
         lxde) ISO="trisquel-mini_${RELEASE}_amd64.iso";;
@@ -2946,7 +2987,6 @@ function get_ubuntu() {
         echo "$(pretty_name "${OS}") ${RELEASE} is currently unavailable. Please select other OS/Release combination"
         exit 1
     fi
-
     if [[ "${RELEASE}" == "daily"* ]] || [ "${RELEASE}" == "dvd" ]; then
         zsync_get "${URL}/${ISO}" "${VM_PATH}" "${OS}-devel.iso"
         make_vm_config "${OS}-devel.iso"
@@ -3666,12 +3706,24 @@ function create_vm() {
                 unzip -qo "${VM_PATH}/${ISO}" -d "${VM_PATH}"
                 rm -f "${VM_PATH}/${ISO}"
                 ISO="$(ls -1 "${VM_PATH}/"*.iso)"
+                ISO="$(basename "${ISO}")"
+            fi;;
+        kolibrios)
+            if [[ ${ISO} = *".7z" ]]; then
+                if [ -z "$(command -v 7z)" ]; then echo "ERROR! '7zip' needs installing. Unable to extract file."
+                else
+                    7z e "${VM_PATH}/${ISO}" -o"${VM_PATH}" >/dev/null 2>&1
+                    rm -f "${VM_PATH}/${ISO}"
+                    ISO="$(ls -1 "${VM_PATH}/"*.iso)"
+                    ISO="$(basename "${ISO}")"
+                fi
             fi;;
         reactos)
             if [[ ${ISO} = *".zip"* ]]; then
                 unzip -qo "${VM_PATH}/${ISO}" -d "${VM_PATH}"
                 rm -f "${VM_PATH}/${ISO}"
                 ISO="$(ls -1 "${VM_PATH}/"*.iso)"
+                ISO="$(basename "${ISO}")"
             fi;;
     esac
     make_vm_config "${ISO}"
@@ -3735,7 +3787,6 @@ function create_config() {
                 unattended_windows "${VM_PATH}"
             fi
             ;;
-
         *) CUSTOM_OS="linux";;
     esac
     echo -e "Selecting OS: ${CUSTOM_OS}. If this is incorrect, please modify the config file to include the correct OS.\n"
@@ -3745,9 +3796,8 @@ function create_config() {
 # Use command -v command to check if quickemu is in the system's PATH and
 # fallback to checking if quickemu is in the current directory.
 function resolve_quickemu() {
-    if command -v quickemu >/dev/null 2>&1; then
-        command -v quickemu
-    elif [ -f "./quickemu" ]; then
+    command -v quickemu || \
+    if [ -x "./quickemu" ]; then
         echo "$(pwd)/quickemu"
     else
         echo "quickemu not found" >&2
@@ -3912,7 +3962,7 @@ if [ -n "${2}" ]; then
             fi
         else
             show_os_info "${OS}"
-            echo -e " - Editions:\t$(editions_${OS} | fmt -w 80)"
+            echo -e " - Editions:\t$("editions_${OS}" | fmt -w 80)"
             echo -e "\nERROR! You must specify an edition."
             exit 1
         fi
