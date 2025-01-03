@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+wayland_check() {
+	noxused=$(loginctl show-session $(awk '/tty/ {print $1}' <(loginctl)) -p Type | awk -F= '{print $2}')
+	if [ $noxused == wayland ]; then
+		GDK_BACKEND=x11
+		echo "Running on Wayland"
+	elif [ $noxused == x11 ]; then
+		echo "Runing on X"
+	elif [ $noxused == tty ]; then
+		echo "Runing on tty"
+	else
+		echo "Not sure where I am running"
+	fi
+}
+
+set_variables() {
+	# DEBUG mod
+	#bash -x ./dh 2>&1 | tee output.log
+	#progname="${progname:="${0##*/}"}"
+	progname="DistroHopper"
+	version="0.80"
+	#GTK_THEME="alt-dialog"
+	DH_CONFIG_DIR="$HOME/.config/dh"
+	DH_CONFIG="$DH_CONFIG_DIR/dh.conf"
+	DH_ICON_DIR="/usr/share/icons/dh"
+	PATH_PREFIX="/usr/bin/"
+	TMP_DIR="/tmp"
+	terminal="sakura"
+	if [ $noxused == wayland ]; then
+		GDK_BACKEND=x11
+	fi
+	replace='"!"'
+	#export "DH_CONFIG_DIR" "DH_CONFIG" "replace" "DH_ICON_DIR" "PATH_PREFIX" "TMP_DIR" "terminal"
+	check_and_set_mode
+	# Set traps to catch the signals and exit gracefully
+	trap "exit" INT
+	trap "exit" EXIT
+}
+
+wayland_check
+set_variables
