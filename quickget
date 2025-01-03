@@ -1127,7 +1127,8 @@ function releases_siduction() {
 
 function editions_siduction() {
     #shellcheck disable=SC2046,SC2005
-    echo $(web_pipe "https://mirror.math.princeton.edu/pub/siduction/iso/Standing_on_the_Shoulders_of_Giants/" | grep folder | cut -d'"' -f8 | tr -d '/' | sort -u)
+    NAME=$(web_pipe "https://mirror.math.princeton.edu/pub/siduction/iso/" | grep folder | cut -d'"' -f8 | tr -d '/')
+    web_pipe "https://mirror.math.princeton.edu/pub/siduction/iso/${NAME}/" | grep folder | cut -d'"' -f8 | tr -d '/' | sort -u
 }
 
 function releases_slackware() {
@@ -1650,6 +1651,10 @@ EOF
             echo "tpm=\"on\"" >> "${CONF_FILE}"
             echo "secureboot=\"off\"" >> "${CONF_FILE}"
         fi
+    fi
+    if [ "${OPERATION}" == ui ]; then
+        echo
+        gum confirm "Run new ${OS} VM?" && quickemu --vm "${CONF_FILE}"
     fi
     echo -e "\nTo start your $(pretty_name "${OS}") virtual machine run:"
     if [ "${OS}" == "slint" ]; then
@@ -2728,10 +2733,14 @@ function get_siduction() {
     local HASH=""
     local DATE=""
     local ISO=""
-    local URL="https://mirrors.dotsrc.org/siduction/iso/Standing_on_the_Shoulders_of_Giants/${EDITION}"
+    local NAME=""
+    local URL=""
+    NAME=$(web_pipe "https://mirror.math.princeton.edu/pub/siduction/iso/" | grep folder | cut -d'"' -f8 | tr -d '/')
+    URL="https://mirrors.dotsrc.org/siduction/iso/${NAME}/${EDITION}"
     DATE=$(web_pipe "${URL}"| grep .iso.md5 | cut -d'-' -f6 | cut -d'.' -f1)
     HASH=$(web_pipe "${URL}/${ISO}.md5" | cut -d' ' -f1)
-    ISO="siduction-2023.1.1-Standing_on_the_Shoulders_of_Giants-${EDITION}-amd64-${DATE}.iso"
+    VERSION=$(web_pipe "${URL}"| grep .iso.md5 | cut -d'-' -f2)
+    ISO="siduction-${VERSION}-${NAME}-${EDITION}-amd64-${DATE}.iso"
     echo "${URL}/${ISO} ${HASH}"
 }
 
@@ -3746,6 +3755,94 @@ function create_config() {
     make_vm_config "${INPUT}" "${FIXED_ISO}"
 }
 
+run_itself() {
+    if [ -n "${1}" ]; then
+        OS="${1,,}"
+    else
+        error_specify_os
+    fi
+
+    os_supported
+
+    if [ -n "${2}" ]; then
+        RELEASE="${2}"
+        VM_PATH="${OS}-${RELEASE}"
+        # If the OS has an editions_() function, use it.
+        if [[ $(type -t "editions_${OS}") == function ]]; then
+            validate_release "releases_${OS}"
+            EDITIONS=("$(editions_"${OS}")")
+            if [ -n "${3}" ]; then
+                EDITION="${3}"
+                if [[ ! "${EDITIONS[*]}" = *"${EDITION}"* ]]; then
+                    echo -e "ERROR! ${EDITION} is not a supported $(pretty_name "${OS}") edition\n"
+                    echo -n ' - Supported editions: '
+                    for EDITION in "${EDITIONS[@]}"; do
+                        echo -n "${EDITION} "
+                    done
+                    echo ""
+                    exit 1
+                fi
+            else
+                show_os_info "${OS}"
+                echo -e " - Editions:\t$("editions_${OS}" | fmt -w 80)"
+                echo -e "\nERROR! You must specify an edition."
+                exit 1
+            fi
+            handle_missing
+            VM_PATH="${OS}-${RELEASE}-${EDITION}"
+            create_vm "$("get_${OS}" "${EDITION}")"
+        elif [ "${OS}" == "macos" ]; then
+            # macOS doesn't use create_vm()
+            validate_release releases_macos
+            get_macos
+        elif [[ "${OS}" == *"ubuntu-server"* ]]; then
+            # (Comes before regular Ubuntu, or the code tries to download the desktop) #
+            # Ubuntu doesn't use create_vm()
+            validate_release releases_ubuntu-server
+            get_ubuntu-server
+        elif [[ "${OS}" == *"ubuntu"* ]]; then
+            # Ubuntu doesn't use create_vm()
+            validate_release releases_ubuntu
+            get_ubuntu
+        elif [[ "${OS}" == "windows"* ]]; then
+            I18N="English International"
+            "languages_${OS}"
+            if [ -n "${3}" ]; then
+                I18N="${3}"
+                if [[ ! "${I18NS[*]}" = *"${I18N}"* ]]; then
+                    error_not_supported_lang
+                fi
+                VM_PATH="$(echo "${OS}-${RELEASE}-${I18N// /-}" | tr -d '()')"
+            fi
+            validate_release "releases_${OS}"
+            get_windows
+        else
+            validate_release "releases_${OS}"
+            create_vm "$("get_${OS}")"
+        fi
+    else
+        error_specify_release
+    fi
+}
+# shellcheck disable=SC2046
+function run_ui() {
+    if ! command -v gum &> /dev/null; then
+        echo "gum could not be found, please install it first"
+        exit 1
+    fi
+    OS=$(gum choose --height=17 --header="Select an OS:" $(os_support))
+    #os_info "${OS}" > "$TMPFILE"
+    RELEASE=$(gum choose --height=17 --header="Select $OS release:" $("releases_${OS}"))
+    if declare -F "editions_${OS}" > /dev/null; then
+        EDITION=$(gum choose --height=17 --header="Select $OS  $RELEASE edition:" $("editions_${OS}"))
+        echo ''
+        run_itself "${OS}" "${RELEASE}" "${EDITION}"
+    else
+        echo ''
+        run_itself "${OS}" "${RELEASE}"
+    fi
+}
+
 # Use command -v command to check if quickemu is in the system's PATH and
 # fallback to checking if quickemu is in the current directory.
 function resolve_quickemu() {
@@ -3787,6 +3884,7 @@ Arguments:
   --show          [os]                     : Show OS information
   --version                                : Show version
   --help                                   : Show this help message
+  --ui                                     : Run in UI mode
 ------------------------------------ Flags -------------------------------------
 --create-config:
   --disable-unattended                     : Force quickget not to set up an unattended installation
@@ -3827,6 +3925,11 @@ fi
 
 #TODO: Deprecate `list`, `list_csv`, and `list_json` in favor of `--list`, `--list-csv`, and `--list-json`
 case "${1}" in
+    --ui)
+        OPERATION="ui"
+        shift
+        run_ui
+        ;;
     --download|-download)
         OPERATION="download"
         shift
@@ -3887,72 +3990,5 @@ case "${1}" in
     -*) error_not_supported_argument;;
 esac
 
-if [ -n "${1}" ]; then
-    OS="${1,,}"
-else
-    error_specify_os
-fi
-
-os_supported
-
-if [ -n "${2}" ]; then
-    RELEASE="${2}"
-    VM_PATH="${OS}-${RELEASE}"
-    # If the OS has an editions_() function, use it.
-    if [[ $(type -t "editions_${OS}") == function ]]; then
-        validate_release "releases_${OS}"
-        EDITIONS=("$(editions_"${OS}")")
-        if [ -n "${3}" ]; then
-            EDITION="${3}"
-            if [[ ! "${EDITIONS[*]}" = *"${EDITION}"* ]]; then
-                echo -e "ERROR! ${EDITION} is not a supported $(pretty_name "${OS}") edition\n"
-                echo -n ' - Supported editions: '
-                for EDITION in "${EDITIONS[@]}"; do
-                    echo -n "${EDITION} "
-                done
-                echo ""
-                exit 1
-            fi
-        else
-            show_os_info "${OS}"
-            echo -e " - Editions:\t$("editions_${OS}" | fmt -w 80)"
-            echo -e "\nERROR! You must specify an edition."
-            exit 1
-        fi
-        handle_missing
-        VM_PATH="${OS}-${RELEASE}-${EDITION}"
-        create_vm "$("get_${OS}" "${EDITION}")"
-    elif [ "${OS}" == "macos" ]; then
-        # macOS doesn't use create_vm()
-        validate_release releases_macos
-        get_macos
-    elif [[ "${OS}" == *"ubuntu-server"* ]]; then
-        # (Comes before regular Ubuntu, or the code tries to download the desktop) #
-        # Ubuntu doesn't use create_vm()
-        validate_release releases_ubuntu-server
-        get_ubuntu-server
-    elif [[ "${OS}" == *"ubuntu"* ]]; then
-        # Ubuntu doesn't use create_vm()
-        validate_release releases_ubuntu
-        get_ubuntu
-    elif [[ "${OS}" == "windows"* ]]; then
-        I18N="English International"
-        "languages_${OS}"
-        if [ -n "${3}" ]; then
-            I18N="${3}"
-            if [[ ! "${I18NS[*]}" = *"${I18N}"* ]]; then
-                error_not_supported_lang
-            fi
-            VM_PATH="$(echo "${OS}-${RELEASE}-${I18N// /-}" | tr -d '()')"
-        fi
-        validate_release "releases_${OS}"
-        get_windows
-    else
-        validate_release "releases_${OS}"
-        create_vm "$("get_${OS}")"
-    fi
-else
-    error_specify_release
-fi
-
+run_itself "$@"
 # vim:tabstop=4:shiftwidth=4:expandtab
