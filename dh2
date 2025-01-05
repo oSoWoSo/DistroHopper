@@ -73,7 +73,7 @@ install_needed_dnf() {
 	$root dnf install qemu bash coreutils edk2-tools grep jq lsb procps python3 genisoimage usbutils util-linux sed spice-gtk-tools swtpm wget xdg-user-dirs xrandr unzip yad
 }
 
-dependencies_install() {
+install_dependencies() {
 # Find the current distribution and install dependecies
 	if [ -f /etc/os-release ]; then
 		if [ -f "$PATH_PREFIX/pacman" ]; then
@@ -91,26 +91,26 @@ dependencies_install() {
 	fi
 }
 
-create_directory_structure() {
+create_dirs() {
 	mkdir -p "$DH_CONFIG_DIR"
 	touch "$DH_CONFIG"
 	mkdir -p "$DH_ICON_DIR" >/dev/null 2>&1 || $root mkdir -p "$DH_ICON_DIR"
 }
 
-choose_VMs_dir() {
+choose_vms_dir() {
 	NEWDIR="$(yad --width=900 --height=900 --file --directory --title="Where to save VMs?")"
 	VMS_DIR="$NEWDIR"
 	echo "VMS_DIR=\"$VMS_DIR\"" > "$DH_CONFIG"
 }
 
-distrohopper_install() {
+install_dh() {
 	cp -f dh quickget quickemu quickreport chunkcheck windowskey "$PATH_PREFIX" >/dev/null 2>&1 || $root cp -f dh quickget quickemu quickreport chunkcheck windowskey "$PATH_PREFIX"
 	cp -f icons/* "$DH_ICON_DIR/" >/dev/null 2>&1 || $root cp -f icons/* "$DH_ICON_DIR/"
 	mkdir -p "$DH_CONFIG_DIR/ready"
 	mkdir -p "$DH_CONFIG_DIR/supported"
 }
 
-desktop_entry_distrohopper() {
+desktop_entry_dh() {
 	echo "$MSG_INTERM"
 	run_in_terminal
 	DESKTOP_FILE="${TMP_DIR}/dh.desktop"
@@ -130,11 +130,11 @@ desktop_entry_distrohopper() {
 
 installation_process() {
 	dependencies_check_gui
-	dependencies_install
-	create_directory_structure
-	choose_VMs_dir
-	distrohopper_install
-	desktop_entry_distrohopper
+	install_dependencies
+	create_dirs
+	choose_vms_dir
+	install_dh
+	desktop_entry_dh
 }
 
 # basic ----------------------------------------------------------------
@@ -164,14 +164,14 @@ run_in_terminal() {
 	yad --title "terminal" --text "Do you want show output in the terminal?" && interminal="yes" || interminal="no"
 }
 
-virtual_machines_update_ready() {
+renew_ready_vms() {
 	cd "$VMS_DIR" || echo "ERROR: VMS_DIR not set!" && exit 1
 	rm -r "$DH_CONFIG_DIR"/ready >/dev/null 2>&1
 	mkdir -p "$DH_CONFIG_DIR"/ready
 	for vm_conf in $(pwd)
 	do
 		echo "creating..."
-		vm_desktop=$(basename "$VMS_DIR/$vm_conf" .conf)
+		VMname=$(basename "$VMS_DIR/$vm_conf" .conf)
 		# Use fuzzy matching to find the best matching icon file (ready to run VMs)
 		icon_name=$(basename "$VMS_DIR/$vm_conf" .conf | cut -d'-' -f -2)
 		icon_file=$(find "$DH_ICON_DIR" -type f -iname "${icon_name// /}.*")
@@ -182,10 +182,10 @@ virtual_machines_update_ready() {
 		elif [ -z "$icon_file" ]; then
 			icon_file="$DH_ICON_DIR/tux.svg"
 		fi
-		DESKTOP_FILE="${DH_CONFIG_DIR}/ready/${vm_desktop}.desktop"
+		DESKTOP_FILE="${DH_CONFIG_DIR}/ready/${VMname}.desktop"
 		type='Application'
-		name="${vm_desktop}"
 		comment='Quickly download, create and run VM of any#TODO operating system.'
+		name="${VMname}"
 		version="${version}"
 		execmd="sh -c 'cd ${VMS_DIR} && quickemu -vm ${vm_conf};$SHELL'"
 		icon="${icon_file}"
@@ -205,7 +205,7 @@ renew_ready() {
 		if [ "$vm_conf" == "distrohopper.conf" ]; then
 			continue # skip processing distrohopper.conf
 		fi
-		vm_desktop=$(basename "$VMS_DIR/$vm_conf" .conf)
+		VMname=$(basename "$VMS_DIR/$vm_conf" .conf)
 		# Use fuzzy matching to find the best matching icon file (ready to run VMs)
 		icon_name=$(basename "$VMS_DIR/$vm_conf" .conf | cut -d'-' -f -2)
 		icon_file=$(find "$DH_ICON_DIR" -type f -iname "${icon_name// /}.*")
@@ -218,10 +218,10 @@ renew_ready() {
 		fi
 		# content of desktop files (ready to run VMs)
 		mkdir -p "$DH_CONFIG_DIR/ready"
-		cat <<EOF > "$DH_CONFIG_DIR/ready/$vm_desktop.desktop"
+		cat <<EOF > "$DH_CONFIG_DIR/ready/$VMname.desktop"
 [Desktop Entry]
 Type=Application
-Name=$vm_desktop
+Name=$VMname
 Exec=sh -c 'cd ${VMS_DIR} && quickemu -vm ${vm_conf}'
 Icon=$icon_file
 Categories=System;Virtualization;
@@ -230,16 +230,16 @@ EOF
 	done
 }
 
-virtual_machines_update_supported() {
+renew_supported_vms() {
 	rm -r "$DH_CONFIG_DIR"/supported >/dev/null 2>&1
 	mkdir -p "$DH_CONFIG_DIR"/supported
 	run_in_terminal
 	# get supported VMs
 	quickget | awk 'NR==3,/zorin/' | grep -o '[^ ]*' > "$DH_CONFIG_DIR/supported.md"
 	while read -r get_name; do
-		vm_desktop=$(echo "$get_name" | tr ' ' '_')
 		releases=$(quickget "$vm_desktop" | grep 'Releases' | cut -f2 | sed 's/^ //' | sed 's/ *$//')
 		editions=$(quickget "$vm_desktop" | grep 'Editions' | cut -f2 | sed 's/^ //' | sed 's/ *$//')
+		VMname=$(echo "$get_name" | tr ' ' '_')
 		icon_name="$DH_ICON_DIR/$get_name"
 		if [ -f "$icon_name.svg" ]; then
 			icon_file="$icon_name.svg"
@@ -248,10 +248,10 @@ virtual_machines_update_supported() {
 		else
 			icon_file="$DH_ICON_DIR/tux.svg"
 		fi
-		echo "creating $vm_desktop entry"
+		echo "creating $VMname entry"
 		echo ""
 		# Check if there are editions
-		DESKTOP_FILE="$DH_CONFIG_DIR/supported/$vm_desktop.desktop"
+		DESKTOP_FILE="$DH_CONFIG_DIR/supported/$VMname.desktop"
 		type="Application"
 		name="$get_name"
 		if [ -z "$editions" ]; then
@@ -279,7 +279,7 @@ first_run() {
 	installation_process
 	echo "Installation done"
 	echo "Update supported..."
-	virtual_machines_update_supported
+	renew_supported_vms
 }
 
 distrohopper_run_gui() {
