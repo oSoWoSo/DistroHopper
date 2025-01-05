@@ -17,6 +17,9 @@ define_variables() {
 	if ! command -v gum >/dev/null 2>&1; then
 		echo 'You are missing gum! Exiting...' && exit 1
 	fi
+	if ! command -v quickemu >/dev/null 2>&1; then
+		gum style --foreground 1 "You are missing quickemu!"
+	fi
 	#export BORDER="rounded"
 	color2=$(( RANDOM % 255 + 1 ))
 	export BORDERS_FOREGROUND="$color"
