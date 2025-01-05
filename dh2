@@ -237,9 +237,9 @@ renew_supported_vms() {
 	# get supported VMs
 	quickget | awk 'NR==3,/zorin/' | grep -o '[^ ]*' > "$DH_CONFIG_DIR/supported.md"
 	while read -r get_name; do
-		releases=$(quickget "$vm_desktop" | grep 'Releases' | cut -f2 | sed 's/^ //' | sed 's/ *$//')
-		editions=$(quickget "$vm_desktop" | grep 'Editions' | cut -f2 | sed 's/^ //' | sed 's/ *$//')
 		VMname=$(echo "$get_name" | tr ' ' '_')
+		releases=$(quickget "$VMname" | grep 'Releases' | cut -f2 | sed 's/^ //' | sed 's/ *$//')
+		editions=$(quickget "$VMname" | grep 'Editions' | cut -f2 | sed 's/^ //' | sed 's/ *$//')
 		icon_name="$DH_ICON_DIR/$get_name"
 		if [ -f "$icon_name.svg" ]; then
 			icon_file="$icon_name.svg"
