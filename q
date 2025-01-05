@@ -82,6 +82,12 @@ generate_supported(){
 	done < "$configdir/supported"
 }
 
+if_needed() {
+	if [ ! -f "${configdir}"/supported ]; then
+		generate_supported
+	fi
+}
+
 ## HELP
 
 show_help() {
@@ -957,6 +963,7 @@ show_menu_settings_icons() {
 # run
 #clear
 define_variables
+if_needed
 use_icons
 show_headers
 show_menus
