@@ -290,6 +290,13 @@ distrohopper_run_gui() {
 }
 
 WIP_buttons() {
+	export root
+	export -f run_in_terminal
+	export -f distrohopper_about
+	export -f help_show
+	export -f first_run
+	export -f renew_supported_vms
+	export -f renew_ready_vms
 	key=$((RANDOM % 9000 + 1000))
 	yad --plug="$key" --tabnum=1 --monitor --icons --listen \
 	 --read-dir="$DH_CONFIG_DIR/ready" --sort-by-name --borders=0 \
@@ -297,16 +304,16 @@ WIP_buttons() {
 	yad --plug="$key" --tabnum=2 --monitor --icons --listen \
 	 --read-dir="$DH_CONFIG_DIR/supported" --sort-by-name --borders=0 \
 	 --icon-size=46 --item-width=76 &
-	yad --plug="$key" --tabnum=3 --monitor --icons --borders=0 \
-	 --icon-size=46 --item-width=76 --columns=1 --text-align=center \
-	 --button="!!Show this help and exit:bash -c help_show" \
-	 --button="Set VMs Directory!Set default directory where VMs are stored:bash -c choose_VMs_dir" \
-	 --button="Install DistroHopper!!Install DistroHopper:bash -c first_run" \
-	 --button="Supported!!Update supported VMs:bash -c virtual_machines_update_supported" \
-	 --button="Ready!!Update ready to run VMs:bash -c virtual_machines_update_ready" \
-	 --button="About!!Show info about DistroHopper:bash -c distrohopper_about" &
+	yad --plug="$key" --tabnum=3 --monitor --icons --borders=0 --use-interp \
+	 --icon-size=46 --item-width=76 --columns=1 --form --text-align=center \
+	 --field="Set VMs directory!!Set default directory where VMs are stored":DIR \
+	 --field="Install dh!!Install DistroHopper":FBTN "first_run" \
+	 --field="Renew supported!!Update supported VMs":FBTN "renew_supported_vms" \
+	 --field="Renew ready!!Update ready to run VMs":FBTN "renew_ready_vms" \
+	 --field="Help!!Show this help and exit":FBTN "help_show" \
+	 --field="About!!Show info about DistroHopper":FBTN "distrohopper_about" &
 	yad --dynamic --notebook --key="$key" --monitor --listen \
-	 --mouse --selectable-labels \
+	 --mouse --selectable-labels --no-buttons \
 	 --window-icon="$DH_ICON_DIR/hop.svg" --width=900 --height=900 \
 	 --title="DistroHopper" --tab="run VM" --tab="download VM" --tab="Options"
 	# posible: --undecorated --fixed ontop --buttons-layout=spread edge start end center --keep-icon-size --image=IMAGE --splash
