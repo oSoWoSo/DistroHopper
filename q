@@ -69,6 +69,19 @@ define_variables() {
 	fi
 }
 
+generate_supported(){
+	echo "Extracting OS Editions and Releases..."
+	rm -r "$configdir/distro"
+	mkdir -p "$configdir/distro"
+	"$QUICKGET" | awk 'NR==2,/zorin/' | cut -d':' -f2 | grep -o '[^ ]*' > "$configdir/supported"
+	while read -r get_name; do
+		supported=$(gum spin --spinner $spinner --title="$get_name" -- "$QUICKGET" "$get_name" | sed '/^$/q')
+		echo "$get_name"
+		echo "$supported"
+		echo "$supported" > "$configdir/distro/${get_name}"
+	done < "$configdir/supported"
+}
+
 ## HELP
 
 show_help() {
@@ -513,9 +526,6 @@ update_quicktui() {
 	echo "Not yet implemented"
 }
 
-generate_supported() {
-	echo "Not yet implemented"
-}
 
 headers_small_or() {
 	printf '\n\nsmall:\n'
