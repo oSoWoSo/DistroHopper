@@ -959,6 +959,7 @@ show_menu_settings_icons() {
 #clear
 define_variables
 if_needed
+use_color
 use_icons
 show_headers
 show_menus
