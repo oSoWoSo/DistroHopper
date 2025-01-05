@@ -121,10 +121,8 @@ As temp folder is used $TMP
 gum_choose_os() {
 	title="Choose OS"
 	show_header
-	os=$(gum filter | awk 'NR==2,/zorin/' | cut -d':' -f2 | grep -o '[^ ]*')
-	choices=$("$QUICKGET" "$os")
-	# preparation for quickemu refactor
-	#os=$(gum filter $(ls OS/* | cut -d'/' -f2))
+	os=$(gum filter < "$configdir"/supported)
+	choices=$("$QUICKGET" "$os" | sed 1d)
 }
 
 gum_choose_release() {
