@@ -20,6 +20,7 @@ define_variables() {
 	if ! command -v quickemu >/dev/null 2>&1; then
 		gum style --foreground 1 "You are missing quickemu!"
 	fi
+	QUICKGET=$(command -v quickget)
 	#export BORDER="rounded"
 	color2=$(( RANDOM % 255 + 1 ))
 	export BORDERS_FOREGROUND="$color"
