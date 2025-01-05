@@ -139,11 +139,8 @@ gum_choose_edition() {
 }
 
 gum_filter_os() {
-	os=$("$QUICKGET" | awk 'NR==2,/zorin/' | cut -d':' -f2 | grep -o '[^ ]*')
-	choices=$("$QUICKGET" "$os")
-	#preparation for refactoring
-	#os=$(gum filter < "$configdir/supported")
-	#choices=$(cat "$configdir/distros/$os")
+	os=$(gum filter < "$configdir/supported")
+	choices=$(cat "$configdir/distros/$os")
 }
 
 gum_filter_release() {
