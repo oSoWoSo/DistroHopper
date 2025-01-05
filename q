@@ -12,7 +12,7 @@ define_variables() {
 	color=$(( RANDOM % 255 + 1 ))
 	progname="${progname:="${0##*/}"}"
 	configdir="$HOME/.config/$progname"
-	version='0.67'
+	version='0.68'
 	vms=(*.conf)
 	if ! command -v gum >/dev/null 2>&1; then
 		echo 'You are missing gum! Exiting...' && exit 1
