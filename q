@@ -697,7 +697,7 @@ show_header_tip() {
 	tip3=$(shuf -n 1 "$configdir/supported")
 	tip4=$(gum style --bold --foreground="$color" "$tip3")
 	tip5=$(gum join "$tip1" "$tip2" "$tip4")
-	tip6=$("$QUICKGET" "$tip3")
+	tip6=$("$QUICKGET" "$tip3" | sed 1d | sed '/^$/q')
 	tip7=$(gum style "$tip6")
 	tip8=$(gum join --vertical --align top "$tip5" "$tip7")
 	header_tip=$(gum style --padding "0 1" --border="$BORDER" --border-foreground $color "$tip8")
