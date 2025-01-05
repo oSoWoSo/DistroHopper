@@ -159,7 +159,7 @@ gum_choose_VM() {
 	fi
 }
 
-gum_choose_VM() {
+gum_choose_VM2() {
 	if ls | grep ".conf" ; then
 		height=$(ls -1 | grep ".conf" | wc -l)
 		title="Choose VM"
@@ -301,6 +301,16 @@ gum_choose_VM_to_delete() {
 		rm -r $chosen & rm $chosen.conf
 	else
 		echo "No VMs to delete"
+	fi
+}
+
+gum_choose_VM_to_delete2() {
+	if [ -n "$(echo *.conf)" ]; then
+		chosen=$(echo "${vms[@]%.*}" | tr " " "\n" | gum choose --select-if-one)
+		gum confirm "Really delete $chosen" && rm -r "$chosen" && rm "$chosen".conf
+		show_headers
+	else
+		gum style --foreground 1 "No VMs!"
 	fi
 }
 
@@ -511,21 +521,7 @@ kill_vms() {
 	fi
 }
 
-gum_choose_VM_to_delete() {
-	if [ -n "$(echo *.conf)" ]; then
-		chosen=$(echo "${vms[@]%.*}" | tr " " "\n" | gum choose --select-if-one)
-		gum confirm "Really delete $chosen" && rm -r "$chosen" && rm "$chosen".conf
-		show_headers
-	else
-		gum style --foreground 1 "No VMs!"
-	fi
-}
 
-## SETTINGS
-
-update_quicktui() {
-	echo "Not yet implemented"
-}
 
 
 headers_small_or() {
