@@ -184,8 +184,8 @@ renew_ready_vms() {
 		fi
 		DESKTOP_FILE="${DH_CONFIG_DIR}/ready/${VMname}.desktop"
 		type='Application'
-		comment='Quickly download, create and run VM of any#TODO operating system.'
 		name="${VMname}"
+		comment=$(quickget "$VMname" | grep 'Description:' | cut -f2)
 		version="${version}"
 		execmd="sh -c 'cd ${VMS_DIR} && quickemu -vm ${vm_conf};$SHELL'"
 		icon="${icon_file}"
