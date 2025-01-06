@@ -1,0 +1,18 @@
+INFO="SliTaz|Independent||https://www.slitaz.org/en/|Simple, fast and low resource Linux OS for servers & desktops.";;
+
+function releases_slitaz() {
+    echo preferred core core64 loram core-5in1 preinit
+}
+
+function get_slitaz() {
+    local HASH=""
+    local ISO="slitaz-rolling-${RELEASE}"
+    local URL="http://mirror.slitaz.org/iso/rolling"
+
+    case ${RELEASE} in
+      preferred) ISO="slitaz-rolling";;
+      *) ISO="slitaz-rolling-${RELEASE}";;
+    esac
+    HASH=$(wget -q -O- "${URL}/${ISO}.md5" |  cut_1)
+    echo "${URL}/${ISO}.iso ${HASH}"
+}

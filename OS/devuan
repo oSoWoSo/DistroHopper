@@ -1,0 +1,19 @@
+INFO=" |Devuan|Debian||https://www.devuan.org/|Fork of Debian without systemd that allows users to reclaim control over their system by avoiding unnecessary entanglements and ensuring Init Freedom.";;
+
+function releases_devuan() {
+    echo beowulf chimaera daedalus
+}
+
+function get_devuan() {
+    local HASH=""
+    local ISO=""
+    local URL="https://files.devuan.org/devuan_${RELEASE}/desktop-live"
+
+    case ${RELEASE} in
+      beowulf) ISO="devuan_${RELEASE}_3.1.1_amd64_desktop-live.iso";;
+      chimaera) ISO="devuan_${RELEASE}_4.0.2_amd64_desktop-live.iso";;
+      daedalus) ISO="devuan_${RELEASE}_5.0.0_amd64_desktop-live.iso";;
+    esac
+    HASH=$(wget -q -O- "${URL}/SHASUMS.txt" | grep "${ISO}" | cut_1)
+    echo "${URL}/${ISO} ${HASH}"
+}

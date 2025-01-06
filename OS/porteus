@@ -1,0 +1,23 @@
+INFO="Porteus|Slackware||http://www.porteus.org/|Complete linux operating system that is optimized to run from CD, USB flash drive, hard drive, or other bootable storage media.";;
+
+function releases_porteus() {
+    echo 5.01 5.0
+}
+
+function editions_porteus() {
+    echo cinnamon gnome kde lxde lxqt mate openbox xfce
+}
+
+function get_porteus() {
+    local EDITION="${1:-}"
+    local edition=""
+    local HASH=""
+    local ISO=""
+    local URL=""
+
+    edition="${EDITION~~}"
+    ISO="Porteus-${edition}-v${RELEASE}-x86_64.iso"
+    URL="https://mirrors.dotsrc.org/porteus/x86_64/Porteus-v${RELEASE}"
+    HASH=$(wget -q -O- "${URL}/sha256sums.txt" | grep "${ISO}" | cut_1)
+    echo "${URL}/${ISO} ${HASH}"
+}

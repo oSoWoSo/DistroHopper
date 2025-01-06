@@ -1,0 +1,25 @@
+INFO="Athena OS|Arch||https://athenaos.org/|Offer a different experience than the most used pentesting distributions by providing only tools that fit with the user needs and improving the access to hacking resources and learning materials.";;
+
+function releases_athenaos() {
+    wget -q -O- 'https://sourceforge.net/projects/athena-iso/rss?path=/' | grep '.iso/download"' | cut -d'=' -f5 | cut -d'"' -f2 | cut -d'/' -f7 | cut -d'v' -f2 | sed ':a;N;$!ba;s/\n/ /g'
+}
+
+function get_athenaos() {
+    local HASH=""
+    local URL=""
+    local ISO=""
+
+    case ${RELEASE} in
+      rolling)
+        ISO="athena-rolling-x86_64.iso"
+        URL="https://sourceforge.net/projects/athena-iso/files/rolling"
+        HASH=$(wget -q -O- "${URL}/${ISO}.md5" | cut_1)
+        ;;
+      *)
+        ISO="athena-20${RELEASE}-x86_64.iso"
+        URL="https://sourceforge.net/projects/athena-iso/files/v${RELEASE}"
+        HASH=$(wget -q -O- 'https://sourceforge.net/projects/athena-iso/rss?path=/' | grep '.iso/download"' | grep "${RELEASE}" | cut -d '=' -f7 | cut -d'>' -f2 | cut -d'<' -f1)
+        ;;
+    esac
+    echo "${URL}/${ISO} ${HASH}"
+}

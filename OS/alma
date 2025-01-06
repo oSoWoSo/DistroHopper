@@ -1,0 +1,18 @@
+INFO=" |Alma Linux|Fedora,RedHat||https://almalinux.org/|Community owned and governed, forever-free enterprise Linux distribution, focused on long-term stability, providing a robust production-grade platform. AlmaLinux OS is binary compatible with RHEL®.";;
+
+function releases_alma() {
+    echo 9 8
+}
+
+function editions_alma() {
+    echo boot minimal dvd
+}
+
+function get_alma() {
+    local EDITION="${1:-}"
+    local HASH=""
+    local ISO="AlmaLinux-${RELEASE}-latest-x86_64-${EDITION}.iso"
+    local URL="https://repo.almalinux.org/almalinux/${RELEASE}/isos/x86_64"
+    HASH="$(wget -q -O- "${URL}/CHECKSUM" | grep "(${ISO}" | cut -d' ' -f4)"
+    echo "${URL}/${ISO} ${HASH}"
+}

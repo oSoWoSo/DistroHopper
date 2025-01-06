@@ -1,0 +1,28 @@
+INFO=" |Deepin|Debian||https://www.deepin.org/|Beautiful UI design, intimate human-computer interaction, and friendly community environment make you feel at home.";;
+
+function releases_deepin() {
+    echo 20.7 20.6 20.5 20.4 20.3 20.2.4 20.2.3 20.2.2 20.2.1 20.2 20.1 20
+}
+
+function get_deepin() {
+    local HASH=""
+    local EDITION=""
+    local ISO="deepin-desktop-community-${RELEASE}-amd64.iso"
+    # deepin-desktop-community-20.3-amd64.iso
+    local URL="https://cdimage.deepin.com/releases/"${RELEASE}
+
+    # fix iso name
+    if [[ "${RELEASE}" == *"20" ]] ; then
+        EDITION="1003"
+        ISO="deepin-desktop-community-${EDITION}-amd64.iso"
+    elif [[ "${RELEASE}" == *"20.1" ]]; then
+        EDITION="1010"
+        ISO="deepin-desktop-community-${EDITION}-amd64.iso"
+    fi
+
+    HASH=$(wget -q -O- "${URL}/SHA256SUMS" | grep "${ISO}" | cut_1)
+    #echo "${URL}/${ISO} ${HASH}"
+    web_get "${URL}/${ISO}" "${VM_PATH}"
+    check_hash "${ISO}" "${HASH}"
+    make_vm_config "${ISO}"
+}

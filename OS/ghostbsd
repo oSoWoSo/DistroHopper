@@ -1,0 +1,9 @@
+INFO="GhostBSD|FreeBSD||https://www.ghostbsd.org/|Simple, elegant desktop BSD Operating System.";;
+
+function releases_ghostbsd() {
+    echo 22.01.12 21.11.24 21.10.16
+}
+
+function editions_ghostbsd() {
+    echo mate xfce
+}

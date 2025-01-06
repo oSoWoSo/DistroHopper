@@ -1,0 +1,21 @@
+INFO=" |Parrot Security|Debian|parrot:parrot|https://www.parrotsec.org/|Provides a huge arsenal of tools, utilities and libraries that IT and security professionals can use to test and assess the security of their assets in a reliable, compliant and reproducible way.";;
+
+function releases_parrotsec() {
+    echo 6.0 5.3 4.11.3
+}
+
+function editions_parrotsec() {
+    echo architect home htb security
+}
+
+function get_parrotsec() {
+    local EDITION="${1:-}"
+    local HASH=""
+    local ISO=""
+    local URL=""
+
+    ISO="Parrot-${EDITION}-${RELEASE}_amd64.iso"
+    URL="https://download.parrot.sh/parrot/iso/${RELEASE}"
+    HASH="$(wget -q -O- "${URL}"/signed-hashes.txt | grep "${ISO}" | cut_1)"
+    echo "${URL}/${ISO}" "${HASH}"
+}

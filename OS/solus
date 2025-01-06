@@ -1,0 +1,19 @@
+INFO=" |Solus|Independent||https://getsol.us/|Designed for home computing. Every tweak enables us to deliver a cohesive computing experience.";;
+
+function releases_solus() {
+    echo 4.3
+}
+
+function editions_solus() {
+    echo Budgie GNOME MATE Plasma
+}
+
+function get_solus() {
+    local EDITION="${1:-}"
+    local HASH=""
+    local ISO="Solus-${RELEASE}-${EDITION}.iso"
+    local URL="https://mirrors.rit.edu/solus/images/${RELEASE}"
+
+    HASH=$(wget -q -O- "${URL}/${ISO}.sha256sum" | cut_1)
+    echo "${URL}/${ISO} ${HASH}"
+}

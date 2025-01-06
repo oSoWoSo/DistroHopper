@@ -1,0 +1,15 @@
+INFO="ReactOS|Independent||https://reactos.org/|Imagine running your favorite Windows applications and drivers in an open-source environment you can trust.";;
+
+function releases_reactos() {
+    echo latest
+}
+
+function get_reactos() {
+    local HASH=""
+    local URL=""
+    # no longer needed?
+    #local TMPURL=""
+
+    URL=$(curl -Lfs "https://sourceforge.net/projects/reactos/files/latest/download" -w %{url_effective} -o /this/is/a/nonexistent/directory/$RANDOM/$RANDOM)
+    echo "${URL} ${HASH}"
+}

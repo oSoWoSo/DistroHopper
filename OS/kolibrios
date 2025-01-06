@@ -1,0 +1,12 @@
+INFO="KolibriOS|Independent||http://kolibrios.org/en/|Tiny yet incredibly powerful and fast operating system.";;
+
+function releases_kolibrios() {
+    echo latest
+}
+
+function get_kolibrios() {
+    local HASH=""
+    local ISO="kolibri.iso"
+    local URL="https://builds.kolibrios.org/eng"
+    echo "${URL}/${ISO} ${HASH}"
+}

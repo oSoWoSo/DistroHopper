@@ -1,0 +1,15 @@
+INFO=" |EndeavourOS|Arch||https://endeavouros.com/|Provides an Arch experience without the hassle of installing it manually for both x86_64 and ARM systems.";;
+
+function releases_endeavouros() {
+    echo galileo-11-2023 \
+     cassini_nova-03-2023_r3 \
+     cassini_22_12 \
+     cassini_neo_22_12 \
+     artemis_nova_22_9 \
+     artemis_neo_22_8 \
+     artemis_neo_22_7 \
+     artemis-22_6 \
+     apollo_22_1 \
+     atlantis_neo-21_5 \
+     atlantis-21_4
+}

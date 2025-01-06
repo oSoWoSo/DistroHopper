@@ -1,0 +1,14 @@
+INFO=" |Arch Linux|Independent||https://archlinux.org/|Lightweight and flexible Linux® distribution that tries to Keep It Simple.";;
+
+function releases_arch() {
+    echo latest
+}
+
+function get_arch() {
+    local HASH=""
+    local ISO="archlinux-x86_64.iso"
+    local URL="https://mirror.rackspace.com/archlinux/iso/latest"
+
+    HASH=$(wget -q -O- "${URL}/sha256sums.txt" | grep "${ISO}" | cut_1)
+    echo "${URL}/${ISO} ${HASH}"
+}

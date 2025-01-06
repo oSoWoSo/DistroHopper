@@ -1,0 +1,58 @@
+INFO=" |Ubuntu Server|Ubuntu||https://ubuntu.com/server|Brings economic and technical scalability to your datacentre, public or private. Whether you want to deploy an OpenStack cloud, a Kubernetes cluster or a 50,000-node render farm, Ubuntu Server delivers the best value scale-out performance available.";;
+
+function releases_ubuntu-server() {
+    local ALL_VERSIONS=($(IFS=$'\n' wget -qO- http://releases.ubuntu.com/streams/v1/com.ubuntu.releases:ubuntu-server.json | jq -r '.products[] | select(.arch=="amd64") | .version'))
+    local LTS_SUPPORT=()
+    local INTERIM_SUPPORT=()
+
+    for i in "${!ALL_VERSIONS[@]}"; do
+        if [[ $i == 0 || ${ALL_VERSIONS[$i]} > ${ALL_VERSIONS[$(expr $i - 1)]} ]]; then
+            if [[ $(expr ${ALL_VERSIONS[${i}]%.*} % 2) == 0 && ${ALL_VERSIONS[${i}]#*.} == "04" ]]; then
+                LTS_SUPPORT+=(${ALL_VERSIONS[$i]})
+            else
+                INTERIM_SUPPORT+=(${ALL_VERSIONS[$i]})
+            fi
+        else
+            break
+        fi
+    done
+    echo ${LTS_SUPPORT[@]} ${INTERIM_SUPPORT[@]} daily-live
+}
+
+function get_ubuntu-server() {
+    local HASH=""
+    local ISO=""
+    local URL=""
+
+    [[ $RELEASE = daily ]] && RELEASE=daily-live
+
+    if [[ "${RELEASE}" == "daily"* ]]; then
+        URL="https://cdimage.ubuntu.com/${OS}/${RELEASE}/current"
+    else
+        URL="https://releases.ubuntu.com/${RELEASE}"
+    fi
+
+    if wget -q --spider "${URL}/SHA256SUMS"; then
+        DATA=$(wget -qO- "${URL}/SHA256SUMS" | grep 'live-server' | grep amd64 | grep iso)
+        ISO=$(cut -d'*' -f2 <<<${DATA})
+        HASH=$(cut_1 <<<${DATA})
+    else
+        DATA=$(wget -qO- "${URL}/MD5SUMS" | grep 'live-server' | grep amd64 | grep iso)
+        ISO=$(cut -d' ' -f3 <<<${DATA})
+        HASH=$(cut_1 <<<${DATA})
+    fi
+
+    if [ -z $ISO ] || [ -z $HASH ]; then
+        echo "$(pretty_name $OS) ${RELEASE} is currently unavailable. Please select other OS/Release combination"
+        exit 1
+    fi
+
+    if [[ "${RELEASE}" == "daily"* ]] || [ "${RELEASE}" == "dvd" ]; then
+        zsync_get "${URL}/${ISO}" "${VM_PATH}" "${OS}-devel.iso"
+        make_vm_config "${OS}-devel.iso"
+    else
+        web_get "${URL}/${ISO}" "${VM_PATH}"
+        check_hash "${ISO}" "${HASH}"
+        make_vm_config "${ISO}"
+    fi
+}

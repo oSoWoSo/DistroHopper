@@ -1,0 +1,14 @@
+INFO="netboot.xyz|iPXE||https://netboot.xyz/|Your favorite operating systems in one place.";;
+
+function releases_netboot() {
+    echo latest
+}
+
+function get_netboot() {
+    local ISO="netboot.xyz.iso"
+    local HASH=""
+    local URL="https://boot.netboot.xyz/ipxe"
+
+    HASH=$(wget -q -O- "${URL}/netboot.xyz-sha256-checksums.txt" | grep "${ISO}" | cut_1)
+    echo "${URL}/${ISO} ${HASH}"
+}

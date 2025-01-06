@@ -1,0 +1,10 @@
+INFO=" |FreeBSD|Independent||https://www.freebsd.org/|Operating system used to power modern servers, desktops, and embedded platforms.";;
+
+function releases_freebsd(){
+    local FBSD_RELEASES=$(curl -sL https://download.freebsd.org/ftp/releases/amd64/amd64/ISO-IMAGES/|grep -e 'class="link"' |grep -v '\.\.'|cut -d\" -f4|tr -d '/')
+    echo ${FBSD_RELEASES}
+}
+
+function editions_freebsd(){
+    echo disc1 dvd1
+}

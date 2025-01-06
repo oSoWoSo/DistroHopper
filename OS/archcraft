@@ -1,0 +1,16 @@
+INFO=" |Archcraft|Arch||https://archcraft.io/|Yet another minimal Linux distribution, based on Arch Linux.";;
+
+function releases_archcraft() {
+    echo latest
+}
+
+function get_archcraft() {
+    local HASH=""
+    local URL=""
+    # no longer needed?
+    #local TMPURL=""
+
+    # Check where the URL redirects using curl. Output to a nonexistent directory so it's not possible to successfully download the image
+    URL=$(curl -Lfs "https://sourceforge.net/projects/archcraft/files/latest/download" -w %{url_effective} -o /this/is/a/nonexistent/directory/$RANDOM/$RANDOM)
+    echo "${URL} ${HASH}"
+}

@@ -1,23 +1,22 @@
 #!/usr/bin/bash
 # Author: zenobit
-# Description: Uses gum to provide a simple TUI for quickemu and quickget
+# Description: Uses gum to provide a simple TUI for VMs using qemu
+# Based of: https://github.com/quickemu-project/quickemu
 # License MIT
 
 ## NEEDED
+
+CHARACTERS="                                                                                                               "
 
 define_variables() {
 	color=$(( RANDOM % 255 + 1 ))
 	progname="${progname:="${0##*/}"}"
 	configdir="$HOME/.config/$progname"
-	version='0.66'
+	version='0.67'
 	vms=(*.conf)
 	if ! command -v gum >/dev/null 2>&1; then
 		echo 'You are missing gum! Exiting...' && exit 1
 	fi
-	if ! command -v quickemu >/dev/null 2>&1; then
-		gum style --foreground 1 "You are missing quickemu!"
-	fi
-	QUICKGET=$(command -v quickget)
 	#export BORDER="rounded"
 	color2=$(( RANDOM % 255 + 1 ))
 	export BORDERS_FOREGROUND="$color"
@@ -67,25 +66,6 @@ define_variables() {
 	fi
 }
 
-generate_supported(){
-	echo "Extracting OS Editions and Releases..."
-	rm -r "$configdir/distro"
-	mkdir -p "$configdir/distro"
-	"$QUICKGET" | awk 'NR==2,/zorin/' | cut -d':' -f2 | grep -o '[^ ]*' > "$configdir/supported"
-	while read -r get_name; do
-		supported=$(gum spin --spinner $spinner --title="$get_name" -- "$QUICKGET" "$get_name" | sed 1d)
-		echo "$get_name"
-		echo "$supported"
-		echo "$supported" > "$configdir/distro/${get_name}"
-	done < "$configdir/supported"
-}
-
-if_needed() {
-	if [ ! -f "${configdir}"/supported ]; then
-		generate_supported
-	fi
-}
-
 ## HELP
 
 show_help() {
@@ -119,8 +99,10 @@ As temp folder is used $TMP
 gum_choose_os() {
 	title="Choose OS"
 	show_header
-	os=$(gum filter < "$configdir"/supported)
-	choices=$("$QUICKGET" "$os" | sed 1d)
+	os=$(gum filter | awk 'NR==2,/zorin/' | cut -d':' -f2 | grep -o '[^ ]*')
+	choices=$("$QUICKGET" "$os")
+	# preparation for quickemu refactor
+	#os=$(gum filter $(ls OS/* | cut -d'/' -f2))
 }
 
 gum_choose_release() {
@@ -137,8 +119,11 @@ gum_choose_edition() {
 }
 
 gum_filter_os() {
-	os=$(gum filter < "$configdir/supported")
-	choices=$(cat "$configdir/distros/$os")
+	os=$("$QUICKGET" | awk 'NR==2,/zorin/' | cut -d':' -f2 | grep -o '[^ ]*')
+	choices=$("$QUICKGET" "$os")
+	#preparation for refactoring
+	#os=$(gum filter < "$configdir/supported")
+	#choices=$(cat "$configdir/distros/$os")
 }
 
 gum_filter_release() {
@@ -188,7 +173,7 @@ create_VM() {
 	show_headers
 }
 
-create_VM() {
+create_VM2() {
 	gum_choose_os
 	if [ -z "$os" ]; then exit 100
 	elif [ "$(echo "$choices" | wc -l)" = 1 ]; then
@@ -521,6 +506,14 @@ gum_choose_VM_to_delete() {
 
 ## SETTINGS
 
+update_quicktui() {
+	echo "Not yet implemented"
+}
+
+generate_supported() {
+	echo "Not yet implemented"
+}
+
 headers_small_or() {
 	printf '\n\nsmall:\n'
 	show_headers_small
@@ -690,7 +683,7 @@ show_header_tip() {
 	tip3=$(shuf -n 1 "$configdir/supported")
 	tip4=$(gum style --bold --foreground="$color" "$tip3")
 	tip5=$(gum join "$tip1" "$tip2" "$tip4")
-	tip6=$("$QUICKGET" -s "$tip3")
+	tip6=$("$QUICKGET" "$tip3")
 	tip7=$(gum style "$tip6")
 	tip8=$(gum join --vertical --align top "$tip5" "$tip7")
 	header_tip=$(gum style --padding "0 1" --border="$BORDER" --border-foreground $color "$tip8")
@@ -951,7 +944,6 @@ show_menu_settings_icons() {
 # run
 #clear
 define_variables
-if_needed
 use_icons
 show_headers
 show_menus

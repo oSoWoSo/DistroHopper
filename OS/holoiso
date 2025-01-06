@@ -1,0 +1,15 @@
+INFO="SteamOS HoloISO|Arch,SteamOS||https://github.com/HoloISO/holoiso|Bring the Steam Decks SteamOS Holo redistribution and provide a close-to-official SteamOS experience.";;
+
+function releases_holoiso() {
+    wget -q https://github.com/HoloISO/holoiso/releases/latest -O- | grep -o -e 'releases/tag/[[:digit:]]\+\.[[:digit:]]\+\.[[:digit:]]' | head -1 | cut -d/ -f3
+}
+
+
+function get_holoiso() {
+    #local HASH=""
+    local ISO=$(wget -q -O- "https://api.github.com/repos/HoloISO/holoiso/releases" | sed 's/ /\n/g' | grep "HoloISO_${RELEASES}" | cut -d'\' -f1 | cut -d'/' -f4)
+    local URL="https://cd2.holoiso.ru.eu.org"
+    # Can't find hash
+    #HASH=$(wget -q -O- "${URL}/${ISO}.sha256sum" | cut_1)
+    echo "${URL}/${ISO} #${HASH}"
+}

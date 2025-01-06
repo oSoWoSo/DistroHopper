@@ -1,0 +1,17 @@
+INFO="CachyOS|Arch||https://cachyos.org/|Designed to deliver lightning-fast speeds and stability, ensuring a smooth and enjoyable computing experience every time you use it.";;
+
+function releases_cachyos() {
+    echo 230813
+}
+
+function editions_cachyos() {
+    echo kde gnome
+}
+
+function get_cachyos() {
+    local HASH=""
+    local ISO="cachyos-${EDITION}-linux-${RELEASE}.iso"
+    local URL="https://mirror.cachyos.org/ISO/${EDITION}/${RELEASE}"
+    HASH=$(wget -q -O- "${URL}/${ISO}.sha256" | cut_1)
+    echo "${URL}/${ISO} ${HASH}"
+}

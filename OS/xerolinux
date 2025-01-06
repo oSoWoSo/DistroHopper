@@ -1,0 +1,16 @@
+INFO=" |XeroLinux|Arch||https://xerolinux.xyz/|Arch-Based Distro, that provides you with an easy way to install Arch and a well optimized, beautifully Customized Plasma Desktop, that you can later shape to suite your needs!";;
+
+function releases_xerolinux() {
+    echo kde
+}
+
+
+function get_xerolinux() {
+    local HASH=""
+    local URL=""
+    local ISO="xerolinux-2022.12-x86_64.iso"
+    local URL="https://sourceforge.net/projects/xerolinux/files/Releases"
+
+    HASH=$(wget -q -O- "${URL}/${ISO}.sha256" | cut_1)
+    echo "${URL}/${ISO} ${HASH}"
+}

@@ -1,0 +1,19 @@
+INFO=" |NixOS|Independent||https://nixos.org/|Linux distribution based on Nix package manager, tool that takes a unique approach to package management and system configuration.";;
+
+function releases_nixos(){
+    echo 23.11 23.05 22.11 22.05 21.11 21.05
+}
+
+function editions_nixos(){
+    echo minimal plasma5 gnome
+}
+
+function get_nixos() {
+    local EDITION="${1:-}"
+    local HASH=""
+    local ISO="latest-nixos-${EDITION}-x86_64-linux.iso"
+    local URL="https://channels.nixos.org/nixos-${RELEASE}"
+
+    HASH=$(wget -q -O- "${URL}/${ISO}.sha256" | cut_1)
+    echo "${URL}/${ISO} ${HASH}"
+}
