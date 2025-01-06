@@ -1,3 +1,54 @@
+<p align="center">Made with 💝 for <img src=".github/tux.png" align="top" width="18" /></p>
+
+# This repository contains a multiple tools
+Can be used together with quickemu
+# Welcome ![hop120](https://github.com/quickemu-project/quickemu/assets/6384793/06713605-a335-4b8a-9f3d-2d3b390848e5) DistroHoppers
+## I made some user interfaces for quickemu...
+
+🦚
+[dh](https://github.com/oSoWoSo/DistroHopper/all/dh) GUI and TUI using yad
+
+🕊️
+[quickfzf](https://github.com/oSoWoSo/DistroHopper/all/quickfzf) TUI using fzf
+
+🐲
+[quicktui](https://github.com/oSoWoSo/DistroHopper/all/quicktui) TUI using gum (🚧 usable but under heavy development)
+
+🐅
+[qrun](https://github.com/oSoWoSo/DistroHopper/all/qrun) TUI using gum
+[![asciicast](https://asciinema.org/a/fPcYGWhF8aGoJJ5M30Q1CWdqe.svg)](https://asciinema.org/a/fPcYGWhF8aGoJJ5M30Q1CWdqe)
+
+🦈
+[q](https://github.com/oSoWoSo/DistroHopper/all/q) TUI using gum
+
+and
+
+### open source version without removed proprietary OSes (Mac,Windows)
+[quickget-](https://github.com/oSoWoSo/DistroHopper/tree/open-source-only/quickget)
+
+### Extended version with more distros then upstream quickemu
+[quickget+](https://github.com/oSoWoSo/DistroHopper/tree/quickget-extended/quickget)
+
+### quickget+ with gum UI
+[quickget+gum](https://github.com/oSoWoSo/DistroHopper/tree/quickget-gum-UI/quickget) 
+
+### quickget+ with easybashgui UI
+[quickget+ebg](https://github.com/oSoWoSo/DistroHopper/tree/quickget-ebg-UI/quickget)
+
+Enjoy...
+
+[repo](https://github.com/oSoWoSo/DistroHopper/)
+
+Everything could work
+# Thanks to:
+- [easybashgui](https://github.com/BashGui/easybashgui)
+- [yad](https://github.com/v1cont/yad)
+- [fzf](https://github.com/junegunn/fzf)
+- [quickemu](https://github.com/quickemu-project/quickemu)
+- Special thanks to all members of **LINUX** community
+
+## quickemu Introduction
+
 <div align="center">
 <img src=".github/logo.png" alt="Quickemu" width="256" />
 
