@@ -3437,6 +3437,75 @@ function create_config() {
     make_vm_config "${INPUT}" "${FIXED_ISO}"
 }
 
+run_itself() {
+    if [ -n "${1}" ]; then
+        OS="${1,,}"
+    else
+        error_specify_os
+    fi
+
+    os_supported
+
+    if [ -n "${2}" ]; then
+        RELEASE="${2}"
+        VM_PATH="${OS}-${RELEASE}"
+        # If the OS has an editions_() function, use it.
+        if [[ $(type -t "editions_${OS}") == function ]]; then
+            validate_release "releases_${OS}"
+            EDITIONS=("$(editions_"${OS}")")
+            if [ -n "${3}" ]; then
+                EDITION="${3}"
+                if [[ ! "${EDITIONS[*]}" = *"${EDITION}"* ]]; then
+                    echo -e "ERROR! ${EDITION} is not a supported $(pretty_name "${OS}") edition\n"
+                    echo -n ' - Supported editions: '
+                    for EDITION in "${EDITIONS[@]}"; do
+                        echo -n "${EDITION} "
+                    done
+                    echo ""
+                    exit 1
+                fi
+            else
+                show_os_info "${OS}"
+                echo -e " - Editions:\t$("editions_${OS}" | fmt -w 80)"
+                echo -e "\nERROR! You must specify an edition."
+                exit 1
+            fi
+            handle_missing
+            VM_PATH="${OS}-${RELEASE}-${EDITION}"
+            create_vm "$("get_${OS}" "${EDITION}")"
+        elif [ "${OS}" == "macos" ]; then
+            # macOS doesn't use create_vm()
+            validate_release releases_macos
+            get_macos
+        elif [[ "${OS}" == *"ubuntu-server"* ]]; then
+            # (Comes before regular Ubuntu, or the code tries to download the desktop) #
+            # Ubuntu doesn't use create_vm()
+            validate_release releases_ubuntu-server
+            get_ubuntu-server
+        elif [[ "${OS}" == *"ubuntu"* ]]; then
+            # Ubuntu doesn't use create_vm()
+            validate_release releases_ubuntu
+            get_ubuntu
+        elif [[ "${OS}" == "windows"* ]]; then
+            I18N="English International"
+            "languages_${OS}"
+            if [ -n "${3}" ]; then
+                I18N="${3}"
+                if [[ ! "${I18NS[*]}" = *"${I18N}"* ]]; then
+                    error_not_supported_lang
+                fi
+                VM_PATH="$(echo "${OS}-${RELEASE}-${I18N// /-}" | tr -d '()')"
+            fi
+            validate_release "releases_${OS}"
+            get_windows
+        else
+            validate_release "releases_${OS}"
+            create_vm "$("get_${OS}")"
+        fi
+    else
+        error_specify_release
+    fi
+}
 
 function run_ui() {
     # test ebg
@@ -3605,74 +3674,5 @@ case "${1}" in
     -*) error_not_supported_argument;;
 esac
 
-run_itself() {
-    if [ -n "${1}" ]; then
-        OS="${1,,}"
-    else
-        error_specify_os
-    fi
-
-    os_supported
-
-    if [ -n "${2}" ]; then
-        RELEASE="${2}"
-        VM_PATH="${OS}-${RELEASE}"
-        # If the OS has an editions_() function, use it.
-        if [[ $(type -t "editions_${OS}") == function ]]; then
-            validate_release "releases_${OS}"
-            EDITIONS=("$(editions_"${OS}")")
-            if [ -n "${3}" ]; then
-                EDITION="${3}"
-                if [[ ! "${EDITIONS[*]}" = *"${EDITION}"* ]]; then
-                    echo -e "ERROR! ${EDITION} is not a supported $(pretty_name "${OS}") edition\n"
-                    echo -n ' - Supported editions: '
-                    for EDITION in "${EDITIONS[@]}"; do
-                        echo -n "${EDITION} "
-                    done
-                    echo ""
-                    exit 1
-                fi
-            else
-                show_os_info "${OS}"
-                echo -e " - Editions:\t$("editions_${OS}" | fmt -w 80)"
-                echo -e "\nERROR! You must specify an edition."
-                exit 1
-            fi
-            handle_missing
-            VM_PATH="${OS}-${RELEASE}-${EDITION}"
-            create_vm "$("get_${OS}" "${EDITION}")"
-        elif [ "${OS}" == "macos" ]; then
-            # macOS doesn't use create_vm()
-            validate_release releases_macos
-            get_macos
-        elif [[ "${OS}" == *"ubuntu-server"* ]]; then
-            # (Comes before regular Ubuntu, or the code tries to download the desktop) #
-            # Ubuntu doesn't use create_vm()
-            validate_release releases_ubuntu-server
-            get_ubuntu-server
-        elif [[ "${OS}" == *"ubuntu"* ]]; then
-            # Ubuntu doesn't use create_vm()
-            validate_release releases_ubuntu
-            get_ubuntu
-        elif [[ "${OS}" == "windows"* ]]; then
-            I18N="English International"
-            "languages_${OS}"
-            if [ -n "${3}" ]; then
-                I18N="${3}"
-                if [[ ! "${I18NS[*]}" = *"${I18N}"* ]]; then
-                    error_not_supported_lang
-                fi
-                VM_PATH="$(echo "${OS}-${RELEASE}-${I18N// /-}" | tr -d '()')"
-            fi
-            validate_release "releases_${OS}"
-            get_windows
-        else
-            validate_release "releases_${OS}"
-            create_vm "$("get_${OS}")"
-        fi
-    else
-        error_specify_release
-    fi
-}
 run_itself "$@"
 # vim:tabstop=4:shiftwidth=4:expandtab
