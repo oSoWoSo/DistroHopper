@@ -12,7 +12,8 @@ define_variables() {
 	color=$(( RANDOM % 255 + 1 ))
 	progname="${progname:="${0##*/}"}"
 	configdir="$HOME/.config/$progname"
-	version='0.68'
+	tmpdir="/tmp"
+	version='0.69'
 	vms=(*.conf)
 	if ! command -v gum >/dev/null 2>&1; then
 		echo 'You are missing gum! Exiting...' && exit 1
@@ -70,21 +71,21 @@ define_variables() {
 	fi
 }
 
-generate_supported(){
+generate_supported() {
 	echo "Extracting OS Editions and Releases..."
-	rm -r "$configdir/distro"
-	mkdir -p "$configdir/distro"
-	"$QUICKGET" | awk 'NR==2,/zorin/' | cut -d':' -f2 | grep -o '[^ ]*' > "$configdir/supported"
+	rm -rf /tmp/distros
+	mkdir -p /tmp/distros
+	"$QUICKGET" | awk 'NR==2,/zorin/' | cut -d':' -f2 | grep -o '[^ ]*' > /tmp/supported
 	while read -r get_name; do
-		supported=$(gum spin --spinner $spinner --title="$get_name" -- "$QUICKGET" "$get_name" | sed '/^$/q')
+		supported=$($QUICKGET "$get_name" | awk 'NF && NR>=5 && NR<=8')
 		echo "$get_name"
-		echo "$supported"
-		echo "$supported" > "$configdir/distro/${get_name}"
-	done < "$configdir/supported"
+		echo "$supported" > "/tmp/distros/${get_name}"
+	done < /tmp/supported
 }
 
+
 if_needed() {
-	if [ ! -f "${configdir}"/supported ]; then
+	if [ ! -f "${tmpdir}"/supported ]; then
 		generate_supported
 	fi
 }
@@ -122,34 +123,33 @@ As temp folder is used $TMP
 gum_choose_os() {
 	title="Choose OS"
 	show_header
-	os=$(gum filter < "$configdir"/supported)
-	choices=$("$QUICKGET" "$os" | sed 1d)
+	os=$(gum choose --prompt='Choose OS' < "$tmpdir"/supported)
+	choices=$("$QUICKGET" "$os" | sed 1d | sed '/^$/q')
 }
 
 gum_choose_release() {
 	title="Choose release"
 	show_header
-	height=$()
-	release=$(echo "$choices" | grep 'Releases' | cut -d':' -f2 | grep -o '[^ ]*' | gum filter --sort)
+	release=$(echo "$choices" | grep 'Releases' | cut -f2 | grep -o '[^ ]*' | gum choose --prompt='Choose release')
 }
 
 gum_choose_edition() {
 	title="Choose edition"
 	show_header
-	edition=$(echo "$choices" | grep 'Editions' | cut -d':' -f2 | grep -o '[^ ]*' | gum filter --prompt='Choose edition' --sort)
+	edition=$(echo "$choices" | grep 'Editions' | cut -f2 | grep -o '[^ ]*' | gum choose --prompt='Choose edition')
 }
 
 gum_filter_os() {
-	os=$(gum filter < "$configdir/supported")
-	choices=$(cat "$configdir/distros/$os")
+	os=$(gum filter < "$tmpdir/supported")
+	choices=$(cat "/tmp/distros/${os}")
 }
 
 gum_filter_release() {
-	release=$(echo "$choices" | grep 'Releases:' | cut -d':' -f2 | grep -o '[^ ]*' | gum filter --sort)
+	release=$(echo "$choices" | grep 'Releases:' | cut -f2 | grep -o '[^ ]*' | gum filter --sort)
 }
 
 gum_filter_edition() {
-	edition=$(echo "$choices" | grep 'Editions:' | cut -d':' -f2 | grep -o '[^ ]*' | gum filter --sort)
+	edition=$(echo "$choices" | grep 'Editions:' | cut -f2 | grep -o '[^ ]*' | gum filter --sort)
 }
 
 gum_choose_VM() {
@@ -175,17 +175,17 @@ gum_choose_VM2() {
 create_VM() {
 	gum_filter_os
 	if [ -z "$os" ]; then exit 100
-	elif [ "$(echo "$choices" | wc -l)" = 1 ]; then
-		clear
+	elif [ "$(echo "$choices" | wc -l)" = 3 ]; then
+		#clear
 		gum_filter_release
-		clear
+		#clear
 		"$QUICKGET" "$os" "$release"
 	else
-		clear
+		#clear
 		gum_filter_release
-		clear
+		#clear
 		gum_filter_edition
-		clear
+		#clear
 		"$QUICKGET" "$os" "$release" "$edition"
 	fi
 	show_headers
@@ -420,63 +420,63 @@ EOF
 }
 
 test_ISOs_download() {
-	rm -r "$configdir"
-	mkdir -p "$configdir" && cd "$configdir" || exit
-	touch "$configdir/test"
+	rm "$tmpdir/test" 2>/dev/null
+	cd "$tmpdir" || exit
+	touch "$tmpdir/test"
 	#"$QUICKGET" | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' > supported
-	os=$(gum filter < "$configdir"/supported)
+	os=$(gum filter < "$tmpdir"/supported)
 	choices=$("$QUICKGET" "$os" | sed 1d)
 		while read -r get_name; do
 		echo "Trying $get_name..."
-		mkdir -p "$configdir/_distros/$get_name" && cd "$configdir/_distros/$get_name" || exit
-		releases=$("$QUICKGET" "$get_name" | grep 'Releases:' | cut -d':' -f2 | sed 's/^ //' | sed 's/ *$//')
+		mkdir -p "$tmpdir/_distros/$get_name" && cd "$tmpdir/_distros/$get_name" || exit
+		releases=$("$QUICKGET" "$get_name" | grep 'Releases:' | cut -f2 | sed 's/^ //' | sed 's/ *$//')
 		echo "$releases" > releases
-		editions=$("$QUICKGET" "$get_name" | grep 'Editions:' | cut -d':' -f2 | sed 's/^ //' | sed 's/ *$//')
+		editions=$("$QUICKGET" "$get_name" | grep 'Editions:' | cut -f2 | sed 's/^ //' | sed 's/ *$//')
 		echo "$editions" > editions
 		if [ -z "$editions" ]; then
 			for release in $releases; do
-				echo "$get_name" >> "$configdir/test"
-				timeout 10 "$QUICKGET" -t "$get_name" "${release}" >> "$configdir/test"
+				echo "$get_name" >> "$tmpdir/test"
+				timeout 10 "$QUICKGET" -t "$get_name" "${release}" >> "$tmpdir/test"
 			done
 		else
 			while read -r release; do
 				for edition in $editions; do
-					echo "$get_name" >> "$configdir/test"
-					timeout 10 "$QUICKGET" -t "$get_name" "${release}" "${edition}" >> "$configdir/test"
+					echo "$get_name" >> "$tmpdir/test"
+					timeout 10 "$QUICKGET" -t "$get_name" "${release}" "${edition}" >> "$tmpdir/test"
 				done
 			done < releases
 		fi
-		cd "$configdir" || exit
+		cd "$tmpdir" || exit
 	done < supported
 	printf "\nDone"
 }
 
 show_ISOs_urls(){
-	rm -r "$configdir"
-	mkdir -p "$configdir" && cd "$configdir" || exit
-	touch "$configdir/test"
+	rm -r "$tmpdir/test" 2>/dev/null
+	cd "$tmpdir" || exit
+	touch "$tmpdir/test"
 	"$QUICKGET" | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' > supported
 	while read -r get_name; do
 		echo "Trying $get_name..."
-		mkdir -p "$configdir/_distros/$get_name" && cd "$configdir/_distros/$get_name" || exit
+		mkdir -p "$tmpdir/_distros/$get_name" && cd "$tmpdir/_distros/$get_name" || exit
 		releases=$("$QUICKGET" "$get_name" | grep 'Releases' | cut -d':' -f2 | sed 's/^ //' | sed 's/ *$//')
 		echo "$releases" > releases
 		editions=$("$QUICKGET" "$get_name" | grep 'Editions' | cut -d':' -f2 | sed 's/^ //' | sed 's/ *$//')
 		echo "$editions" > editions
 		if [ -z "$editions" ]; then
 			for release in $releases; do
-				echo "$get_name" >> "$configdir/test"
-				timeout 5 "$QUICKGET" -s "$get_name" "${release}" >> "$configdir/test" #&& $(killall zsync >> /dev/null)
+				echo "$get_name" >> "$tmpdir/test"
+				timeout 5 "$QUICKGET" -s "$get_name" "${release}" >> "$tmpdir/test" #&& $(killall zsync >> /dev/null)
 			done
 		else
 			while read -r release; do
 				for edition in $editions; do
-					echo "$get_name" >> "$configdir/test"
-					timeout 5 "$QUICKGET" -s "$get_name" "${release}" "${edition}" >> "$configdir/test" #&& $(killall zsync >> /dev/null)
+					echo "$get_name" >> "$tmpdir/test"
+					timeout 5 "$QUICKGET" -s "$get_name" "${release}" "${edition}" >> "$tmpdir/test" #&& $(killall zsync >> /dev/null)
 				done
 			done < releases
 		fi
-		cd "$configdir" || exit
+		cd "$tmpdir" || exit
 	done < supported
 	printf "\nDone"
 }
@@ -521,9 +521,6 @@ kill_vms() {
 		show_headers
 	fi
 }
-
-
-
 
 headers_small_or() {
 	printf '\n\nsmall:\n'
@@ -691,11 +688,11 @@ show_header_vms() {
 show_header_tip() {
 	tip1=$(gum style --bold --foreground "$color2" "Tip: ")
 	tip2=$(gum style "try ")
-	tip3=$(shuf -n 1 "$configdir/supported")
+	tip3=$(shuf -n 1 "$tmpdir/supported")
 	tip4=$(gum style --bold --foreground="$color" "$tip3")
 	tip5=$(gum join "$tip1" "$tip2" "$tip4")
-	tip6=$("$QUICKGET" "$tip3" | sed 1d | sed '/^$/q')
-	tip7=$(gum style "$tip6")
+	tip6=$("$QUICKGET" "$tip3" | awk 'NR==3,NR==8')
+	tip7=$(gum style --width=77 "$tip6")
 	tip8=$(gum join --vertical --align top "$tip5" "$tip7")
 	header_tip=$(gum style --padding "0 1" --border="$BORDER" --border-foreground $color "$tip8")
 }
@@ -790,13 +787,12 @@ help
 exit $progname" | gum filter --height "$height")
 # from choose:  --selected '󰜎 run'
 		case $start in
-			create ) create_VM;;
-			run ) gum_choose_VM && run_VM;;
-			'ssh into' ) ssh_into;;
+			'create' ) create_VM;;
+			'run' ) gum_choose_VM && run_VM;;
 			'OS homepage' ) open_distro_homepage;;
-			kill ) kill_vm;;
-			delete ) gum_choose_VM_to_delete;;
-			icons ) icons_or;;
+			'ssh into' ) ssh_into;;
+			'kill' ) kill_vm;;
+			'delete' ) gum_choose_VM_to_delete;;
 			'advanced' ) show_menu_advanced;;
 			'settings' ) show_menu_settings;;
 			'help' ) help_main; show_help;;
@@ -823,11 +819,10 @@ show_menu_main_icons() {
 	case $start in
 		' create' ) create_VM;;
 		'󰜎 run' ) gum_choose_VM && run_VM;;
-		' ssh into' ) ssh_into;;
 		'󰖟 OS homepage' ) open_distro_homepage;;
+		' ssh into' ) ssh_into;;
 		' kill' ) kill_vm;;
 		'󰆳 delete' ) gum_choose_VM_to_delete;;
-		'󱌝 icons' ) icons_or;;
 		' advanced' ) show_menu_advanced_icons;;
 		' settings' ) show_menu_settings_icons;;
 		'󰘥 help' ) help_main; show_help;;
