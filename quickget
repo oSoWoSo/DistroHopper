@@ -1505,6 +1505,10 @@ EOF
             echo "secureboot=\"off\"" >> "${CONF_FILE}"
         fi
     fi
+    if [ "${OPERATION}" == ui ]; then
+        echo
+        question "Run new ${OS} VM?" && quickemu --vm "${CONF_FILE}"
+    fi
     echo -e "\nTo start your $(pretty_name "${OS}") virtual machine run:"
     if [ "${OS}" == "slint" ]; then
         echo -e "    quickemu --vm ${CONF_FILE}\nTo start Slint with braille support run:\n    quickemu --vm --braille --display sdl ${CONF_FILE}"
@@ -3433,6 +3437,27 @@ function create_config() {
     make_vm_config "${INPUT}" "${FIXED_ISO}"
 }
 
+
+function run_ui() {
+    # test ebg
+    . easybashgui 2>/dev/null || . ./easybashgui
+    menu $(os_support)
+    OS="$(0< "${dir_tmp}/${file_tmp}" )"
+    TMPFILE="/tmp/${OS}"
+    os_info "${OS}" > "$TMPFILE"
+    menu $("releases_${OS}")
+    RELEASE="$(0< "${dir_tmp}/${file_tmp}" )"
+    if declare -F "editions_${OS}" > /dev/null; then
+        menu $("editions_${OS}")
+        EDITION="$(0< "${dir_tmp}/${file_tmp}" )"
+        echo ''
+        run_itself "${OS}" "${RELEASE}" "${EDITION}"
+    else
+        echo ''
+        run_itself "${OS}" "${RELEASE}"
+    fi
+}
+
 # Use command -v command to check if quickemu is in the system's PATH and
 # fallback to checking if quickemu is in the current directory.
 function resolve_quickemu() {
@@ -3474,6 +3499,7 @@ Arguments:
   --show          [os]                     : Show OS information
   --version                                : Show version
   --help                                   : Show this help message
+  --ui                                     : Run in UI mode
 ------------------------------------ Flags -------------------------------------
 --create-config:
   --disable-unattended                     : Force quickget not to set up an unattended installation
@@ -3514,6 +3540,11 @@ fi
 
 #TODO: Deprecate `list`, `list_csv`, and `list_json` in favor of `--list`, `--list-csv`, and `--list-json`
 case "${1}" in
+    --ui)
+        OPERATION="ui"
+        shift
+        run_ui
+        ;;
     --download|-download)
         OPERATION="download"
         shift
