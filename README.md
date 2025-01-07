@@ -47,7 +47,9 @@ Everything could work
 - [quickemu](https://github.com/quickemu-project/quickemu)
 - Special thanks to all members of **LINUX** community
 
-## quickemu Introduction
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=Osowoso/distrohopper&type=Timeline)](https://star-history.com/#Osowoso/distrohopper&Timeline)
 
 <div align="center">
 <img src=".github/logo.png" alt="Quickemu" width="256" />
