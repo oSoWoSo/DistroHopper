@@ -399,8 +399,7 @@ function test_all() {
 }
 
 function os_support() {
-    echo agarimos \
-    alma \
+    echo alma \
     alpine \
     android \
     antix \
@@ -417,13 +416,11 @@ function os_support() {
     bunsenlabs \
     cachyos \
     centos-stream \
-    cereus \
     chimeralinux \
     crunchbang++ \
     debian \
     deepin \
     devuan \
-    dietpi \
     dragonflybsd \
     easyos \
     edubuntu \
@@ -433,8 +430,6 @@ function os_support() {
     fedora \
     freebsd \
     freedos \
-    fvoid \
-    gabeeos \
     garuda \
     gentoo \
     ghostbsd \
@@ -454,7 +449,6 @@ function os_support() {
     macos \
     mageia \
     manjaro \
-    miyo \
     mxlinux \
     netboot \
     netbsd \
@@ -498,70 +492,13 @@ function os_support() {
     ubuntukylin \
     ubuntustudio \
     vanillaos \
-    ventoy \
     void \
-    voidpup \
     vxlinux \
     windows \
     windows-server \
     xubuntu \
     zorin
 }
-
-# Not in upstream
-function releases_agarimos() {
-    echo latest
-}
-
-function editions_agarimos() {
-    echo plasma xfce lxqt gnome
-}
-
-function releases_cereus() {
-    echo latest
-}
-
-function editions_cereus() {
-    echo base lxqt xfce
-}
-
-function releases_dietpi() {
-    echo bios uefi
-}
-
-function editions_dietpi() {
-    echo bookworm bookworm-installer bullseye bullseye-installer
-}
-
-function releases_fvoid() {
-    echo latest
-}
-
-function releases_gabeeos() {
-    echo latest
-}
-
-function editions_gabeeos() {
-    echo openbox qtile
-}
-
-function releases_miyo() {
-    echo 2022
-}
-
-function editions_miyo(){
-    echo Kwin Deboot-Ceres JWM Openbox MATE
-}
-
-function releases_ventoy() {
-    echo 1.0.95
-}
-
-function releases_voidpup() {
-    echo latest
-}
-
-# QUICKEMU STANDARD
 
 function releases_alma() {
     echo 9 8
@@ -1578,137 +1515,6 @@ EOF
     echo
     exit 0
 }
-
-# QUICKEMU-EXTENDED ONLY DISTROS!
-
-function get_agarimos() {
-    local EDITION="${1:-}"
-    local HASH=""
-    local ISO=""
-    local URL=""
-    #local DATE=""
-    #local KERNEL=""
-    case ${EDITION} in
-        gnome)
-            URL="https://sourceforge.net/projects/agarimos/files/Gnome"
-            ISO="AgarimOS-Gnome-Catppuccin-Liv-x86_64-6.5.12_1-20231130.iso";;
-        plasma)
-            URL="https://sourceforge.net/projects/agarimos/files/Plasma"
-            ISO="AgarimOS-Plasma-Dracula-Live-x86_64-6.5.11_1-20231120.iso";;
-        xfce)
-            URL="https://sourceforge.net/projects/agarimos/files/XFCE4"
-            ISO="AgarimOS-XFCE4-Catppuccin-Live-x86_64-6.5.12_1-20231122.iso";;
-        lxqt)
-            URL="https://sourceforge.net/projects/agarimos/files/LXQT-KWIN"
-            ISO="AgarimOS-LXQT-KWIN-Dracula-Live-x86_64-6.5.12_1-20231121.iso";;
-    esac
-    HASH=$(wget -q -O- "${URL}/${ISO}.sha256" | cut -d' ' -f1)
-    echo "${URL}/${ISO} ${HASH}"
-}
-
-function get_cereus() {
-    local EDITION="${1:-}"
-    local HASH=""
-    local DATE=""
-    local ISO=""
-    local URL="https://sourceforge.net/projects/cereus-linux/files/isos/beta/latest/${EDITION}"
-    DATE=$(wget -q -O- https://sourceforge.net/projects/cereus-linux/files/isos/beta/latest/base/SHA256SUM | grep 'x86_64-base' | rev | cut -d'-' -f1 | rev | cut -d'.' -f1-3)
-    ISO="cereus-beta-live-x86_64-${EDITION}-${DATE}.iso"
-    case ${EDITION} in
-        base) HASH=$(wget -q -O- "${URL}/SHA256SUM" | grep "${ISO}" | cut -d' ' -f1);;
-        *) HASH=$(wget -q -O- "${URL}/SHA256" | grep "${ISO}" | cut -d' ' -f1);;
-    esac
-    echo "${URL}/${ISO} ${HASH}"
-}
-
-function get_dietpi() {
-    local HASH=""
-    local ISO=""
-    local URL="https://dietpi.com/downloads/images"
-    case ${RELEASE} in
-        bios)
-            case ${EDITION} in
-                bookworm)
-                    local ISO="DietPi_NativePC-BIOS-x86_64-Bookworm.7z";;
-                bullseye)
-                    local ISO="DietPi_NativePC-BIOS-x86_64-Bullseye.7z";;
-                bookworm-installer)
-                    local ISO="DietPi_NativePC-BIOS-x86_64-Bookworm_Installer.7z";;
-                bullseye-installer)
-                    local ISO="DietPi_NativePC-BIOS-x86_64-Bullseye_Installer.7z";;
-            esac;;
-        uefi)
-            case ${EDITION} in
-                bookworm-installer)
-                    local ISO="DietPi_NativePC-UEFI-x86_64-Bookworm_Installer.7z";;
-                bullseye-installer)
-                    local ISO="DietPi_NativePC-UEFI-x86_64-Bullseye_Installer.7z";;
-            esac;;
-    esac
-    HASH=$(wget -q -O- "${URL}/SHASUMS.txt" | grep "${ISO}" | cut -d' ' -f1)
-    echo "${URL}/${ISO} ${HASH}"
-}
-
-function get_fvoid() {
-    local HASH=""
-    local URL=""
-    local TMPURL=""
-    TMPURL=$(wget -q -S -O- --max-redirect=0 "https://sourceforge.net/projects/f-void/files/latest/download" 2>&1 | grep -i Location | cut -d' ' -f4)
-    URL=${TMPURL%\?*}
-    echo "${URL} ${HASH}"
-}
-
-function get_gabeeos() {
-    local HASH=""
-    local URL=""
-    #local TMPURL=""
-    #TMPURL=$(wget -q -S -O- --max-redirect=0 "https://sourceforge.net/projects/gabeeos/files/latest/download" 2>&1 | grep -i Location | cut -d' ' -f4)
-    case ${EDITION} in
-        openbox)
-            ISO="gabeeOSLinux-Openbox-Cherry-x86_64-6.1.25_1-20230502.iso"
-            URL="https://sourceforge.net/projects/gabeeoslinux/files/Distro/Openbox/beta"
-            HASH=$(wget -q -O- ${URL}/SHA256 | grep "${ISO}" | cut -d' ' -f2);;
-        qtile)
-            ISO="gabeeOSLinux-Qtile-x86_64-6.1.25_1-20230508.iso"
-            URL="https://sourceforge.net/projects/gabeeoslinux/files/Distro/Qtile/beta"
-            HASH=$(wget -q -O- ${URL}/SHA256 | grep "${ISO}" | cut -d' ' -f4);;
-    esac
-    echo "${URL}/${ISO} ${HASH}"
-}
-
-function get_miyo() {
-    local EDITION="${1:-}"
-    local HASH=""
-    local URL="https://sourceforge.net/projects/miyolinux/files/${RELEASE}-Release/${EDITION}"
-    case ${EDITION} in
-        Kwin) ISO="miyo-kwin-x86_64-BIOS-20220526.iso";;
-        Deboot-Ceres) ISO="Deboot-Ceres-x86-64-BIOS-20220415.iso";;
-        JWM) ISO="miyolinux-jwm-x86_64-BIOS-20220226.iso";;
-        Openbox) ISO="MiyoLinux-x86_64-BIOS-20220129.iso";;
-        MATE) ISO="mate-minimal-x86_64-BIOS-20220107.iso";;
-    esac
-    HASH=$(wget -q -O- "${URL}/${ISO}.sha256" | cut -d' ' -f1)
-    echo "${URL}/${ISO} ${HASH}"
-}
-
-function get_ventoy() {
-    local HASH=""
-    local ISO="ventoy-${RELEASE}-livecd.iso"
-    local URL="https://github.com/ventoy/Ventoy/releases/download/v${RELEASE}"
-    HASH="$(wget -q -O- "${URL}/sha256.txt" | grep "${ISO}" | cut -d' ' -f4)"
-    echo "${URL}/${ISO} ${HASH}"
-}
-
-function get_voidpup() {
-    local HASH=""
-    local URL=""
-    local TMPURL=""
-    TMPURL=$(wget -q -S -O- --max-redirect=0 "https://sourceforge.net/projects/vpup/files/latest/download" 2>&1 | grep -i Location | cut -d' ' -f4)
-    URL=${TMPURL%\?*}
-    echo "${URL} ${HASH}"
-}
-
-# QUICKEMU STANDARD
 
 function get_alma() {
     local HASH=""
@@ -3521,11 +3327,6 @@ function create_vm() {
             if [[ ${ISO} = *".gz"* ]]; then
                 gzip -d "${VM_PATH}/${ISO}"
                 ISO="${ISO/.gz/}"
-            fi;;
-        dietpi)
-            if [[ $ISO =~ ".7z" ]]; then
-                7zip x -o${VM_PATH} ${VM_PATH}/${ISO}
-                ISO=$(ls ${VM_PATH} | grep -i '.iso')
             fi;;
         dragonflybsd)
             #  Could be other OS iso files compressed with bzip2 or gzip
