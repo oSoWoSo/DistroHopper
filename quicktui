@@ -476,7 +476,7 @@ globe
 moon
 monkey
 meter
-hamburger" | gum filter --height 11)
+hamburger" | gum filter --height 14)
     mkdir -p ${configdir}
     touch "${configdir}"/spinner
     echo "$spinner" > "${configdir}"/spinner
@@ -486,7 +486,7 @@ hamburger" | gum filter --height 11)
 show_menu_main() {
     while true
     do
-    height=9
+    height=12
     start=$(echo "create new VM
 run VM
 open distro homepage
@@ -515,7 +515,7 @@ show_menu_advanced() {
     do
     title="advanced"
     show_header
-    height=8
+    height=11
     start=$(echo "test ISOs download
 show ISOs URLs
 set default config for VMs
@@ -542,7 +542,7 @@ show_menu_settings() {
     do
     title="settings"
     show_header
-    height=6
+    height=9
     start=$(echo "update $progname
 regenerate supported
 change borders color
@@ -567,7 +567,7 @@ show_menu_test() {
     do
     title="test"
     show_header
-    height=27
+    height=30
     start=$(echo "add new distro
 change spinner
 choose vm to delete
