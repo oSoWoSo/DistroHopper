@@ -267,7 +267,7 @@ _show_menu() {
  kill
 󰆳 delete
 󱌝 icons
-󰩈 exit" | gum filter --height 8)
+󰩈 exit" | gum filter --height 11)
 #󰩈 exit" | gum choose --selected '󰜎 run')
 			case $start in
 				' create') create_VM;;
@@ -287,7 +287,7 @@ ssh into
 kill
 delete
 icons
-exit $progname" | gum filter --height 8)
+exit $progname" | gum filter --height 11)
 #exit $progname" | gum choose --selected 'run')
 			case $start in
 				create) create_VM;;
