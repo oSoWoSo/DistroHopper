@@ -774,7 +774,7 @@ show_menus() {
 show_menu_main() {
 	while true
 	do
-		height=10
+		height=13
 		start=$(echo "create
 run
 OS homepage
@@ -804,7 +804,7 @@ exit $progname" | gum filter --height "$height")
 show_menu_main_icons() {
 	while true
 	do
-	height=10
+	height=13
 	start=$(echo " create
 󰜎 run
 󰖟 OS homepage
@@ -836,7 +836,7 @@ show_menu_advanced() {
 	do
 	title="advanced"
 	show_header
-	height=8
+	height=11
 	start=$(echo "test ISOs download
 show ISOs URLs
 set default config for VMs
@@ -863,7 +863,7 @@ show_menu_advanced_icons() {
 	do
 	title="advanced"
 	show_header
-	height=8
+	height=11
 	start=$(echo "󰙨 test ISOs download
  show ISOs URLs
  set default config for VMs
@@ -890,7 +890,7 @@ show_menu_settings() {
 	do
 	title="settings"
 	show_header
-	height=10
+	height=13
 	start=$(echo "update $progname
 regenerate supported
 icons
@@ -921,7 +921,7 @@ show_menu_settings_icons() {
 	do
 	title="settings"
 	show_header
-	height=10
+	height=13
 	start=$(echo " update $progname
  regenerate supported
 󱌝 icons
