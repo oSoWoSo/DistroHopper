@@ -1,0 +1,18 @@
+oSoWoSo/DistroHopper@quickget-extended:
+  - source: quickget
+    dest: quickget
+oSoWoSo/DistroHopper@dh:
+  - source: dh
+    dest: dh
+oSoWoSo/DistroHopper@q:
+  - source: q
+    dest: q
+oSoWoSo/DistroHopper@qrun:
+  - source: qrun
+    dest: qrun
+oSoWoSo/DistroHopper@quicktui:
+  - source: quicktui
+    dest: quicktui
+oSoWoSo/DistroHopper@quickfzf:
+  - source: quickfzf
+    dest: quickfzf
