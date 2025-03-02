@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run GitHub File Sync
-        uses: oSoWoSo/repo-file-sync-action@latest
+        uses: oSoWoSo/repo-file-sync-action@v1.21.2
         with:
           GH_PAT: ${{ secrets.TOKEN }}
           ORIGINAL_MESSAGE: true
