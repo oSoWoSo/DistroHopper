@@ -15,11 +15,11 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@main
 
       - name: Run GitHub File Sync
-        #uses: oSoWoSo/repo-file-sync-action@master
-        uses: betahuhn/repo-file-sync-action@master
+        uses: oSoWoSo/repo-file-sync-action@master
+        #uses: betahuhn/repo-file-sync-action@master
         with:
           GH_PAT: ${{ secrets.TOKEN }}
           ORIGINAL_MESSAGE: true
