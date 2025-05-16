@@ -952,7 +952,7 @@ show_menu_settings_icons() {
 }
 
 ## RUN
-#clear
+clear
 define_variables
 if_needed
 use_color
