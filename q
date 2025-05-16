@@ -552,6 +552,15 @@ change_color() {
 	echo $BORDER_FOREGROUND > "${configdir}"/color
 }
 
+change_borders_color() {
+	title="Define color number or choose random"
+	show_header
+	BORDER_FOREGROUND=$(echo 'random' | gum filter --height 4 --prompt="Enter custom" --no-strict)
+	mkdir -p ${configdir}
+	touch "${configdir}"/color
+	echo $BORDER_FOREGROUND > "${configdir}"/color
+}
+
 use_color() {
 	if [ -f "${configdir}/color" ]; then
 		BORDER_FOREGROUND=$(cat ${configdir}/color)
@@ -901,7 +910,7 @@ exit $progname" | gum filter --height "$height")
 		'regenerate supported' ) generate_supported;;
 		'icons' ) icons_or;;
 		'accent color' ) change_color;;
-		'borders color' ) change_color;;
+		'borders color' ) change_borders_color;;
 		'borders style' ) change_borders;;
 		'spinner' ) change_spinner;;
 		'headers' ) headers_small_or;;
@@ -932,7 +941,7 @@ show_menu_settings_icons() {
 		' regenerate supported' ) generate_supported;;
 		'󱌝 icons' ) icons_or;;
 		' accent color' ) change_color;;
-		' borders color' ) change_color_border;;
+		' borders color' ) change_borders_color;;
 		'󰴱 borders style' ) change_borders;;
 		' spinner' ) change_spinner;;
 		'󰛼 headers' ) headers_small_or;;
