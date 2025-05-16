@@ -844,7 +844,7 @@ edit VM config
 custom quickemu command
 add new distro
 back to main menu
-EXIT $progname" | gum filter --height "$height")
+exit $progname" | gum filter --height "$height")
 	case $start in
 		'set default config for VMs' ) edit_default_VMs_config;;
 		'edit VM config' ) edit_VM_config;;
@@ -900,7 +900,7 @@ borders style
 spinner
 headers
 back to main menu
-EXIT $progname" | gum filter --height "$height")
+exit $progname" | gum filter --height "$height")
 	case $start in
 		"update $progname" ) update_quicktui;;
 		'regenerate supported' ) generate_supported;;
