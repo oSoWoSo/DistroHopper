@@ -175,7 +175,7 @@ gum_choose_VM2() {
 create_VM() {
 	gum_filter_os
 	if [ -z "$os" ]; then exit 100
-	elif [ "$(echo "$choices" | wc -l)" = 3 ]; then
+	elif [ "$(echo "$choices" | wc -l)" = 4 ]; then
 		#clear
 		gum_filter_release
 		#clear
