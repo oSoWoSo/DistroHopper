@@ -13,7 +13,7 @@ define_variables() {
 	progname="${progname:="${0##*/}"}"
 	configdir="$HOME/.config/$progname"
 	tmpdir="/tmp"
-	version='0.69'
+	version='0.70'
 	vms=(*.conf)
 	if ! command -v gum >/dev/null 2>&1; then
 		echo 'You are missing gum! Exiting...' && exit 1
@@ -83,7 +83,6 @@ generate_supported() {
 	done < /tmp/supported
 }
 
-
 if_needed() {
 	if [ ! -f "${tmpdir}"/supported ]; then
 		generate_supported
@@ -115,10 +114,6 @@ As temp folder is used $TMP
 }
 
 ## MAIN
-
-#template for functions
-#    title=""
-#    show_header
 
 gum_choose_os() {
 	title="Choose OS"
@@ -276,7 +271,7 @@ gum_choose_running() {
 	fi
 }
 
-# test
+#TODO:
 gum_choose_runnings() {
 	pid_files=( */*.pid )
 	if [ ${#pid_files[@]} -gt 0 ]; then
@@ -315,16 +310,16 @@ gum_choose_VM_to_delete2() {
 	fi
 }
 
-#gum_choose_VM_to_delete() {
-	#if ls | grep ".conf" ; then
-		#GUM_FILTER_HEADER="Choose VM to delete"
-		#height=$(ls -1 | grep ".conf" | wc -l)
-		#chosen=$(ls -1 | grep ".conf" | gum filter --height "$height" --no-limit)
-		#delete_VM
-	#else
-		#echo "No VMs to delete"
-	#fi
-#}
+gum_choose_VM_to_delete3() {
+	if ls | grep ".conf" ; then
+		GUM_FILTER_HEADER="Choose VM to delete"
+		height=$(ls -1 | grep ".conf" | wc -l)
+		chosen=$(ls -1 | grep ".conf" | gum filter --height "$height" --no-limit)
+		delete_VM
+	else
+		echo "No VMs to delete"
+	fi
+}
 
 delete_VM() {
 	#chosen_to_delete=$(cat $chosen | while read line; echo $line | rev | cut -d'.' -f2-5 | rev; done)
@@ -509,7 +504,7 @@ kill_vm() {
 	fi
 }
 
-# test
+#TODO:
 kill_vms() {
 	gum_choose_runnings
 	if [ -n "$selected" ]; then
@@ -844,7 +839,7 @@ edit VM config
 custom quickemu command
 add new distro
 back to main menu
-EXIT $progname" | gum filter --height "$height")
+exit $progname" | gum filter --height "$height")
 	case $start in
 		'set default config for VMs' ) edit_default_VMs_config;;
 		'edit VM config' ) edit_VM_config;;
@@ -900,7 +895,7 @@ borders style
 spinner
 headers
 back to main menu
-EXIT $progname" | gum filter --height "$height")
+exit $progname" | gum filter --height "$height")
 	case $start in
 		"update $progname" ) update_quicktui;;
 		'regenerate supported' ) generate_supported;;
@@ -947,7 +942,7 @@ show_menu_settings_icons() {
 	done
 }
 
-# run
+## RUN
 #clear
 define_variables
 if_needed
