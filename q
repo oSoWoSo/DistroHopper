@@ -216,7 +216,7 @@ show_headers_small
 edit_default_VMs_config() {
 	title="Editing default VM's config..."
 	show_header
-	printf 'For example:\ncpu_cores="2"\nram="4G"\n'
+	printf 'For example:\nguest_os="linux"\nncpu_cores="4"\nram="4G"\ndisk_img="../Disks/linux0.qcow2"\niso="../ISOs/archlinux-x86_64.iso"\ndisk_size="200G"\ndisplay="spice"\npublic_dir="/home/kuklinistvan/VMs/PublicDirs/linux0"\n'
 	title="CTRL+D to complete.  CTRL+C and esc will cancel"
 	show_header
 	gum write > "${configdir}"/default_vm_config
