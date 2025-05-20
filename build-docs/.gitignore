@@ -1,0 +1,17 @@
+baks/
+test*
+winchanges
+quickemu
+quickget
+quickemu.1-07-Ubuntus02-generated.md
+quickemu.1-08-OtherOperatingSystems02-generated.md
+quickemu.1-14-AllquickemuOptions-02coggged.md
+quickemu_conf.lst
+quickemu.lst
+quickget.lst
+README.lst
+README_main.md
+quickemu.1-01-head.md
+quickget.1-00-header.md
+quickemu_conf.1-00-hdr.md
+quickemu_ENV_notes.md
