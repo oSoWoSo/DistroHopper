@@ -1,0 +1,4 @@
+chunkcheck usr/bin
+quickemu usr/bin
+quickget usr/bin
+quickreport usr/bin
