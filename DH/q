@@ -546,7 +546,7 @@ double" | gum filter --height $height)
 change_color() {
 	title="Define color number or choose random"
 	show_header
-	BORDER_FOREGROUND=$(echo 'random' | gum filter --height 1 --prompt="Enter custom" --no-strict)
+	BORDER_FOREGROUND=$(echo 'random' | gum filter --height 4 --prompt="Enter custom" --no-strict)
 	mkdir -p ${configdir}
 	touch "${configdir}"/color
 	echo $BORDER_FOREGROUND > "${configdir}"/color
@@ -695,7 +695,26 @@ show_header_tip() {
 	tip3=$(shuf -n 1 "$tmpdir/supported")
 	tip4=$(gum style --bold --foreground="$color" "$tip3")
 	tip5=$(gum join "$tip1" "$tip2" "$tip4")
-	tip6=$("$QUICKGET" "$tip3" | awk 'NR==3,NR==7')
+	TIPS=$("$QUICKGET" "$tip3" | awk 'NR==3,NR==7')
+	cre=$(echo "$TIPS" | grep 'Credentials:' | cut -f2)
+	web=$(echo "$TIPS" | grep 'Website:' | cut -f2)
+	des=$(echo "$TIPS" | grep 'Description:' | cut -f2 | tput cols 20)
+	rel=$(echo "$TIPS" | grep 'Releases:' | cut -f2)
+	edi=$(echo "$TIPS" | grep 'Editions:' | cut -f2)
+	if [ -z "$edi" ]; then
+		tip6="Credentials: ${cre}
+Website:     ${web}
+Description: ${des}
+Releases:    ${rel}
+"
+	else
+		tip6="Credentials: ${cre}
+Website:     ${web}
+Description: ${des}
+Releases:    ${rel}
+Editions:    ${edi}
+"
+	fi
 	tip7=$(gum style --width=77 "$tip6")
 	tip8=$(gum join --vertical --align top "$tip5" "$tip7")
 	header_tip=$(gum style --padding "0 1" --border="$BORDER" --border-foreground $color "$tip8")
