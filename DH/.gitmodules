@@ -1,3 +1,3 @@
 [submodule "build-docs"]
-	path = build-docs
+	path = DH/build-docs
 	url = https://github.com/philclifford/quickemu-docs.git
