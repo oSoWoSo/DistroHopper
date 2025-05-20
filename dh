@@ -1,0 +1,334 @@
+#!/usr/bin/env bash
+
+wayland_check() {
+	session_type=$(loginctl show-session "$XDG_SESSION_ID" -p Type | cut -d= -f2)
+	case "$session_type" in
+	wayland)
+		export GDK_BACKEND=x11
+		echo "Running on Wayland"
+		;;
+	x11)
+		echo "Running on X"
+		;;
+	"")
+		echo "Running on TTY"
+		;;
+	*)
+		echo "Not sure where I am running"
+		;;
+	esac
+}
+
+root_check() {
+	if [ "$(id -u)" != 0 ]; then
+		if [ -f /usr/bin/sudo ]; then
+			echo "$(tput bold)INFO: Using sudo for root operations.$(tput sgr0)"
+			root="sudo"
+		elif [ -f /usr/bin/doas ]; then
+			echo "$(tput bold)INFO: Using doas for root operations.$(tput sgr0)"
+			root="doas"
+		fi
+	fi
+}
+
+set_variables() {
+	# DEBUG mod
+	#bash -x ./dh 2>&1 | tee output.log
+	#progname="${progname:="${0##*/}"}"
+	progname="DistroHopper"
+	version="0.90"
+	#GTK_THEME="alt-dialog"
+	DH_CONFIG_DIR="$HOME/.config/dh"
+	DH_CONFIG="$DH_CONFIG_DIR/config"
+	DH_ICON_DIR="/usr/share/icons/dh"
+	PATH_PREFIX="/usr/bin/"
+	TMP_DIR="/tmp"
+	terminal="sakura"
+	replace='"!"'
+	#export "DH_CONFIG_DIR" "DH_CONFIG" "replace" "DH_ICON_DIR" "PATH_PREFIX" "TMP_DIR" "terminal"
+	#check_and_set_mode
+	# Set traps to catch the signals and exit gracefully
+	trap "exit" INT
+	trap "exit" EXIT
+}
+
+# installation ---------------------------------------------------------
+
+dependencies_check_gui() {
+	[ -f "$PATH_PREFIX/yad" ] || echo "Yad not installed!"
+}
+
+install_needed_atp() {
+	$root apt install qemu bash coreutils ovmf grep jq lsb procps python3 genisoimage usbutils util-linux sed spice-client-gtk swtpm wget xdg-user-dirs zsync unzip yad
+}
+
+install_needed_pacman() {
+	$root pacman -S cdrtools coreutils edk2-ovmf grep jq procps python3 qemu-full sed socat spice-gtk swtpm usbutils util-linux wget xdg-user-dirs xorg-xrandr zsync getext yad
+}
+
+install_needed_xbps() {
+	$root xbps-install -S qemu bash coreutils grep jq procps-ng python3 util-linux sed spice-gtk swtpm usbutils wget xdg-user-dirs xrandr unzip zsync socat yad
+}
+
+install_needed_dnf() {
+	$root dnf install qemu bash coreutils edk2-tools grep jq lsb procps python3 genisoimage usbutils util-linux sed spice-gtk-tools swtpm wget xdg-user-dirs xrandr unzip yad
+}
+
+install_dependencies() {
+	# Find the current distribution and install dependecies
+	if [ -f /etc/os-release ]; then
+		if [ -f "$PATH_PREFIX/pacman" ]; then
+			install_needed_pacman
+		elif [ -f "$PATH_PREFIX/apt" ]; then
+			install_needed_apt
+		elif [ -f "$PATH_PREFIX/xbps-install" ]; then
+			install_needed_xbps
+		elif [ -f "$PATH_PREFIX/dnf" ]; then
+			install_needed_dnf
+		else
+			echo "Error unknown distro!"
+			#exit 1
+		fi
+	fi
+}
+
+create_dirs() {
+	mkdir -p "$DH_CONFIG_DIR"
+	touch "$DH_CONFIG"
+	mkdir -p "$DH_ICON_DIR" >/dev/null 2>&1 || $root mkdir -p "$DH_ICON_DIR"
+}
+
+choose_vms_dir() {
+	NEWDIR="$(yad --width=900 --height=900 --file --directory --title="Where to save VMs?")"
+	VMS_DIR="$NEWDIR"
+	echo "VMS_DIR=\"$VMS_DIR\"" >"$DH_CONFIG"
+}
+
+install_dh() {
+	cp -f dh quickget quickemu quickreport chunkcheck windowskey "$PATH_PREFIX" >/dev/null 2>&1 || $root cp -f dh quickget quickemu quickreport chunkcheck windowskey "$PATH_PREFIX"
+	cp -f icons/* "$DH_ICON_DIR/" >/dev/null 2>&1 || $root cp -f icons/* "$DH_ICON_DIR/"
+	mkdir -p "$DH_CONFIG_DIR/ready"
+	mkdir -p "$DH_CONFIG_DIR/supported"
+}
+
+desktop_entry_dh() {
+	echo "$MSG_INTERM"
+	run_in_terminal
+	DESKTOP_FILE="${TMP_DIR}/dh.desktop"
+	type='Application'
+	name='DistroHopper'
+	comment='Quickly download, create and run VM of any#TODO operating system.'
+	version="${version}"
+	execmd="sh -c 'cd ${VMS_DIR} && dh g'"
+	if [ "$interminal" == "yes" ]; then
+		terminal='true'
+	fi
+	icon="$DH_ICON_DIR/hop.svg"
+	categories='System;Virtualization;'
+	create_desktop_entry
+	$root cp ${TMP_DIR}/dh.desktop /usr/share/applications/
+}
+
+installation_process() {
+	dependencies_check_gui
+	install_dependencies
+	create_dirs
+	choose_vms_dir
+	install_dh
+	desktop_entry_dh
+}
+
+# basic ----------------------------------------------------------------
+# shellcheck disable=SC2154
+create_desktop_entry() {
+	cat <<EOF >${DESKTOP_FILE}
+[Desktop Entry]
+Version=$version
+Type=$type
+Name=$name
+GenericName=$gname
+Comment=$comment
+Exec=$execmd
+Icon=$icon
+Terminal=$terminal
+X-MultipleArgs=$args
+Type=$type
+Categories=$categories
+StartupNotify=$notify
+MimeType=$mime
+Keywords=$keyword
+
+EOF
+}
+
+run_in_terminal() {
+	yad --title "terminal" --text "Do you want show output in the terminal?" && interminal="yes" || interminal="no"
+}
+
+renew_ready_vms() {
+	cd "$VMS_DIR" || echo "ERROR: VMS_DIR not set!" && exit 1
+	rm -r "$DH_CONFIG_DIR"/ready >/dev/null 2>&1
+	mkdir -p "$DH_CONFIG_DIR"/ready
+	for vm_conf in $(pwd); do
+		echo "creating..."
+		VMname=$(basename "$VMS_DIR/$vm_conf" .conf)
+		# Use fuzzy matching to find the best matching icon file (ready to run VMs)
+		icon_name=$(basename "$VMS_DIR/$vm_conf" .conf | cut -d'-' -f -2)
+		icon_file=$(find "$DH_ICON_DIR" -type f -iname "${icon_name// /}.*")
+		# If no icon was found, try shorter name (ready to run VMs)
+		if [ -z "$icon_file" ]; then
+			icon_name=$(basename "$VMS_DIR/$vm_conf" .conf | cut -d'-' -f1)
+			icon_file=$(find "$DH_ICON_DIR" -type f -iname "${icon_name// /}.*")
+		elif [ -z "$icon_file" ]; then
+			icon_file="$DH_ICON_DIR/tux.svg"
+		fi
+		DESKTOP_FILE="${DH_CONFIG_DIR}/ready/${VMname}.desktop"
+		type='Application'
+		name="${VMname}"
+		comment=$(quickget "$VMname" | grep 'Description:' | cut -f2)
+		version="${version}"
+		execmd="sh -c 'cd ${VMS_DIR} && quickemu -vm ${vm_conf};$SHELL'"
+		icon="${icon_file}"
+		categories='System;Virtualization;'
+		create_desktop_entry
+	done
+}
+
+renew_ready() {
+	cd "$VMS_DIR" || exit 1
+	#	for files in "$VMS_DIR"/*; do
+	#	if [ ! -e *.conf ]; then
+	#		echo $"No .conf files found"
+	#		return
+	#	fi
+	for vm_conf in *.conf; do
+		if [ "$vm_conf" == "distrohopper.conf" ]; then
+			continue # skip processing distrohopper.conf
+		fi
+		VMname=$(basename "$VMS_DIR/$vm_conf" .conf)
+		# Use fuzzy matching to find the best matching icon file (ready to run VMs)
+		icon_name=$(basename "$VMS_DIR/$vm_conf" .conf | cut -d'-' -f -2)
+		icon_file=$(find "$DH_ICON_DIR" -type f -iname "${icon_name// /}.*")
+		# If no icon was found, try shorter name (ready to run VMs)
+		if [ -z "$icon_file" ]; then
+			icon_name=$(basename "$VMS_DIR/$vm_conf" .conf | cut -d'-' -f1)
+			icon_file=$(find "$DH_ICON_DIR" -type f -iname "${icon_name// /}.*")
+		elif [ -z "$icon_file" ]; then
+			icon_file="$DH_ICON_DIR/tux.svg"
+		fi
+		# content of desktop files (ready to run VMs)
+		mkdir -p "$DH_CONFIG_DIR/ready"
+		cat <<EOF >"$DH_CONFIG_DIR/ready/$VMname.desktop"
+[Desktop Entry]
+Type=Application
+Name=$VMname
+Exec=sh -c 'cd ${VMS_DIR} && quickemu -vm ${vm_conf}'
+Icon=$icon_file
+Categories=System;Virtualization;
+
+EOF
+	done
+}
+
+renew_supported_vms() {
+	rm -r "$DH_CONFIG_DIR"/supported >/dev/null 2>&1
+	mkdir -p "$DH_CONFIG_DIR"/supported
+	run_in_terminal
+	# get supported VMs
+	quickget | awk 'NR==3,/zorin/' | grep -o '[^ ]*' >"$DH_CONFIG_DIR/supported.md"
+	while read -r get_name; do
+		VMname=$(echo "$get_name" | tr ' ' '_')
+		releases=$(quickget "$VMname" | grep 'Releases' | cut -f2 | sed 's/^ //' | sed 's/ *$//')
+		editions=$(quickget "$VMname" | grep 'Editions' | cut -f2 | sed 's/^ //' | sed 's/ *$//')
+		icon_name="$DH_ICON_DIR/$get_name"
+		if [ -f "$icon_name.svg" ]; then
+			icon_file="$icon_name.svg"
+		elif [ -f "$icon_name.png" ]; then
+			icon_file="$icon_name.png"
+		else
+			icon_file="$DH_ICON_DIR/tux.svg"
+		fi
+		echo "creating $VMname entry"
+		echo ""
+		# Check if there are editions
+		DESKTOP_FILE="$DH_CONFIG_DIR/supported/$VMname.desktop"
+		type="Application"
+		name="$get_name"
+		if [ -z "$editions" ]; then
+			execmd="sh -c 'cd ${VMS_DIR} && GDK_BACKEND=x11 yad --form --field=\"Release:CB\" \"${releases// /$replace}\" | cut -d\"|\" -f1 | xargs -I{} sh -c \"quickget ${get_name} {}\";$SHELL'"
+		elif [ "$interminal" == "yes" ]; then
+			terminal="true"
+		else
+			execmd="sh -c 'cd ${VMS_DIR} && GDK_BACKEND=x11 yad --form --separator=\" \" --field=\"Release:CB\" \"${releases// /$replace}\" --field=\"Edition:CB\" \"${editions// /$replace}\" | xargs -I{} sh -c \"quickget ${get_name} {}\";$SHELL'"
+		fi
+		icon="$icon_file"
+		categories='System;Virtualization;'
+		create_desktop_entry
+	done <"$DH_CONFIG_DIR"/supported.md
+}
+
+distrohopper_about() {
+	echo "#TODO"
+}
+
+help_show() {
+	echo "#TODO"
+}
+
+first_run() {
+	installation_process
+	echo "Installation done"
+	echo "Update supported..."
+	renew_supported_vms
+}
+
+distrohopper_run_gui() {
+	key=$((RANDOM % 9000 + 1000))
+	yad --plug="$key" --tabnum=1 --monitor --icons --listen --read-dir="$DH_CONFIG_DIR"/ready --sort-by-name --no-buttons --borders=0 --icon-size=46 --item-width=76 &
+	yad --plug="$key" --tabnum=2 --monitor --icons --listen --read-dir="$DH_CONFIG_DIR"/supported --sort-by-name --no-buttons --borders=0 --icon-size=46 --item-width=76 &
+	yad --dynamic --notebook --key="$key" --monitor --listen --window-icon="$DH_ICON_DIR"/hop.svg --width=900 --height=900 --title="DistroHopper" --tab="run VM" --tab="download VM"
+}
+
+WIP_buttons() {
+	export root
+	export -f run_in_terminal
+	export -f distrohopper_about
+	export -f help_show
+	export -f first_run
+	export -f renew_supported_vms
+	export -f renew_ready_vms
+	key=$((RANDOM % 9000 + 1000))
+	yad --plug="$key" --tabnum=1 --monitor --icons --listen \
+		--read-dir="$DH_CONFIG_DIR/ready" --sort-by-name --borders=0 \
+		--icon-size=46 --item-width=76 &
+	yad --plug="$key" --tabnum=2 --monitor --icons --listen \
+		--read-dir="$DH_CONFIG_DIR/supported" --sort-by-name --borders=0 \
+		--icon-size=46 --item-width=76 &
+	yad --plug="$key" --tabnum=3 --monitor --icons --borders=0 --use-interp \
+		--icon-size=46 --item-width=76 --columns=1 --form --text-align=center \
+		--field="Set VMs directory!!Set default directory where VMs are stored":DIR \
+		--field="Install dh!!Install DistroHopper":FBTN "first_run" \
+		--field="Renew supported!!Update supported VMs":FBTN "renew_supported_vms" \
+		--field="Renew ready!!Update ready to run VMs":FBTN "renew_ready_vms" \
+		--field="Help!!Show this help and exit":FBTN "help_show" \
+		--field="About!!Show info about DistroHopper":FBTN "distrohopper_about" &
+	yad --dynamic --notebook --key="$key" --monitor --listen \
+		--mouse --selectable-labels --no-buttons \
+		--window-icon="$DH_ICON_DIR/hop.svg" --width=900 --height=900 \
+		--title="DistroHopper" --tab="run VM" --tab="download VM" --tab="Options"
+	# posible: --undecorated --fixed ontop --buttons-layout=spread edge start end center --keep-icon-size --image=IMAGE --splash
+	VAR1="$?"
+	echo "  DEBUG: VAR1 = $VAR1"
+	echo $?
+}
+
+wayland_check
+root_check
+set_variables
+if [ -f "$DH_CONFIG" ]; then
+	echo "Already installed"
+else
+	#first_run
+	echo "Installation finished"
+fi
+WIP_buttons
