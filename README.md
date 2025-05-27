@@ -47,6 +47,8 @@ Everything could work
 - [quickemu](https://github.com/quickemu-project/quickemu)
 - Special thanks to all members of **LINUX** community
 
+![Alt](https://repobeats.axiom.co/api/embed/a2ddede7bf2c42e7c6cc92602c461ea8c86fd9f2.svg "Repobeats analytics image")
+
 ## quickemu Introduction
 
 <div align="center">
