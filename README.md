@@ -6,20 +6,20 @@ Can be used together with quickemu
 ## I made some user interfaces for quickemu...
 
 🦚
-[dh](https://github.com/oSoWoSo/DistroHopper/all/dh) GUI and TUI using yad
+[dh](https://github.com/oSoWoSo/DistroHopper/blob/all/dh) GUI and TUI using yad
 
 🕊️
-[quickfzf](https://github.com/oSoWoSo/DistroHopper/all/quickfzf) TUI using fzf
+[quickfzf](https://github.com/oSoWoSo/DistroHopper/blob/all/quickfzf) TUI using fzf
 
 🐲
-[quicktui](https://github.com/oSoWoSo/DistroHopper/all/quicktui) TUI using gum (🚧 usable but under heavy development)
+[quicktui](https://github.com/oSoWoSo/DistroHopper/blob/all/quicktui) TUI using gum (🚧 usable but under heavy development)
 
 🐅
-[qrun](https://github.com/oSoWoSo/DistroHopper/all/qrun) TUI using gum
+[qrun](https://github.com/oSoWoSo/DistroHopper/blob/all/qrun) TUI using gum
 [![asciicast](https://asciinema.org/a/fPcYGWhF8aGoJJ5M30Q1CWdqe.svg)](https://asciinema.org/a/fPcYGWhF8aGoJJ5M30Q1CWdqe)
 
 🦈
-[q](https://github.com/oSoWoSo/DistroHopper/all/q) TUI using gum
+[q](https://github.com/oSoWoSo/DistroHopper/blob/all/q) TUI using gum
 
 and
 
