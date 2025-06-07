@@ -1,2 +1,0 @@
-#!/bin/bash
-./quickget --help|grep '^  -'|grep -v '^---' 
