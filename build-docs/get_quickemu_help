@@ -1,4 +1,0 @@
-#!/bin/bash
-./quickemu --help | tail +12
-#grep '^  --'
-#|grep -v '^---' 
