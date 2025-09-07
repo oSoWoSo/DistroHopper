@@ -1,0 +1,970 @@
+#!/usr/bin/env bash
+# SC2317: Command appears to be unreachable. Check usage (or ignore if invoked indirectly).
+#  - https://www.shellcheck.net/wiki/SC2317
+#  - Disable globally because many functions are called indirectly
+# shellcheck disable=SC2317
+# Latest cherrypick (or not) commit. Start from here...
+# https://github.com/quickemu-project/quickemu/tree/3da9edc9953340622db23be4661aefa4cd0632f2
+
+export TEXTDOMAIN=quickget
+if [[ -n $Q_DEBUG ]]; then
+    export TEXTDOMAINDIR="${PWD}/locale"
+else
+    export TEXTDOMAINDIR=/usr/share/locale
+fi
+
+export LC_ALL=C
+#TODO: config file
+#TOshare="/usr/share/quickget"
+TOshare="./"
+TOpublic="$TOshare/public"
+TOactions="$TOshare/actions"
+
+function cleanup() {
+    if [ -n "$(jobs -p)" ]; then
+        kill "$(jobs -p)" 2>/dev/null
+    fi
+}
+
+function show_os_info() {
+    # shellcheck source=public/alpine
+    . "${TOpublic}/${1}"
+    echo
+    echo " ${PRETTY}"
+    echo $"    Website: ${HOMEPAGE}"
+    echo $"   Based of: ${BASEDOF}"
+    echo $"Description: ${DESCRIPTION}"
+    echo $"Credentials: ${CREDENTIALS}"
+    echo $"Releases: ${RELEASES}" | fmt -w $(tput cols)
+    if [[ $(type -t "editions_") == function ]]; then
+        echo -n $"Editions: ${EDITIONS}" | fmt -w $(tput cols)
+    fi
+}
+
+function os_support() {
+    DIR="${TOactions}"
+    for file in "$DIR"/*; do
+        if [[ -f "$file" ]]; then
+            filename="${file##*/}"
+            echo "$filename"
+        fi
+    done
+}
+
+function error_specify_os() {
+    echo $"ERROR! You must specify an operating system."
+    echo $"- Supported Operating Systems:"
+    os_support | fmt -w $(tput cols)
+    echo -e $"\nTo see all possible arguments, use:\n   quickget -h  or  quickget --help"
+    exit 1
+}
+
+function os_supported() {
+    if [[ ! "$(os_support)" =~ ${OS} ]]; then
+        echo -e $"ERROR! ${OS} is not a supported OS.\n"
+        os_support | fmt -w $(tput cols)
+        exit 1
+    fi
+}
+
+function error_specify_release() {
+    show_os_info "${OS}"
+    echo -e $"\nERROR! You must specify a release."
+    exit 1
+}
+
+function error_not_supported_release() {
+    if [[ ! "${RELEASES[*]}" =~ ${RELEASE} ]]; then
+        echo -e $"ERROR! ${DISPLAY_NAME} ${RELEASE} is not a supported release.\n"
+        echo -n $' - Supported releases: '
+        releases_
+        exit 1
+    fi
+}
+
+function error_not_supported_lang() {
+    echo -e $"ERROR! ${I18N} is not a supported ${PRETTY} language\n"
+    echo -n $' - Editions: '
+    for I18N in "${I18NS[@]}"; do
+        echo -n "${I18N} "
+    done
+    exit 1
+}
+
+function error_not_supported_argument() {
+    echo $"ERROR! Not supported argument"
+    echo $"To see all possible arguments, use:"
+    echo $"   quickget -h  or  quickget --help"
+    exit 1
+}
+
+function error_unable_to_create_dir() {
+    echo $"ERROR! Unable to create directory ${DIR}"
+    exit 1
+}
+
+function error_not_supported_image() {
+    echo $"ERROR! Only ISO,IMG and QCOW2 file types are supported for --create-config"
+    exit 1
+}
+
+function is_valid_language() {
+    local I18N=""
+    local PASSED_I18N="${1}"
+    for I18N in "${I18NS[@]}"; do
+        if [[ "${I18N}" == "${PASSED_I18N}" ]]; then
+            return 0
+        fi
+    done
+    return 1
+}
+
+function handle_missing() {
+    # Handle odd missing Fedora combinations
+    case "${OS}" in
+        fedora)
+            # First we need to handle the Beta naming kludge
+            if [[ "${RELEASE}" == *"_Beta" ]]; then
+                NRELEASE="${RELEASE/_Beta/}"
+                else
+                NRELEASE="${RELEASE}"
+            fi
+            if [[ "${NRELEASE}" -lt 40 && "${EDITION}" == "Onyx" ]] || [[ "${NRELEASE}" -lt 40 && "${EDITION}" == "Sericea" ]]; then
+                echo $"ERROR! Unsupported combination"
+                echo $"       Fedora ${RELEASE} ${EDITION} is not available, please choose another Release or Edition"
+                exit 1
+            fi;;
+    esac
+}
+
+function validate_release() {
+    local DISPLAY_NAME=""
+    local RELEASE_GENERATOR=""
+    local RELEASES=""
+
+    DISPLAY_NAME="${PRETTY}"
+    case ${OS} in
+        *ubuntu-server*) RELEASE_GENERATOR="releases_";;
+        *ubuntu*) RELEASE_GENERATOR="releases_";;
+        *) RELEASE_GENERATOR="${1}";;
+    esac
+    RELEASES=$(${RELEASE_GENERATOR})
+    error_not_supported_release
+}
+
+function list_json() {
+    # Reference: https://stackoverflow.com/a/67359273
+    list_csv | jq -R 'split(",") as $h|reduce inputs as $in ([]; . += [$in|split(",")|. as $a|reduce range(0,length) as $i ({};.[$h[$i]]=$a[$i])])'
+    exit 0
+}
+
+function list_csv() {
+    CSV_DATA="$(csv_data)"
+
+    echo "Display Name,OS,Release,Option,Downloader,PNG,SVG"
+    sort -t',' -k2,2 <<<"${CSV_DATA}"
+    exit 0
+}
+
+# OLD FUNCTIONS TO REMADE?
+
+list_supported() {
+    # output OS RELEASE EDITION (usefull for straight testing...)
+    local DL=""
+    local FUNC
+    local OPTION
+    local OS
+
+    for OS in $(os_support); do
+        case ${OS} in
+          *ubuntu-server*) FUNC="ubuntu-server";;
+          *ubuntu*) FUNC="ubuntu";;
+          *) FUNC="${OS}";;
+        esac
+        for RELEASE in $(releases_ | sed -Ee 's/eol-\S+//g' ); do # hide eol releases
+            # If the OS has an editions_() function, use it.
+            if [[ $(type -t editions_) == function ]]; then
+                for OPTION in $(editions_); do
+                    echo "${OS} ${RELEASE} ${OPTION}"
+                done
+            elif [[ "${OS}" == "windows"* ]]; then
+                "languages_"
+                for OPTION in "${LANGS[@]}"; do
+                    echo "${OS} ${RELEASE} ${OPTION}"
+                done
+            else
+                echo "${OS} ${RELEASE}"
+            fi
+        done
+    done
+    exit 0
+}
+
+list_isos() {
+    local URL
+    local FUNC
+    local OPTION
+    local OS
+    echo "OS|Release|Edition|URL"
+    for OS in $(os_support); do
+        case ${OS} in
+          *ubuntu-server*) FUNC="ubuntu-server";;
+          *ubuntu*) FUNC="ubuntu";;
+          *) FUNC="${OS}";;
+        esac
+        for RELEASE in $(releases_ | sed -Ee 's/eol-\S+//g' ); do # hide eol releases
+             # If the OS has an editions_() function, use it.
+            if [[ $(type -t editions_) == function ]]; then
+                for OPTION in $(editions_); do
+                    URL=$(./quickget -u "${OS}" "${RELEASE}" "${OPTION}")
+                    if [ -z "${URL}" ]; then
+                        echo "${OS}|${RELEASE}|${OPTION}|${URL}"
+                    else
+                        echo "${OS}|${RELEASE}|${OPTION}|${URL}"
+                    fi
+                done
+            elif [[ "${OS}" == "windows"* ]]; then
+                languages_
+                for OPTION in "${LANGS[@]}"; do
+                    #URL=$(./quickget -u ${OS} ${RELEASE} ${OPTION})
+                    if [ -n "${URL}" ]; then
+                        echo "${OS}|${RELEASE}|${OPTION}|"
+                    else
+                        echo "${OS}|${RELEASE}|${OPTION}|Strange!" #TODO
+                    fi
+                done
+            elif [[ "${OS}" == "macos" ]]; then
+                echo "${OS}|${RELEASE}|${OPTION}|"
+            else
+                URL=$(./quickget -u "${OS}" "${RELEASE}")
+                if [ -z "${URL}" ]; then
+                    echo "${OS}|${RELEASE}|${OPTION}|${URL}"
+                else
+                    echo "${OS}|${RELEASE}|${OPTION}|${URL}"
+                fi
+            fi
+        done
+    done
+    exit 0
+}
+
+function csv_data() {
+    local DISPLAY_NAME
+    local DL=""
+    local DOWNLOADER
+    local FUNC
+    local OPTION
+    local OS
+    local PNG
+    local RELEASE
+    local SVG
+    local HAS_ZSYNC=0
+
+    # Check if zsync is available
+    if command -v zsync &>/dev/null; then
+        HAS_ZSYNC=1
+    fi
+
+    for OS in $(os_support); do
+        . "${TOactions}/${OS}"
+        local EDITIONS=""
+        DISPLAY_NAME="${PRETTY}"
+
+        PNG="https://quickemu-project.github.io/quickemu-icons/png/${FUNC}/${FUNC}-quickemu-white-pinkbg.png"
+        SVG="https://quickemu-project.github.io/quickemu-icons/svg/${FUNC}/${FUNC}-quickemu-white-pinkbg.svg"
+
+        if [[ $(type -t editions_) == function ]]; then
+            EDITIONS=$(editions_)
+        fi
+
+        for RELEASE in $(releases_); do
+            if [[ "${OS}" == *"ubuntu"* ]] && [[ ${RELEASE} == *"daily"*  ]] && [ ${HAS_ZSYNC} -eq 1 ]; then
+                DOWNLOADER="zsync"
+            else
+                DOWNLOADER="${DL}"
+            fi
+
+            # If the OS has an editions_() function, use it.
+            if [[ ${EDITIONS} ]]; then
+                for OPTION in ${EDITIONS}; do
+                    echo "${DISPLAY_NAME},${OS},${RELEASE},${OPTION},${DOWNLOADER},${PNG},${SVG}"
+                done
+            elif [[ "${OS}" == "windows"* ]]; then
+                languages_
+                for I18N in "${I18NS[@]}"; do
+                    echo "${DISPLAY_NAME},${OS},${RELEASE},${I18N},${DOWNLOADER},${PNG},${SVG}"
+                done
+            else
+                echo "${DISPLAY_NAME},${OS},${RELEASE},,${DOWNLOADER},${PNG},${SVG}"
+            fi
+        done &
+    done
+    wait
+}
+
+function list_supported() {
+    list_csv | cut -d ',' -f2,3,4 | tr ',' ' '
+    exit 0
+}
+
+# OLD FUNCTIONS TO REMADE?
+
+function test_result() {
+    local OS="${1}"
+    local RELEASE="${2}"
+    local EDITION="${3:-}"
+    local URL="${4:-}"
+    local RESULT="${5:-}"
+    if [ -n "${EDITION}" ]; then
+        OS="${OS}-${RELEASE}-${EDITION}"
+    else
+        OS="${OS}-${RELEASE}"
+    fi
+
+    if [ -n "${RESULT}" ]; then
+        # Pad the OS string for consistent output
+        OS=$(printf "%-35s" "${OS}")
+        echo -e "${RESULT}: ${OS} ${URL}"
+    else
+        OS=$(printf "%-36s" "${OS}:")
+        echo -e "${OS} ${URL}"
+    fi
+}
+
+function test_all() {
+    OS="${1}"
+    os_supported
+
+    local CHECK=""
+    local FUNC="${OS}"
+    if [[ "${OS}" == *ubuntu* && "${OS}" != "ubuntu-server" ]]; then
+        FUNC="ubuntu"
+    fi
+    local URL=""
+    . "${TOactions}/${OS}"
+
+    for RELEASE in $(releases_); do
+        . "${TOactions}/${OS}"
+        if [ "${OS}" == 'rebornos' ]; then
+          if curl -I "https://cdn.soulharsh007.dev/RebornOS-ISO/${ISO}"; then
+            test_result "${OS} ${RELEASE} ${URL} PASS"
+          else
+            test_result "${OS} ${RELEASE} ${URL} FAIL"
+          fi
+        elif [[ $(type -t editions_) == function ]]; then
+            . "${TOactions}/${OS}"
+            for EDITION in $(editions_); do
+                validate_release releases_
+                URL=$(get_ | cut -d' ' -f1 | head -n 1)
+                if [ "${OPERATION}" == "show" ]; then
+                    test_result "${OS}" "${RELEASE}" "${EDITION}" "${URL}"
+                elif [ "${OPERATION}" == "test" ]; then
+                    CHECK=$(web_check "${URL}" && echo "PASS" || echo "FAIL")
+                    test_result "${OS}" "${RELEASE}" "${EDITION}" "${URL}" "${CHECK}"
+                fi
+            done
+        elif [[ "${OS}" == "windows"* ]]; then
+            . "${TOactions}/${OS}"
+            languages_
+            for I18N in "${I18NS[@]}"; do
+                validate_release releases_
+                if [ "${OPERATION}" == "show" ]; then
+                    test_result "${OS}" "${RELEASE}" "${I18N}" ""
+                elif [ "${OPERATION}" == "test" ]; then
+                    test_result "${OS}" "${RELEASE}" "${I18N}" "${URL}" "SKIP"
+                fi
+            done
+        elif [[ "${OS}" == "macos" ]]; then
+            validate_release releases_
+            (get_)
+        elif [ "${OS}" == "ubuntu-server" ]; then
+            validate_release releases_
+            (get_)
+        elif [[ "${OS}" == *ubuntu* ]]; then
+            validate_release releases_
+            (get_)
+        else
+            validate_release releases_
+            URL=$(get_ | cut -d' ' -f1 | head -n 1)
+            if [ "${OPERATION}" == "show" ]; then
+                test_result "${OS}" "${RELEASE}" "${EDITION}" "${URL}"
+            elif [ "${OPERATION}" == "test" ]; then
+                CHECK=$(web_check "${URL}" && echo "PASS" || echo "FAIL")
+                test_result "${OS}" "${RELEASE}" "${EDITION}" "${URL}" "${CHECK}"
+            fi
+        fi
+    done
+}
+
+function check_hash() {
+    local iso=""
+    local hash=""
+    local hash_algo=""
+    if [ "${OPERATION}" == "download" ]; then
+        iso="${1}"
+    else
+        iso="${VM_PATH}/${1}"
+    fi
+    hash="${2}"
+    # Guess the hash algorithm by the hash length
+    case ${#hash} in
+        32) hash_algo=md5sum;;
+        40) hash_algo=sha1sum;;
+        64) hash_algo=sha256sum;;
+        128) hash_algo=sha512sum;;
+        *) echo $"WARNING! Can't guess hash algorithm, not checking ${iso} hash."
+            return;;
+    esac
+    echo -n $"Checking ${iso} with ${hash_algo}... "
+    if ! echo "${hash} ${iso}" | ${hash_algo} --check --status; then
+        echo $"ERROR!"
+        echo $"${iso} doesn't match ${hash}. Try running 'quickget' again."
+        exit 1
+    else
+        echo $"Good!"
+    fi
+}
+
+# Download a file from the web and pipe it to stdout
+function web_pipe() {
+    curl --disable --silent --location "${1}"
+}
+
+# Download a JSON file from the web and pipe it to stdout
+function web_pipe_json() {
+     curl --disable --silent --location --header "Accept: application/json" "${1}"
+}
+
+# Download a file from the web
+function web_get() {
+    local CHECK=""
+    local HEADERS=()
+    local URL="${1}"
+    local DIR="${2}"
+    local FILE=""
+    local USER_AGENT="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
+
+    if [ -n "${3}" ]; then
+        FILE="${3}"
+    else
+        FILE="${URL##*/}"
+    fi
+
+    # Process any URL redirections after the file name has been extracted
+    URL=$(web_redirect "${URL}")
+
+    # Process any headers
+    while (( "$#" )); do
+        if [ "${1}" == "--header" ]; then
+            HEADERS+=("${1}" "${2}")
+            shift 2
+        else
+            shift
+        fi
+    done
+
+    # Test mode for ISO
+    if [ "${OPERATION}" == "show" ]; then
+        test_result "${OS}" "${RELEASE}" "${EDITION}" "${URL}"
+        exit 0
+    elif [ "${OPERATION}" == "test" ]; then
+        CHECK=$(web_check "${URL}" && echo "PASS" || echo "FAIL")
+        test_result "${OS}" "${RELEASE}" "${EDITION}" "${URL}" "${CHECK}"
+        exit 0
+    elif [ "${OPERATION}" == "download" ]; then
+        DIR="$(pwd)"
+    fi
+
+    if [ "${DIR}" != "$(pwd)" ] && ! mkdir -p "${DIR}" 2>/dev/null; then
+        error_unable_to_create_dir
+    fi
+
+    if [[ ${OS} != windows && ${OS} != macos && ${OS} != windows-server ]]; then
+        echo $"Downloading ${PRETTY} ${RELEASE} ${EDITION}"
+        echo $"- URL: ${URL}"
+        echo "- PATH: ${PWD}/${DIR}/${FILE}"
+    fi
+
+    if ! curl --disable --progress-bar --location --output "${DIR}/${FILE}" --continue-at - --user-agent "${USER_AGENT}" "${HEADERS[@]}" -- "${URL}"; then
+        echo $"ERROR! Failed to download ${URL} with curl."
+        rm -f "${DIR}/${FILE}"
+    fi
+}
+
+# checks if a URL needs to be redirected and returns the final URL
+function web_redirect() {
+    local REDIRECT_URL=""
+    local URL="${1}"
+    # Check for URL redirections
+    # Output to nonexistent directory so the download fails fast
+    REDIRECT_URL=$(curl --disable --silent --location --fail --write-out '%{url_effective}' --output /var/cache/${RANDOM}/${RANDOM} "${URL}")
+    if [ "${REDIRECT_URL}" != "${URL}" ]; then
+        echo "${REDIRECT_URL}"
+    else
+        echo "${URL}"
+    fi
+}
+
+# checks if a URL is reachable
+function web_check() {
+    local HEADERS=()
+    local URL="${1}"
+    # Process any headers
+    while (( "$#" )); do
+        if [ "${1}" == "--header" ]; then
+            HEADERS+=("${1}" "${2}")
+            shift 2
+        else
+            shift
+        fi
+    done
+    curl --disable --silent --location --head --output /dev/null --fail --connect-timeout 30 --max-time 30 --retry 3 "${HEADERS[@]}" "${URL}"
+}
+
+function zsync_get() {
+    local CHECK=""
+    local DIR="${2}"
+    local FILE="${1##*/}"
+    local OUT=""
+    local URL="${1}"
+    # Test mode for ISO
+    if [ "${OPERATION}" == "show" ]; then
+        test_result "${OS}" "${RELEASE}" "${EDITION}" "${URL}"
+        exit 0
+    elif [ "${OPERATION}" == "test" ]; then
+        CHECK=$(web_check "${URL}" && echo "PASS" || echo "FAIL")
+        test_result "${OS}" "${RELEASE}" "${EDITION}" "${URL}" "${CHECK}"
+        exit 0
+    elif command -v zsync &>/dev/null; then
+        if [ -n "${3}" ]; then
+            OUT="${3}"
+        else
+            OUT="${FILE}"
+        fi
+
+        if ! mkdir -p "${DIR}" 2>/dev/null; then
+            error_unable_to_create_dir
+        fi
+        echo $"Downloading ${PRETTY} ${RELEASE} ${EDITION} from ${URL}"
+        # Only force http for zsync - not earlier because we might fall through here
+        if ! zsync "${URL/https/http}.zsync" -i "${DIR}/${OUT}" -o "${DIR}/${OUT}" 2>/dev/null; then
+            echo $"ERROR! Failed to download ${URL/https/http}.zsync"
+            exit 1
+        fi
+
+        if [ -e "${DIR}/${OUT}.zs-old" ]; then
+            rm "${DIR}/${OUT}.zs-old"
+        fi
+    else
+        echo $"INFO: zsync not found, falling back to curl"
+        if [ -n "${3}" ]; then
+            web_get "${1}" "${2}" "${3}"
+        else
+            web_get "${1}" "${2}"
+        fi
+    fi
+}
+
+function make_vm_config() {
+    local CONF_FILE=""
+    local IMAGE_FILE=""
+    local ISO_FILE=""
+    #local IMAGE_TYPE=""
+    #local GUEST=""
+    if [ "${OPERATION}" == "download" ]; then
+        exit 0
+    fi
+    IMAGE_FILE="${1}"
+    ISO_FILE="${2}"
+
+    if [ "${OS}" == 'custom' ]; then
+        GUEST="${CUSTOM_OS}"
+        IMAGE_TYPE="${CUSTOM_IMAGE_TYPE}"
+    fi
+    if [ -z "$GUEST" ]; then
+        GUEST="linux"
+    fi
+    if [ -z "${IMAGE_TYPE}" ]; then
+        IMAGE_TYPE="iso"
+    fi
+
+    CONF_FILE="${VM_PATH}.conf"
+
+    if [ ! -e "${CONF_FILE}" ]; then
+        echo $"Making ${CONF_FILE}"
+        cat << EOF > "${CONF_FILE}"
+#!${QUICKEMU} --vm
+guest_os="${GUEST}"
+disk_img="${VM_PATH}/disk.qcow2"
+${IMAGE_TYPE}="${VM_PATH}/${IMAGE_FILE}"
+EOF
+        echo $" - Setting ${CONF_FILE} executable"
+        chmod u+x "${CONF_FILE}"
+        if [ -n "${ISO_FILE}" ]; then
+            echo "fixed_iso=\"${VM_PATH}/${ISO_FILE}\"" >> "${CONF_FILE}"
+        fi
+
+        # OS specific tweaks
+        #. "${TOactions}/${OS}"
+        #specific_tweaks 2>/dev/null
+        if [ "${OS}" == "ubuntu" ] && [[ ${RELEASE} == *"daily"*  ]]; then
+            # Minimum to install lobster testing is 18GB but 32GB are allocated for headroom
+            echo "disk_size=\"32G\"" >> "${CONF_FILE}"
+        fi
+
+        if [[ "${OS}" == "windows"* ]]; then
+            echo "disk_size=\"64G\"" >> "${CONF_FILE}"
+        fi
+
+        # Enable TPM for Windows 11 and Windows Server 2022
+        if [[ "${OS}" == "windows" && "${RELEASE}" == "11" || "${OS}" == "windows-server" && "${RELEASE}" == "2022" ]]; then
+            echo "tpm=\"on\"" >> "${CONF_FILE}"
+            echo "secureboot=\"off\"" >> "${CONF_FILE}"
+        fi
+        if [ "${OPERATION}" == ui ]; then
+            echo
+            gum confirm $"Run new ${OS} VM?" && quickemu --vm "${CONF_FILE}"
+        fi
+    fi
+    echo -e $"\nTo start your ${PRETTY} virtual machine run:"
+    if [ "${OS}" == "slint" ]; then
+        echo -e $"    quickemu --vm ${CONF_FILE}\nTo start Slint with braille support run:\n    quickemu --vm --braille --display sdl ${CONF_FILE}"
+    else
+        echo "    quickemu --vm ${CONF_FILE}"
+    fi
+    echo
+    unset GUEST IMAGE_TYPE
+    exit 0
+}
+
+function open_homepage() {
+    # shellcheck source=actions/alpine
+    . "actions/${1}"
+    local XDG_OPEN=""
+    if [ -z "${PRETTY}" ]; then
+        error_specify_os
+    else
+        # shellcheck disable=SC2034
+        XDG_OPEN=$(xdg-open "${HOMEPAGE}" || sensible-browser "${HOMEPAGE}" || x-www-browser "${HOMEPAGE}" || gnome-open "${HOMEPAGE}")
+        exit 0
+    fi
+}
+
+function create_vm() {
+    # shellcheck disable=SC2206
+    local URL_HASH=(${1// / })
+    local URL="${URL_HASH[0]}"
+    local HASH="${URL_HASH[1]}"
+    local ISO="${URL##*/}"
+    #echo "${URL}"
+    #echo "${ISO}"
+    #echo "${HASH}"
+    web_get "${URL}" "${VM_PATH}"
+    if [ -n "${HASH}" ]; then
+        check_hash "${ISO}" "${HASH}"
+    fi
+    # shellcheck disable=SC2076
+    . "${TOactions}/${OS}"
+    "distro_specific" 2>/dev/null
+    make_vm_config "${ISO}"
+}
+
+function create_config() {
+    local VM_PATH="${1}"
+    local INPUT="${2}"
+    local FIXED_ISO=""
+
+    OS="custom"
+    if ! mkdir "${VM_PATH}" 2>/dev/null; then
+        echo $"WARNING! This will overwrite content of directory: ${VM_PATH}"
+    fi
+    if [[ "${INPUT}" == "http://"* ]] || [[ "${INPUT}" == "https://"* ]]; then
+        INPUT="$(web_redirect "${INPUT}")"
+        if [[ "${INPUT}" == *".iso" ]] || [[ "${INPUT}" == *".img" ]]; then
+            web_get "${INPUT}" "${VM_PATH}"
+            INPUT="${INPUT##*/}"
+        else
+            error_not_supported_image
+        fi
+    fi
+    function moving_image() {
+        echo $"Moving image to VM dir"
+    }
+    if [ ! -f "${INPUT}" ]; then
+        echo $"ERROR! The input must be a valid URL or path to an ISO, IMG, or QCOW2 file."
+        echo "#TODO exit 1"
+    elif [[ "${INPUT}" == *".iso" ]]; then
+        moving_image && mv "${INPUT}" "${VM_PATH}"
+        CUSTOM_IMAGE_TYPE="iso"
+    elif [[ "${INPUT}" == *".img" ]]; then
+        moving_image && mv "${INPUT}" "${VM_PATH}"
+        CUSTOM_IMAGE_TYPE="img"
+    elif [[ "${INPUT}" == *".qcow2" ]]; then
+        moving_image && mv "${INPUT}" "${VM_PATH}/disk.qcow2"
+        CUSTOM_IMAGE_TYPE="qcow2"
+    else
+        error_not_supported_image
+    fi
+    INPUT="$(basename "${INPUT}")"
+
+    echo $"Creating custom VM config for ${INPUT##*/}."
+    case "${INPUT,,}" in
+        *freebsd*) CUSTOM_OS="freebsd";;
+        *kolibrios*) CUSTOM_OS="kolibrios";;
+        *reactos*) CUSTOM_OS="reactos";;
+        *windows-server*|*eval_oemret_x*|*eval_x*) CUSTOM_OS="windows-server";;
+        *windows*|win*)
+            CUSTOM_OS="windows"
+            # Older windows 10 ISOs use the year followed by the month rather than the year & half). Match any text for language.
+            if [ "${3}" != "--disable-unattended" ] && ( [ "${3}" == "--unattended" ] || grep -E -q 'Win(10|11)_([0-9]{2}H(1|2)|[0-9]{4})_[^.]*?(x64|x32)(v[0-9])?.iso' <<< "${INPUT}" ); then
+                echo $"Creating unattended Windows installation files. To disable, pass --disable-unattended"
+                echo
+                echo $"Downloading VirtIO drivers..."
+                web_get "https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso" "${VM_PATH}"
+                FIXED_ISO="virtio-win.iso"
+                rm -f "${VM_PATH}/unattended.iso"
+                unattended_windows "${VM_PATH}"
+            fi
+            ;;
+        *) CUSTOM_OS="linux";;
+    esac
+    echo -e $"Selecting OS: ${CUSTOM_OS}. If this is incorrect, please modify the config file to include the correct OS.\n"
+    make_vm_config "${INPUT}" "${FIXED_ISO}"
+}
+
+# Use command -v command to check if quickemu is in the system's PATH and
+# fallback to checking if quickemu is in the current directory.
+function resolve_quickemu() {
+    command -v quickemu || \
+    if [ -x "./quickemu" ]; then
+        echo "$(pwd)/quickemu"
+    else
+        echo $"quickemu not found" >&2
+        exit 1
+    fi
+}
+
+run_itself() {
+    if [ -n "${1}" ]; then
+        OS="${1,,}"
+    else
+        error_specify_os
+    fi
+
+    os_supported
+    # shellcheck source=actions/alpine
+    . "${TOactions}/${OS}"
+
+    if [ -n "${2}" ]; then
+        RELEASE="${2}"
+        VM_PATH="${OS}-${RELEASE}"
+        # If the OS has an editions_() function, use it.
+        if [[ $(type -t editions_) == function ]]; then
+            validate_release releases_
+            EDITIONS=$(editions_)
+            if [ -n "${3}" ]; then
+                EDITION="${3}"
+                if [[ ! "${EDITIONS[*]}" = *"${EDITION}"* ]]; then
+                    echo -e $"ERROR! ${EDITION} is not a supported ${PRETTY} edition\n"
+                    echo -n $' - Supported editions: '
+                    for EDITION in "${EDITIONS[@]}"; do
+                        echo -n "${EDITION} "
+                    done
+                    echo ""
+                    exit 1
+                fi
+            else
+                show_os_info "${OS}"
+                echo -e $"\nERROR! You must specify an edition."
+                exit 1
+            fi
+            handle_missing
+            VM_PATH="${OS}-${RELEASE}-${EDITION}"
+            create_vm "$("get_" "${EDITION}")"
+        elif [ "${OS}" == "macos" ]; then
+            # macOS doesn't use create_vm()
+            validate_release releases_
+            get_
+        elif [[ "${OS}" == *"ubuntu-server"* ]]; then
+            # (Comes before regular Ubuntu, or the code tries to download the desktop) #
+            # Ubuntu doesn't use create_vm()
+            validate_release releases_
+            get_
+        elif [[ "${OS}" == *"ubuntu"* ]]; then
+            # Ubuntu doesn't use create_vm()
+            validate_release releases_
+            get_
+        elif [[ "${OS}" == "windows"* ]]; then
+            I18N="English International"
+            languages_"${OS}"
+            if [ -n "${3}" ]; then
+                I18N="${3}"
+                if [[ ! "${I18NS[*]}" = *"${I18N}"* ]]; then
+                    error_not_supported_lang
+                fi
+                VM_PATH="$(echo "${OS}-${RELEASE}-${I18N// /-}" | tr -d '()')"
+            fi
+            validate_release releases_
+            get_
+        else
+            validate_release releases_
+            create_vm "$("get_")"
+        fi
+    else
+        error_specify_release
+    fi
+}
+
+# shellcheck disable=SC2046
+function run_ui() {
+    if ! command -v gum &> /dev/null; then
+        echo $"gum could not be found, please install it first"
+        exit 1
+    fi
+    OS=$(gum filter --height=17 --header="Select an OS:" $(os_support))
+    #os_info "${OS}" > "$TMPFILE"
+    # shellcheck source=actions/alpine
+    . "${TOpublic}/${OS}"
+    RELEASE=$(gum filter --height=9 --header="Select $OS release:" ${RELEASES})
+    if declare -F editions_ > /dev/null; then
+        EDITION=$(gum filter --height=9 --header="Select $OS  $RELEASE edition:" ${EDITIONS})
+        echo ''
+        run_itself "${OS}" "${RELEASE}" "${EDITION}"
+    else
+        echo ''
+        run_itself "${OS}" "${RELEASE}"
+    fi
+}
+
+function help_message() {
+    #shellcheck disable=SC2016
+    printf '
+                                _
+               __ _  __ _  ____| |_
+              / _` |/ _` |/ _ \   _|
+             | (_| | (_| |  __/| |_
+              \__, |\__, |\___|\___|
+                 |_| |___/ v%s, using curl %s
+--------------------------------------------------------------------------------
+ Project - https://github.com/quickemu-project/quickemu
+ Discord - https://wimpysworld.io/discord
+--------------------------------------------------------------------------------
+
+Usage:
+  quickget <os> <release> [edition]
+  quickget ubuntu 22.04
+
+Advanced usage:
+  quickget <arg> [path] <os> [release] [edition]
+  quickget --download ubuntu 22.04
+
+Arguments:
+  --download      <os> <release> [edition] : Download image; no VM configuration
+  --create-config <os> [path/url] [flags]  : Create VM config for an OS image
+  --open-homepage <os>                     : Open homepage for the OS
+  --show          [os]                     : Show OS information
+  --version                                : Show version
+  --help                                   : Show this help message
+  --ui                                     : Run in UI mode
+------------------------------------ Flags -------------------------------------
+--create-config:
+  --disable-unattended                     : Force quickget not to set up an unattended installation
+-------------------------- For testing & development ---------------------------
+  --url           [os] [release] [edition] : Show image URL(s)
+  --check         [os] [release] [edition] : Check image URL(s)
+  --list                                   : List all supported systems
+  --list-csv                               : List everything in csv format
+  --list-json                              : List everything in json format
+--------------------------------------------------------------------------------
+
+Supported Operating Systems:\n\n' "$(${QUICKEMU} --version)" "${CURL_VERSION}"
+    os_support | fmt -w 80
+}
+
+trap cleanup EXIT
+
+if ((BASH_VERSINFO[0] < 4)); then
+    echo $"Sorry, you need bash 4.0 or newer to run this script."
+    exit 1
+fi
+
+QUICKEMU=$(resolve_quickemu)
+I18NS=()
+OPERATION=""
+CURL=$(command -v curl)
+if [ ! -x "${CURL}" ]; then
+    echo $"ERROR! curl not found. Please install curl"
+    exit 1
+fi
+CURL_VERSION=$("${CURL}" --version | head -n 1 | cut -d' ' -f2)
+
+#TODO: Deprecate `list`, `list_csv`, and `list_json` in favor of `--list`, `--list-csv`, and `--list-json`
+case "${1}" in
+    --ui)
+        OPERATION="ui"
+        shift
+        run_ui
+        ;;
+    --download|-download)
+        OPERATION="download"
+        shift
+        ;;
+    --create-config|-create-config)
+        OPERATION="config"
+        shift
+        create_config "${@}"
+        ;;
+    --open-homepage|-open-homepage)
+        shift
+        open_homepage "${1}"
+        ;;
+    --show|-show)
+        shift
+        if [ -z "${1}" ]; then
+            for OS in $(os_support); do
+                show_os_info "${OS}"
+            done
+        else
+            show_os_info "${1}"
+        fi
+        exit 0;;
+    --version|-version)
+        WHERE=$(dirname "${BASH_SOURCE[0]}")
+        "${WHERE}/quickemu" --version
+        exit 0;;
+    --help|-help|--h|-h)
+        help_message
+        exit 0;;
+    --url|-url)
+        OPERATION="show"
+        shift
+        if [ -z "${1}" ]; then
+            for OS in $(os_support); do
+                (test_all "${OS}")
+            done
+            exit 0
+        elif [ -z "${2}" ]; then
+            test_all "${1}"
+            exit 0
+        fi;;
+    --check|-check)
+        OPERATION="test"
+        shift
+        if [ -z "${1}" ]; then
+            for OS in $(os_support); do
+                (test_all "${OS}")
+            done
+            exit 0
+        elif [ -z "${2}" ]; then
+            test_all "${1}"
+            exit 0
+        fi;;
+    --list-csv|-list-csv|list|list_csv) list_csv;;
+    --list-json|-list-json|list_json) list_json;;
+    --list|-list) list_supported;;
+    -*) error_not_supported_argument;;
+esac
+
+run_itself "$@"
+
+# vim:tabstop=4:shiftwidth=4:expandtab
