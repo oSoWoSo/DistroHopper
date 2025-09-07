@@ -1,0 +1,31 @@
+# Template file for 'dietpi'
+OSNAME="dietpi"
+PRETTY="DietPi"
+BASEDOF="Debian"
+DESCRIPTION="Highly optimised minimal Debian OS"
+HOMEPAGE="https://dietpi.com"
+CREDENTIALS="-"
+
+
+RELEASES="uefi bios"
+EDITIONS="Trixie Bullseye Bookworm"
+
+function get_() {
+    local HASH=""
+    local ISO=""
+    local URL="https://dietpi.com/downloads/images"
+    if [ "${RELEASE}" == 'bios' ]; then
+        local ISO="DietPi_VM-x86_64-${EDITION}_Installer.iso"
+    elif [ "${RELEASE}" == 'uefi' ]; then
+        local ISO="DietPi_VM-UEFI-x86_64-${EDITION}_Installer.iso"
+    fi
+    HASH=$(wget -q -O- "${URL}/SHASUMS.txt" | grep "${ISO}" | cut -d' ' -f1)
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+function specific_tweaks() {
+    if [[ "${RELEASE}" == 'bios' ]]; then
+        echo "boot=\"legacy\"" >> "${CONF_FILE}"
+    fi
+}
+

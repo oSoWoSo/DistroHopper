@@ -1,0 +1,20 @@
+# Template file for 'biglinux'
+OSNAME="biglinux"
+PRETTY="BigLinux"
+BASEDOF="Manjaro"
+DESCRIPTION="Is the right choice if you want to have an easy and enriching experience with Linux. It has been perfected over more than 19 years, following our motto: 'In search of the perfect system'"
+HOMEPAGE="https://www.biglinux.com.br"
+CREDENTIALS="-"
+
+
+RELEASES="2025-05-12"
+EDITIONS="k614"
+
+function get_() {
+    local HASH=""
+    local ISO="biglinux_${RELEASE}_${EDITION}.iso"
+    local URL="https://iso.biglinux.com.br"
+    HASH=$(web_pipe "${URL}/${ISO}.md5" | grep -Eo '[[:alnum:]]{32}')
+    echo "${URL}/${ISO} ${HASH}"
+}
+

@@ -1,0 +1,24 @@
+# Template file for 'endeavouros'
+OSNAME="endeavouros"
+PRETTY="EndeavourOS"
+BASEDOF="Arch"
+DESCRIPTION="Provides an Arch experience without the hassle of installing it manually for both x86_64 and ARM systems"
+HOMEPAGE="https://endeavouros.com"
+CREDENTIALS="-"
+
+
+RELEASES="mercury-neo-2025.03.19 mercury-2025.02.08 gemini-2024.04.20 galileo-neo-2024.01.25 galileo-11-2023"
+
+
+function get_() {
+    local ENDEAVOUR_RELEASES=""
+    local HASH=""
+    local ISO=""
+    local URL="https://mirror.alpix.eu/endeavouros/iso"
+    # Find EndeavourOS releases from mirror, pick one matching release
+    ENDEAVOUR_RELEASES=$(web_pipe "${URL}/" | grep -o '<a href="[^"]*.iso">' | sed 's/^<a href="//;s/.iso">.*//' | grep -v 'x86_64')
+    ISO="$(echo "${ENDEAVOUR_RELEASES}" | grep -i "${RELEASE}").iso"
+    HASH=$(web_pipe "${URL}/${ISO}.sha512sum" | cut -d' ' -f1)
+    echo "${URL}/${ISO} ${HASH}"
+}
+
