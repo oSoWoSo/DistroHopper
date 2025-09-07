@@ -1,0 +1,28 @@
+vxlinux
+
+vxlinux 4.2:                         https://mega.nz/folder/SxwFTCTZ#s_qwDWrSWr7ZSTBVJC9Q_g/file/vx-4.2.iso
+
+# Template file for 'vxlinux'
+OSNAME="vxlinux"
+PRETTY="VX Linux"
+BASEDOF="Void"
+DESCRIPTION="Pre-configured, secure systemd-free Plasma desktop with focus on convenience, performance and simplicity. Based on the excellent Void Linux"
+HOMEPAGE="https://vxlinux.org"
+CREDENTIALS="-"
+
+
+RELEASES="4.2"
+
+
+function get_() {
+    local HASH=""
+    local ISO="vx-${RELEASE}.iso"
+    # Newer ISOs are only on mega.nz
+    # TODO Needs to be checked manually? without mega client?
+    local URL="https://mega.nz/folder/SxwFTCTZ#s_qwDWrSWr7ZSTBVJC9Q_g/file"
+    #local URL="https://github.com/VX-Linux/main/releases/download/${RELEASE}"
+    HASH=$(web_pipe "${URL}/vx-${RELEASE}.md5" | cut -d' ' -f1)
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+
