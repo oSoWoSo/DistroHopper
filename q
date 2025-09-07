@@ -1,8 +1,10 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 # Author: zenobit
 # Description: Uses gum to provide a simple TUI for VMs using qemu
 # Based of: https://github.com/quickemu-project/quickemu
 # License MIT
+
+#set -eu
 
 ## NEEDED
 
@@ -19,9 +21,12 @@ define_variables() {
 		echo 'You are missing gum! Exiting...' && exit 1
 	fi
 	if ! command -v quickemu >/dev/null 2>&1; then
-		gum style --foreground 1 "You are missing quickemu!"
+		if ! command -v ./quickemu >/dev/null 2>&1; then
+		  gum style --foreground 1 'You are missing quickemu!'
+		else
+		  echo 'Using quickemu in current directory'
+		fi
 	fi
-	QUICKGET=$(command -v quickget)
 	#export BORDER="rounded"
 	color2=$(( RANDOM % 255 + 1 ))
 	export BORDERS_FOREGROUND="$color"
@@ -41,18 +46,18 @@ define_variables() {
 	# Set traps to catch the signals and exit gracefully
 	trap 'exit' INT
 	trap 'exit' EXIT
-	if ! command -v quickemu >/dev/null 2>&1; then
-		echo 'You are missing quickemu...!'
-	fi
-	QUICKGET=$(command -v quickget)
-	if ! command -v gum >/dev/null 2>&1; then
-		echo 'You are missing gum...!'
-	fi
 	# just for development in termux
 	if command -v termux-info >/dev/null 2>&1; then
 		echo "Running in termux!"
-		TMP="$(pwd)/tmp"
+		TERMUX=1
+		tmpdir="$(pwd)/tmp"
 	fi
+
+  if [ "$TERMUX" == 1 ]; then
+    QUICKGET=./quickget
+  else
+    QUICKGET=quickget
+  fi
 	# use configdir
 	if [ -f "${configdir}/border" ]; then
 		BORDER="$(cat "${configdir}"/border)"
@@ -73,18 +78,18 @@ define_variables() {
 
 generate_supported() {
 	echo "Extracting OS Editions and Releases..."
-	rm -rf /tmp/distros
-	mkdir -p /tmp/distros
-	"$QUICKGET" | awk 'NR==2,/zorin/' | cut -d':' -f2 | grep -o '[^ ]*' > /tmp/supported
+	rm -rf "$tmpdir/distros"
+	mkdir -p "$tmpdir/distros"
+	"$QUICKGET" | awk 'NR==2,/zorin/' | cut -d':' -f2 | grep -o '[^ ]*' > $tmpdir/supported
 	while read -r get_name; do
 		supported=$($QUICKGET "$get_name" | awk 'NF && NR>=5 && NR<=8')
 		echo "$get_name"
-		echo "$supported" > "/tmp/distros/${get_name}"
-	done < /tmp/supported
+		echo "$supported" > "$tmpdir/distros/${get_name}"
+	done < $tmpdir/supported
 }
 
 if_needed() {
-	if [ ! -f "${tmpdir}"/supported ]; then
+	if [ ! -f "$tmpdir"/supported ]; then
 		generate_supported
 	fi
 }
@@ -109,7 +114,7 @@ If is posible choose more options use TAB for highliting desired and then ENTER
 
 Config files are stored at $configdir
 
-As temp folder is used $TMP
+As temp folder is used $tmpdir
 "
 }
 
@@ -136,7 +141,7 @@ gum_choose_edition() {
 
 gum_filter_os() {
 	os=$(gum filter < "$tmpdir/supported")
-	choices=$(cat "/tmp/distros/${os}")
+	choices=$(cat "$tmpdir/distros/${os}")
 }
 
 gum_filter_release() {
