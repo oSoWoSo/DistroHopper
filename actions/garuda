@@ -1,0 +1,29 @@
+# Template file for 'garuda'
+OSNAME="garuda"
+PRETTY="Garuda Linux"
+ICON=""
+BASEDOF="Arch"
+HOMEPAGE="https://garudalinux.org"
+DESCRIPTION="Feature rich and easy to use Linux distribution"
+CREDENTIALS="-"
+
+function releases_() {
+    echo latest
+}
+
+function editions_() {
+    echo $(web_pipe "https://iso.builds.garudalinux.org/iso/latest/garuda/" | grep -oP '(?<=href=")[^"]*' | tail --lines +2 | cut -d'/' -f1)
+}
+
+function get_() {
+    local HASH=""
+    local ISO=""
+    local URL="https://iso.builds.garudalinux.org/iso/latest/garuda"
+    ISO=${EDITION}/latest.iso
+    HASH="$(web_pipe "${URL}/${ISO}.sha256" | cut -d' ' -f1)"
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+function specific_tweaks() {
+  echo "disk_size=\"32G\"" >> "${CONF_FILE}"
+}
