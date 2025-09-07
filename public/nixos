@@ -1,0 +1,34 @@
+# Template file for 'nixos'
+OSNAME="nixos"
+PRETTY="NixOS"
+BASEDOF="-"
+DESCRIPTION="Linux distribution based on Nix package manager, tool that takes a unique approach to package management and system configuration"
+HOMEPAGE="https://nixos.org"
+CREDENTIALS="-"
+
+
+RELEASES="unstable 25.05 24.11"
+EDITIONS="plasma minimal gnome"
+
+function get_() {
+    local HASH=""
+    # Adapt the plasma edition according to the NixOS release
+    case "${EDITION}" in
+        plasma)
+            if [ "${RELEASE}" == "23.11" ]; then
+                EDITION+="5"
+            else
+                EDITION+="6"
+            fi
+            ;;
+    esac
+    local ISO="latest-nixos-${EDITION}-x86_64-linux.iso"
+    local URL="https://channels.nixos.org/nixos-${RELEASE}"
+    HASH=$(web_pipe "${URL}/${ISO}.sha256" | cut -d' ' -f1)
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+function specific_tweaks() {
+  echo "disk_size=\"32G\"" >> "${CONF_FILE}"
+}
+

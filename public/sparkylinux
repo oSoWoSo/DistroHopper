@@ -1,0 +1,26 @@
+# Template file for 'sparkylinux'
+OSNAME="sparkylinux"
+PRETTY="SparkyLinux"
+BASEDOF="Debian"
+DESCRIPTION="Fast, lightweight and fully customizable operating system which offers several versions for different use cases"
+HOMEPAGE="https://sparkylinux.org"
+CREDENTIALS="-"
+
+
+RELEASES="7.7"
+EDITIONS="xfce minimalgui minimalcli mate lxqt kde"
+
+function get_() {
+    local HASH=""
+    local ISO=""
+    local URL=""
+    ISO="sparkylinux-${RELEASE}-x86_64-${EDITION}.iso"
+    case ${EDITION} in
+        minimalcli) URL="https://sourceforge.net/projects/sparkylinux/files/cli";;
+        minimalgui) URL="https://sourceforge.net/projects/sparkylinux/files/base";;
+        *) URL="https://sourceforge.net/projects/sparkylinux/files/${EDITION}";;
+    esac
+    HASH=$(web_pipe "${URL}/${ISO}.allsums.txt" | head -n 2 | grep 'iso' | cut -d' ' -f1)
+    echo "${URL}/${ISO}" "${HASH}"
+}
+

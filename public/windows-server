@@ -1,0 +1,40 @@
+# Template file for 'windows-server'
+OSNAME="windows-server"
+PRETTY="Windows Server"
+BASEDOF="-"
+DESCRIPTION="Platform for building an infrastructure of connected applications, networks, and web services"
+HOMEPAGE="https://www.microsoft.com/en-us/windows-server"
+CREDENTIALS="-"
+GUEST="windows-server"
+
+RELEASES=""
+
+
+function get_() {
+    if [ "${OS}" == "windows-server" ]; then
+        download_windows_server "windows-server-${RELEASE}"
+    else
+        download_windows_workstation "${RELEASE}"
+    fi
+
+    if [ "${OPERATION}" == "download" ]; then
+        exit 0
+    fi
+
+    echo "Downloading VirtIO drivers..."
+    web_get "https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso" "${VM_PATH}"
+
+    rm -f "${VM_PATH}/unattended.iso"
+    case ${RELEASE} in
+        10|11)
+            unattended_windows "${VM_PATH}"
+            ;;
+    esac
+
+    if [ -n "${FILE_NAME}" ]; then
+        make_vm_config "${FILE_NAME}" "virtio-win.iso"
+    else
+        make_vm_config "windows-${RELEASE}.iso" "virtio-win.iso"
+    fi
+}
+
