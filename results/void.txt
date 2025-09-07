@@ -1,0 +1,36 @@
+void
+
+void current glibc:                  https://repo-default.voidlinux.org/live/current/void-live-x86_64-20250202-base.iso
+void current musl:                   https://repo-default.voidlinux.org/live/current/void-live-x86_64-musl-20250202-base.iso
+void current xfce-glibc:             https://repo-default.voidlinux.org/live/current/void-live-x86_64-20250202-xfce.iso
+void current xfce-musl:              https://repo-default.voidlinux.org/live/current/void-live-x86_64-musl-20250202-xfce.iso
+
+# Template file for 'void'
+OSNAME="void"
+PRETTY="Void Linux"
+BASEDOF="-"
+DESCRIPTION="General purpose operating system. Its package system allows you to quickly install, update and remove software; software is provided in binary packages or can be built directly from sources"
+HOMEPAGE="https://voidlinux.org"
+CREDENTIALS="anon:voidlinux root:voidlinux"
+
+
+RELEASES="current"
+EDITIONS="xfce-musl xfce-glibc musl glibc"
+
+function get_() {
+    local DATE=""
+    local HASH=""
+    local ISO=""
+    local URL="https://repo-default.voidlinux.org/live/current"
+    DATE=$(web_pipe "$URL" | grep "^<a href=\"void-live-x86_64-" | cut -d'-' -f5 | tail -1)
+    case ${EDITION} in
+        glibc) ISO="void-live-x86_64-${DATE}-base.iso";;
+        musl) ISO="void-live-x86_64-musl-${DATE}-base.iso";;
+        xfce-glibc) ISO="void-live-x86_64-${DATE}-xfce.iso";;
+        xfce-musl) ISO="void-live-x86_64-musl-${DATE}-xfce.iso";;
+    esac
+    HASH="$(web_pipe "${URL}/sha256sum.txt" | grep "${ISO}" | cut -d' ' -f4)"
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+

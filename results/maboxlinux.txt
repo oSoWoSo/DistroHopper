@@ -1,0 +1,25 @@
+maboxlinux
+
+maboxlinux latest:                   https://cfhcable.dl.sourceforge.net/project/mabox-linux/25.04/linux61/mabox-linux-25.04-Istredd-250430-linux61.iso
+
+# Template file for 'maboxlinux'
+OSNAME="maboxlinux"
+PRETTY="Mabox Linux"
+BASEDOF="Manjaro"
+DESCRIPTION="Lightweight, functional and easy to customize Openbox desktop"
+HOMEPAGE="https://maboxlinux.org"
+CREDENTIALS="-"
+
+
+RELEASES="latest"
+
+
+function get_() {
+    local HASH=""
+    local URL=""
+    URL="https://sourceforge.net/projects/mabox-linux/files/${RELEASE}/download"
+    URL="$(web_redirect "${URL}" | cut -d? -f1)"
+    echo "${URL} ${HASH}"
+}
+
+

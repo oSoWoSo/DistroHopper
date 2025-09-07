@@ -1,0 +1,24 @@
+solus
+
+
+# Template file for 'solus'
+OSNAME="solus"
+PRETTY="Solus"
+BASEDOF="-"
+DESCRIPTION="Designed for home computing. Every tweak enables us to deliver a cohesive computing experience"
+HOMEPAGE="https://getsol.us"
+CREDENTIALS="-"
+
+
+RELEASES=""
+EDITIONS=""
+
+function get_() {
+    local HASH=""
+    local ISO="Solus-${EDITION}-Release-${RELEASE}.iso"
+    local URL="https://downloads.getsol.us/isos/${RELEASE}"
+    HASH=$(web_pipe "${URL}/${ISO}.sha256sum" | cut -d' ' -f1)
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+
