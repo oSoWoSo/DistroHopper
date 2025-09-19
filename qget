@@ -6,7 +6,7 @@
 # Latest cherrypick (or not) commit. Start from here...
 # https://github.com/quickemu-project/quickemu/tree/3da9edc9953340622db23be4661aefa4cd0632f2
 
-export TEXTDOMAIN=quickget
+export TEXTDOMAIN=qget
 if [[ -n $Q_DEBUG ]]; then
     export TEXTDOMAINDIR="${PWD}/locale"
 else
@@ -15,7 +15,7 @@ fi
 
 export LC_ALL=C
 #TODO: config file
-#TOshare="/usr/share/quickget"
+#TOshare="/usr/share/qget"
 TOshare="./"
 TOpublic="$TOshare/public"
 TOactions="$TOshare/actions"
@@ -55,7 +55,7 @@ function error_specify_os() {
     echo $"ERROR! You must specify an operating system."
     echo $"- Supported Operating Systems:"
     os_support | fmt -w $(tput cols)
-    echo -e $"\nTo see all possible arguments, use:\n   quickget -h  or  quickget --help"
+    echo -e $"\nTo see all possible arguments, use:\n   qget -h  or  qget --help"
     exit 1
 }
 
@@ -94,7 +94,7 @@ function error_not_supported_lang() {
 function error_not_supported_argument() {
     echo $"ERROR! Not supported argument"
     echo $"To see all possible arguments, use:"
-    echo $"   quickget -h  or  quickget --help"
+    echo $"   qget -h  or  qget --help"
     exit 1
 }
 
@@ -216,7 +216,7 @@ list_isos() {
              # If the OS has an editions_() function, use it.
             if [[ $(type -t editions_) == function ]]; then
                 for OPTION in $(editions_); do
-                    URL=$(./quickget -u "${OS}" "${RELEASE}" "${OPTION}")
+                    URL=$(./qget -u "${OS}" "${RELEASE}" "${OPTION}")
                     if [ -z "${URL}" ]; then
                         echo "${OS}|${RELEASE}|${OPTION}|${URL}"
                     else
@@ -226,7 +226,7 @@ list_isos() {
             elif [[ "${OS}" == "windows"* ]]; then
                 languages_
                 for OPTION in "${LANGS[@]}"; do
-                    #URL=$(./quickget -u ${OS} ${RELEASE} ${OPTION})
+                    #URL=$(./qget -u ${OS} ${RELEASE} ${OPTION})
                     if [ -n "${URL}" ]; then
                         echo "${OS}|${RELEASE}|${OPTION}|"
                     else
@@ -236,7 +236,7 @@ list_isos() {
             elif [[ "${OS}" == "macos" ]]; then
                 echo "${OS}|${RELEASE}|${OPTION}|"
             else
-                URL=$(./quickget -u "${OS}" "${RELEASE}")
+                URL=$(./qget -u "${OS}" "${RELEASE}")
                 if [ -z "${URL}" ]; then
                     echo "${OS}|${RELEASE}|${OPTION}|${URL}"
                 else
@@ -418,7 +418,7 @@ function check_hash() {
     echo -n $"Checking ${iso} with ${hash_algo}... "
     if ! echo "${hash} ${iso}" | ${hash_algo} --check --status; then
         echo $"ERROR!"
-        echo $"${iso} doesn't match ${hash}. Try running 'quickget' again."
+        echo $"${iso} doesn't match ${hash}. Try running 'qget' again."
         exit 1
     else
         echo $"Good!"
@@ -846,17 +846,17 @@ function help_message() {
               \__, |\__, |\___|\___|
                  |_| |___/ v%s, using curl %s
 --------------------------------------------------------------------------------
- Project - https://github.com/quickemu-project/quickemu
- Discord - https://wimpysworld.io/discord
+ Project - https://github.com/osowoso/distrohopper
+ Discord - https://discord.gg/UQRE3aNF
 --------------------------------------------------------------------------------
 
 Usage:
-  quickget <os> <release> [edition]
-  quickget ubuntu 22.04
+  qget <os> <release> [edition]
+  qget ubuntu 22.04
 
 Advanced usage:
-  quickget <arg> [path] <os> [release] [edition]
-  quickget --download ubuntu 22.04
+  qget <arg> [path] <os> [release] [edition]
+  qget --download ubuntu 22.04
 
 Arguments:
   --download      <os> <release> [edition] : Download image; no VM configuration
@@ -868,7 +868,7 @@ Arguments:
   --ui                                     : Run in UI mode
 ------------------------------------ Flags -------------------------------------
 --create-config:
-  --disable-unattended                     : Force quickget not to set up an unattended installation
+  --disable-unattended                     : Force qget not to set up an unattended installation
 -------------------------- For testing & development ---------------------------
   --url           [os] [release] [edition] : Show image URL(s)
   --check         [os] [release] [edition] : Check image URL(s)
