@@ -5,6 +5,8 @@
 # License MIT
 
 #set -eu
+# Show command runned DEBUG
+#set -x
 
 ## NEEDED
 
