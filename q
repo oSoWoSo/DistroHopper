@@ -81,6 +81,7 @@ generate_supported() {
 	rm -rf "$tmpdir/distros"
 	mkdir -p "$tmpdir/distros"
 	"$QUICKGET" | awk 'NR==2,/zorin/' | cut -d':' -f2 | grep -o '[^ ]*' > $tmpdir/supported
+	#get_name=$(cat $tmpdir/supported)
 	while read -r get_name; do
 		supported=$($QUICKGET "$get_name" | awk 'NF && NR>=5 && NR<=8')
 		echo "$get_name"
