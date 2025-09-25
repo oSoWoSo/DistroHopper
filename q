@@ -83,7 +83,6 @@ generate_supported() {
 	rm -rf "$tmpdir/distros"
 	mkdir -p "$tmpdir/distros"
 	"$QUICKGET" | awk 'NR==2,/zorin/' | cut -d':' -f2 | grep -o '[^ ]*' > $tmpdir/supported
-	#get_name=$(cat $tmpdir/supported)
 	while read -r get_name; do
 		supported=$($QUICKGET "$get_name" | awk 'NF && NR>=5 && NR<=8')
 		echo "$get_name"
@@ -694,7 +693,7 @@ show_header_tip() {
 	tip3=$(shuf -n 1 "$tmpdir/supported")
 	tip4=$(gum style --bold --foreground="$color" "$tip3")
 	tip5=$(gum join "$tip1" "$tip2" "$tip4")
-	tip6=$("$QUICKGET" "$tip3" | awk 'NR==3,NR==8')
+	tip6=$("$QUICKGET" "$tip3" | awk 'NR==3,NR==7')
 	tip7=$(gum style --width=77 "$tip6")
 	tip8=$(gum join --vertical --align top "$tip5" "$tip7")
 	header_tip=$(gum style --padding "0 1" --border="$BORDER" --border-foreground $color "$tip8")
