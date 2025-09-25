@@ -5,7 +5,7 @@ ICON=""
 BASEDOF="-"
 DESCRIPTION="Security-oriented, lightweight Linux distribution based on musl libc and busybox"
 HOMEPAGE="https://alpinelinux.org/"
-CREDENTIALS="-"
+CREDENTIALS="root:(no password)"
 
 function releases_() {
     local REL=""

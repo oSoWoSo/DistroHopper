@@ -1,0 +1,20 @@
+# Template file for 'rhinolinux'
+OSNAME="rhinolinux"
+PRETTY="Rhino Linux"
+ICON=""
+BASEDOF="Ubuntu"
+DESCRIPTION="Ubuntu-based, rolling release distribution, with Pacstall & XFCE at its core"
+HOMEPAGE="https://rhinolinux.org"
+CREDENTIALS="-"
+
+function releases_() {
+    echo "2025.3 2025.2 2025.1 2024.2 2024.1 2023.4  2023.3  2023.2 2023.1"
+}
+
+function get_() {
+    local HASH=""
+    local ISO="Rhino-Linux-${RELEASE}-amd64.iso"
+    local URL="https://sourceforge.net/projects/rhino-linux-builder/files/${RELEASE}"
+    HASH=$(web_pipe "${URL}/${ISO}.sha256" | grep "${ISO}" | cut -d' ' -f1 | head -n 1)
+    echo "${URL}/${ISO} ${HASH}"
+}
