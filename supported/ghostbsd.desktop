@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=0.80
+Type=Application
+Name=ghostbsd
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --separator=" " --field="Release:CB" "21.10.16"!"21.11.24"!"22.01.12" --field="Edition:CB" "mate"!"xfce" | xargs -I{} sh -c "./quickget ghostbsd {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/ghostbsd.svg
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
+Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
+

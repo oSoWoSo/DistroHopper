@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=0.80
+Type=Application
+Name=slax
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --separator=" " --field="Release:CB" "latest" --field="Edition:CB" "Debian"!"Slackware" | xargs -I{} sh -c "./quickget slax {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/slax.svg
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
+Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
+

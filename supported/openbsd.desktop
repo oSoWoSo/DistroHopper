@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=0.80
+Type=Application
+Name=openbsd
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --field="Release:CB" "6.8"!"6.9"!"7.0"!"7.1"!"7.2"!"7.3"!"7.4" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget openbsd {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/openbsd.svg
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
+Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
+

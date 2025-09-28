@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=0.80
+Type=Application
+Name=lmde
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --separator=" " --field="Release:CB" "5" --field="Edition:CB" "cinnamon" | xargs -I{} sh -c "./quickget lmde {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/lmde.svg
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
+Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
+

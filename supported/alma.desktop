@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=0.80
+Type=Application
+Name=alma
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --separator=" " --field="Release:CB" "8"!"9" --field="Edition:CB" "boot"!"minimal"!"dvd" | xargs -I{} sh -c "./quickget alma {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/alma.svg
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
+Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
+

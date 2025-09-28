@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=0.80
+Type=Application
+Name=garuda
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --separator=" " --field="Release:CB" "latest" --field="Edition:CB" "cinnamon"!"dr460nized"!"dr460nized-gaming"!"gnome"!"i3"!"kde-git"!"kde-lite"!"lxqt-kwin"!"mate"!"qtile"!"sway"!"wayfire"!"xfce" | xargs -I{} sh -c "./quickget garuda {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/garuda.svg
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
+Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
+

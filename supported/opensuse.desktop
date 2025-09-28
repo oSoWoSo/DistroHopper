@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=0.80
+Type=Application
+Name=opensuse
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --field="Release:CB" "15.0"!"15.1"!"15.2"!"15.3"!"15.4"!"microos"!"tumbleweed" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget opensuse {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/opensuse.svg
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
+Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
+

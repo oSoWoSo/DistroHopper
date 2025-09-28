@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=0.80
+Type=Application
+Name=artix
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --separator=" " --field="Release:CB" "stable" --field="Edition:CB" "base-dinit"!"base-openrc"!"base-runit"!"base-s6"!"cinnamon-dinit"!"cinnamon-openrc"!"cinnamon-runit"!"cinnamon-s6"!"lxde-dinit"!"lxde-openrc"!"lxde-runit"!"lxde-s6"!"lxqt-dinit"!"lxqt-openrc"!"lxqt-runit"!"lxqt-s6"!"mate-dinit"!"mate-openrc"!"mate-runit"!"mate-s6"!"plasma-dinit"!"plasma-openrc"!"plasma-runit"!"plasma-s6"!"xfce-dinit"!"xfce-openrc"!"xfce-runit"!"xfce-s6"!"community-gtk-openrc"!"community-qt-openrc" | xargs -I{} sh -c "./quickget artix {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/artix.svg
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
+Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
+

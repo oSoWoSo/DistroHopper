@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=0.80
+Type=Application
+Name=slitaz
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --field="Release:CB" "preferred"!"core"!"core64"!"loram"!"core-5in1"!"preinit" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget slitaz {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/slitaz.svg
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
+Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
+

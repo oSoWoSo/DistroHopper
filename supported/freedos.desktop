@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=0.80
+Type=Application
+Name=freedos
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --field="Release:CB" "1.2"!"1.3" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget freedos {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/freedos.svg
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
+Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
+

@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=0.80
+Type=Application
+Name=gentoo
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --field="Release:CB" "latest" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget gentoo {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/gentoo.svg
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
+Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
+

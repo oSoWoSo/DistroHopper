@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=0.80
+Type=Application
+Name=arco
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --separator=" " --field="Release:CB" "v21.09.08"!"v21.09.11"!"v21.11.04"!"v21.11.05"!"v22.01.10"!"v22.03.07"!"v22.04.02"!"v22.05.02"!"v22.06.07"!"v22.07.03"!"v22.09.04"!"v22.10.02"!"v22.11.02"!"v22.12.02"!"v23.01.03"!"v23.02.02"!"v23.03.01"!"v23.04.03"!"v23.05.04"!"v23.06.02"!"v23.07.01"!"v23.09.03"!"v23.10.01" --field="Edition:CB" "large"!"small" | xargs -I{} sh -c "./quickget arco {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/arco.svg
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
+Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
+

@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=0.80
+Type=Application
+Name=freebsd
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --separator=" " --field="Release:CB" "12.4"!"13.1"!"13.2"!"14.0" --field="Edition:CB" "disc1"!"dvd1" | xargs -I{} sh -c "./quickget freebsd {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/freebsd.svg
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
+Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
+

@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=0.80
+Type=Application
+Name=nixos
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --separator=" " --field="Release:CB" "21.05"!"21.11"!"22.05"!"22.11"!"23.05" --field="Edition:CB" "gnome"!"plasma5"!"minimal" | xargs -I{} sh -c "./quickget nixos {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/nixos.svg
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
+Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
+

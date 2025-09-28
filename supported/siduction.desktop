@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=0.80
+Type=Application
+Name=siduction
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --separator=" " --field="Release:CB" "latest" --field="Edition:CB" "kde"!"lxqt"!"nox"!"xfce"!"xorg" | xargs -I{} sh -c "./quickget siduction {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/siduction.svg
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
+Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
+

@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=0.80
+Type=Application
+Name=vanillaos
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --field="Release:CB" "22.10" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget vanillaos {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/vanillaos.svg
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
+Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
+

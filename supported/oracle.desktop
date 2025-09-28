@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=0.80
+Type=Application
+Name=oracle
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --field="Release:CB" "7.7"!"7.8"!"7.9"!"8.4"!"8.5"!"8.6"!"9.0" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget oracle {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/oracle.svg
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
+Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
+

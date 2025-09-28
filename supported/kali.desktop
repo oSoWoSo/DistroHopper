@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=0.80
+Type=Application
+Name=kali
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --field="Release:CB" "current"!"kali-weekly" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget kali {}";/usr/bin/fish'
+Icon=/home/zen/Git/DistroHopper/icons/kali.svg
+Terminal=sakura
+X-MultipleArgs=
+Type=Application
+Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
+
