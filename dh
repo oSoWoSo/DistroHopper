@@ -311,7 +311,7 @@ EOF
 		echo "$MSG_INTERM"
 		run_in_terminal
 		# get supported VMs
-		"$portable_prefix"quickget | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' > "$DH_CONFIG_DIR/supported.md"
+		"$portable_prefix"quickget | awk 'NR==2,/zorin/' | cut -d':' -f2 | grep -o '[^ ]*' > "$DH_CONFIG_DIR/supported.md"
 		while read -r get_name; do
 			vm_desktop=$(echo "$get_name" | tr ' ' '_')
 			releases=$("$portable_prefix"quickget "$vm_desktop" | grep 'Releases' | cut -d':' -f2 | sed 's/^ //' | sed 's/ *$//')
