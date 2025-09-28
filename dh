@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-wayland_check() {
+function wayland_check() {
 	session_type=$(loginctl show-session "$XDG_SESSION_ID" -p Type | cut -d= -f2)
 	case "$session_type" in
 	wayland)
@@ -20,7 +20,7 @@ wayland_check() {
 }
 
 root=""
-root_check() {
+function root_check() {
 	if [ "$(id -u)" != 0 ]; then
 		if [ -f /usr/bin/sudo ]; then
 			echo "$(tput bold)INFO: Using sudo for root operations.$(tput sgr0)"
@@ -32,7 +32,7 @@ root_check() {
 	fi
 }
 
-set_variables() {
+function set_variables() {
 	# DEBUG mod
 	#bash -x ./dh 2>&1 | tee output.log
 	#progname="${progname:="${0##*/}"}"
@@ -54,27 +54,27 @@ set_variables() {
 
 # installation ---------------------------------------------------------
 
-dependencies_check_gui() {
+function dependencies_check_gui() {
 	[ -f "$PATH_PREFIX/yad" ] || echo "Yad not installed!"
 }
 
-install_needed_apt() {
+function install_needed_apt() {
 	$root apt install qemu bash coreutils ovmf grep jq lsb procps python3 genisoimage usbutils util-linux sed spice-client-gtk swtpm wget xdg-user-dirs zsync unzip yad
 }
 
-install_needed_pacman() {
+function install_needed_pacman() {
 	$root pacman -S cdrtools coreutils edk2-ovmf grep jq procps python3 qemu-full sed socat spice-gtk swtpm usbutils util-linux wget xdg-user-dirs xorg-xrandr zsync getext yad
 }
 
-install_needed_xbps() {
+function install_needed_xbps() {
 	$root xbps-install -S qemu bash coreutils grep jq procps-ng python3 util-linux sed spice-gtk swtpm usbutils wget xdg-user-dirs xrandr unzip zsync socat yad
 }
 
-install_needed_dnf() {
+function install_needed_dnf() {
 	$root dnf install qemu bash coreutils edk2-tools grep jq lsb procps python3 genisoimage usbutils util-linux sed spice-gtk-tools swtpm wget xdg-user-dirs xrandr unzip yad
 }
 
-install_dependencies() {
+function install_dependencies() {
 	# Find the current distribution and install dependecies
 	if [ -f /etc/os-release ]; then
 		if [ -f "$PATH_PREFIX/pacman" ]; then
@@ -92,19 +92,19 @@ install_dependencies() {
 	fi
 }
 
-create_dirs() {
+function create_dirs() {
 	mkdir -p "$DH_CONFIG_DIR"
 	touch "$DH_CONFIG"
 	mkdir -p "$DH_ICON_DIR"
 }
 
-choose_vms_dir() {
+function choose_vms_dir() {
 	NEWDIR="$(yad --width=900 --height=900 --file --directory --title="Where to save VMs?")"
 	VMS_DIR="$NEWDIR"
 	echo "VMS_DIR=\"$VMS_DIR\"" >"$DH_CONFIG"
 }
 
-install_dh() {
+function install_dh() {
 	cp -f dh quickget quickemu quickreport chunkcheck "$PATH_PREFIX" >/dev/null 2>&1 || $root cp -f dh quickget quickemu quickreport chunkcheck "$PATH_PREFIX"
 	cd /tmp/
 	wget https://github.com/oSoWoSo/distro-svg/archive/refs/heads/main.zip
@@ -133,7 +133,7 @@ desktop_entry_dh() {
 	$root cp "${TMP_DIR}/dh.desktop" /usr/share/applications/
 }
 
-installation_process() {
+function installation_process() {
 	dependencies_check_gui
 	install_dependencies
 	create_dirs
@@ -169,7 +169,7 @@ run_in_terminal() {
 	yad --title "terminal" --text "Do you want show output in the terminal?" && interminal="yes" || interminal="no"
 }
 
-renew_ready_vms() {
+function renew_ready_vms() {
 	cd "$VMS_DIR" || echo "ERROR: VMS_DIR not set!" && exit 1
 	rm -r "$DH_CONFIG_DIR"/ready >/dev/null 2>&1
 	mkdir -p "$DH_CONFIG_DIR"/ready
@@ -199,7 +199,7 @@ renew_ready_vms() {
 	done
 }
 
-renew_ready() {
+function renew_ready() {
 	cd "$VMS_DIR" || exit 1
 	#	for files in "$VMS_DIR"/*; do
 	#	if [ ! -e *.conf ]; then
@@ -236,7 +236,7 @@ EOF
 	done
 }
 
-renew_supported_vms() {
+function renew_supported_vms() {
 	rm -r "$DH_CONFIG_DIR"/supported >/dev/null 2>&1
 	mkdir -p "$DH_CONFIG_DIR"/supported
 	run_in_terminal
@@ -273,29 +273,29 @@ renew_supported_vms() {
 	done <"$DH_CONFIG_DIR"/supported.md
 }
 
-distrohopper_about() {
+function distrohopper_about() {
 	echo "#TODO"
 }
 
-help_show() {
+function help_show() {
 	echo "#TODO"
 }
 
-first_run() {
+function first_run() {
 	installation_process
 	echo "Installation done"
 	echo "Update supported..."
 	renew_supported_vms
 }
 
-distrohopper_run_gui() {
+function distrohopper_run_gui() {
 	key=$((RANDOM % 9000 + 1000))
 	yad --plug="$key" --tabnum=1 --monitor --icons --listen --read-dir="$DH_CONFIG_DIR"/ready --sort-by-name --no-buttons --borders=0 --icon-size=46 --item-width=76 &
 	yad --plug="$key" --tabnum=2 --monitor --icons --listen --read-dir="$DH_CONFIG_DIR"/supported --sort-by-name --no-buttons --borders=0 --icon-size=46 --item-width=76 &
 	yad --dynamic --notebook --key="$key" --monitor --listen --window-icon="$DH_ICON_DIR"/hop.svg --width=900 --height=900 --title="DistroHopper" --tab="run VM" --tab="download VM"
 }
 
-WIP_buttons() {
+function WIP_buttons() {
 	export root
 	export -f run_in_terminal
 	export -f distrohopper_about
