@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=About DistroHopper
+Exec=yad --image=/usr/share/icons/distroicons/hop.svg --info --text "About Distrohopper \n\n Quickly download, create and run VM of any operating system. \n Source Code: https://github.com/oSoWoSo/DistroHopper \n License: AGPL-3-only" --no-buttons
+Icon=/usr/share/icons/distroicons/hop.svg
+Categories=System;Virtualization;Settings;
