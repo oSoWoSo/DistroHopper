@@ -165,9 +165,9 @@ Keywords=$keyword
 EOF
 }
 
-run_in_terminal() {
-	yad --title "terminal" --text "Do you want show output in the terminal?" && interminal="yes" || interminal="no"
-}
+#run_in_terminal() {
+#	yad --title "terminal" --text "Do you want show output in the terminal?" && interminal="yes" || interminal="no"
+#}
 
 function renew_ready_vms() {
 	cd "$VMS_DIR" || echo "ERROR: VMS_DIR not set!" && exit 1
@@ -239,7 +239,7 @@ EOF
 function renew_supported_vms() {
 	rm -r "$DH_CONFIG_DIR"/supported >/dev/null 2>&1
 	mkdir -p "$DH_CONFIG_DIR"/supported
-	run_in_terminal
+	#run_in_terminal
 	# get supported VMs
 	quickget | awk 'NR==3,/zorin/' | grep -o '[^ ]*' >"$DH_CONFIG_DIR/supported.md"
 	while read -r get_name; do
@@ -297,7 +297,7 @@ function distrohopper_run_gui() {
 
 function WIP_buttons() {
 	export root
-	export -f run_in_terminal
+	#export -f run_in_terminal
 	export -f distrohopper_about
 	export -f help_show
 	export -f first_run
