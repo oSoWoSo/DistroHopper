@@ -10,20 +10,6 @@
 #    export TEXTDOMAINDIR=/usr/share/locale
 #fi
 
-if [[ -f "lang/${LANGUAGE}.cfg" ]]; then
-	source "lang/${LANGUAGE}.cfg"
-elif [[ -f "lang/${LANG:0:5}.cfg" ]]; then
-	source "lang/${LANG:0:5}.cfg"
-elif [[ -f "lang/${LANG:0:2}.cfg" ]]; then
-	source "lang/${LANG:0:2}.cfg"
-else
-	source "lang/en.cfg"
-fi
-
-trap 'exit' SIGINT SIGTERM SIGQUIT
-set -e
-echo "$MSG_RUNNING"
-
 while true
 do
 	function variables_set() {
@@ -46,6 +32,28 @@ do
 		trap "exit" INT
 		trap "exit" EXIT
 	}
+
+	if [[ -f "$DH_CONFIG_DIR/lang/${LANGUAGE}.cfg" ]]; then
+		source "$DH_CONFIG_DIR/lang/${LANGUAGE}.cfg"
+	elif [[ -f "$DH_CONFIG_DIR/lang/${LANG:0:5}.cfg" ]]; then
+		source "$DH_CONFIG_DIR/lang/${LANG:0:5}.cfg"
+	elif [[ -f "$DH_CONFIG_DIR/lang/${LANG:0:2}.cfg" ]]; then
+		source "$DH_CONFIG_DIR/lang/${LANG:0:2}.cfg"
+	elif [[ -f "$DH_CONFIG_DIR/lang/en.cfg" ]]; then
+		source "$DH_CONFIG_DIR/lang/en.cfg"
+	elif [[ -f "lang/${LANGUAGE}.cfg" ]]; then
+		source "lang/${LANGUAGE}.cfg"
+	elif [[ -f "lang/${LANG:0:5}.cfg" ]]; then
+		source "lang/${LANG:0:5}.cfg"
+	elif [[ -f "lang/${LANG:0:2}.cfg" ]]; then
+		source "lang/${LANG:0:2}.cfg"
+	else
+		source "lang/en.cfg"
+	fi
+
+	trap 'exit' SIGINT SIGTERM SIGQUIT
+	set -e
+	echo "$MSG_RUNNING"
 
 	function bugs_notice_show() {
 		echo ""
@@ -214,7 +222,7 @@ EOF
 	function install_distrohopper() {
 		cp dh quickget quickemu quickreport "$PATH_PREFIX" >/dev/null 2>&1 || sudo cp dh quickget quickemu quickreport "$PATH_PREFIX"
 		# quickget also to config directory for adding new distros...
-		cp quickget "$DH_CONFIG_DIR/"
+		#cp quickget "$DH_CONFIG_DIR/"
 		echo "$MSG_C_ICONS"
 		cp icons/* "$DH_ICON_DIR/" >/dev/null 2>&1 || sudo cp icons/* "$DH_ICON_DIR/"
 		echo "$MSG_C_ENTRIES"
