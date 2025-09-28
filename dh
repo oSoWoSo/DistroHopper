@@ -211,7 +211,7 @@ EOF
 		fi
 	}
 
-	function distrohopper_install() {
+	function install_distrohopper() {
 		cp dh quickget quickemu quickreport "$PATH_PREFIX" >/dev/null 2>&1 || sudo cp dh quickget quickemu quickreport "$PATH_PREFIX"
 		# quickget also to config directory for adding new distros...
 		cp quickget "$DH_CONFIG_DIR/"
@@ -233,7 +233,7 @@ EOF
 		 && echo "$MSG_SETTINGUP" \
 		 && virtual_machines_directory_choose \
 		 && echo "$MSG_INSTALLING" \
-		 && distrohopper_install \
+		 && install_distrohopper \
 		 && echo "$MSG_C_ENTRY" \
 		 && desktop_entry_distrohopper
 	}
