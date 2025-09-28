@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=0.80
+Type=Application
+Name=arcolinux
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/z/vm && yad --form --separator=" " --field="Release:CB" "	" --field="Edition:CB" "	net"!"plasma"!"pro" | xargs -I{} sh -c "quickget arcolinux {}";/bin/bash'
+Icon=/usr/share/icons/distrohopper/tux.svg
+Terminal=false
+X-MultipleArgs=
+Type=Application
+Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
+

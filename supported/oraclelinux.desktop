@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=0.80
+Type=Application
+Name=oraclelinux
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/z/vm && yad --form --field="Release:CB" "	9.3"!"9.2"!"9.1"!"9.0"!"8.9"!"8.8"!"8.7"!"8.6"!"8.5"!"8.4"!"7.9"!"7.8"!"7.7" | cut -d"|" -f1 | xargs -I{} sh -c "quickget oraclelinux {}";/bin/bash'
+Icon=/usr/share/icons/distrohopper/tux.svg
+Terminal=false
+X-MultipleArgs=
+Type=Application
+Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
+

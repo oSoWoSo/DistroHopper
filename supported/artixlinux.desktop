@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=0.80
+Type=Application
+Name=artixlinux
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/z/vm && yad --form --separator=" " --field="Release:CB" "	20250407" --field="Edition:CB" "	base-dinit"!"base-openrc"!"base-runit"!"base-s6"!"cinnamon-dinit"!"cinnamon-openrc" | xargs -I{} sh -c "quickget artixlinux {}";/bin/bash'
+Icon=/usr/share/icons/distrohopper/tux.svg
+Terminal=false
+X-MultipleArgs=
+Type=Application
+Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
+

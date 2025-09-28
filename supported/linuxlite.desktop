@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=0.80
+Type=Application
+Name=linuxlite
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/z/vm && yad --form --field="Release:CB" "	6.6"!"6.4"!"6.2"!"6.0" | cut -d"|" -f1 | xargs -I{} sh -c "quickget linuxlite {}";/bin/bash'
+Icon=/usr/share/icons/distrohopper/tux.svg
+Terminal=false
+X-MultipleArgs=
+Type=Application
+Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
+

@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=0.80
+Type=Application
+Name=linuxmint
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/z/vm && yad --form --separator=" " --field="Release:CB" "	22.1"!"22"!"21.3"!"21.2"!"21.1"!"21"!"20.3"!"20.2" --field="Edition:CB" "	cinnamon"!"mate"!"xfce" | xargs -I{} sh -c "quickget linuxmint {}";/bin/bash'
+Icon=/usr/share/icons/distrohopper/tux.svg
+Terminal=false
+X-MultipleArgs=
+Type=Application
+Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
+
