@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=About yad
+Exec=yad --about
+Icon=/usr/share/icons/Papirus/64x64/apps/yad.svg
+Categories=System;Virtualization;Settings;
