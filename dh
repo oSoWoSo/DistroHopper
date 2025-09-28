@@ -58,7 +58,7 @@ dependencies_check_gui() {
 	[ -f "$PATH_PREFIX/yad" ] || echo "Yad not installed!"
 }
 
-install_needed_atp() {
+install_needed_apt() {
 	$root apt install qemu bash coreutils ovmf grep jq lsb procps python3 genisoimage usbutils util-linux sed spice-client-gtk swtpm wget xdg-user-dirs zsync unzip yad
 }
 
@@ -173,7 +173,7 @@ renew_ready_vms() {
 	cd "$VMS_DIR" || echo "ERROR: VMS_DIR not set!" && exit 1
 	rm -r "$DH_CONFIG_DIR"/ready >/dev/null 2>&1
 	mkdir -p "$DH_CONFIG_DIR"/ready
-	for vm_conf in $(pwd); do
+	for vm_conf in *.conf; do
 		echo "creating..."
 		VMname=$(basename "$VMS_DIR/$vm_conf" .conf)
 		# Use fuzzy matching to find the best matching icon file (ready to run VMs)
@@ -183,7 +183,8 @@ renew_ready_vms() {
 		if [ -z "$icon_file" ]; then
 			icon_name=$(basename "$VMS_DIR/$vm_conf" .conf | cut -d'-' -f1)
 			icon_file=$(find "$DH_ICON_DIR" -type f -iname "${icon_name// /}.*")
-		elif [ -z "$icon_file" ]; then
+        fi
+		if [ -z "$icon_file" ]; then
 			icon_file="$DH_ICON_DIR/tux.svg"
 		fi
 		DESKTOP_FILE="${DH_CONFIG_DIR}/ready/${VMname}.desktop"
@@ -217,7 +218,8 @@ renew_ready() {
 		if [ -z "$icon_file" ]; then
 			icon_name=$(basename "$VMS_DIR/$vm_conf" .conf | cut -d'-' -f1)
 			icon_file=$(find "$DH_ICON_DIR" -type f -iname "${icon_name// /}.*")
-		elif [ -z "$icon_file" ]; then
+        fi
+		if [ -z "$icon_file" ]; then
 			icon_file="$DH_ICON_DIR/tux.svg"
 		fi
 		# content of desktop files (ready to run VMs)
