@@ -251,9 +251,8 @@ EOF
 
 	function virtual_machines_update_ready() {
 		cd "$VMS_DIR" || exit 1
-		rm "$DH_CONFIG_DIR"/ready/*.desktop 2>/dev/null
-		for vm_conf in $(pwd)
-		do
+		rm "$DH_CONFIG_DIR"/ready/*.desktop 2>/dev/null || echo "No .desktop file to remove"
+		for vm_conf in *.conf; do
 			if [ "${vm_conf}" == "distrohopper.conf" ]; then
 				echo "continue" # skip processing distrohopper.conf
 			fi
@@ -317,7 +316,7 @@ EOF
 	}
 
 	function virtual_machines_update_supported() {
-		rm "$DH_CONFIG_DIR"/supported/*.desktop
+		rm "$DH_CONFIG_DIR"/supported/*.desktop 2>/dev/null || echo "No .desktop file to remove"
 		#echo "$MSG_INTERM"
 		#run_in_terminal # Not working as expected
 		# get supported VMs
