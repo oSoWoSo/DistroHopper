@@ -332,10 +332,13 @@ EOF
 			name="$get_name"
 			if [ -z "$editions" ]; then
 				execmd="sh -c 'cd ${VMS_DIR} && yad --form --field=\"Release:CB\" \"${releases// /$replace}\" | cut -d\"|\" -f1 | xargs -I{} sh -c \"${portable_prefix}quickget ${get_name} {}\";$SHELL'"
-			elif [ "$interminal" == "yes" ]; then
-				terminal="true"
 			else
 				execmd="sh -c 'cd ${VMS_DIR} && yad --form --separator=\" \" --field=\"Release:CB\" \"${releases// /$replace}\" --field=\"Edition:CB\" \"${editions// /$replace}\" | xargs -I{} sh -c \"${portable_prefix}quickget ${get_name} {}\";$SHELL'"
+			fi
+			if [ "$interminal" == "yes" ]; then
+				terminal="true"
+			else
+				terminal="false"
 			fi
 			icon="$icon_file"
 			categories='System;Virtualization;'
