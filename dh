@@ -143,8 +143,8 @@ EOF
 	}
 
 	function desktop_entry_distrohopper() {
-		echo "$MSG_INTERM"
-		run_in_terminal
+		#echo "$MSG_INTERM"
+		#run_in_terminal # Not working as expected
 		DESKTOP_FILE="${TMP_DIR}/dh.desktop"
 		type='Application'
 		name='DistroHopper'
@@ -153,6 +153,8 @@ EOF
 		execmd="sh -c 'cd ${VMS_DIR} && dh g'"
 		if [ "$interminal" == "yes" ]; then
 			terminal='true'
+		else
+			terminal='false'
 		fi
 		icon="$DH_ICON_DIR/hop.svg" 
 		categories='System;Virtualization;'
@@ -308,8 +310,8 @@ EOF
 
 	function virtual_machines_update_supported() {
 		rm "$DH_CONFIG_DIR"/supported/*.desktop
-		echo "$MSG_INTERM"
-		run_in_terminal
+		#echo "$MSG_INTERM"
+		#run_in_terminal # Not working as expected
 		# get supported VMs
 		"$portable_prefix"quickget | awk 'NR==2,/zorin/' | cut -d':' -f2 | grep -o '[^ ]*' > "$DH_CONFIG_DIR/supported.md"
 		while read -r get_name; do
