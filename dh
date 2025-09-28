@@ -2,6 +2,14 @@
 # shellcheck disable=1078,1079,1091,2027,2034
 
 # shellcheck source=/dev/null
+
+#export TEXTDOMAIN=dh
+#if [[ -n $Q_DEBUG ]]; then
+#    export TEXTDOMAINDIR="${PWD}/lang"
+#else
+#    export TEXTDOMAINDIR=/usr/share/locale
+#fi
+
 if [[ -f "lang/${LANGUAGE}.cfg" ]]; then
 	source "lang/${LANGUAGE}.cfg"
 elif [[ -f "lang/${LANG:0:5}.cfg" ]]; then
