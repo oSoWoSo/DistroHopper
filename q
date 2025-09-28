@@ -223,7 +223,7 @@ show_headers_small
 edit_default_VMs_config() {
 	title="Editing default VM's config..."
 	show_header
-	printf 'For example:\ncpu_cores="2"\nram="4G"\n'
+	printf 'For example:\nguest_os="linux"\nncpu_cores="4"\nram="4G"\ndisk_size="200G"\ndisplay="spice"\npublic_dir="/home/kuklinistvan/VMs/PublicDirs/linux0"\n'
 	title="CTRL+D to complete.  CTRL+C and esc will cancel"
 	show_header
 	gum write > "${configdir}"/default_vm_config
@@ -553,7 +553,16 @@ double" | gum filter --height $height)
 change_color() {
 	title="Define color number or choose random"
 	show_header
-	BORDER_FOREGROUND=$(echo 'random' | gum filter --height 1 --prompt="Enter custom" --no-strict)
+	BORDER_FOREGROUND=$(echo 'random' | gum filter --height 4 --prompt="Enter custom" --no-strict)
+	mkdir -p ${configdir}
+	touch "${configdir}"/color
+	echo $BORDER_FOREGROUND > "${configdir}"/color
+}
+
+change_borders_color() {
+	title="Define color number or choose random"
+	show_header
+	BORDER_FOREGROUND=$(echo 'random' | gum filter --height 4 --prompt="Enter custom" --no-strict)
 	mkdir -p ${configdir}
 	touch "${configdir}"/color
 	echo $BORDER_FOREGROUND > "${configdir}"/color
@@ -908,7 +917,7 @@ exit $progname" | gum filter --height "$height")
 		'regenerate supported' ) generate_supported;;
 		'icons' ) icons_or;;
 		'accent color' ) change_color;;
-		'borders color' ) change_color;;
+		'borders color' ) change_borders_color;;
 		'borders style' ) change_borders;;
 		'spinner' ) change_spinner;;
 		'headers' ) headers_small_or;;
@@ -939,7 +948,7 @@ show_menu_settings_icons() {
 		' regenerate supported' ) generate_supported;;
 		'󱌝 icons' ) icons_or;;
 		' accent color' ) change_color;;
-		' borders color' ) change_color_border;;
+		' borders color' ) change_borders_color;;
 		'󰴱 borders style' ) change_borders;;
 		' spinner' ) change_spinner;;
 		'󰛼 headers' ) headers_small_or;;
