@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=0.80
+Type=Application
+Name=porteus
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/z/vm && yad --form --separator=" " --field="Release:CB" "	5.01" --field="Edition:CB" "	cinnamon"!"gnome"!"kde"!"lxde"!"lxqt"!"mate"!"openbox"!"xfce" | xargs -I{} sh -c "quickget porteus {}";/bin/bash'
+Icon=/usr/share/icons/distrohopper/tux.svg
+Terminal=false
+X-MultipleArgs=
+Type=Application
+Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
+

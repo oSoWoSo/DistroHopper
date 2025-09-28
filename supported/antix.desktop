@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=0.80
+Type=Application
+Name=antix
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/z/vm && yad --form --separator=" " --field="Release:CB" "	23.1"!"23"!"22"!"21" --field="Edition:CB" "	net-sysv"!"core-sysv"!"base-sysv"!"full-sysv"!"net-runit"!"core-runit"!"base-runit" | xargs -I{} sh -c "quickget antix {}";/bin/bash'
+Icon=/usr/share/icons/distrohopper/antix.svg
+Terminal=false
+X-MultipleArgs=
+Type=Application
+Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
+

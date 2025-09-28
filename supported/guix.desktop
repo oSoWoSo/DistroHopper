@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=0.80
+Type=Application
+Name=guix
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/z/vm && yad --form --field="Release:CB" "	1.4.0"!"1.3.0" | cut -d"|" -f1 | xargs -I{} sh -c "quickget guix {}";/bin/bash'
+Icon=/usr/share/icons/distrohopper/tux.svg
+Terminal=false
+X-MultipleArgs=
+Type=Application
+Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
+

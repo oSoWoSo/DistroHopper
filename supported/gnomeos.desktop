@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=0.80
+Type=Application
+Name=gnomeos
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/z/vm && yad --form --field="Release:CB" "	nightly"!"49.rc"!"49.beta"!"49.alpha.1"!"49.0"!"48.rc"!"48.beta"!"48.alpha"!"48.0"!"47.rc"!"47.beta" | cut -d"|" -f1 | xargs -I{} sh -c "quickget gnomeos {}";/bin/bash'
+Icon=/usr/share/icons/distrohopper/tux.svg
+Terminal=false
+X-MultipleArgs=
+Type=Application
+Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
+

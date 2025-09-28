@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=0.80
+Type=Application
+Name=pclinuxos
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/z/vm && yad --form --separator=" " --field="Release:CB" "	2025.09" --field="Edition:CB" "	kde"!"kde-darkstar"!"mate"!"xfce" | xargs -I{} sh -c "quickget pclinuxos {}";/bin/bash'
+Icon=/usr/share/icons/distrohopper/pclinuxos.svg
+Terminal=false
+X-MultipleArgs=
+Type=Application
+Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
+

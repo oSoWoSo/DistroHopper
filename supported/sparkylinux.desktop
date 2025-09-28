@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=0.80
+Type=Application
+Name=sparkylinux
+GenericName=
+Comment=
+Exec=sh -c 'cd /home/z/vm && yad --form --separator=" " --field="Release:CB" "	8.0.1"!"8.0" --field="Edition:CB" "	kde"!"lxqt"!"mate"!"minimalcli"!"minimalgui"!"xfce" | xargs -I{} sh -c "quickget sparkylinux {}";/bin/bash'
+Icon=/usr/share/icons/distrohopper/tux.svg
+Terminal=false
+X-MultipleArgs=
+Type=Application
+Categories=System;Virtualization;
+StartupNotify=
+MimeType=
+Keywords=
+
