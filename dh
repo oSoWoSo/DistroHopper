@@ -413,64 +413,8 @@ EOF
 
 	distrohopper_about() {
 		yad --about --pname=DistroHopper --image="$DH_ICON_DIR"/hop.svg --pversion="$version" \
-		 --copyright=AGPL3 --comments="random comment" --license=ALGPL3 --authors=zenobit --website=dh.osowoso.xyz \
+		 --copyright=AGPL3 --comments="random comment" --license=ALGPL3 --authors=zenobit --website=dh.osowoso.org \
 		 --website-label="oSoWoSo"
-	}
-
-	function distrohopper_run_tui() {
-		dependencies_check_tui
-		tui_run
-		if [ "$todo" = "create" ]; then
-			virtual_machine_create
-			if [ "$os" = windows ]; then
-				tui_windows
-			else
-				tui_get_releases_and_editions
-				fzf_choose_release
-				if [ "$(echo "$choices" | wc -l)" = 1 ]; then
-					quickget_download_os_release
-				else
-					fzf_choose_edition
-					quickget_download_os_release_edition
-				fi
-			fi
-		else
-			fzf_choose_virtual_machine_to_run
-			virtual_machine_run
-		fi
-	}
-
-	tui_run() {
-		cd "$VMS_DIR" || exit 1
-		vms=(*.conf)
-		printf "$MSG_PREPARED:\n-------------\n\n"
-		# Check if there are any VMs
-		if [ ${#vms[@]} -eq 0 ]; then
-			echo "$MSG_NO_VM"
-			exit 1
-		fi
-		# Print the names of the available VMs
-		printf "%s\n" "${vms[@]%.*}"
-		echo "-------------"
-		# Action prompt
-		echo "$MSG_NEW (c)"
-		printf "$MSG_OR_RUN\n"
-		read -rn 1 -s start
-		case $start in
-			c )
-				todo="create"
-			;;
-		esac
-	}
-
-	tui_windows() {
-		fzf_choose_language_windows_other
-		if [ "$answer" = "Choose other language" ]; then
-			fzf_choose_release_windows
-			quickget_get_windows_languages_list
-			fzf_choose_language_windows
-			quickget_download_windows
-		fi
 	}
 
 	function fzf_choose_release() {
@@ -697,6 +641,61 @@ EOF
 		echo "$MSG_TERMINAL_SET $terminal."
 	}
 
+	function distrohopper_run_tui() {
+		dependencies_check_tui
+		tui_run
+		if [ "$todo" = "create" ]; then
+			virtual_machine_create
+			if [ "$os" = windows ]; then
+				tui_windows
+			else
+				quickget_get_releases_and_editions
+				fzf_choose_release
+				if [ "$(echo "$choices" | wc -l)" = 1 ]; then
+					quickget_download_os_release
+				else
+					fzf_choose_edition
+					quickget_download_os_release_edition
+				fi
+			fi
+		else
+			fzf_choose_virtual_machine_to_run
+			virtual_machine_run
+		fi
+	}
+
+	tui_run() {
+		cd "$VMS_DIR" || exit 1
+		vms=(*.conf)
+		printf "$MSG_PREPARED:\n-------------\n\n"
+		# Check if there are any VMs
+		if [ ${#vms[@]} -eq 0 ]; then
+			echo "$MSG_NO_VM"
+			exit 1
+		fi
+		# Print the names of the available VMs
+		printf "%s\n" "${vms[@]%.*}"
+		echo "-------------"
+		# Action prompt
+		echo "$MSG_NEW (c)"
+		printf "$MSG_OR_RUN\n"
+		read -rn 1 -s start
+		case $start in
+			c )
+				todo="create"
+			;;
+		esac
+	}
+
+	tui_windows() {
+		fzf_choose_language_windows_other
+		if [ "$answer" = "Choose other language" ]; then
+			fzf_choose_release_windows
+			quickget_get_windows_languages_list
+			fzf_choose_language_windows
+			quickget_download_windows
+		fi
+	}
 
 # run ------------------------------------------------------------------
 
