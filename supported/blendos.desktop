@@ -4,9 +4,9 @@ Type=Application
 Name=blendos
 GenericName=
 Comment=
-Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --separator=" " --field="Release:CB" "plasma/1688424625"!"gnome/1688424211"!"deepin/1688423865"!"lxqt/1688423615"!"mate/1688423313"!"xfce/1688423053"!"cinnamon/1688422684"!"plasma/1687873468"!"gnome/1687872336"!"deepin/1687871428"!"lxqt/1687870883"!"mate/1687870186"!"xfce/1687869663"!"cinnamon/1687869060" --field="Edition:CB" "gnome"!"kde" | xargs -I{} sh -c "./quickget blendos {}";/usr/bin/fish'
-Icon=/home/zen/Git/DistroHopper/icons/blendos.svg
-Terminal=sakura
+Exec=sh -c 'cd /home/z/vm && yad --form --field="Release:CB" "	latest" | cut -d"|" -f1 | xargs -I{} sh -c "quickget blendos {}";/bin/bash'
+Icon=/usr/share/icons/distrohopper/blendos.svg
+Terminal=false
 X-MultipleArgs=
 Type=Application
 Categories=System;Virtualization;

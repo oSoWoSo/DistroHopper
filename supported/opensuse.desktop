@@ -4,9 +4,9 @@ Type=Application
 Name=opensuse
 GenericName=
 Comment=
-Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --field="Release:CB" "15.0"!"15.1"!"15.2"!"15.3"!"15.4"!"microos"!"tumbleweed" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget opensuse {}";/usr/bin/fish'
-Icon=/home/zen/Git/DistroHopper/icons/opensuse.svg
-Terminal=sakura
+Exec=sh -c 'cd /home/z/vm && yad --form --field="Release:CB" "	16.0"!"15.6"!"15.5"!"15.4"!"15.3"!"15.2"!"15.1"!"15.0"!"aeon"!"microos"!"tumbleweed" | cut -d"|" -f1 | xargs -I{} sh -c "quickget opensuse {}";/bin/bash'
+Icon=/usr/share/icons/distrohopper/opensuse.svg
+Terminal=false
 X-MultipleArgs=
 Type=Application
 Categories=System;Virtualization;

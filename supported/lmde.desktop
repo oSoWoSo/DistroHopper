@@ -4,9 +4,9 @@ Type=Application
 Name=lmde
 GenericName=
 Comment=
-Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --separator=" " --field="Release:CB" "5" --field="Edition:CB" "cinnamon" | xargs -I{} sh -c "./quickget lmde {}";/usr/bin/fish'
-Icon=/home/zen/Git/DistroHopper/icons/lmde.svg
-Terminal=sakura
+Exec=sh -c 'cd /home/z/vm && yad --form --separator=" " --field="Release:CB" "	6" --field="Edition:CB" "	cinnamon" | xargs -I{} sh -c "quickget lmde {}";/bin/bash'
+Icon=/usr/share/icons/distrohopper/lmde.svg
+Terminal=false
 X-MultipleArgs=
 Type=Application
 Categories=System;Virtualization;

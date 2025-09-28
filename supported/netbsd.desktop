@@ -4,9 +4,9 @@ Type=Application
 Name=netbsd
 GenericName=
 Comment=
-Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --field="Release:CB" "9.3"!"9.2"!"9.1"!"9.0"!"8.2"!"8.1"!"8.0" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget netbsd {}";/usr/bin/fish'
-Icon=/home/zen/Git/DistroHopper/icons/netbsd.svg
-Terminal=sakura
+Exec=sh -c 'cd /home/z/vm && yad --form --field="Release:CB" "	10.1"!"10.0"!"9.4"!"9.3" | cut -d"|" -f1 | xargs -I{} sh -c "quickget netbsd {}";/bin/bash'
+Icon=/usr/share/icons/distrohopper/netbsd.svg
+Terminal=false
 X-MultipleArgs=
 Type=Application
 Categories=System;Virtualization;

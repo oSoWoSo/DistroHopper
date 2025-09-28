@@ -4,9 +4,9 @@ Type=Application
 Name=tinycore
 GenericName=
 Comment=
-Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --separator=" " --field="Release:CB" "14.0" --field="Edition:CB" "Core"!"TinyCore"!"CorePlus"!"CorePure64"!"TinyCorePure64" | xargs -I{} sh -c "./quickget tinycore {}";/usr/bin/fish'
-Icon=/home/zen/Git/DistroHopper/icons/tinycore.svg
-Terminal=sakura
+Exec=sh -c 'cd /home/z/vm && yad --form --separator=" " --field="Release:CB" "	15"!"14" --field="Edition:CB" "	Core"!"TinyCore"!"CorePlus"!"CorePure64"!"TinyCorePure64" | xargs -I{} sh -c "quickget tinycore {}";/bin/bash'
+Icon=/usr/share/icons/distrohopper/tinycore.svg
+Terminal=false
 X-MultipleArgs=
 Type=Application
 Categories=System;Virtualization;

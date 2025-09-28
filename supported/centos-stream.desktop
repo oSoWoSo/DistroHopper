@@ -4,9 +4,9 @@ Type=Application
 Name=centos-stream
 GenericName=
 Comment=
-Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --separator=" " --field="Release:CB" "8"!"9" --field="Edition:CB" "dvd1"!"boot" | xargs -I{} sh -c "./quickget centos-stream {}";/usr/bin/fish'
-Icon=/home/zen/Git/DistroHopper/icons/centos-stream.svg
-Terminal=sakura
+Exec=sh -c 'cd /home/z/vm && yad --form --separator=" " --field="Release:CB" "	10"!"9" --field="Edition:CB" "	boot"!"dvd1" | xargs -I{} sh -c "quickget centos-stream {}";/bin/bash'
+Icon=/usr/share/icons/distrohopper/centos-stream.svg
+Terminal=false
 X-MultipleArgs=
 Type=Application
 Categories=System;Virtualization;

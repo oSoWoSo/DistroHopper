@@ -4,9 +4,9 @@ Type=Application
 Name=popos
 GenericName=
 Comment=
-Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --separator=" " --field="Release:CB" "20.04"!"21.10"!"22.04" --field="Edition:CB" "intel"!"nvidia" | xargs -I{} sh -c "./quickget popos {}";/usr/bin/fish'
-Icon=/home/zen/Git/DistroHopper/icons/popos.svg
-Terminal=sakura
+Exec=sh -c 'cd /home/z/vm && yad --form --separator=" " --field="Release:CB" "	22.04"!"20.04" --field="Edition:CB" "	intel"!"nvidia" | xargs -I{} sh -c "quickget popos {}";/bin/bash'
+Icon=/usr/share/icons/distrohopper/popos.svg
+Terminal=false
 X-MultipleArgs=
 Type=Application
 Categories=System;Virtualization;

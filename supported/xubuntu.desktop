@@ -4,9 +4,9 @@ Type=Application
 Name=xubuntu
 GenericName=
 Comment=
-Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --field="Release:CB" "16.04"!"18.04"!"20.04"!"22.04"!"23.04"!"jammy-daily"!"daily-live"!"daily-canary"!"daily-legacy" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget xubuntu {}";/usr/bin/fish'
-Icon=/home/zen/Git/DistroHopper/icons/xubuntu.svg
-Terminal=sakura
+Exec=sh -c 'cd /home/z/vm && yad --form --field="Release:CB" "	16.04"!"18.04"!"20.04"!"22.04"!"24.04"!"25.04"!"daily-live" | cut -d"|" -f1 | xargs -I{} sh -c "quickget xubuntu {}";/bin/bash'
+Icon=/usr/share/icons/distrohopper/xubuntu.svg
+Terminal=false
 X-MultipleArgs=
 Type=Application
 Categories=System;Virtualization;

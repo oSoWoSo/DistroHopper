@@ -4,9 +4,9 @@ Type=Application
 Name=kolibrios
 GenericName=
 Comment=
-Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --field="Release:CB" "latest" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget kolibrios {}";/usr/bin/fish'
-Icon=/home/zen/Git/DistroHopper/icons/kolibrios.svg
-Terminal=sakura
+Exec=sh -c 'cd /home/z/vm && yad --form --separator=" " --field="Release:CB" "	latest" --field="Edition:CB" "	en_US"!"ru_RU"!"it_IT"!"es_ES" | xargs -I{} sh -c "quickget kolibrios {}";/bin/bash'
+Icon=/usr/share/icons/distrohopper/kolibrios.svg
+Terminal=false
 X-MultipleArgs=
 Type=Application
 Categories=System;Virtualization;

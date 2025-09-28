@@ -4,9 +4,9 @@ Type=Application
 Name=vanillaos
 GenericName=
 Comment=
-Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --field="Release:CB" "22.10" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget vanillaos {}";/usr/bin/fish'
-Icon=/home/zen/Git/DistroHopper/icons/vanillaos.svg
-Terminal=sakura
+Exec=sh -c 'cd /home/z/vm && yad --form --field="Release:CB" "	22.10-r8"!"22.10-r7.5"!"22.10-r7"!"22.10-r6"!"22.10-r5"!"22.10-r4"!"22.10-r3"!"22.10-r2" | cut -d"|" -f1 | xargs -I{} sh -c "quickget vanillaos {}";/bin/bash'
+Icon=/usr/share/icons/distrohopper/vanillaos.svg
+Terminal=false
 X-MultipleArgs=
 Type=Application
 Categories=System;Virtualization;

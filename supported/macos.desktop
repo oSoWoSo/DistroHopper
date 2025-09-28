@@ -4,9 +4,9 @@ Type=Application
 Name=macos
 GenericName=
 Comment=
-Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --field="Release:CB" "high-sierra"!"mojave"!"catalina"!"big-sur"!"monterey"!"ventura" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget macos {}";/usr/bin/fish'
-Icon=/home/zen/Git/DistroHopper/icons/macos.svg
-Terminal=sakura
+Exec=sh -c 'cd /home/z/vm && yad --form --field="Release:CB" "	mojave"!"catalina"!"big-sur"!"monterey"!"ventura"!"sonoma"!"sequoia" | cut -d"|" -f1 | xargs -I{} sh -c "quickget macos {}";/bin/bash'
+Icon=/usr/share/icons/distrohopper/macos.svg
+Terminal=false
 X-MultipleArgs=
 Type=Application
 Categories=System;Virtualization;

@@ -4,9 +4,9 @@ Type=Application
 Name=archcraft
 GenericName=
 Comment=
-Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --field="Release:CB" "latest" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget archcraft {}";/usr/bin/fish'
-Icon=/home/zen/Git/DistroHopper/icons/archcraft.svg
-Terminal=sakura
+Exec=sh -c 'cd /home/z/vm && yad --form --field="Release:CB" "	latest" | cut -d"|" -f1 | xargs -I{} sh -c "quickget archcraft {}";/bin/bash'
+Icon=/usr/share/icons/distrohopper/archcraft.svg
+Terminal=false
 X-MultipleArgs=
 Type=Application
 Categories=System;Virtualization;

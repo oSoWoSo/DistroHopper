@@ -4,9 +4,9 @@ Type=Application
 Name=solus
 GenericName=
 Comment=
-Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --separator=" " --field="Release:CB" "4.3" --field="Edition:CB" "Budgie"!"GNOME"!"MATE"!"Plasma" | xargs -I{} sh -c "./quickget solus {}";/usr/bin/fish'
-Icon=/home/zen/Git/DistroHopper/icons/solus.svg
-Terminal=sakura
+Exec=sh -c 'cd /home/z/vm && yad --form --separator=" " --field="Release:CB" "	2024-10-14"!"2025-01-26" --field="Edition:CB" "	Budgie"!"GNOME"!"Plasma"!"XFCE-Beta" | xargs -I{} sh -c "quickget solus {}";/bin/bash'
+Icon=/usr/share/icons/distrohopper/solus.svg
+Terminal=false
 X-MultipleArgs=
 Type=Application
 Categories=System;Virtualization;

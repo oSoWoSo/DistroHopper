@@ -4,9 +4,9 @@ Type=Application
 Name=ubuntu-server
 GenericName=
 Comment=
-Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --field="Release:CB" "18.04"!"20.04"!"22.04"!"23.04"!"daily-live" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget ubuntu-server {}";/usr/bin/fish'
-Icon=/home/zen/Git/DistroHopper/icons/ubuntu-server.svg
-Terminal=sakura
+Exec=sh -c 'cd /home/z/vm && yad --form --field="Release:CB" "	daily-live"!"25.10"!"25.04"!"24.04"!"22.04"!"20.04"!"18.04"!"16.04"!"14.04" | cut -d"|" -f1 | xargs -I{} sh -c "quickget ubuntu-server {}";/bin/bash'
+Icon=/usr/share/icons/distrohopper/ubuntu-server.svg
+Terminal=false
 X-MultipleArgs=
 Type=Application
 Categories=System;Virtualization;

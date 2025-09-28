@@ -4,9 +4,9 @@ Type=Application
 Name=slax
 GenericName=
 Comment=
-Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --separator=" " --field="Release:CB" "latest" --field="Edition:CB" "Debian"!"Slackware" | xargs -I{} sh -c "./quickget slax {}";/usr/bin/fish'
-Icon=/home/zen/Git/DistroHopper/icons/slax.svg
-Terminal=sakura
+Exec=sh -c 'cd /home/z/vm && yad --form --separator=" " --field="Release:CB" "	latest" --field="Edition:CB" "	debian"!"slackware" | xargs -I{} sh -c "quickget slax {}";/bin/bash'
+Icon=/usr/share/icons/distrohopper/slax.svg
+Terminal=false
 X-MultipleArgs=
 Type=Application
 Categories=System;Virtualization;

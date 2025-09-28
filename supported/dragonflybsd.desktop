@@ -4,9 +4,9 @@ Type=Application
 Name=dragonflybsd
 GenericName=
 Comment=
-Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --field="Release:CB" "6.4.0"!"6.2.2"!"6.2.1"!"6.0.1"!"6.0.0"!"5.8.3"!"5.8.2"!"5.8.1"!"5.6.3"!"5.8.0"!"5.6.2"!"5.6.1"!"5.6.0"!"5.4.3"!"5.4.2"!"5.4.1"!"5.4.0"!"5.2.2"!"5.2.1"!"5.2.0"!"5.0.2"!"5.0.1"!"5.0.0" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget dragonflybsd {}";/usr/bin/fish'
-Icon=/home/zen/Git/DistroHopper/icons/dragonflybsd.svg
-Terminal=sakura
+Exec=sh -c 'cd /home/z/vm && yad --form --field="Release:CB" "	6.4.2"!"6.4.1"!"6.4.0"!"6.2.2"!"6.2.1"!"6.0.1"!"6.0.0"!"5.8.3"!"5.8.2"!"5.8.1"!"5.6.3"!"5.8.0" | cut -d"|" -f1 | xargs -I{} sh -c "quickget dragonflybsd {}";/bin/bash'
+Icon=/usr/share/icons/distrohopper/dragonflybsd.svg
+Terminal=false
 X-MultipleArgs=
 Type=Application
 Categories=System;Virtualization;

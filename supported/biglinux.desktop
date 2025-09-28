@@ -4,9 +4,9 @@ Type=Application
 Name=biglinux
 GenericName=
 Comment=
-Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --field="Release:CB" "kde" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget biglinux {}";/usr/bin/fish'
-Icon=/home/zen/Git/DistroHopper/icons/biglinux.svg
-Terminal=sakura
+Exec=sh -c 'cd /home/z/vm && yad --form --separator=" " --field="Release:CB" "	2025-09-26" --field="Edition:CB" "	k616"!"k612"!"k66" | xargs -I{} sh -c "quickget biglinux {}";/bin/bash'
+Icon=/usr/share/icons/distrohopper/biglinux.svg
+Terminal=false
 X-MultipleArgs=
 Type=Application
 Categories=System;Virtualization;

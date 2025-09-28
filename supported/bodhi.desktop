@@ -4,9 +4,9 @@ Type=Application
 Name=bodhi
 GenericName=
 Comment=
-Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --separator=" " --field="Release:CB" "7.0.0" --field="Edition:CB" "standard"!"hwe"!"s76" | xargs -I{} sh -c "./quickget bodhi {}";/usr/bin/fish'
-Icon=/home/zen/Git/DistroHopper/icons/bodhi.svg
-Terminal=sakura
+Exec=sh -c 'cd /home/z/vm && yad --form --separator=" " --field="Release:CB" "	7.0.0" --field="Edition:CB" "	standard"!"hwe"!"s76" | xargs -I{} sh -c "quickget bodhi {}";/bin/bash'
+Icon=/usr/share/icons/distrohopper/bodhi.svg
+Terminal=false
 X-MultipleArgs=
 Type=Application
 Categories=System;Virtualization;

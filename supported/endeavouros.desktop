@@ -4,9 +4,9 @@ Type=Application
 Name=endeavouros
 GenericName=
 Comment=
-Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --field="Release:CB" "apollo_22_1"!"artemis-22_6"!"artemis_neo_22_7"!"artemis_neo_22_8"!"artemis_nova_22_9"!"atlantis-21_4"!"atlantis_neo-21_5"!"cassini_22_12" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget endeavouros {}";/usr/bin/fish'
-Icon=/home/zen/Git/DistroHopper/icons/endeavouros.svg
-Terminal=sakura
+Exec=sh -c 'cd /home/z/vm && yad --form --field="Release:CB" "	mercury-neo-2025.03.19"!"mercury-2025.02.08"!"gemini-2024.04.20" | cut -d"|" -f1 | xargs -I{} sh -c "quickget endeavouros {}";/bin/bash'
+Icon=/usr/share/icons/distrohopper/endeavouros.svg
+Terminal=false
 X-MultipleArgs=
 Type=Application
 Categories=System;Virtualization;

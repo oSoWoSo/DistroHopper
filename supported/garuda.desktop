@@ -4,9 +4,9 @@ Type=Application
 Name=garuda
 GenericName=
 Comment=
-Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --separator=" " --field="Release:CB" "latest" --field="Edition:CB" "cinnamon"!"dr460nized"!"dr460nized-gaming"!"gnome"!"i3"!"kde-git"!"kde-lite"!"lxqt-kwin"!"mate"!"qtile"!"sway"!"wayfire"!"xfce" | xargs -I{} sh -c "./quickget garuda {}";/usr/bin/fish'
-Icon=/home/zen/Git/DistroHopper/icons/garuda.svg
-Terminal=sakura
+Exec=sh -c 'cd /home/z/vm && yad --form --separator=" " --field="Release:CB" "	latest" --field="Edition:CB" "	cinnamon"!"dr460nized"!"dr460nized-gaming"!"gnome"!"i3"!"kde-git"!"kde-lite"!"lxqt-kwin" | xargs -I{} sh -c "quickget garuda {}";/bin/bash'
+Icon=/usr/share/icons/distrohopper/garuda.svg
+Terminal=false
 X-MultipleArgs=
 Type=Application
 Categories=System;Virtualization;

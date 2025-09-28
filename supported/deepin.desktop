@@ -4,9 +4,9 @@ Type=Application
 Name=deepin
 GenericName=
 Comment=
-Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --field="Release:CB" "20"!"20.1"!"20.2"!"20.2.1"!"20.2.2"!"20.2.3"!"20.2.4"!"20.3"!"20.4"!"20.5"!"20.6"!"20.7" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget deepin {}";/usr/bin/fish'
-Icon=/home/zen/Git/DistroHopper/icons/deepin.svg
-Terminal=sakura
+Exec=sh -c 'cd /home/z/vm && yad --form --field="Release:CB" "	25.0.1"!"23.1"!"20.9" | cut -d"|" -f1 | xargs -I{} sh -c "quickget deepin {}";/bin/bash'
+Icon=/usr/share/icons/distrohopper/deepin.svg
+Terminal=false
 X-MultipleArgs=
 Type=Application
 Categories=System;Virtualization;

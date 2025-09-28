@@ -4,9 +4,9 @@ Type=Application
 Name=gentoo
 GenericName=
 Comment=
-Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --field="Release:CB" "latest" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget gentoo {}";/usr/bin/fish'
-Icon=/home/zen/Git/DistroHopper/icons/gentoo.svg
-Terminal=sakura
+Exec=sh -c 'cd /home/z/vm && yad --form --separator=" " --field="Release:CB" "	latest" --field="Edition:CB" "	minimal"!"livegui" | xargs -I{} sh -c "quickget gentoo {}";/bin/bash'
+Icon=/usr/share/icons/distrohopper/gentoo.svg
+Terminal=false
 X-MultipleArgs=
 Type=Application
 Categories=System;Virtualization;

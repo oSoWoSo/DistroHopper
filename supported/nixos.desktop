@@ -4,9 +4,9 @@ Type=Application
 Name=nixos
 GenericName=
 Comment=
-Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --separator=" " --field="Release:CB" "21.05"!"21.11"!"22.05"!"22.11"!"23.05" --field="Edition:CB" "gnome"!"plasma5"!"minimal" | xargs -I{} sh -c "./quickget nixos {}";/usr/bin/fish'
-Icon=/home/zen/Git/DistroHopper/icons/nixos.svg
-Terminal=sakura
+Exec=sh -c 'cd /home/z/vm && yad --form --separator=" " --field="Release:CB" "	unstable"!"25.05" --field="Edition:CB" "	minimal"!"graphical" | xargs -I{} sh -c "quickget nixos {}";/bin/bash'
+Icon=/usr/share/icons/distrohopper/nixos.svg
+Terminal=false
 X-MultipleArgs=
 Type=Application
 Categories=System;Virtualization;

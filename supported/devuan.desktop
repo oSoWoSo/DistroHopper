@@ -4,9 +4,9 @@ Type=Application
 Name=devuan
 GenericName=
 Comment=
-Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --field="Release:CB" "beowulf"!"chimaera"!"daedalus" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget devuan {}";/usr/bin/fish'
-Icon=/home/zen/Git/DistroHopper/icons/devuan.svg
-Terminal=sakura
+Exec=sh -c 'cd /home/z/vm && yad --form --field="Release:CB" "	daedalus"!"chimaera"!"beowulf" | cut -d"|" -f1 | xargs -I{} sh -c "quickget devuan {}";/bin/bash'
+Icon=/usr/share/icons/distrohopper/devuan.svg
+Terminal=false
 X-MultipleArgs=
 Type=Application
 Categories=System;Virtualization;

@@ -4,9 +4,9 @@ Type=Application
 Name=netboot
 GenericName=
 Comment=
-Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --field="Release:CB" "latest" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget netboot {}";/usr/bin/fish'
-Icon=/home/zen/Git/DistroHopper/icons/netboot.svg
-Terminal=sakura
+Exec=sh -c 'cd /home/z/vm && yad --form --field="Release:CB" "	latest" | cut -d"|" -f1 | xargs -I{} sh -c "quickget netboot {}";/bin/bash'
+Icon=/usr/share/icons/distrohopper/netboot.svg
+Terminal=false
 X-MultipleArgs=
 Type=Application
 Categories=System;Virtualization;

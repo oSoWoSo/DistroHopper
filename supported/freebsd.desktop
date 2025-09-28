@@ -4,9 +4,9 @@ Type=Application
 Name=freebsd
 GenericName=
 Comment=
-Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --separator=" " --field="Release:CB" "12.4"!"13.1"!"13.2"!"14.0" --field="Edition:CB" "disc1"!"dvd1" | xargs -I{} sh -c "./quickget freebsd {}";/usr/bin/fish'
-Icon=/home/zen/Git/DistroHopper/icons/freebsd.svg
-Terminal=sakura
+Exec=sh -c 'cd /home/z/vm && yad --form --separator=" " --field="Release:CB" "	14.3"!"14.2"!"13.5"!"13.4" --field="Edition:CB" "	disc1"!"dvd1" | xargs -I{} sh -c "quickget freebsd {}";/bin/bash'
+Icon=/usr/share/icons/distrohopper/freebsd.svg
+Terminal=false
 X-MultipleArgs=
 Type=Application
 Categories=System;Virtualization;

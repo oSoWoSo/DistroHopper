@@ -4,9 +4,9 @@ Type=Application
 Name=openbsd
 GenericName=
 Comment=
-Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --field="Release:CB" "6.8"!"6.9"!"7.0"!"7.1"!"7.2"!"7.3"!"7.4" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget openbsd {}";/usr/bin/fish'
-Icon=/home/zen/Git/DistroHopper/icons/openbsd.svg
-Terminal=sakura
+Exec=sh -c 'cd /home/z/vm && yad --form --field="Release:CB" "	7.7"!"7.6"!"7.5"!"7.4"!"7.3"!"7.2"!"7.1"!"7.0"!"6.9"!"6.8" | cut -d"|" -f1 | xargs -I{} sh -c "quickget openbsd {}";/bin/bash'
+Icon=/usr/share/icons/distrohopper/openbsd.svg
+Terminal=false
 X-MultipleArgs=
 Type=Application
 Categories=System;Virtualization;

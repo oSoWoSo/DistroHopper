@@ -4,9 +4,9 @@ Type=Application
 Name=ghostbsd
 GenericName=
 Comment=
-Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --separator=" " --field="Release:CB" "21.10.16"!"21.11.24"!"22.01.12" --field="Edition:CB" "mate"!"xfce" | xargs -I{} sh -c "./quickget ghostbsd {}";/usr/bin/fish'
-Icon=/home/zen/Git/DistroHopper/icons/ghostbsd.svg
-Terminal=sakura
+Exec=sh -c 'cd /home/z/vm && yad --form --separator=" " --field="Release:CB" "	25.02-R14.3p2"!"25.01-R14.2p1"!"24.10.1" --field="Edition:CB" "	mate"!"xfce" | xargs -I{} sh -c "quickget ghostbsd {}";/bin/bash'
+Icon=/usr/share/icons/distrohopper/ghostbsd.svg
+Terminal=false
 X-MultipleArgs=
 Type=Application
 Categories=System;Virtualization;

@@ -4,9 +4,9 @@ Type=Application
 Name=batocera
 GenericName=
 Comment=
-Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --field="Release:CB" "32"!"33"!"34" | cut -d"|" -f1 | xargs -I{} sh -c "./quickget batocera {}";/usr/bin/fish'
-Icon=/home/zen/Git/DistroHopper/icons/batocera.svg
-Terminal=sakura
+Exec=sh -c 'cd /home/z/vm && yad --form --field="Release:CB" "	last"!"41"!"40"!"39"!"38" | cut -d"|" -f1 | xargs -I{} sh -c "quickget batocera {}";/bin/bash'
+Icon=/usr/share/icons/distrohopper/batocera.svg
+Terminal=false
 X-MultipleArgs=
 Type=Application
 Categories=System;Virtualization;

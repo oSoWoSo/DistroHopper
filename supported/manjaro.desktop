@@ -4,9 +4,9 @@ Type=Application
 Name=manjaro
 GenericName=
 Comment=
-Exec=sh -c 'cd /home/zen/Git/DistroHopper && yad --form --separator=" " --field="Release:CB" "xfce"!"gnome"!"kde"!"budgie"!"cinnamon"!"i3"!"mate" --field="Edition:CB" "full"!"minimal" | xargs -I{} sh -c "./quickget manjaro {}";/usr/bin/fish'
-Icon=/home/zen/Git/DistroHopper/icons/manjaro.svg
-Terminal=sakura
+Exec=sh -c 'cd /home/z/vm && yad --form --separator=" " --field="Release:CB" "	xfce"!"gnome"!"plasma"!"cinnamon"!"i3"!"sway" --field="Edition:CB" "	full"!"minimal" | xargs -I{} sh -c "quickget manjaro {}";/bin/bash'
+Icon=/usr/share/icons/distrohopper/manjaro.svg
+Terminal=false
 X-MultipleArgs=
 Type=Application
 Categories=System;Virtualization;
