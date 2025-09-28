@@ -1,111 +1,372 @@
-<div align="center">
-<img src=".github/logo.png" alt="Quickemu" width="256" />
+![](https://img.shields.io/github/stars/oSoWoSo/DistroHopper?style=for-the-badge&color=8BC53F&logo=instatus&logoColor=000000)
+![](https://img.shields.io/github/forks/oSoWoSo/DistroHopper?style=for-the-badge&color=8BC53F&logo=git&logoColor=000000)
+![](https://img.shields.io/github/license/oSoWoSo/DistroHopper?style=for-the-badge&color=8BC53F&logo=apache&logoColor=000000)
+![](https://img.shields.io/github/repo-size/oSoWoSo/DistroHopper?style=for-the-badge&color=8BC53F&logo=files&logoColor=000000)
 
-# Quickemu
+![](https://img.shields.io/github/last-commit/oSoWoSo/DistroHopper?style=for-the-badge&color=8BC53F&logo=codeigniter&logoColor=000000)
+![](https://img.shields.io/badge/language-shell-green?style=for-the-badge&color=8BC53F&logo=sharp&logoColor=000000)
+![](https://img.shields.io/badge/gitmoji-%20😜%20😍-FFDD67.svg?style=for-the-badge&color=8BC53F&logo=sharp&logoColor=000000&alt="Gitmoji")
 
-**Quickly create and run optimised Windows, macOS and Linux virtual machines:**
+---
 
-**Made with 💝 for <img src=".github/tux.png" align="top" width="24" alt="Tux (Linux)"/> & <img src=".github/apple.png" align="top" width="24" alt="Apple (macOS)"/>**
-</div>
+# Looking to try out a new operating system?
 
-<p align="center">
-  &nbsp;<a href="https://wimpysworld.io/discord" target="_blank"><img alt="Discord" src="https://img.shields.io/discord/712850672223125565?style=for-the-badge&logo=discord&logoColor=%23ffffff&label=Discord&labelColor=%234253e8&color=%23e4e2e2"></a>&nbsp;
-  &nbsp;<a href="https://fosstodon.org/@wimpy" target="_blank"><img alt="Mastodon" src="https://img.shields.io/badge/Mastodon-6468fa?style=for-the-badge&logo=mastodon&logoColor=%23ffffff"></a>&nbsp;
-  &nbsp;<a href="https://twitter.com/m_wimpress" target="_blank"><img alt="Twitter" src="https://img.shields.io/badge/Twitter-303030?style=for-the-badge&logo=x&logoColor=%23ffffff"></a>&nbsp;
-  &nbsp;<a href="https://linkedin.com/in/martinwimpress" target="_blank"><img alt="LinkedIn" src="https://img.shields.io/badge/LinkedIn-1667be?style=for-the-badge&logo=linkedin&logoColor=%23ffffff"></a>&nbsp;
-</p>
+ try
+
+# **DistroHopper**
+Quickly download, create and run VM of any#TODO operating system.
+
+Linux![Tux](docs/tux23.png) required...
+
+---
+
+Click on Hop for latest download
+
+[![Hop](docs/hop120.png)](https://sourceforge.net/projects/distrohopper/files/latest/download)
+
+[![Donate](https://liberapay.com/assets/widgets/donate.svg)](https://liberapay.com/zenobit/donate)
+
+Licensed under AGPL3
+# Still Beta version!
+<details>
+  <summary>Click for screenshot</summary>
+<img src="docs/distrohopper.png">
+</details>
+
+ As a base excellent [quickemu](https://github.com/quickemu-project/quickemu) (Link to project page)
+
+[![quickemu video: Replace VirtualBox with Bash &
+QEMU](https://img.youtube.com/vi/AOTYWEgw0hI/0.jpg)](https://www.youtube.com/watch?v=AOTYWEgw0hI)
 
 
-# Introduction
-
-**Quickemu** is a wrapper for the excellent [QEMU](https://www.qemu.org/) that
-automatically *"does the right thing"* when creating virtual machines. No
-requirement for exhaustive configuration options. You decide what operating
-system you want to run and Quickemu takes care of the rest 🤖
-
-- `quickget` **automatically downloads the upstream OS** and creates the configuration 📀
-- `quickemu` enumerates your hardware and launches the virtual machine with the **optimum configuration best suited to your computer** ⚡️
-
-The original objective of the project was to [enable quick testing of Linux
-distributions](https://github.com/quickemu-project/quickemu/wiki/02-Create-Linux-virtual-machines)
-where the virtual machines and their configuration can be stored anywhere (such
-as external USB storage or your home directory) and no elevated permissions are
-required to run the virtual machines.
-
-**Today, Quickemu includes comprehensive support for [macOS](https://github.com/quickemu-project/quickemu/wiki/03-Create-macOS-virtual-machines),
-[Windows](https://github.com/quickemu-project/quickemu/wiki/04-Create-Windows-virtual-machines)**, most of the BSDs, novel non-Linux operating systems such as FreeDOS, Haiku, KolibriOS, OpenIndiana, ReactOS, and more.
+  You can download new distro with **few clicks** of a mouse
 
 # Features
+ - GUI using yad (on youtube)
 
-- Host support for **Linux and macOS**
-- **macOS** Sonoma, Ventura, Monterey, Big Sur, Catalina & Mojave
-- **Windows** 10 and 11 including TPM 2.0
-- **Windows Server** 2022 2019 2016
-- [Ubuntu](https://ubuntu.com/desktop) and all the **[official Ubuntu
-  flavours](https://ubuntu.com/download/flavours)**
-- **Nearly 1000 operating system editions are supported!**
-- Full SPICE support including host/guest clipboard sharing
-- VirtIO-webdavd file sharing for Linux and Windows guests
-- VirtIO-9p file sharing for Linux and macOS guests
-- [QEMU Guest Agent
-  support](https://wiki.qemu.org/Features/GuestAgent); provides access
-  to a system-level agent via standard QMP commands
-- Samba file sharing for Linux, macOS and Windows guests (*if `smbd`
-  is installed on the host*)
-- VirGL acceleration
-- USB device pass-through
-- Smartcard pass-through
-- Automatic SSH port forwarding to guests
-- Network port forwarding
-- Full duplex audio
-- Braille support
-- EFI (with or without SecureBoot) and Legacy BIOS boot
+[![dh](https://img.youtube.com/vi/RrFQECcwLRA/0.jpg)](https://www.youtube.com/watch?v=RrFQECcwLRA)
 
-## As featured on [Linux Matters](https://linuxmatters.sh) podcast!
+ - TUI using fzf (on youtube)
 
-The presenters of Linux Matters 🐧🎙️ are the creators of each of the principle Quickemu projects. We discussed Quickemu's 2024 reboot in [Episode 30 - Quickemu Rising From the Bashes](https://linuxmatters.sh/30). <!-- and in [Episode 32 - Quick, quicker, quickest](https://linuxmatters.sh/32) [Martin](https://github.com/flexiondotorg) unveils macOS host support for [**Quickemu**](https://github.com/quickemu-project/quickemu), [Mark](https://github.com/marxjohnson) explains the origins of the [**Quickgui**](https://github.com/quickemu-project/quickgui) desktop app and upcoming improvements, and [Alan](https://github.com/popey) debuts [**Quicktest**](https://github.com/quickemu-project/quicktest); a framework for automatically testing operating systems via Quickemu -->
+[![tui](https://img.youtube.com/vi/gJ5hqYEskOw/0.jpg)](https://www.youtube.com/watch?v=gJ5hqYEskOw)
 
-<div align="center">
-  <a href="https://linuxmatters.sh" target="_blank"><img src="https://github.com/wimpysworld/nix-config/raw/main/.github/screenshots/linuxmatters.png" alt="Linux Matters Podcast"/></a>
-  <br />
-  <em>Linux Matters Podcast</em>
-</div>
+ - Desktop(shortcuts) entries generator
 
-# Quick start
+ - Set dir where VMs will be stored
 
-[Once Quickemu is installed](https://github.com/quickemu-project/quickemu/wiki/01-Installation), there are two simple steps to create and run a virtual machine:
+ - Install DistroHopper systemwide
 
-- `quickget` automatically downloads the ISO image for the operating system you want to run and creates a configuration file for the virtual machine.
+ - Portable mode (dependecies still must be installed)
 
-``` shell
-quickget nixos unstable minimal
-```
+ - Add new operating system to quickget (bit easier)
 
-- `quickemu` starts the virtual machine using the configuration file created by `quickget`.
+ - Copy all downloaded ISOs to destination directory
 
-``` shell
-quickemu --vm nixos-unstable-minimal.conf
-```
+ - Translate DistroHopper (Currently supported English and Czech language)
 
-Execute `quickget` (with no arguments) to see a list of all the supported operating systems.
 
-## Demo
+Developed in English and translated into Czech language.
 
-<div align="center">
+## Welcome translations!
 
-<a href="https://asciinema.org/a/658148?autoplay=1" target="_blank"><img src="https://asciinema.org/a/658148.svg" /></a>
+---
 
-</div>
+# Why am I doing it?
+  Because I wanna learn
 
-# Documentation
+- Linux
 
-The wiki describes how to get up and running with Quickemu and also covers more advanced configuration and usage.
+- Bash
 
-- [**Installation**](https://github.com/quickemu-project/quickemu/wiki/01-Installation) 💾
-- [**Create Linux virtual machines**](https://github.com/quickemu-project/quickemu/wiki/02-Create-Linux-virtual-machines) 🐧
-- [**Create macOS virtual machines**](https://github.com/quickemu-project/quickemu/wiki/03-Create-macOS-virtual-machines) 🍏
-- [**Create Windows virtual machines**](https://github.com/quickemu-project/quickemu/wiki/04-Create-Windows-virtual-machines) 🪟
-- [**Advanced quickemu configuration**](https://github.com/quickemu-project/quickemu/wiki/05-Advanced-quickemu-configuration) 🔧
-- [**Advanced quickget features**](https://github.com/quickemu-project/quickemu/wiki/06-Advanced-quickget-features) 🤓
-- [**Alternative frontends**](https://github.com/quickemu-project/quickemu/wiki/07-Alternative-frontends) 🧑‍💻
-- [**References**](https://github.com/quickemu-project/quickemu/wiki/08-References) 📚️
+- yad
+
+- project management
+
+And contribute to open source
+
+ play with Quickemu
+
+And easily add new distros to it
+
+---
+
+## How to run DistroHopper?
+
+You need fullfill the requirement first...
+
+## Requirements (For running VMs)
+-   [QEMU](https://www.qemu.org/) (*6.0.0 or newer*) **with GTK, SDL, SPICE & VirtFS support**
+-   [bash](https://www.gnu.org/software/bash/) (*4.0 or newer*)
+-   [Coreutils](https://www.gnu.org/software/coreutils/)
+-   [EDK II](https://github.com/tianocore/edk2)
+-   [grep](https://www.gnu.org/software/grep/)
+-   [jq](https://stedolan.github.io/jq/)
+-   [LSB](https://wiki.linuxfoundation.org/lsb/start)
+-   [procps](https://gitlab.com/procps-ng/procps)
+-   [python3](https://www.python.org/)
+-   [macrecovery](https://github.com/acidanthera/OpenCorePkg/tree/master/Utilities/macrecovery)
+-   [mkisofs](http://cdrtools.sourceforge.net/private/cdrecord.html)
+-   [usbutils](https://github.com/gregkh/usbutils)
+-   [util-linux](https://github.com/karelzak/util-linux)
+-   [sed](https://www.gnu.org/software/sed/)
+-   [socat](http://www.dest-unreach.org/socat/)
+-   [spicy](https://gitlab.freedesktop.org/spice/spice-gtk)
+-   [swtpm](https://github.com/stefanberger/swtpm)
+-   [Wget](https://www.gnu.org/software/wget/)
+-   [xdg-user-dirs](https://www.freedesktop.org/wiki/Software/xdg-user-dirs/)
+-   [xrandr](https://gitlab.freedesktop.org/xorg/app/xrandr)
+-   [zsync](http://zsync.moria.org.uk/)
+-   [unzip](http://www.info-zip.org/UnZip.html)
+
+### Installing Requirements
+
+For Ubuntu, Arch and nixos systems the
+[ppa](https://launchpad.net/~flexiondotorg/+archive/ubuntu/quickemu),
+[AUR](https://aur.archlinux.org/packages/quickemu) or
+[nix](https://github.com/NixOS/nixpkgs/tree/master/pkgs/development/quickemu)
+packaging will take care of the dependencies. For other host
+distributions or operating systems it will be necessary to install the
+above requirements or their equivalents.
+
+	If you install DistroHopper, it should take care of dependencies on Arch, Debian, Ubuntu, openSuse and Fedora
+
+### For DistroHopper to work you need
+
+  `wget yad fzf`
+
+ quickemu is included
+
+ For adding new distros, or adding/improving translations you will need also meld.
+
+# How to install DistroHopper?
+
+ You need get copy of distrohopper
+
+  If you want more stable experience, download latest release from
+
+#### [GitHub](https://github.com/oSoWoSo/DistroHopper/releases) or SourceForge [![SourceForge](https://img.shields.io/sourceforge/dt/distrohopper.svg)](https://sourceforge.net/projects/distrohopper/files/latest/download)
+
+---
+
+ If you want latest developer version... (could have bugs and break anytime)
+
+ Or you want translate DistroHopper
+
+ `git clone https://github.com/oSoWoSo/DistroHopper`
+
+ Enter created/unpacked distrohopper directory
+
+ Now you should be good to go...
+
+---
+
+# How to run DistroHopper
+
+ Just run from terminal
+
+ `./dh`
+
+  And you will see what next...
+
+  I am usually run DistroHopper as:
+
+ `./dh m r s l && ./dh i && dh g`
+
+ (But...)
+
+## Desktop files
+
+ All desktop files will be storred in your .config/distrohopper
+ in directories *ready* and *supported*
+
+ Fell free to copy them anywhere you want...
+
+### Currently supported Operating Systems and tools:
+agarimos
+alma
+alpine
+android
+arch
+archcraft
+arco
+artix
+athenaos
+batocera
+biglinux
+blendos
+bodhi
+cachyos
+centos-stream
+cereus
+chimera
+debian
+deepin
+devuan
+dietpi
+dragonflybsd
+edubuntu
+elementary
+endeavouros
+endless
+fedora
+freebsd
+freedos
+fvoid
+gabeeos
+garuda
+gentoo
+ghostbsd
+haiku
+holoiso
+kali
+kdeneon
+kolibrios
+kubuntu
+lite
+lmde
+mageia
+manjaro
+mint
+miyo
+mx
+netboot
+netbsd
+nixos
+lubuntu
+macos
+openbsd
+openindiana
+opensuse
+oracle
+popos
+reactos
+rebornos
+rocky
+siduction
+slackware
+slax
+slitaz
+solus
+tails
+tinycore
+truenas-core
+truenas-scale
+tuxedoos
+ubuntu
+ubuntu-budgie
+ubuntucinnamon
+ubuntukylin
+ubuntu-mate
+ubuntu-server
+ubuntustudio
+ubuntu-unity
+vanillaos
+ventoy
+void
+voidpup
+vx
+windows
+xero
+xubuntu
+zorin
+
+
+Also with posible planned: [in discusion](https://github.com/oSoWoSo/DistroHopper/discussions/9)
+
+---
+
+#### [discuss](https://github.com/oSoWoSo/DistroHopper/discussions) on github
+
+# Join DistroHopper chat group:
+[![SimpleX](docs/simplex.svg)](https://simplex.chat/contact#/?v=1-2&smp=smp%3A%2F%2FSkIkI6EPd2D63F4xFKfHk7I1UGZVNn6k1QWZ5rcyr6w%3D%40smp9.simplex.im%2FzmtsZwfTjwyynibt0bF6bb_xLWS9ce5A%23%2F%3Fv%3D1-2%26dh%3DMCowBQYDK2VuAyEAkMtz66wGfWb6VDn-_t_mVm3RFiFfOC3Hxye8Hm5tmVo%253D%26srv%3Djssqzccmrcws6bhmn77vgmhfjmhwlyr3u7puw4erkyoosywgl67slqqd.onion&data=%7B%22type%22%3A%22group%22%2C%22groupLinkId%22%3A%22o8KR0TOM0f2j33nO9goMRQ%3D%3D%22%7D) (click SimpleX logo)
+
+(check the software! even if you don't want chat about DistroHopper)
+[Simplex website](https://simplex.chat)
+
+# Without these amazing projects it wouldn't be posible:
+
+#### [bash](https://www.gnu.org/software/bash/)
+
+#### [QEMU](https://www.qemu.org/)
+
+#### [quickemu](https://github.com/quickemu-project/quickemu)
+
+GUI depends on
+#### [yad](https://github.com/v1cont/yad)
+
+TUI depends on
+#### [fzf](https://github.com/junegunn/fzf)
+
+----
+
+For
+
+- easy of use
+
+#### [fish](https://fishshell.com)
+
+- commiting and working with github
+
+#### [lazygit](https://github.com/jesseduffield/lazygit)
+
+#### [opencommit](https://github.com/di-sukharev/opencommit)
+
+- Editing
+
+#### [geany](https://geany.org/)
+
+#### [Kate](https://apps.kde.org/kate)
+
+- diff
+
+#### [Meld](https://meld.app/)
+
+- Logo and icons
+
+#### [GIMP](https://www.gimp.org)
+
+and
+
+#### [Inkscape](https://inkscape.org)
+
+#### [logo by](https://freesvg.org/by/OpenClipart) bit repaired by me..
+
+- Updating translation
+
+#### [Poedit](https://poeditor.com/)
+
+Everything done on
+
+#### [Void Linux](https://voidlinux.org)
+
+---
+
+# Mirrored on
+
+#### [GitHub](https://github.com/oSoWoSo/DistroHopper)
+
+#### [SourceForge](https://sourceforge.net/projects/distrohopper)
+
+#### [Disroot](https://git.disroot.org/oSoWoSo/DistroHopper)
+
+#### [Codeberg](https://codeberg.org/oSoWoSo/DistroHopper)
+
+#### [GitLab](https://gitlab.com/osowoso/distrohopper)
+
+#### [SourceHut](https://git.sr.ht/~osowoso/DistroHopper)
+
+---
+
+For Homepage click on Hop
+
+[![Hop](docs/hop120.png)](https://dh.osowoso.xyz/)
+
+# donate
+[![Donate](https://liberapay.com/assets/widgets/donate.svg)](https://liberapay.com/zenobit/donate)
+
+@zen0bit at github
+
+mailto: <zenobit@osowoso.xyz>
+
+#### parent site [oSoWoSo](https://osowoso.xyz)
+
