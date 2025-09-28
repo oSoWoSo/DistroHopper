@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+
+
 function wayland_check() {
 	session_type=$(loginctl show-session "$XDG_SESSION_ID" -p Type | cut -d= -f2)
 	case "$session_type" in
@@ -42,11 +44,12 @@ function set_variables() {
 	DH_CONFIG_DIR="$HOME/.config/dh"
 	DH_CONFIG="$DH_CONFIG_DIR/config"
 	DH_ICON_DIR="$DH_CONFIG_DIR/icons"
+	VMS_DIR="$HOME/vm"
 	PATH_PREFIX="/usr/bin/"
 	TMP_DIR="/tmp"
 	terminal="sakura"
 	replace='"!"'
-	export "DH_CONFIG_DIR" "DH_CONFIG" "replace" "DH_ICON_DIR" "PATH_PREFIX" "TMP_DIR" "terminal"
+	export "DH_CONFIG_DIR" "DH_CONFIG" "replace" "DH_ICON_DIR" "PATH_PREFIX" "TMP_DIR" "terminal" "VMS_DIR"
 	#check_and_set_mode
 	# Set traps to catch the signals and exit gracefully
 	trap "exit" INT
@@ -101,7 +104,8 @@ function create_dirs() {
 function choose_vms_dir() {
 	NEWDIR="$(yad --width=900 --height=900 --file --directory --title="Where to save VMs?")"
 	VMS_DIR="$NEWDIR"
-	echo "VMS_DIR=\"$VMS_DIR\"" >"$DH_CONFIG"
+	export VMS_DIR
+	echo "VMS_DIR=\"$VMS_DIR\"\nexport VMS_DIR" > "$DH_CONFIG"
 }
 
 function install_dh() {
@@ -145,12 +149,13 @@ function desktop_entry_dh() {
 	name='DistroHopper'
 	comment='Quickly download, create and run VM of any#TODO operating system.'
 	version="${version}"
-	execmd="sh -c 'cd ${VMS_DIR} && dh g'"
+	execmd="sh -c 'cd ${VMS_DIR} && dh'"
 	if [ "$interminal" = "yes" ]; then
 		terminal='true'
 	fi
 	icon="$DH_ICON_DIR/hop.svg"
 	categories='System;Virtualization;'
+	export -f create_desktop_entry
 	create_desktop_entry
 	$root cp "${TMP_DIR}/dh.desktop" /usr/share/applications/
 }
@@ -171,7 +176,7 @@ function installation_process() {
 #}
 
 function renew_ready_vms() {
-	cd "$VMS_DIR" || echo "ERROR: VMS_DIR not set!" && exit 1
+	cd "$VMS_DIR" || echo "ERROR: VMS_DIR not set!"; exit 1
 	rm -r "$DH_CONFIG_DIR"/ready >/dev/null 2>&1
 	mkdir -p "$DH_CONFIG_DIR"/ready
 	for vm_conf in *.conf; do
@@ -201,7 +206,7 @@ function renew_ready_vms() {
 }
 
 function renew_ready() {
-	cd "$VMS_DIR" || exit 1
+	cd "$VMS_DIR" || echo "ERROR: VMS_DIR not set!"; exit 1
 	#	for files in "$VMS_DIR"/*; do
 	#	if [ ! -e *.conf ]; then
 	#		echo $"No .conf files found"
@@ -238,6 +243,7 @@ EOF
 }
 
 function renew_supported_vms() {
+	echo "Regenerating supported"
 	rm -r "$DH_CONFIG_DIR"/supported >/dev/null 2>&1
 	mkdir -p "$DH_CONFIG_DIR"/supported
 	#run_in_terminal
@@ -298,11 +304,14 @@ function distrohopper_run_gui() {
 
 function WIP_buttons() {
 	export root
+	export VMSDIR
 	#export -f run_in_terminal
 	export -f distrohopper_about
 	export -f help_show
 	export -f first_run
+	export -f create_desktop_entry
 	export -f renew_supported_vms
+	export -f renew_ready
 	export -f renew_ready_vms
 	key=$((RANDOM % 9000 + 1000))
 	yad --plug="$key" --tabnum=1 --monitor --icons --listen \
@@ -338,4 +347,5 @@ else
 	first_run
 	echo "Installation finished"
 fi
+#distrohopper_run_gui
 WIP_buttons
