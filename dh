@@ -202,7 +202,7 @@ EOF
 	}
 
 	function distrohopper_install() {
-		cp dh quickget quickemu macrecovery windowskey "$PATH_PREFIX" >/dev/null 2>&1 || sudo cp dh quickget quickemu macrecovery windowskey "$PATH_PREFIX"
+		cp dh quickget quickemu quickreport "$PATH_PREFIX" >/dev/null 2>&1 || sudo cp dh quickget quickemu quickreport "$PATH_PREFIX"
 		# quickget also to config directory for adding new distros...
 		cp quickget "$DH_CONFIG_DIR/"
 		echo "$MSG_C_ICONS"
