@@ -177,6 +177,22 @@ EOF
 		export \"VMS_DIR\"" >> "$DH_CONFIG"
 	}
 
+	function install_needed_apt() {
+			sudo apt install qemu-system bash coreutils ovmf grep jq lsb-base procps python3 genisoimage usbutils util-linux sed spice-client-gtk swtpm wget xdg-user-dirs zsync unzip yad fzf
+	}
+
+	function install_needed_pacman() {
+			sudo pacman -S cdrtools coreutils edk2-ovmf grep jq procps python3 qemu-full sed socat spice-gtk swtpm usbutils util-linux wget xdg-user-dirs xorg-xrandr zsync getext yad fzf
+	}
+
+	function install_needed_xbps() {
+			sudo xbps-install -S qemu bash coreutils grep jq procps-ng python3 util-linux sed spice-gtk swtpm usbutils wget xdg-user-dirs xrandr unzip zsync socat yad fzf
+	}
+
+	function install_needed_dnf() {
+			sudo dnf install qemu bash coreutils edk2-tools grep jq lsb procps python3 genisoimage usbutils util-linux sed spice-gtk-tools swtpm wget xdg-user-dirs xrandr unzip yad fzf
+	}
+
 	function dependencies_install() {
 	# Find the current distribution and install dependecies
 		if [ -f /etc/os-release ]; then
@@ -193,22 +209,6 @@ EOF
 				exit 1
 			fi
 		fi
-	}
-
-	function install_needed_atp() {
-			sudo apt install qemu bash coreutils ovmf grep jq lsb procps python3 genisoimage usbutils util-linux sed spice-client-gtk swtpm wget xdg-user-dirs zsync unzip yad fzf
-	}
-
-	function install_needed_pacman() {
-			sudo pacman -S cdrtools coreutils edk2-ovmf grep jq procps python3 qemu-full sed socat spice-gtk swtpm usbutils util-linux wget xdg-user-dirs xorg-xrandr zsync getext yad fzf
-	}
-
-	function install_needed_xbps() {
-			sudo xbps-install -S qemu bash coreutils grep jq procps-ng python3 util-linux sed spice-gtk swtpm usbutils wget xdg-user-dirs xrandr unzip zsync socat yad fzf
-	}
-
-	function install_needed_dnf() {
-			sudo dnf install qemu bash coreutils edk2-tools grep jq lsb procps python3 genisoimage usbutils util-linux sed spice-gtk-tools swtpm wget xdg-user-dirs xrandr unzip yad fzf
 	}
 
 	function distrohopper_install() {
