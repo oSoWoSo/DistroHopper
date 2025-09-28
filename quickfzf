@@ -1,0 +1,110 @@
+#!/usr/bin/bash
+
+# Author: zenobit
+# Description: Uses fzf to provide a simple TUI for quickemu and quickget
+# License MIT
+
+# Define variables
+progname="${progname:="${0##*/}"}"
+version="0.24"
+#EDITOR="nano"
+configfile=~/.config/quickfzf/config
+vms=(*.conf)
+# Set traps to catch the signals and exit gracefully
+trap "exit" INT
+trap "exit" EXIT
+# Dependency check: check if fzf is installed and can be executed
+if ! command -v fzf >/dev/null 2>&1; then
+    echo "You are missing fzf..." && exit 255
+fi
+if ! command -v quickemu >/dev/null 2>&1; then
+    echo "You are missing quickemu..." && exit 255
+fi
+QUICKGET=$(command -v quickget) || exit 255
+
+# Display header
+printf 'Simple TUI for quickemu\n%s: v.%s\nquickemu: v.%s\n' "$progname" "$version" "$(quickemu --version)"
+if [ -f "$configfile" ]; then
+	printf 'custom command:\nquickemu %s\n' "$(cat "$configfile")"
+fi
+if [ -z "$EDITOR" ]; then
+    echo "editor: Not set! edit configs will not work!"
+else
+    echo "editor: $EDITOR"
+fi
+printf '\n Workdir: %s\n\n Prepared VMs:\n-------------\n' "$(pwd)"
+# Check if there are any VMs
+if [ ${#vms[@]} -eq 0 ]; then
+    echo "No VMs found."
+    exit 1
+fi
+# Print the names of the available VMs
+printf "%s\n" "${vms[@]%.*}"
+echo "-------------"
+printf '\nPress CTRL+c anytime to kill %s\n\n' "$progname"
+# Action prompt
+printf " Do you want to create a new VM? (c)
+ edit VM's config file (e)
+ quickemu custom command (q) 
+ or run an existing one? (press anything else)\n"
+read -rn 1 -s start
+case $start in
+    c ) todo="create";;
+    e ) todo="edit";;
+    q ) todo="custom";;
+    * ) todo="run";;
+esac
+
+# If the user chose to create a new VM
+if [ "$todo" = "create" ]; then
+    os=$(quickget | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' | fzf --cycle --header='Choose OS to download')
+	choices=$(quickget "$os" | sed 1d)
+	# Get the release and edition to download, if necessary
+	if [ "$(echo "$choices" | wc -l)" = 1 ]; then
+	    # get release
+	    release=$(echo "$choices" | grep 'Releases' | cut -d':' -f2 | grep -o '[^ ]*' | fzf --cycle --header='Choose Release')
+	    # downloading
+	    printf '\n Trying to download %s %s...\n\n' "$os" "$release"
+	    quickget "$os" "$release"
+	else
+	    # get release
+	    release=$(echo "$choices" | grep 'Releases' | cut -d':' -f2 | grep -o '[^ ]*' | fzf --cycle --header='Choose Release')
+	    # get edition
+	    edition=$(echo "$choices" | grep 'Editions' | cut -d':' -f2 | grep -o '[^ ]*' | fzf --cycle --header='Choose Edition')
+	    # downloading
+	    printf '\n Trying to download %s %s %s...\n\n' "$os" "$release" "$edition"
+	    quickget "$os" "$release" "$edition"
+	fi
+
+# edit VM's config'
+elif [ "$todo" = "edit" ]; then
+    editconfig=$(ls | grep '.conf' | fzf --cycle --header='Choose config to edit')
+    "$EDITOR" "$editconfig"
+
+# create quickemu custom command
+elif [ "$todo" = "custom" ]; then
+	custom=$(echo "edit delete"| grep -o '[^ ]*' | fzf --cycle --header='Edit or delete custom command?')
+	if [ "$custom" = "edit" ]; then
+		quickemu
+		printf '\nEnter quickemu custom command:\n'
+		read -r qcommand
+		mkdir -p ~/.config/quickfzf
+		echo "$qcommand" > "$configfile"
+	elif [ "$custom" = "delete" ]; then
+		rm -r ~/.config/quickfzf
+	fi
+
+# run VM
+elif [ "$todo" = "run" ]; then
+	# choose VM to run
+	chosen=$(echo "$(ls *.conf 2>/dev/null | sed 's/\.conf$//')" | fzf --cycle --header='Choose VM to run')
+
+	# Run chosen VM
+	printf '\n Starting %s...\n\n' "$chosen"
+	if [ -f "$configfile" ]; then
+		quickemu $(cat "$configfile") -vm "$chosen".conf
+	else
+		quickemu -vm "$chosen".conf
+	fi
+fi
+exit 0
