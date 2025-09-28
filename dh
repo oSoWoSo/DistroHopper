@@ -115,7 +115,29 @@ function install_dh() {
 	mkdir -p "$DH_CONFIG_DIR/supported"
 }
 
-desktop_entry_dh() {
+# shellcheck disable=SC2154
+function create_desktop_entry() {
+	cat <<EOF >${DESKTOP_FILE}
+[Desktop Entry]
+Version=$version
+Type=$type
+Name=$name
+GenericName=$gname
+Comment=$comment
+Exec=$execmd
+Icon=$icon
+Terminal=$terminal
+X-MultipleArgs=$args
+Type=$type
+Categories=$categories
+StartupNotify=$notify
+MimeType=$mime
+Keywords=$keyword
+
+EOF
+}
+
+function desktop_entry_dh() {
 	echo "$MSG_INTERM"
 	run_in_terminal
 	DESKTOP_FILE="${TMP_DIR}/dh.desktop"
@@ -143,27 +165,6 @@ function installation_process() {
 }
 
 # basic ----------------------------------------------------------------
-# shellcheck disable=SC2154
-create_desktop_entry() {
-	cat <<EOF >${DESKTOP_FILE}
-[Desktop Entry]
-Version=$version
-Type=$type
-Name=$name
-GenericName=$gname
-Comment=$comment
-Exec=$execmd
-Icon=$icon
-Terminal=$terminal
-X-MultipleArgs=$args
-Type=$type
-Categories=$categories
-StartupNotify=$notify
-MimeType=$mime
-Keywords=$keyword
-
-EOF
-}
 
 #run_in_terminal() {
 #	yad --title "terminal" --text "Do you want show output in the terminal?" && interminal="yes" || interminal="no"
