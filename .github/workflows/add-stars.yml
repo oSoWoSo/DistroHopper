@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - name: add watcher to readme
+    - name: add watcher to stars.md
       run: |
         echo -e "\nWe got a :star: from [@${{github.actor}}](https://github.com/${{github.actor}})" >> stars.md 
     
