@@ -10,6 +10,25 @@
 #    export TEXTDOMAINDIR=/usr/share/locale
 #fi
 
+function wayland_check() {
+	session_type=$(loginctl show-session "$XDG_SESSION_ID" -p Type | cut -d= -f2)
+	case "$session_type" in
+	wayland)
+		export GDK_BACKEND=x11
+		echo "Running on Wayland"
+		;;
+	x11)
+		echo "Running on X"
+		;;
+	"")
+		echo "Running on TTY"
+		;;
+	*)
+		echo "Not sure where I am running"
+		;;
+	esac
+}
+
 while true
 do
 	function variables_set() {
@@ -706,7 +725,7 @@ EOF
 	}
 
 # run ------------------------------------------------------------------
-
+	wayland_check
 	variables_set
 
 	if [[ $# -eq 0 ]]; then
