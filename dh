@@ -191,7 +191,7 @@ EOF
 		else
 			terminal='false'
 		fi
-		icon="$DH_ICON_DIR/hop.svg" 
+		icon="$DH_ICON_DIR/hop.svg"
 		categories='System;Virtualization;'
 		desktop_entry_create
 		sudo cp ${TMP_DIR}/dh.desktop /usr/share/applications/
@@ -298,7 +298,7 @@ EOF
 			DESKTOP_FILE="${DH_CONFIG_DIR}/ready/${vm_desktop}.desktop"
 			type='Application'
 			name="${vm_desktop}"
-			comment='Quickly download, create and run VM of any#TODO operating system.'
+			comment=$(quickget --show ${icon_name} | grep 'Description' | cut -f2-)
 			version="${version}"
 			execmd="sh -c 'cd ${VMS_DIR} && ${portable_prefix}quickemu -vm ${vm_conf};$SHELL'"
 			icon="${icon_file}"
@@ -330,10 +330,11 @@ EOF
 				icon_file="$DH_ICON_DIR/tux.svg"
 			fi
 			# content of desktop files (ready to run VMs)
-			cat <<EOF > "$DH_CONFIG_DIR"/ready/"$vm_desktop".desktop
+			cat <<EOF > "${DH_CONFIG_DIR}/ready/${vm_desktop}.desktop"
 [Desktop Entry]
 Type=Application
 Name=$vm_desktop
+Comment=$(quickget --show ${icon_name} | grep 'Description' | cut -f2-)
 Exec=sh -c 'cd ${VMS_DIR} && ${portable_prefix}quickemu -vm ${vm_conf}'
 Icon=$icon_file
 Categories=System;Virtualization;
@@ -366,6 +367,7 @@ EOF
 			DESKTOP_FILE="$DH_CONFIG_DIR/supported/$vm_desktop.desktop"
 			type="Application"
 			name="$get_name"
+			comment=$(quickget --show ${get_name} | grep 'Description' | cut -f2-)
 			if [ -z "$editions" ]; then
 				execmd="sh -c 'cd ${VMS_DIR} && yad --form --field=\"Release:CB\" \"${releases// /$replace}\" | cut -d\"|\" -f1 | xargs -I{} sh -c \"${portable_prefix}quickget ${get_name} {}\";$SHELL'"
 			else
