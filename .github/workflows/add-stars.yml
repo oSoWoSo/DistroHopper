@@ -4,6 +4,8 @@ on: [watch]
 
 jobs:
   addstars:
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
