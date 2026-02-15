@@ -6,3 +6,5 @@ We got a :star: from [@AOTREVAI](https://github.com/AOTREVAI)
 We got a :star: from [@Garry04](https://github.com/Garry04)
 
 We got a :star: from [@ephmo](https://github.com/ephmo)
+
+We got a :star: from [@dverbeeck](https://github.com/dverbeeck)
