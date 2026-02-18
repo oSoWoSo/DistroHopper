@@ -1,0 +1,52 @@
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const toc = document.getElementById("TOC");
+    if (!toc) return;
+
+    // Add toc-title with toggle button
+    const titleEl = document.createElement("div");
+    titleEl.id = "toc-title";
+    titleEl.innerHTML = '<span>Contents</span><span id="toc-toggle-icon">◀</span>';
+    toc.insertBefore(titleEl, toc.firstChild);
+
+    // Wrap TOC + the rest of the content in .page-wrapper
+    const body = document.body;
+    const wrapper = document.createElement("div");
+    wrapper.className = "page-wrapper";
+
+    // Find all elements after <nav> (main nav menu)
+    const topNav = document.querySelector("body > nav");
+    const siblings = [];
+    let el = topNav ? topNav.nextElementSibling : body.firstElementChild;
+    while (el) {
+      siblings.push(el);
+      el = el.nextElementSibling;
+    }
+
+    siblings.forEach((s) => wrapper.appendChild(s));
+    body.appendChild(wrapper);
+
+    // Wrap main content (everything except TOC) in .main-content
+    const mainContent = document.createElement("div");
+    mainContent.className = "main-content";
+    Array.from(wrapper.children).forEach((child) => {
+      if (child.id !== "TOC") mainContent.appendChild(child);
+    });
+    wrapper.appendChild(mainContent);
+
+    // Collapsible toggle
+    const icon = document.getElementById("toc-toggle-icon");
+    const saved = localStorage.getItem("toc-collapsed");
+    if (saved === "true") {
+      toc.classList.add("collapsed");
+      icon.textContent = "▶";
+    }
+
+    titleEl.addEventListener("click", function () {
+      toc.classList.toggle("collapsed");
+      const isCollapsed = toc.classList.contains("collapsed");
+      icon.textContent = isCollapsed ? "▶" : "◀";
+      localStorage.setItem("toc-collapsed", isCollapsed);
+    });
+  });
+</script>

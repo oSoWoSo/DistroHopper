@@ -1,4 +1,4 @@
-<p align="center">Made with 💝 for <img src=".github/tux.png" align="top" width="18" /></p>
+<p align="center">Made with 💝 for <img src="tux.svg" align="top" width="18" /></p>
 
 # This repository contains a multiple tools
 Can be used together with quickemu

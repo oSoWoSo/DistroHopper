@@ -1,0 +1,442 @@
+/* ========================================
+   CSS Variables & Theme Configuration
+   ========================================
+   This section defines the CSS variables for color schemes used throughout the application.
+*/
+
+/* Theme colors */
+:root {
+  --green: #2d5a3d; /* Base green color */
+  --green-light: #478061;
+  --green-lighter: #87ff87;
+  --gren-dark: #295340;
+  --green-slate: #478061;
+  --green-tea: #62B086;
+  --yellowish: #C2FF00;
+  --lime: #AFFF00;  
+  --silver: #CCCCCC;
+  --white: #FFFFFF;
+  --black: #000000;
+  --gray: #282E3A;
+  --gray-light: #E4E2E2;
+  --gray2: #222222;
+  --gray-dark: #111111;
+  --gold: #FCC11A;
+  --test: #FF0000;
+
+/* Dark Theme (default) */
+  --link-color: var(--yellowish); /* Color for links in dark theme */
+  --accent-color: var(--green); /* Accent color for elements */
+  --secondary-color: var(--test); /* Currently unused secondary color */
+  --text-color: var(--silver); /* Main text color */
+  --text-light: var(--white); /* Light text color */
+  --bg-color: var(--black); /* Background color for dark theme */
+  --bg-light: var(--gray); /* Light background */
+  --border-color: var(--gray); /* Border color */
+  --switch-background: var(--white);
+  --shadow: 0 2px 8px rgba(135, 255, 135, 0.1); /* Shadow effect */
+  --shadow-lg: 0 4px 20px rgba(135, 255, 135, 0.2); /* Larger shadow effect */
+  --transition: all 0.3s ease; /* Transition effects */
+
+  --nav-height: 52px;
+  --color-icon: var(--white);
+}
+
+/* Light theme */
+[data-theme="light"] {
+  --link-color: var(--green); /* Color for links in light theme */
+  --accent-color: var(--yellowish); /* Accent color for light theme */
+  --secondary-color: var(--test); /* Currently unused secondary color */
+  --text-color: var(--black); /* Main text color in light theme */
+  --text-light: var(--gray2); /* Light text color in light theme */
+  --bg-color: var(--white); /* Background color for light theme */
+  --bg-light: var(--gray-light); /* Light background */
+  --border-color: var(--silver); /* Border color in light theme */
+  --switch-background: var(--black);
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Light theme shadow */
+  --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.15); /* Larger shadow effect */
+
+  --color-icon: var(--black);
+}
+
+h1, h2, h3 { font-weight: bold; }
+
+h1 { font-size: 2.3rem; }
+h2 { font-size: 2.1rem; }
+h3 { font-size: 1.9rem; }
+h4 { font-size: 1.7rem; }
+h5 { font-size: 1.5rem; }
+h6 { font-size: 1.3rem; }
+
+h1 { color: var(--green); }
+h2 { color: #8bd5ca; }
+h3 { color: #91d7e3; }
+h4 { color: #7dc4e4; }
+h5 { color: #8aadf4; }
+h6 { color: #b7bdf8; }
+
+
+/* ========================================
+   Reset & Base Styles
+   ========================================
+   This section resets browser default styles and establishes base styles for typography and layout.
+*/
+* {
+  margin: 0; /* Remove default margin */
+  padding: 0; /* Remove default padding */
+  box-sizing: border-box; /* Adjust box sizing model */
+}
+
+body {
+  color: var(--text-color); /* Set text color */
+  background-color: var(--bg-color); /* Set background color */
+  line-height: 1.6; /* Set line height for better readability */
+  overflow-x: hidden; /* Prevent horizontal overflow */
+  font-size: 14px; /* Base font size */
+  font-weight: 500; /* FIX: slightly heavier than browser default (400) */
+  padding: 20px; /* Padding around the body */
+  max-width: 1200px; /* Maximum width for the content */
+  margin: 0 auto; /* Center the body */
+  font-family: "Courier New", monospace; /* Set font family */
+}
+
+b, strong, h1, h2, h3, h4, h5, h6 {
+  font-weight: 700; /* Bold font weight */
+  margin-top: 1.5em; /* Margin above headings */
+  margin-bottom: 0.5em; /* Margin below headings */
+}
+
+b, strong {
+  color: var(--text-light); /* Light color for bold text */
+}
+
+a, a:visited {
+  color: var(--link-color, var(--green)); /* Link color */
+  text-decoration: underline; /* Remove underline from links */
+  transition: var(--transition); /* Smooth color transition */
+}
+
+a:hover {
+  color: var(--accent-color, var(--green)); /* Color change on hover */
+  text-decoration: underline; /* Underline on hover */
+}
+
+blockquote {
+  border-left: 4px solid var(--green); /* Left border for blockquote */
+  padding-left: 20px; /* Padding inside blockquote */
+  margin: 1em 0; /* Vertical margins for blockquote */
+  color: var(--text-light); /* Text color for blockquote */
+  font-style: italic; /* Italicize blockquote text */
+}
+
+code {
+  background-color: var(--bg-light); /* Background for inline code */
+  padding: 2px 6px; /* Padding for inline code */
+  border-radius: 3px; /* Rounded corners for inline code */
+  font-family: "Courier New", monospace; /* Font for inline code */
+  font-size: 0.9em; /* Smaller font size for inline code */
+}
+
+hr {
+  border-top: 1px solid var(--border-color); /* Top border for horizontal rule */
+  border-top-color: var(--border-color); /* Border color */
+  border: none; /* Remove default border style */
+  margin: 2em 0; /* Vertical margins for horizontal rule */
+}
+
+img {
+  max-width: 100%; /* Ensure responsive images */
+  height: auto; /* Maintain aspect ratio */
+  border-radius: 5px; /* Rounded corners for images */
+  margin: 1em 0; /* Vertical margins for images */
+}
+
+/* SVG color filter — only applies to <img data-colorize> elements */
+img[data-colorize] {
+  filter: var(--filter-icon);
+}
+
+li {
+  margin-bottom: 0.5em; /* Margin below list items */
+}
+
+/* ========================================
+   Navigation
+   ======================================== */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  min-height: var(--nav-height);
+  background-color: var(--bg-color);
+  padding: 0.8em 0;
+  margin-bottom: 1.5em;
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* Crossed release button - if no release exist */
+nav ul li a.no-release,
+nav ul li a.no-release:visited {
+    text-decoration: line-through;
+    opacity: 0.6;
+}
+
+nav ul li a.no-release:hover {
+    opacity: 1;
+}
+
+nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em;
+  margin-left: 0;
+  margin-bottom: 0;
+  list-style: none;
+  padding: 0;
+}
+
+nav ul li {
+  margin-bottom: 0;
+}
+
+nav ul li a,
+nav ul li a:visited {
+  display: inline-block;
+  padding: 4px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+  color: var(--link-color);
+  text-decoration: none;
+  font-family: "Courier New", monospace;
+  font-size: 0.9rem;
+  transition: var(--transition);
+}
+
+nav ul li a:hover {
+  background-color: var(--accent-color);
+  color: var(--bg-color);
+  border-color: var(--accent-color);
+  text-decoration: none;
+}
+
+/* Active/current page link */
+nav ul li a.active {
+  background-color: var(--green);
+  color: var(--white);
+  border-color: var(--green);
+}
+
+@media (max-width: 768px) {
+  nav ul {
+    gap: 0.3em;
+  }
+
+  nav ul li a {
+    font-size: 0.8rem;
+    padding: 3px 8px;
+  }
+}
+
+p {
+  margin-bottom: 1em; /* Margin below paragraphs */
+  line-height: 1.8; /* Set line spacing for paragraphs */
+}
+
+pre {
+  background-color: var(--bg-light); /* Background for preformatted text */
+  padding: 15px; /* Padding for preformatted text */
+  border-radius: 5px; /* Rounded corners for preformatted text */
+  overflow-x: auto; /* Allow horizontal scrolling */
+  margin: 1em 0; /* Vertical margins for preformatted text */
+  border: 1px solid var(--border-color); /* Border for preformatted text */
+}
+
+pre code {
+  background-color: transparent; /* Transparent background for code blocks */
+  padding: 0; /* No padding for code blocks */
+}
+
+table {
+  width: 100%; /* Table width */
+  border-collapse: collapse; /* Collapse borders */
+  margin: 1em 0; /* Vertical margins for tables */
+}
+
+th {
+  background-color: var(--bg-light); /* Background for header cells */
+  font-weight: bold; /* Bold font for header cells */
+}
+
+th, td {
+  padding: 10px; /* Padding for table cells */
+  text-align: left; /* Align text to the left */
+  border-bottom: 1px solid var(--border-color); /* Bottom border for cells */
+}
+
+/* ========================================
+   Layout - Sidebar + Content
+   ======================================== */
+.page-wrapper {
+  display: flex;
+  gap: 2em;
+  align-items: flex-start;
+  margin-top: 0;
+}
+
+/* TOC Sidebar */
+#TOC {
+  position: sticky;
+  top: calc(var(--nav-height) + 10px);
+  max-height: calc(100vh - var(--nav-height) - 20px);
+  min-width: 220px;
+  max-width: 220px;
+  overflow-y: auto;
+  background-color: var(--bg-light);
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  padding: 1em;
+  font-size: 0.85rem;
+  transition: var(--transition);
+  flex-shrink: 0;
+}
+
+#TOC.collapsed {
+  min-width: unset;
+  max-width: unset;
+  width: auto;
+  padding: 0.5em;
+  overflow: hidden;
+}
+
+#TOC.collapsed > ul {
+  display: none;
+}
+
+#TOC.collapsed > #toc-title {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  white-space: nowrap;
+}
+
+#toc-title {
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: var(--green-tea);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.8em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+#toc-title:hover {
+  color: var(--yellowish);
+}
+
+#toc-toggle-icon {
+  font-size: 0.9rem;
+  transition: var(--transition);
+}
+
+/* FIX: override the global ul,ol margin-left that was pushing TOC lists
+   outside the border box */
+#TOC ul {
+  margin-left: 0.8em;
+  margin-bottom: 0;
+  list-style: none;
+  padding-left: 0; /* FIX: remove any inherited padding */
+}
+
+/* FIX: first-level ul sits directly inside #TOC padding — no extra indent */
+#TOC > ul {
+  margin-left: 0;
+}
+
+#TOC ul li {
+  margin-bottom: 0.3em;
+}
+
+#TOC a,
+#TOC a:visited {
+  color: var(--text-color);
+  text-decoration: none;
+  font-size: 0.82rem;
+  display: block;
+  padding: 2px 4px;
+  border-radius: 3px;
+  transition: var(--transition);
+}
+
+#TOC a:hover {
+  color: var(--yellowish);
+  background-color: var(--bg-color);
+  text-decoration: none;
+}
+
+/* Main content next to sidebar */
+body > *:not(#TOC):not(nav):not(.theme-toggle) {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Wrap everything after nav in flex container — done via JS */
+.page-wrapper > .main-content {
+  flex: 1;
+  min-width: 0;
+}
+
+@media (max-width: 768px) {
+  .page-wrapper {
+    flex-direction: column;
+  }
+
+  #TOC {
+    position: static;
+    max-width: 100%;
+    width: 100%;
+  }
+}
+
+ul {
+  list-style-type: none; /* Remove bullet points */
+}
+
+ul, ol {
+  margin-left: 2em; /* Indent lists */
+  margin-bottom: 1em; /* Vertical margins for lists */
+  list-style: inherit; /* Restore list style */
+}
+
+/* Theme toggle button */
+.theme-toggle {
+  position: absolue;
+  top: 20px; /* Distance from the top */
+  right: 20px; /* Distance from the right */
+  background: var(--switch-background); /* Button background color */
+  color: var(--gold); /* Button text color */
+  border: none; /* No border for the button */
+  padding: 10px 15px; /* Padding for the button */
+  border-radius: 5px; /* Rounded corners for the button */
+  cursor: pointer; /* Pointer cursor on hover */
+  font-size: 1.2rem; /* Font size for the button */
+  z-index: 1000; /* High z-index for visibility */
+  transition: var(--transition); /* Smooth transition for hover */
+}
+
+.theme-toggle:hover {
+  background: var(--green); /* Darker background on hover */
+}
+
+@media (max-width: 768px) {
+  body {
+    padding: 10px; /* Less padding for smaller screens */
+    font-size: 13px; /* Smaller font size for small screens */
+  }
+
+  h1 { font-size: 1.5rem; } /* Smaller h1 for small screens */
+  h2 { font-size: 1.3rem; } /* Smaller h2 for small screens */
+  h3 { font-size: 1.1rem; } /* Smaller h3 for small screens */
+}

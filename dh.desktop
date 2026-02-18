@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=DistroHopper
+Description=Quickly download, create and run VM of any#TODO operating system.
+version=0.77b
+Exec=sh -c './dh m g'
+Icon=/home/zen/git/distrohopper/icons/hop.svg
+Categories=System;Virtualization;
+
