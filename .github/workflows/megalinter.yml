@@ -2,7 +2,6 @@
 # MegaLinter GitHub Action configuration file
 # More info at https://megalinter.io
 name: MegaLinter
-
 on:
   # Trigger mega-linter at every push. Action will also be visible from Pull Requests to main
   push: # Comment this line to trigger action only on pull-requests (not recommended if you don't pay for GH Actions)
@@ -38,6 +37,18 @@ jobs:
           token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
           # fetch-depth: 0 # If you use VALIDATE_ALL_CODEBASE = true, you can remove this line to improve performances
 
+      - name: Cache MegaLinter Docker image
+        uses: actions/cache@v5
+        with:
+          path: /tmp/megalinter-cache
+          key: megalinter-v9.3.0
+
+      - name: Load cached Docker image
+        run: |
+          if [ -f /tmp/megalinter-cache/image.tar ]; then
+            docker load -i /tmp/megalinter-cache/image.tar
+          fi
+
       # MegaLinter
       - name: MegaLinter
         id: ml
@@ -54,6 +65,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # ADD YOUR CUSTOM ENV VARIABLES HERE OR DEFINE THEM IN A FILE .mega-linter.yml AT THE ROOT OF YOUR REPOSITORY
           DISABLE: COPYPASTE,SPELL # Uncomment to disable copy-paste and spell checks
+
+      - name: Save Docker image to cache
+        if: always()
+        run: |
+          mkdir -p /tmp/megalinter-cache
+          docker save ghcr.io/oxsecurity/megalinter:v9.3.0 \
+            -o /tmp/megalinter-cache/image.tar
 
       # Upload MegaLinter artifacts
       - name: Archive production artifacts
