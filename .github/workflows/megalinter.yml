@@ -36,7 +36,7 @@ jobs:
         uses: actions/checkout@v6
         with:
           token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
-          #fetch-depth: 0 # If you use VALIDATE_ALL_CODEBASE = true, you can remove this line to improve performances
+          # fetch-depth: 0 # If you use VALIDATE_ALL_CODEBASE = true, you can remove this line to improve performances
 
       # MegaLinter
       - name: MegaLinter
@@ -45,6 +45,7 @@ jobs:
         # More info at https://megalinter.io/flavors/
         # MAJOR-RELEASE-IMPACTED
         # 42bb470545e359597e7f12156947c436e4e3fb9a v9.3.0
+        # https://github.com/oxsecurity/megalinter/tags
         uses: oxsecurity/megalinter@42bb470545e359597e7f12156947c436e4e3fb9a
         env:
           # All available variables are described in documentation
@@ -58,6 +59,7 @@ jobs:
       - name: Archive production artifacts
         if: success() || failure()
         # b7c566a772e6b6bfb58ed0dc250532a479d7789f v6.0.0
+        # https://github.com/actions/upload-artifact/tags
         uses: actions/upload-artifact@v6
         with:
           name: MegaLinter reports
@@ -70,6 +72,7 @@ jobs:
         id: cpr
         if: steps.ml.outputs.has_updated_sources == 1 && (env.APPLY_FIXES_EVENT == 'all' || env.APPLY_FIXES_EVENT == github.event_name) && env.APPLY_FIXES_MODE == 'pull_request' && (github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository) && !contains(github.event.head_commit.message, 'skip fix')
         # c0f553fe549906ede9cf27b5156039d195d2ece0 v8.1.0
+        # https://github.com/peter-evans/create-pull-request/tags
         uses: peter-evans/create-pull-request@c0f553fe549906ede9cf27b5156039d195d2ece0
         with:
           token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
@@ -91,6 +94,7 @@ jobs:
       - name: Commit and push applied linter fixes
         if: steps.ml.outputs.has_updated_sources == 1 && (env.APPLY_FIXES_EVENT == 'all' || env.APPLY_FIXES_EVENT == github.event_name) && env.APPLY_FIXES_MODE == 'commit' && github.ref != 'refs/heads/main' && (github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository) && !contains(github.event.head_commit.message, 'skip fix')
         # 04702edda442b2e678b25b537cec683a1493fcb9 v7.1.0
+        # https://github.com/stefanzweifel/git-auto-commit-action/tags
         uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9
         with:
           branch: ${{ github.event.pull_request.head.ref || github.head_ref || github.ref }}
