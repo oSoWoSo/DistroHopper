@@ -291,7 +291,7 @@ _build_nav() {
 	for md in *.md; do
 		[ -f "$md" ] || continue
 		[ "$md" = "README.md" ] && continue
-		local name="${md%.md}"
+		local name=$(echo "${md%.md}" | sed 's/_/ /g')
 		local active=""
 		[ "$name" = "$current" ] && active=' class="active"'
 		echo "  <li><a href=\"${name}.html\"${active}>${name}</a></li>" >> "$nav_file"
@@ -307,7 +307,7 @@ target_build() { ## Builds the website, optional: title argument
 	if [ -z "$1" ]; then
 		_r "No website title provided
    using generated one!"
-		title=$(basename "$(pwd)")
+		title=$(basename "$(pwd)" | sed 's/_/ /g')
 	else
 		title="$1"
 	fi
@@ -349,7 +349,7 @@ target_build() { ## Builds the website, optional: title argument
 				current="index"
 			else
 				output="docs/${file%.md}.html"
-				meta_title="${file%.md}"
+				meta_title=$(echo "${file%.md}" | sed 's/_/ /g')
 				current="${file%.md}"
 			fi
 

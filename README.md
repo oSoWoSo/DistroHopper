@@ -1,8 +1,6 @@
-<p align="center">Made with 💝 for <img src="tux.svg" align="top" width="18" /></p>
-
 # This repository contains a multiple tools
-Can be used together with quickemu
-# Welcome ![hop120](https://github.com/quickemu-project/quickemu/assets/6384793/06713605-a335-4b8a-9f3d-2d3b390848e5) DistroHoppers
+Can be used together with quickemu  
+# <p align="center">Welcome <img src="https://dh.osowoso.org/hop120.png" align="middle" width="80" /> DistroHoppers</p>
 ## I made some user interfaces for quickemu...
 
 🦚
@@ -52,13 +50,13 @@ Everything could work
 ## quickemu Introduction
 
 <div align="center">
-<img src=".github/logo.png" alt="Quickemu" width="256" />
+<img src="https://dh.osowoso.org/logo.png" alt="Quickemu" width="256" />
 
 # Quickemu
 
 **Quickly create and run optimised Windows, macOS and Linux virtual machines:**
 
-**Made with 💝 for <img src=".github/tux.png" align="top" width="24" alt="Tux (Linux)"/> & <img src=".github/apple.png" align="top" width="24" alt="Apple (macOS)"/>**
+**Made with 💝 for <img src="https://dh.osowoso.org/tux.png" align="middle" width="24" alt="Tux (Linux)"/> & <img src="https://dh.osowoso.org/apple.png" align="middle" width="24" alt="Apple (macOS)"/>**
 </div>
 
 <p align="center">
