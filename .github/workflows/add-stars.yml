@@ -14,7 +14,9 @@ jobs:
         echo -e "\nWe got a :star: from [@${{github.actor}}](https://github.com/${{github.actor}})" >> stars.md 
     
     - name: Commit changes
-      uses: elstudio/actions-js-build/commit@v4
+      # 65bf468d1d03f013c2caa86f00af91dd50b7e43f v4
+      # https://github.com/elstudio/actions-js-build/tags
+      uses: elstudio/actions-js-build/commit@65bf468d1d03f013c2caa86f00af91dd50b7e43f
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         PUSH_BRANCH: 'main'
