@@ -1,0 +1,240 @@
+#!/usr/bin/env bash
+#
+# deploy — copy template and push repos
+#
+# Author: zenobit <zen@duck.com>
+# License: MIT
+#
+
+DEPLOY_VERSION='0.0.3'
+
+# Source shared functions
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=lib.sh
+source "${SCRIPT_DIR}/lib.sh"
+
+# Load .env
+if [ -f "${SCRIPT_DIR}/.env" ]; then
+	source "${SCRIPT_DIR}/.env"
+	export GITHUB_TOKEN
+	echo 'Using .env'
+else
+	_re '.env not found! Create it from src/.env'
+fi
+
+[ ${#LIST[@]} -eq 0 ] && _re 'LIST is empty — define it in .env'
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+# Get field from LIST entry (pipe-separated)
+# Usage: _parse_list_entry "$entry" <field_number>
+_parse_list_entry() {
+	echo "$1" | cut -d'|' -f"$2"
+}
+
+# Return local value if set, otherwise fall back to shared value
+_get_repo_val() {
+	echo "${1:-$2}"
+}
+
+# Build a human-readable list of repo names from LIST
+_list_names() {
+	for entry in "${LIST[@]}"; do
+		local d
+		d=$(_parse_list_entry "$entry" 1)
+		basename "$d"
+	done
+}
+
+# ---------------------------------------------------------------------------
+# Remove deprecated files from repos using template
+# ---------------------------------------------------------------------------
+
+_remove_deprecated() {
+	local d
+	d="$1"
+	for f in $d/create $d/create-web $d/docs/goatcounter.html $d/src/goatcounter.html $d/src/_config.yml $d/docs/_config.yml; do
+		[ rm "$f" 2>/dev/null ] && _b "Deprecated $f removed!"
+	done
+}
+
+# ---------------------------------------------------------------------------
+# Actions
+# ---------------------------------------------------------------------------
+
+_copy() {
+	for entry in "${LIST[@]}"; do
+		local d
+		d=$(_parse_list_entry "$entry" 1)
+		[ -d "$d" ] || { _y "Skipping (not found): $d"; continue; }
+
+		_g "Copying template to: $d"
+		mkdir -p "$d/src"
+
+		# Copy src/* but never overwrite src/.env
+		for f in src/*; do
+			[ "$f" = "src/.env" ] && continue
+			cp -v "$f" "$d/src/"
+		done
+
+		cp -v lib.sh web-create web-deploy "$d/"
+		cp -rv .github "$d/"
+		_remove_deprecated "$d"
+	done
+}
+
+_create_env() {
+	for entry in "${LIST[@]}"; do
+		local d title giscus_repo giscus_repo_id giscus_category giscus_category_id
+
+		d=$(                _parse_list_entry "$entry" 1)
+		title=$(            _parse_list_entry "$entry" 2)
+		giscus_repo=$(      _parse_list_entry "$entry" 3)
+		giscus_repo_id=$(   _parse_list_entry "$entry" 4)
+		giscus_category=$(  _parse_list_entry "$entry" 5)
+		giscus_category_id=$(_parse_list_entry "$entry" 6)
+
+		[ -d "$d" ] || { _y "Skipping (not found): $d"; continue; }
+
+		# Fall back to shared values or auto-detect
+		title=$(              _get_repo_val "$title"               "$(basename "$d" | sed 's/_/ /g')")
+		giscus_repo=$(        _get_repo_val "$giscus_repo"         "$(git -C "$d" remote get-url origin 2>/dev/null \
+			| sed 's|.*github\.com[:/]\(.*\)\.git|\1|; s|.*github\.com[:/]\(.*\)|\1|')")
+		giscus_repo_id=$(     _get_repo_val "$giscus_repo_id"      "${GISCUS_REPO_ID:-}")
+		giscus_category=$(    _get_repo_val "$giscus_category"     "${GISCUS_CATEGORY:-}")
+		giscus_category_id=$( _get_repo_val "$giscus_category_id"  "${GISCUS_CATEGORY_ID:-}")
+
+		# Ask before overwriting existing src/.env
+		if [ -f "$d/src/.env" ]; then
+			_y "src/.env already exists in $d"
+			_confirm "Overwrite?" || { _y "Skipping $d"; continue; }
+		fi
+
+		mkdir -p "$d/src"
+		echo "Creating src/.env for: $d"
+		cat > "$d/src/.env" <<EOF
+TITLE='${title}'
+
+GOATCOUNTER_URL='${GOATCOUNTER_URL:-}'
+
+GISCUS_REPO='${giscus_repo}'
+GISCUS_REPO_ID='${giscus_repo_id}'
+GISCUS_CATEGORY='${giscus_category}'
+GISCUS_CATEGORY_ID='${giscus_category_id}'
+
+EOF
+		[ -n "$FORGE_URL" ] && echo "FORGE_URL=\"${FORGE_URL}\"" >> "$d/src/.env"
+	done
+}
+
+_build_repos() {
+	for entry in "${LIST[@]}"; do
+		local d
+		d=$(_parse_list_entry "$entry" 1)
+		[ -f "$d/web-create" ] || { _y "Skipping (no web-create): $d"; continue; }
+		_g "Building: $d"
+		(cd "$d" && GITHUB_TOKEN="$GITHUB_TOKEN" ./web-create -b) || _y "Build failed: $d"
+	done
+}
+
+_push_template() {
+	_g "Pushing template..."
+	git push origin
+}
+
+_push_repos() {
+	local msg
+	msg=$(_input "Commit message...")
+	[ -z "$msg" ] && _g "No message, skipping push" && return
+
+	for entry in "${LIST[@]}"; do
+		local d
+		d=$(_parse_list_entry "$entry" 1)
+		[ -d "$d/.git" ] || continue
+		_g "Pushing: $d"
+		git -C "$d" add -A
+		git -C "$d" commit -m "$msg" || _y "Nothing to commit in $d"
+		git -C "$d" push origin || _y "Push failed: $d"
+	done
+}
+
+_release_template() {
+	if ! command -v gh &>/dev/null; then
+		_re "gh CLI not found — install it first"
+	fi
+
+	local version
+	version=$(_input "Release version (e.g. v1.0.0)...")
+	[ -z "$version" ] && _g "No version, skipping release" && return
+
+	local notes
+	notes=$(_write "Release notes (optional)...")
+
+	if gh release create "$version" --title "$version" --notes "$notes"; then
+		_g "Release $version created"
+	else
+		_re "Release failed"
+	fi
+}
+
+# ---------------------------------------------------------------------------
+# Menu
+# ---------------------------------------------------------------------------
+
+	_b "Website Deploy System
+               v$DEPLOY_VERSION
+           by oSoWoSo"
+
+ACTION=$(_choose \
+	"Copy template to repos" \
+	"Create src/.env in repos" \
+	"Build all repos" \
+	"Push template (origin)" \
+	"Push repos from LIST" \
+	"Create release (template)" \
+	"All (copy + create .env + build + push template + push repos)")
+
+msgCopy="Copy template to:
+$(_list_names | sed 's/^/  /')
+Continue?"
+
+msgEnv="Create src/.env in:
+$(_list_names | sed 's/^/  /')
+Continue?"
+
+msgBuild="Build all repos in:
+$(_list_names | sed 's/^/  /')
+Continue?"
+
+case "$ACTION" in
+	"Copy template to repos")
+		_confirm "$msgCopy" && _copy
+		;;
+"Create src/.env in repos")
+		_confirm "$msgEnv" && _create_env
+		;;
+	"Build all repos")
+		_confirm "$msgBuild" && _build_repos
+		;;
+	"Push template (origin)")
+		_confirm "Push template to origin?" && _push_template
+		;;
+	"Push repos from LIST")
+		_confirm "Commit and push all repos in LIST?" && _push_repos
+		;;
+	"Create release (template)")
+		_release_template
+		;;
+	"All (copy + create .env + build + push template + push repos)")
+		_confirm "Run all steps?" && {
+			_copy
+			_create_env
+			_build_repos
+			_push_template
+			_push_repos
+		}
+		;;
+esac
+
