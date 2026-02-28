@@ -56,8 +56,16 @@ function set_variables() {
 	else
 		terminal="xterm"
 	fi
+	# Detect getter tool: prefer qget (native), fall back to quickget
+	if command -v qget &>/dev/null; then
+		GETTER="qget"
+	elif command -v quickget &>/dev/null; then
+		GETTER="quickget"
+	else
+		GETTER="quickget"
+	fi
 	replace='"!"'
-	export "DH_CONFIG_DIR" "DH_CONFIG" "replace" "DH_ICON_DIR" "PATH_PREFIX" "TMP_DIR" "terminal" "VMS_DIR"
+	export "DH_CONFIG_DIR" "DH_CONFIG" "replace" "DH_ICON_DIR" "PATH_PREFIX" "TMP_DIR" "terminal" "VMS_DIR" "GETTER"
 	#check_and_set_mode
 	# Set traps to catch the signals and exit gracefully
 	trap "exit" INT
@@ -204,7 +212,7 @@ function renew_ready_vms() {
 		DESKTOP_FILE="${DH_CONFIG_DIR}/ready/${VMname}.desktop"
 		type='Application'
 		name="${VMname}"
-		comment=$(quickget "$VMname" | grep 'Description:' | cut -f2)
+		comment=$("$GETTER" --show "$VMname" 2>/dev/null | grep 'Description:' | sed 's/.*Description: //')
 		version="${version}"
 		execmd="sh -c 'cd ${VMS_DIR} && quickemu -vm ${vm_conf};$SHELL'"
 		icon="${icon_file}"
@@ -250,17 +258,21 @@ EOF
 	done
 }
 
+function getter_list_os() {
+	"$GETTER" --list 2>/dev/null | tail -n +2 | awk '{print $1}' | sort -u
+}
+
 function renew_supported_vms() {
 	echo "Regenerating supported"
 	rm -r "$DH_CONFIG_DIR"/supported >/dev/null 2>&1
 	mkdir -p "$DH_CONFIG_DIR"/supported
 	#run_in_terminal
 	# get supported VMs
-	quickget | awk 'NR==3,/zorin/' | grep -o '[^ ]*' >"$DH_CONFIG_DIR/supported.md"
+	getter_list_os >"$DH_CONFIG_DIR/supported.md"
 	while read -r get_name; do
 		VMname=$(echo "$get_name" | tr ' ' '_')
-		releases=$(quickget "$VMname" | grep 'Releases' | cut -f2 | sed 's/^ //' | sed 's/ *$//')
-		editions=$(quickget "$VMname" | grep 'Editions' | cut -f2 | sed 's/^ //' | sed 's/ *$//')
+		releases=$("$GETTER" --show "$get_name" 2>/dev/null | grep 'Releases:' | sed 's/.*Releases: //' | sed 's/ *$//')
+		editions=$("$GETTER" --show "$get_name" 2>/dev/null | grep 'Editions:' | sed 's/.*Editions: //' | sed 's/ *$//')
 		icon_name="$DH_ICON_DIR/$get_name"
 		if [ -f "$icon_name.svg" ]; then
 			icon_file="$icon_name.svg"
@@ -276,9 +288,9 @@ function renew_supported_vms() {
 		type="Application"
 		name="$get_name"
 		if [ -z "$editions" ]; then
-			execmd="sh -c 'cd ${VMS_DIR} && GDK_BACKEND=x11 yad --form --field=\"Release:CB\" \"${releases// /$replace}\" | cut -d\"|\" -f1 | xargs -I{} sh -c \"quickget ${get_name} {}\";$SHELL'"
+			execmd="sh -c 'cd ${VMS_DIR} && GDK_BACKEND=x11 yad --form --field=\"Release:CB\" \"${releases// /$replace}\" | cut -d\"|\" -f1 | xargs -I{} sh -c \"${GETTER} ${get_name} {}\";$SHELL'"
 		else
-			execmd="sh -c 'cd ${VMS_DIR} && GDK_BACKEND=x11 yad --form --separator=\" \" --field=\"Release:CB\" \"${releases// /$replace}\" --field=\"Edition:CB\" \"${editions// /$replace}\" | xargs -I{} sh -c \"quickget ${get_name} {}\";$SHELL'"
+			execmd="sh -c 'cd ${VMS_DIR} && GDK_BACKEND=x11 yad --form --separator=\" \" --field=\"Release:CB\" \"${releases// /$replace}\" --field=\"Edition:CB\" \"${editions// /$replace}\" | xargs -I{} sh -c \"${GETTER} ${get_name} {}\";$SHELL'"
 		fi
 		if [ "$interminal" = "yes" ]; then
 			terminal="true"
@@ -353,14 +365,16 @@ function WIP_buttons() {
 	echo $?
 }
 
-wayland_check
-root_check
-set_variables
-if [ -f "$DH_CONFIG" ]; then
-	echo "Already installed"
-else
-	first_run
-	echo "Installation finished"
+if [ -z "${DH_TEST_MODE}" ]; then
+	wayland_check
+	root_check
+	set_variables
+	if [ -f "$DH_CONFIG" ]; then
+		echo "Already installed"
+	else
+		first_run
+		echo "Installation finished"
+	fi
+	#distrohopper_run_gui
+	WIP_buttons
 fi
-#distrohopper_run_gui
-WIP_buttons

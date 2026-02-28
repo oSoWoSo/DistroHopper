@@ -537,6 +537,21 @@ EOF
     exit 0
 }
 
+# Detect getter tool: prefer qget (native), fall back to quickget
+if command -v qget &>/dev/null; then
+    GETTER="qget"
+elif command -v quickget &>/dev/null; then
+    GETTER="quickget"
+else
+    GETTER="quickget"
+fi
+export GETTER
+
+case "${1}" in
+    --qget|-q) GETTER="qget"; shift;;
+    --quickget|-Q) GETTER="quickget"; shift;;
+esac
+
 if [ "${1}" == -t ] || [ "${1}" == --test ]; then
     OPERATION='test'
     shift
