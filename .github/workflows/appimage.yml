@@ -1,0 +1,42 @@
+name: Build AppImage
+
+on:
+  push:
+    branches: [appimage]
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [x86_64, aarch64]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download QEMU base AppImage
+        run: |
+          curl -sL "${{ secrets.QEMU_URL }}" -o QEMU-${{ matrix.arch }}.AppImage
+          chmod +x QEMU-${{ matrix.arch }}.AppImage
+
+      - name: Extract and prepare
+        run: |
+          mkdir -p AppDir
+          ./QEMU-${{ matrix.arch }}.AppImage --appimage-extract --prefix AppDir
+          cp quickemu quickget quickfzf dh AppDir/bin/
+          sed -i 's/MAIN_BIN=qemu-system-x86_64/MAIN_BIN=dh/' AppDir/AppRun
+
+      - name: Build AppImage
+        uses: docker://github.com/marketplace/actions/appimage-builder
+        with:
+          options: --input AppDir
+          output: DistroHopper-${{ matrix.arch }}.AppImage
+
+      - name: Upload release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: DistroHopper-${{ matrix.arch }}.AppImage
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
