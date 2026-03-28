@@ -5,6 +5,7 @@ on:
     branches: [appimage]
   release:
     types: [published]
+  workflow_dispatch:
 
 jobs:
   build:
