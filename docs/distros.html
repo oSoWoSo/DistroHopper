@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distributions - DistroHopper</title>
+    <meta name="description" content="List of Linux distributions supported by DistroHopper, automatically updated from distributionhub.">
+    
+    <!-- Site styles -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- DistributionHub styles -->
+    <link rel="stylesheet" href="lib/bootstrap.min.css">
+    <link rel="stylesheet" href="lib/fa.all.min.css">
+    <link rel="stylesheet" href="lib/animate.min.css">
+    <link rel="stylesheet" href="distros.css">
+    
+    <style>
+        /* Override site styles for distributionhub theme */
+        body {
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+        .page-wrapper {
+            background-color: #1a1a1a;
+        }
+        /* Hide default TOC since distributionhub has its own layout */
+        #TOC {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Theme toggle -->
+    <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+    <script>
+        function toggleTheme(){
+            const html=document.documentElement;
+            const current=html.getAttribute("data-theme")||"dark";
+            const next=current==="dark"?"light":"dark";
+            html.setAttribute("data-theme",next);
+            localStorage.setItem("theme",next)
+        }
+        (function(){
+            const saved=localStorage.getItem("theme")||"dark";
+            document.documentElement.setAttribute("data-theme",saved)
+        })();
+    </script>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-content">
+            <a href="https://osowoso.org" class="nav-brand">oSoWoSo</a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="CODE_OF_CONDUCT.html">CODE OF CONDUCT</a></li>
+                <li><a href="CONTRIBUTING.html">CONTRIBUTING</a></li>
+                <li><a href="README-web.html">README-web</a></li>
+                <li><a href="SECURITY.html">SECURITY</a></li>
+                <li><a href="distros.html" class="active">distros</a></li>
+                <li><a href="stars.html">stars</a></li>
+            </ul>
+            <div class="nav-buttons">
+                <a href="https://github.com/oSoWoSo/DistroHopper/releases/latest" class="nav-btn">⏬ release</a>
+                <a href="https://github.com/oSoWoSo/DistroHopper/archive/refs/heads/main.zip" class="nav-btn">📦repo zip</a>
+                <a href="https://github.com/oSoWoSo/DistroHopper" class="nav-btn">🔗git</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Particles background -->
+    <div id="particles-js"></div>
+
+    <!-- Main content -->
+    <main class="container main-content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="text-start subtle-glow animate__animated animate__fadeIn">
+                Welcome to <strong class="text-gradient">DistroHub</strong>
+            </h1>
+            <div class="d-flex align-items-center gap-3">
+                <a href="https://github.com/oSoWoSo/distributionhub" target="_blank" rel="noopener" class="github-link subtle-glow">
+                    <i class="fab fa-github"></i>
+                </a>
+            </div>
+        </div>
+
+        <p class="text-center mb-4" style="color: #aaa;">
+            Below is the list of Linux distributions supported by DistroHopper.<br>
+            This list is automatically updated from <a href="https://github.com/oSoWoSo/distributionhub" style="color: #8CFFFA;">distributionhub</a>.
+        </p>
+
+        <div class="search-container mb-4 animate__animated animate__fadeIn">
+            <div class="search-filter-group">
+                <div class="search-input-wrapper">
+                    <input type="text" id="distroSearch" class="form-control bg-dark text-light" placeholder="Search distributions or details.." aria-label="Search distributions">
+                </div>
+                <div class="filter-buttons">
+                    <button class="btn btn-outline-info btn-sm filter-btn" data-filter="beginner">Beginner</button>
+                    <button class="btn btn-outline-info btn-sm filter-btn" data-filter="advanced">Advanced</button>
+                    <button class="btn btn-outline-info btn-sm filter-btn" data-filter="lightweight">Lightweight</button>
+                    <button class="btn btn-outline-info btn-sm filter-btn" data-filter="torrent">Torrent</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" id="distroList"></div>
+    </main>
+
+    <!-- Scroll to top button -->
+    <a href="#" class="btn btn-primary scroll-to-top" aria-label="Scroll to top">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+
+    <!-- Scripts -->
+    <script src="distros.js"></script>
+    <script>
+    // DistributionHub-style initialization
+    document.addEventListener("DOMContentLoaded", function() {
+        // Scroll to top functionality
+        const scrollToTop = document.querySelector('.scroll-to-top');
+        if (scrollToTop) {
+            scrollToTop.style.display = 'none';
+            
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    scrollToTop.style.display = 'flex';
+                } else {
+                    if (window.pageYOffset <= 300) {
+                        scrollToTop.style.display = 'none';
+                    }
+                }
+            });
+            
+            scrollToTop.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        }
+        
+        // Initialize distributions from distros.js
+        const distroList = document.getElementById('distroList');
+        const distroSearch = document.getElementById('distroSearch');
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        
+        let currentFilter = 'all';
+        let searchTerm = '';
+        
+        // Get distributions from window.distributions
+        const distributions = window.distributions || [];
+        
+        function createDistroCard(distro) {
+            const cleanVersion = distro.version.replace(/\sx86_64/i, '');
+            const iconSrc = distro.icon || 'img/distro/default-distro.png';
+            
+            const card = document.createElement('div');
+            card.className = 'col-md-4 mb-4 distro-card-wrapper';
+            card.setAttribute('data-category', distro.category || 'other');
+            card.setAttribute('data-name', distro.name.toLowerCase());
+            
+            const downloadBtn = distro.downloadLink 
+                ? `<a href="${distro.downloadLink}" class="btn btn-download flex-grow-1" target="_blank" rel="noopener"><i class="fas fa-download me-2"></i>Download</a>`
+                : '';
+            
+            const torrentBtn = distro.torrent
+                ? `<a href="${distro.torrent}" class="btn btn-torrent flex-grow-1" target="_blank" rel="noopener"><i class="fas fa-magnet me-2"></i>Torrent</a>`
+                : '';
+            
+            card.innerHTML = `
+                <div class="card h-100">
+                    <div class="card-img-container">
+                        <img src="${iconSrc}" class="card-img-top" alt="${distro.name} logo" loading="lazy" onerror="this.src='img/distro/tux.png'">
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">
+                            ${distro.websiteLink ? `<a href="${distro.websiteLink}" class="distro-title-link" target="_blank" rel="noopener">` : ''}
+                            <strong>${distro.name}</strong>
+                            ${distro.websiteLink ? '</a>' : ''}
+                        </h5>
+                        <div class="card-text distro-version">
+                            <strong>Version:</strong> ${cleanVersion}
+                        </div>
+                        <p class="card-text flex-grow-1">${distro.description || ''}</p>
+                        <div class="mt-auto d-flex gap-2">
+                            ${downloadBtn}
+                            ${torrentBtn}
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            return card;
+        }
+        
+        function renderDistros() {
+            distroList.innerHTML = '';
+            
+            const filtered = distributions.filter(distro => {
+                const matchesCategory = currentFilter === 'all' || (distro.category || 'other') === currentFilter;
+                const matchesSearch = distro.name.toLowerCase().includes(searchTerm) || 
+                    (distro.description && distro.description.toLowerCase().includes(searchTerm));
+                return matchesCategory && matchesSearch;
+            });
+            
+            filtered.forEach(distro => {
+                distroList.appendChild(createDistroCard(distro));
+            });
+        }
+        
+        // Search functionality
+        distroSearch.addEventListener('input', function(e) {
+            searchTerm = e.target.value.toLowerCase();
+            renderDistros();
+        });
+        
+        // Filter buttons
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const filter = this.getAttribute('data-filter');
+                currentFilter = filter === currentFilter ? 'all' : filter;
+                
+                filterButtons.forEach(b => b.classList.remove('active'));
+                if (currentFilter !== 'all') {
+                    this.classList.add('active');
+                }
+                renderDistros();
+            });
+        });
+        
+        // Initial render
+        renderDistros();
+    });
+    </script>
+</body>
+</html>
