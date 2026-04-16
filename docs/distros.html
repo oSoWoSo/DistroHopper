@@ -104,7 +104,7 @@
             </div>
         </div>
 
-        <div class="row" id="distroList"></div>
+        <div class="distros-grid" id="distroGrid"></div>
     </main>
 
     <!-- Scroll to top button -->
@@ -139,7 +139,7 @@
         }
         
         // Initialize distributions from distros.js
-        const distroList = document.getElementById('distroList');
+        const distroList = document.getElementById('distroGrid');
         const distroSearch = document.getElementById('distroSearch');
         const filterButtons = document.querySelectorAll('.filter-btn');
         
@@ -157,7 +157,7 @@
             const iconSrc = distro.icon || 'img/distro/default-distro.png';
             
             const card = document.createElement('div');
-            card.className = 'col-md-4 mb-4 distro-card-wrapper';
+            card.className = 'distro-card';
             card.setAttribute('data-category', distro.category || 'other');
             card.setAttribute('data-name', (distro.name || '').toLowerCase());
             
