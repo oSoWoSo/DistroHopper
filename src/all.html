@@ -80,6 +80,31 @@
             background: var(--yellow, #FFD700);
         }
         
+        .category-badge {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+        
+        .category-beginner { background: #4CAF50; color: white; }
+        .category-advanced { background: #FF9800; color: white; }
+        .category-lightweight { background: #2196F3; color: white; }
+        .category-other { background: #9E9E9E; color: white; }
+        
+        .basedof-badge {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            background: var(--bg-primary, #333);
+            color: var(--text-secondary, #aaa);
+            border: 1px solid var(--border-color, #555);
+            margin-right: 0.5rem;
+        }
+        
         /* Search and filters */
         .distros-filters {
             display: flex;
@@ -317,14 +342,30 @@
                 const category = distro.category || 'other';
                 const distroId = distro.name || 'Unknown';
                 
+                // Generate a colored placeholder for icon
+                const colors = ['#E95420', '#3C3B37', '#A80030', '#41B549', '#87CF3E', '#2F2F2F', '#178CDA', '#000000'];
+                const colorIndex = distro.name.charCodeAt(0) % colors.length;
+                const bgColor = colors[colorIndex];
+                const initial = distro.name ? distro.name.charAt(0).toUpperCase() : '?';
+                
+                const iconHtml = `<div style="width: 32px; height: 32px; background: ${bgColor}; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 14px; margin-right: 0.5rem;">${initial}</div>`;
+                
+                // Get based-on info from releases data
+                const releaseInfo = Object.values(window.distrosReleases || {}).find(d => d.name?.toLowerCase() === distro.name?.toLowerCase());
+                const basedof = releaseInfo?.basedof || '';
+                const basedofHtml = basedof ? `<span class="basedof-badge">${basedof}</span>` : '';
+                
                 return `
                     <div class="distro-card" data-category="${category}">
-                        <h3>
-                            <a href="${distro.websiteLink || '#'}" target="_blank" rel="noopener">${distro.name || 'Unknown'}</a>
-                        </h3>
+                        <div class="distro-header">
+                            <a href="${distro.websiteLink || '#'}" target="_blank" rel="noopener" style="display: flex; align-items: center; text-decoration: none; color: inherit;">
+                                ${iconHtml}<h3>${distro.name || 'Unknown'}</h3>
+                            </a>
+                        </div>
                         <p class="distro-description">${distro.description || ''}</p>
                         <div class="distro-meta">
                             <span class="category-badge category-${category}">${categoryLabels[category] || category}</span>
+                            ${basedofHtml}
                             ${distro.version ? `<span>${distro.version}</span>` : ''}
                         </div>
                         <button class="download-btn" onclick="showDownloads('${distroId.replace(/'/g, "\\'")}')">Download</button>
@@ -350,13 +391,35 @@
             const modalTitle = document.getElementById('modalTitle');
             const modalBody = document.getElementById('modalBody');
             
-            modalTitle.textContent = `Download ${distro.name}`;
+            // Generate a colored placeholder for icon
+            const colors = ['#E95420', '#3C3B37', '#A80030', '#41B549', '#87CF3E', '#2F2F2F', '#178CDA', '#000000'];
+            const colorIndex = distro.name.charCodeAt(0) % colors.length;
+            const bgColor = colors[colorIndex];
+            const initial = distro.name ? distro.name.charAt(0).toUpperCase() : '?';
+            const iconHtml = `<div style="width: 48px; height: 48px; background: ${bgColor}; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 20px; margin-right: 1rem; vertical-align: middle;">${initial}</div>`;
+            
+            modalTitle.innerHTML = `${iconHtml}${distro.name}`;
+            
+            // Get based-on info from release data
+            const releaseInfo = Object.values(window.distrosReleases || {}).find(d => d.name?.toLowerCase() === distroId.toLowerCase());
+            const basedof = releaseInfo?.basedof || '';
+            
+            // Add based-on info if available
+            let basedofHtml = '';
+            if (basedof) {
+                basedofHtml = `<p style="color: var(--text-muted); margin: 0.5rem 0;">
+                    <strong>Based on:</strong> ${basedof}
+                </p>`;
+            }
             
             const downloadLink = distro.downloadLink;
             const releases = releaseInfo?.releases || [];
             const editions = releaseInfo?.editions || [];
             
             let html = '';
+            
+            // Based-on info
+            html += basedofHtml;
             
             // If we have releases and editions, show table
             if (releases.length > 0 && editions.length > 0) {
