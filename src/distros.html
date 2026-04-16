@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distributions - DistroHopper</title>
+    <meta name="description" content="Supported Linux distributions for DistroHopper">
+    
+    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        /* Distros page styling */
+        .distros-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            padding: 1rem 0;
+        }
+        
+        .distro-card {
+            border: 1px solid var(--border-color, #444);
+            border-radius: 8px;
+            padding: 1rem;
+            background: var(--bg-secondary, #2d2d2d);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .distro-card:hover {
+            border-color: var(--green, #8BC53F);
+            box-shadow: 0 0 10px rgba(139, 197, 63, 0.2);
+        }
+        
+        .distro-card h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.2rem;
+        }
+        
+        .distro-card h3 a {
+            color: var(--green, #8BC53F);
+            text-decoration: none;
+        }
+        
+        .distro-card h3 a:hover {
+            text-decoration: underline;
+        }
+        
+        .distro-description {
+            color: var(--text-secondary, #aaa);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            flex-grow: 1;
+        }
+        
+        .distro-meta {
+            font-size: 0.8rem;
+            color: var(--text-muted, #666);
+            margin-bottom: 0.75rem;
+        }
+        
+        .distro-meta span {
+            margin-right: 1rem;
+        }
+        
+        .download-btn {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: var(--green, #8BC53F);
+            color: var(--bg-primary, #1a1a1a);
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .download-btn:hover {
+            background: var(--yellow, #FFD700);
+        }
+        
+        /* Search and filters */
+        .distros-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            align-items: center;
+        }
+        
+        .distros-search {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.5rem;
+            border: 1px solid var(--border-color, #444);
+            border-radius: 4px;
+            background: var(--bg-secondary, #2d2d2d);
+            color: var(--text-primary, #fff);
+        }
+        
+        .filter-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 0.4rem 0.8rem;
+            border: 1px solid var(--border-color, #444);
+            border-radius: 4px;
+            background: transparent;
+            color: var(--text-primary, #fff);
+            cursor: pointer;
+        }
+        
+        .filter-btn:hover, .filter-btn.active {
+            border-color: var(--green, #8BC53F);
+            color: var(--green, #8BC53F);
+        }
+        
+        /* Modal for release/edition selection */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: var(--bg-secondary, #2d2d2d);
+            border: 1px solid var(--border-color, #444);
+            border-radius: 8px;
+            padding: 1.5rem;
+            max-width: 90vw;
+            max-height: 80vh;
+            overflow: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color, #444);
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-primary, #fff);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .release-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .release-table th, .release-table td {
+            padding: 0.5rem;
+            border: 1px solid var(--border-color, #444);
+            text-align: center;
+        }
+        
+        .release-table th {
+            background: var(--bg-primary, #1a1a1a);
+        }
+        
+        .release-table td a {
+            color: var(--green, #8BC53F);
+        }
+        
+        .release-table td.disabled {
+            color: var(--text-muted, #666);
+        }
+        
+        .page-header {
+            margin-bottom: 1.5rem;
+        }
+        
+        .page-header h1 {
+            margin: 0;
+        }
+        
+        .page-header p {
+            color: var(--text-secondary, #aaa);
+            margin: 0.5rem 0 0 0;
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+    <script>
+        function toggleTheme(){
+            const html=document.documentElement;
+            const current=html.getAttribute("data-theme")||"dark";
+            const next=current==="dark"?"light":"dark";
+            html.setAttribute("data-theme",next);
+            localStorage.setItem("theme",next)
+        }
+        (function(){
+            const saved=localStorage.getItem("theme")||"dark";
+            document.documentElement.setAttribute("data-theme",saved)
+        })();
+    </script>
+
+    <nav>
+        <ul>
+            <li><a href="https://osowoso.org">oSoWoSo</a></li>
+            <li>⏮️</a></li>
+            <li><a href="index.html" class="active">Home</a></li>
+            <li><a href="CODE_OF_CONDUCT.html">CODE OF CONDUCT</a></li>
+            <li><a href="CONTRIBUTING.html">CONTRIBUTING</a></li>
+            <li><a href="README-web.html">README-web</a></li>
+            <li><a href="SECURITY.html">SECURITY</a></li>
+            <li><a href="distros.html">Distros</a></li>
+            <li><a href="all.html">All</a></li>
+            <li><a href="stars.html">stars</a></li>
+            <li>⏭️</a></li>
+        </ul>
+        <ul>
+            <li><a href="https://github.com/oSoWoSo/DistroHopper/releases/latest">⏬ release</a></li>
+            <li><a href="https://github.com/oSoWoSo/DistroHopper/archive/refs/heads/main.zip">📦repo zip</a></li>
+            <li><a href="https://github.com/oSoWoSo/DistroHopper">🔗git</a></li>
+        </ul>
+    </nav>
+
+    <div id="TOC"></div>
+
+    <main class="container">
+        <div class="page-header">
+            <h1>Supported Distributions</h1>
+            <p>Linux distributions supported by DistroHopper. Click on a distribution to visit its homepage.</p>
+        </div>
+
+        <div class="distros-filters">
+            <input type="text" id="distroSearch" class="distros-search" placeholder="Search distributions...">
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="beginner">Beginner</button>
+                <button class="filter-btn" data-filter="advanced">Advanced</button>
+                <button class="filter-btn" data-filter="lightweight">Lightweight</button>
+            </div>
+        </div>
+
+        <div class="distros-grid" id="distroGrid">
+            <!-- Distros will be rendered here -->
+        </div>
+    </main>
+
+    <!-- Modal for release/edition selection -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Download Options</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modalBody">
+                <!-- Release/edition table will be rendered here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="distros.js"></script>
+    <script>
+        // Distros data from distributionhub (211 distros)
+        const distros = window.distributions || [];
+        
+        // Current filter state
+        let currentFilter = 'all';
+        let searchTerm = '';
+        
+        // Category labels
+        const categoryLabels = {
+            'beginner': 'Beginner',
+            'advanced': 'Advanced', 
+            'lightweight': 'Lightweight'
+        };
+        
+        // Render distro cards
+        function renderDistros() {
+            const grid = document.getElementById('distroGrid');
+            
+            const filtered = distros.filter(distro => {
+                const matchesFilter = currentFilter === 'all' || distro.category === currentFilter;
+                const matchesSearch = (!distro.name || distro.name.toLowerCase().includes(searchTerm.toLowerCase())) || 
+                    (distro.description && distro.description.toLowerCase().includes(searchTerm.toLowerCase()));
+                return matchesFilter && matchesSearch;
+            });
+            
+            if (filtered.length === 0) {
+                grid.innerHTML = '<p style="color: var(--text-secondary);">No distributions found.</p>';
+                return;
+            }
+            
+            grid.innerHTML = filtered.map(distro => {
+                const category = distro.category || 'other';
+                const downloadLink = distro.downloadLink || '#';
+                const websiteLink = distro.websiteLink || '#';
+                
+                return `
+                    <div class="distro-card" data-category="${category}">
+                        <h3>
+                            <a href="${websiteLink}" target="_blank" rel="noopener">${distro.name || 'Unknown'}</a>
+                        </h3>
+                        <p class="distro-description">${distro.description || ''}</p>
+                        <div class="distro-meta">
+                            <span class="category-badge category-${category}">${categoryLabels[category] || category}</span>
+                            ${distro.version ? `<span>${distro.version}</span>` : ''}
+                        </div>
+                        <a href="${downloadLink}" target="_blank" rel="noopener" class="download-btn">Download</a>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Show download modal
+        function showDownloads(id, name, releases, editions) {
+            const modal = document.getElementById('modalOverlay');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+            
+            modalTitle.textContent = `Download ${name}`;
+            
+            // Simple approach: show releases list (actual download URLs would need get_() function)
+            if (releases.length === 0) {
+                modalBody.innerHTML = '<p>No releases available for download.</p>';
+            } else {
+                let html = '<p>Available releases:</p><ul style="list-style: none; padding: 0;">';
+                releases.forEach(release => {
+                    html += `<li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border-color);">
+                        <strong>${release}</strong>
+                        <span style="color: var(--text-muted);"> - See homepage for downloads</span>
+                    </li>`;
+                });
+                html += '</ul>';
+                html += `<p style="margin-top: 1rem;"><a href="https://github.com/oSoWoSo/DistroHopper" target="_blank" class="download-btn" style="display: inline-block;">Get with DistroHopper</a></p>`;
+                modalBody.innerHTML = html;
+            }
+            
+            modal.classList.add('active');
+        }
+        
+        // Close modal
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+        }
+        
+        // Close modal on overlay click
+        document.getElementById('modalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+        
+        // Search functionality
+        document.getElementById('distroSearch').addEventListener('input', function(e) {
+            searchTerm = e.target.value;
+            renderDistros();
+        });
+        
+        // Filter buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const filter = this.getAttribute('data-filter');
+                currentFilter = filter;
+                
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                renderDistros();
+            });
+        });
+        
+        // Initial render
+        renderDistros();
+    </script>
+</body>
+</html>
