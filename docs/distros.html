@@ -148,14 +148,16 @@
         // Get distributions from window.distributions
         const distributions = window.distributions || [];
         
+        console.log('Distributions loaded:', distributions.length);
+        
         function createDistroCard(distro) {
-            const cleanVersion = distro.version.replace(/\sx86_64/i, '');
+            const cleanVersion = (distro.version || '').replace(/\sx86_64/i, '');
             const iconSrc = distro.icon || 'img/distro/default-distro.png';
             
             const card = document.createElement('div');
             card.className = 'col-md-4 mb-4 distro-card-wrapper';
             card.setAttribute('data-category', distro.category || 'other');
-            card.setAttribute('data-name', distro.name.toLowerCase());
+            card.setAttribute('data-name', (distro.name || '').toLowerCase());
             
             const downloadBtn = distro.downloadLink 
                 ? `<a href="${distro.downloadLink}" class="btn btn-download flex-grow-1" target="_blank" rel="noopener"><i class="fas fa-download me-2"></i>Download</a>`
@@ -173,11 +175,11 @@
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title">
                             ${distro.websiteLink ? `<a href="${distro.websiteLink}" class="distro-title-link" target="_blank" rel="noopener">` : ''}
-                            <strong>${distro.name}</strong>
+                            <strong>${distro.name || 'Unknown'}</strong>
                             ${distro.websiteLink ? '</a>' : ''}
                         </h5>
                         <div class="card-text distro-version">
-                            <strong>Version:</strong> ${cleanVersion}
+                            <strong>Version:</strong> ${cleanVersion || 'N/A'}
                         </div>
                         <p class="card-text flex-grow-1">${distro.description || ''}</p>
                         <div class="mt-auto d-flex gap-2">
@@ -192,18 +194,23 @@
         }
         
         function renderDistros() {
+            console.log('Rendering distros, currentFilter:', currentFilter, 'searchTerm:', searchTerm);
             distroList.innerHTML = '';
             
             const filtered = distributions.filter(distro => {
                 const matchesCategory = currentFilter === 'all' || (distro.category || 'other') === currentFilter;
-                const matchesSearch = distro.name.toLowerCase().includes(searchTerm) || 
+                const matchesSearch = (distro.name || '').toLowerCase().includes(searchTerm) || 
                     (distro.description && distro.description.toLowerCase().includes(searchTerm));
                 return matchesCategory && matchesSearch;
             });
             
+            console.log('Filtered count:', filtered.length);
+            
             filtered.forEach(distro => {
                 distroList.appendChild(createDistroCard(distro));
             });
+            
+            console.log('Rendered', filtered.length, 'cards');
         }
         
         // Search functionality
