@@ -284,16 +284,16 @@ Everything done on
 
 For Homepage click on Hop
 
-[![Hop](hop120.png)](https://dh.osowoso.xyz/)
+[![Hop](hop120.png)](https://dh.osowoso.org/)
 
 # donate
 [![Donate](https://liberapay.com/assets/widgets/donate.svg)](https://liberapay.com/zenobit/donate)
 
 @zen0bit at github
 
-mailto: <zenobit@osowoso.xyz>
+mailto: <zen@duck.com>
 
 [up](./)
 
-#### parent site [oSoWoSo](https://osowoso.xyz)
+#### parent site [oSoWoSo](https://osowoso.org)
 
