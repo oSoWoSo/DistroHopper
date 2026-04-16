@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>DistroHopper</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+<script>
+  function toggleTheme(){
+    const html=document.documentElement;
+    const current=html.getAttribute("data-theme")||"dark";
+    const next=current==="dark"?"light":"dark";
+    html.setAttribute("data-theme",next);
+    localStorage.setItem("theme",next)
+  }
+  (function(){
+    const saved=localStorage.getItem("theme")||"dark";
+    document.documentElement.setAttribute("data-theme",saved)
+  })();
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const toc = document.getElementById("TOC");
+    if (!toc) return;
+
+    // Add toc-title with toggle button
+    const titleEl = document.createElement("div");
+    titleEl.id = "toc-title";
+    titleEl.innerHTML = '<span>Contents</span><span id="toc-toggle-icon">◀</span>';
+    toc.insertBefore(titleEl, toc.firstChild);
+
+    // Wrap TOC + the rest of the content in .page-wrapper
+    const body = document.body;
+    const wrapper = document.createElement("div");
+    wrapper.className = "page-wrapper";
+
+    // Find all elements after <nav> (main nav menu)
+    const topNav = document.querySelector("body > nav");
+    const siblings = [];
+    let el = topNav ? topNav.nextElementSibling : body.firstElementChild;
+    while (el) {
+      siblings.push(el);
+      el = el.nextElementSibling;
+    }
+
+    siblings.forEach((s) => wrapper.appendChild(s));
+    body.appendChild(wrapper);
+
+    // Wrap main content (everything except TOC) in .main-content
+    const mainContent = document.createElement("div");
+    mainContent.className = "main-content";
+    Array.from(wrapper.children).forEach((child) => {
+      if (child.id !== "TOC") mainContent.appendChild(child);
+    });
+    wrapper.appendChild(mainContent);
+
+    // Collapsible toggle
+    const icon = document.getElementById("toc-toggle-icon");
+    const saved = localStorage.getItem("toc-collapsed");
+    if (saved === "true") {
+      toc.classList.add("collapsed");
+      icon.textContent = "▶";
+    }
+
+    titleEl.addEventListener("click", function () {
+      toc.classList.toggle("collapsed");
+      const isCollapsed = toc.classList.contains("collapsed");
+      icon.textContent = isCollapsed ? "▶" : "◀";
+      localStorage.setItem("toc-collapsed", isCollapsed);
+    });
+  });
+</script>
+<nav><ul>
+  <li><a href="https://osowoso.org">oSoWoSo</a></li>
+  <li>⏮️</li>
+  <li><a href="index.html" class="active">Home</a></li>
+  <li><a href="https://github.com/oSoWoSo/DistroHopper/releases/latest">⏬ release</a></li>
+  <li><a href="https://github.com/oSoWoSo/DistroHopper/archive/refs/heads/main.zip">📦repo zip</a></li>
+  <li><a href="https://github.com/oSoWoSo/DistroHopper">🔗git</a></li>
+  <li>⏭️</li>
+  <li><a href="README-web.html">README-web</a></li>
+  <li><a href="stars.html">stars</a></li>
+</ul></nav>
+<header id="title-block-header">
+<h1 class="title">DistroHopper</h1>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#this-repository-contains-a-multiple-tools"
+id="toc-this-repository-contains-a-multiple-tools">This repository
+contains a multiple tools</a></li>
+<li><a href="#welcome--distrohoppers"
+id="toc-welcome--distrohoppers"><p align="center">Welcome
+<img src="https://dh.osowoso.org/hop120.png" align="middle" width="80" />
+DistroHoppers</p></a>
+<ul>
+<li><a href="#i-made-some-user-interfaces-for-quickemu"
+id="toc-i-made-some-user-interfaces-for-quickemu">I made some user
+interfaces for quickemu...</a>
+<ul>
+<li><a
+href="#open-source-version-without-removed-proprietary-oses-macwindows"
+id="toc-open-source-version-without-removed-proprietary-oses-macwindows">open
+source version without removed proprietary OSes (Mac,Windows)</a></li>
+<li><a href="#extended-version-with-more-distros-then-upstream-quickemu"
+id="toc-extended-version-with-more-distros-then-upstream-quickemu">Extended
+version with more distros then upstream quickemu</a></li>
+<li><a href="#quickget-with-gum-ui"
+id="toc-quickget-with-gum-ui">quickget+ with gum UI</a></li>
+<li><a href="#quickget-with-easybashgui-ui"
+id="toc-quickget-with-easybashgui-ui">quickget+ with easybashgui
+UI</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#thanks-to" id="toc-thanks-to">Thanks to:</a>
+<ul>
+<li><a href="#quickemu-introduction"
+id="toc-quickemu-introduction">quickemu Introduction</a></li>
+</ul></li>
+<li><a href="#quickemu" id="toc-quickemu">Quickemu</a></li>
+<li><a href="#introduction" id="toc-introduction">Introduction</a></li>
+<li><a href="#features" id="toc-features">Features</a>
+<ul>
+<li><a href="#as-featured-on-linux-matters-podcast"
+id="toc-as-featured-on-linux-matters-podcast">As featured on Linux
+Matters podcast!</a></li>
+</ul></li>
+<li><a href="#quick-start" id="toc-quick-start">Quick start</a>
+<ul>
+<li><a href="#demo" id="toc-demo">Demo</a></li>
+</ul></li>
+<li><a href="#documentation"
+id="toc-documentation">Documentation</a></li>
+</ul>
+</nav>
+<h1 id="this-repository-contains-a-multiple-tools">This repository
+contains a multiple tools</h1>
+<p>Can be used together with quickemu</p>
+<h1 id="welcome--distrohoppers"><p align="center">Welcome
+<img src="https://dh.osowoso.org/hop120.png" align="middle" width="80" />
+DistroHoppers</p></h1>
+<h2 id="i-made-some-user-interfaces-for-quickemu">I made some user
+interfaces for quickemu...</h2>
+<p>🦚 <a
+href="https://github.com/oSoWoSo/DistroHopper/blob/all/dh">dh</a> GUI
+and TUI using yad</p>
+<p>🕊️ <a
+href="https://github.com/oSoWoSo/DistroHopper/blob/all/quickfzf">quickfzf</a>
+TUI using fzf</p>
+<p>🐲 <a
+href="https://github.com/oSoWoSo/DistroHopper/blob/all/quicktui">quicktui</a>
+TUI using gum (🚧 usable but under heavy development)</p>
+<p>🐅 <a
+href="https://github.com/oSoWoSo/DistroHopper/blob/all/qrun">qrun</a>
+TUI using gum <a
+href="https://asciinema.org/a/fPcYGWhF8aGoJJ5M30Q1CWdqe"><img
+src="https://asciinema.org/a/fPcYGWhF8aGoJJ5M30Q1CWdqe.svg"
+alt="asciicast" /></a></p>
+<p>🦈 <a href="https://github.com/oSoWoSo/DistroHopper/blob/all/q">q</a>
+TUI using gum</p>
+<p>and</p>
+<h3
+id="open-source-version-without-removed-proprietary-oses-macwindows">open
+source version without removed proprietary OSes (Mac,Windows)</h3>
+<p><a
+href="https://github.com/oSoWoSo/DistroHopper/tree/open-source-only/quickget">quickget-</a></p>
+<h3
+id="extended-version-with-more-distros-then-upstream-quickemu">Extended
+version with more distros then upstream quickemu</h3>
+<p><a
+href="https://github.com/oSoWoSo/DistroHopper/tree/quickget-extended/quickget">quickget+</a></p>
+<h3 id="quickget-with-gum-ui">quickget+ with gum UI</h3>
+<p><a
+href="https://github.com/oSoWoSo/DistroHopper/tree/quickget-gum-UI/quickget">quickget+gum</a></p>
+<h3 id="quickget-with-easybashgui-ui">quickget+ with easybashgui UI</h3>
+<p><a
+href="https://github.com/oSoWoSo/DistroHopper/tree/quickget-ebg-UI/quickget">quickget+ebg</a></p>
+<p>Enjoy...</p>
+<p><a href="https://github.com/oSoWoSo/DistroHopper/">repo</a></p>
+<p>Everything could work</p>
+<h1 id="thanks-to">Thanks to:</h1>
+<ul>
+<li><a
+href="https://github.com/BashGui/easybashgui">easybashgui</a></li>
+<li><a href="https://github.com/v1cont/yad">yad</a></li>
+<li><a href="https://github.com/junegunn/fzf">fzf</a></li>
+<li><a
+href="https://github.com/quickemu-project/quickemu">quickemu</a></li>
+<li>Special thanks to all members of <strong>LINUX</strong>
+community</li>
+</ul>
+<p><img
+src="https://repobeats.axiom.co/api/embed/a2ddede7bf2c42e7c6cc92602c461ea8c86fd9f2.svg"
+title="Repobeats analytics image" alt="Alt" /></p>
+<h2 id="quickemu-introduction">quickemu Introduction</h2>
+<div align="center">
+<img src="https://dh.osowoso.org/logo.png" alt="Quickemu" width="256" />
+
+<h1 id="quickemu">Quickemu</h1>
+<p><strong>Quickly create and run optimised Windows, macOS and Linux
+virtual machines:</strong></p>
+<p><strong>Made with 💝 for
+<img src="https://dh.osowoso.org/tux.png" align="middle" width="24" alt="Tux (Linux)"/>
+&amp;
+<img src="https://dh.osowoso.org/apple.png" align="middle" width="24" alt="Apple (macOS)"/></strong></p>
+</div>
+
+<p align="center">
+  &nbsp;<a href="https://wimpysworld.io/discord" target="_blank"><img alt="Discord" src="https://img.shields.io/discord/712850672223125565?style=for-the-badge&logo=discord&logoColor=%23ffffff&label=Discord&labelColor=%234253e8&color=%23e4e2e2"></a>&nbsp;
+  &nbsp;<a href="https://fosstodon.org/@wimpy" target="_blank"><img alt="Mastodon" src="https://img.shields.io/badge/Mastodon-6468fa?style=for-the-badge&logo=mastodon&logoColor=%23ffffff"></a>&nbsp;
+  &nbsp;<a href="https://twitter.com/m_wimpress" target="_blank"><img alt="Twitter" src="https://img.shields.io/badge/Twitter-303030?style=for-the-badge&logo=x&logoColor=%23ffffff"></a>&nbsp;
+  &nbsp;<a href="https://linkedin.com/in/martinwimpress" target="_blank"><img alt="LinkedIn" src="https://img.shields.io/badge/LinkedIn-1667be?style=for-the-badge&logo=linkedin&logoColor=%23ffffff"></a>&nbsp;
+</p>
+
+<h1 id="introduction">Introduction</h1>
+<p><strong>Quickemu</strong> is a wrapper for the excellent <a
+href="https://www.qemu.org/">QEMU</a> that automatically <em>"does the
+right thing"</em> when creating virtual machines. No requirement for
+exhaustive configuration options. You decide what operating system you
+want to run and Quickemu takes care of the rest 🤖</p>
+<ul>
+<li><code>quickget</code> <strong>automatically downloads the upstream
+OS</strong> and creates the configuration 📀</li>
+<li><code>quickemu</code> enumerates your hardware and launches the
+virtual machine with the <strong>optimum configuration best suited to
+your computer</strong> ⚡️</li>
+</ul>
+<p>The original objective of the project was to <a
+href="https://github.com/quickemu-project/quickemu/wiki/02-Create-Linux-virtual-machines">enable
+quick testing of Linux distributions</a> where the virtual machines and
+their configuration can be stored anywhere (such as external USB storage
+or your home directory) and no elevated permissions are required to run
+the virtual machines.</p>
+<p><strong>Today, Quickemu includes comprehensive support for <a
+href="https://github.com/quickemu-project/quickemu/wiki/03-Create-macOS-virtual-machines">macOS</a>,
+<a
+href="https://github.com/quickemu-project/quickemu/wiki/04-Create-Windows-virtual-machines">Windows</a></strong>,
+most of the BSDs, novel non-Linux operating systems such as FreeDOS,
+Haiku, KolibriOS, OpenIndiana, ReactOS, and more.</p>
+<h1 id="features">Features</h1>
+<ul>
+<li>Host support for <strong>Linux and macOS</strong></li>
+<li><strong>macOS</strong> Sonoma, Ventura, Monterey, Big Sur, Catalina
+&amp; Mojave</li>
+<li><strong>Windows</strong> 10 and 11 including TPM 2.0</li>
+<li><strong>Windows Server</strong> 2022 2019 2016</li>
+<li><a href="https://ubuntu.com/desktop">Ubuntu</a> and all the
+<strong><a href="https://ubuntu.com/download/flavours">official Ubuntu
+flavours</a></strong></li>
+<li><strong>Nearly 1000 operating system editions are
+supported!</strong></li>
+<li>Full SPICE support including host/guest clipboard sharing</li>
+<li>VirtIO-webdavd file sharing for Linux and Windows guests</li>
+<li>VirtIO-9p file sharing for Linux and macOS guests</li>
+<li><a href="https://wiki.qemu.org/Features/GuestAgent">QEMU Guest Agent
+support</a>; provides access to a system-level agent via standard QMP
+commands</li>
+<li>Samba file sharing for Linux, macOS and Windows guests (<em>if
+<code>smbd</code> is installed on the host</em>)</li>
+<li>VirGL acceleration</li>
+<li>USB device pass-through</li>
+<li>Smartcard pass-through</li>
+<li>Automatic SSH port forwarding to guests</li>
+<li>Network port forwarding</li>
+<li>Full duplex audio</li>
+<li>Braille support</li>
+<li>EFI (with or without SecureBoot) and Legacy BIOS boot</li>
+</ul>
+<h2 id="as-featured-on-linux-matters-podcast">As featured on <a
+href="https://linuxmatters.sh">Linux Matters</a> podcast!</h2>
+<p>The presenters of Linux Matters 🐧🎙️ are the creators of each of the
+principal Quickemu projects. We discussed Quickemu's 2024 reboot in <a
+href="https://linuxmatters.sh/30">Episode 30 - Quickemu Rising From the
+Bashes</a>.
+<!-- and in [Episode 32 - Quick, quicker, quickest](https://linuxmatters.sh/32) [Martin](https://github.com/flexiondotorg) unveils macOS host support for [**Quickemu**](https://github.com/quickemu-project/quickemu), [Mark](https://github.com/marxjohnson) explains the origins of the [**Quickgui**](https://github.com/quickemu-project/quickgui) desktop app and upcoming improvements, and [Alan](https://github.com/popey) debuts [**Quicktest**](https://github.com/quickemu-project/quicktest); a framework for automatically testing operating systems via Quickemu --></p>
+<div align="center">
+  <a href="https://linuxmatters.sh" target="_blank"><img src="https://github.com/wimpysworld/nix-config/raw/main/.github/screenshots/linuxmatters.png" alt="Linux Matters Podcast"/></a>
+  <br />
+  <em>Linux Matters Podcast</em>
+</div>
+
+<h1 id="quick-start">Quick start</h1>
+<p><a
+href="https://github.com/quickemu-project/quickemu/wiki/01-Installation">Once
+Quickemu is installed</a>, there are two simple steps to create and run
+a virtual machine:</p>
+<ul>
+<li><code>quickget</code> automatically downloads the ISO image for the
+operating system you want to run and creates a configuration file for
+the virtual machine.</li>
+</ul>
+<pre class="shell"><code>quickget nixos unstable minimal</code></pre>
+<ul>
+<li><code>quickemu</code> starts the virtual machine using the
+configuration file created by <code>quickget</code>.</li>
+</ul>
+<pre class="shell"><code>quickemu --vm nixos-unstable-minimal.conf</code></pre>
+<p>Execute <code>quickget</code> (with no arguments) to see a list of
+all the supported operating systems.</p>
+<h2 id="demo">Demo</h2>
+<div align="center">
+
+<p><a href="https://asciinema.org/a/658148?autoplay=1" target="_blank"><img src="https://asciinema.org/a/658148.svg" /></a></p>
+</div>
+
+<h1 id="documentation">Documentation</h1>
+<p>The wiki describes how to get up and running with Quickemu and also
+covers more advanced configuration and usage.</p>
+<ul>
+<li><a
+href="https://github.com/quickemu-project/quickemu/wiki/01-Installation"><strong>Installation</strong></a>
+💾</li>
+<li><a
+href="https://github.com/quickemu-project/quickemu/wiki/02-Create-Linux-virtual-machines"><strong>Create
+Linux virtual machines</strong></a> 🐧</li>
+<li><a
+href="https://github.com/quickemu-project/quickemu/wiki/03-Create-macOS-virtual-machines"><strong>Create
+macOS virtual machines</strong></a> 🍏</li>
+<li><a
+href="https://github.com/quickemu-project/quickemu/wiki/04-Create-Windows-virtual-machines"><strong>Create
+Windows virtual machines</strong></a> 🪟</li>
+<li><a
+href="https://github.com/quickemu-project/quickemu/wiki/05-Advanced-quickemu-configuration"><strong>Advanced
+quickemu configuration</strong></a> 🔧</li>
+<li><a
+href="https://github.com/quickemu-project/quickemu/wiki/06-Advanced-quickget-features"><strong>Advanced
+quickget features</strong></a> 🤓</li>
+<li><a
+href="https://github.com/quickemu-project/quickemu/wiki/07-Alternative-frontends"><strong>Alternative
+frontends</strong></a> 🧑‍💻</li>
+<li><a
+href="https://github.com/quickemu-project/quickemu/wiki/08-References"><strong>References</strong></a>
+📚️</li>
+</ul>
+<script>
+(function () {
+  function hexToRgb(hex) {
+    hex = hex.trim().replace(/^#/, '');
+    if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+    const n = parseInt(hex, 16);
+    return [n >> 16 & 255, n >> 8 & 255, n & 255];
+  }
+
+  function clamp(v, min, max) {
+    return Math.min(Math.max(v, min), max);
+  }
+
+  function Color(r, g, b) {
+    this.r = r / 255;
+    this.g = g / 255;
+    this.b = b / 255;
+  }
+
+  Color.prototype.applyFilter = function (funcs) {
+    let [r, g, b] = [this.r * 255, this.g * 255, this.b * 255];
+
+    function multiply(matrix) {
+      const nr = clamp(r * matrix[0] + g * matrix[1] + b * matrix[2], 0, 255);
+      const ng = clamp(r * matrix[3] + g * matrix[4] + b * matrix[5], 0, 255);
+      const nb = clamp(r * matrix[6] + g * matrix[7] + b * matrix[8], 0, 255);
+      r = nr; g = ng; b = nb;
+    }
+
+    function hueRotate(angle) {
+      const a = angle / 180 * Math.PI;
+      const sin = Math.sin(a), cos = Math.cos(a);
+      multiply([
+        0.213 + cos*0.787 - sin*0.213, 0.715 - cos*0.715 - sin*0.715, 0.072 - cos*0.072 + sin*0.928,
+        0.213 - cos*0.213 + sin*0.143, 0.715 + cos*0.285 + sin*0.140, 0.072 - cos*0.072 - sin*0.283,
+        0.213 - cos*0.213 - sin*0.787, 0.715 - cos*0.715 + sin*0.715, 0.072 + cos*0.928 + sin*0.072,
+      ]);
+    }
+
+    function sepia(v) {
+      multiply([
+        0.393 + 0.607*(1-v), 0.769 - 0.769*(1-v), 0.189 - 0.189*(1-v),
+        0.349 - 0.349*(1-v), 0.686 + 0.314*(1-v), 0.168 - 0.168*(1-v),
+        0.272 - 0.272*(1-v), 0.534 - 0.534*(1-v), 0.131 + 0.869*(1-v),
+      ]);
+    }
+
+    function saturate(v) {
+      multiply([
+        0.213 + 0.787*v, 0.715 - 0.715*v, 0.072 - 0.072*v,
+        0.213 - 0.213*v, 0.715 + 0.285*v, 0.072 - 0.072*v,
+        0.213 - 0.213*v, 0.715 - 0.715*v, 0.072 + 0.928*v,
+      ]);
+    }
+
+    for (const [fn, val] of funcs) {
+      if (fn === 'invert')    { r = clamp((1-r/255)*255*val + r/255*255*(1-val),0,255); g = clamp((1-g/255)*255*val + g/255*255*(1-val),0,255); b = clamp((1-b/255)*255*val + b/255*255*(1-val),0,255); }
+      if (fn === 'sepia')     sepia(val);
+      if (fn === 'saturate')  saturate(val);
+      if (fn === 'hueRotate') hueRotate(val);
+      if (fn === 'brightness'){ r = clamp(r*val,0,255); g = clamp(g*val,0,255); b = clamp(b*val,0,255); }
+    }
+
+    return new Color(r, g, b);
+  };
+
+  function loss(result, target) {
+    return (
+      Math.pow(result.r*255 - target.r*255, 2) +
+      Math.pow(result.g*255 - target.g*255, 2) +
+      Math.pow(result.b*255 - target.b*255, 2)
+    );
+  }
+
+  function solve(target) {
+    function css(v) {
+      return [
+        ['invert',    clamp(v[0], 0, 1)],
+        ['sepia',     clamp(v[1], 0, 1)],
+        ['saturate',  clamp(v[2], 0, 20)],
+        ['hueRotate', clamp(v[3], 0, 360)],
+        ['brightness',clamp(v[4], 0, 10)],
+        ['brightness',clamp(v[5], 0, 10)],
+      ];
+    }
+
+    function score(v) {
+      return loss(new Color(0,0,0).applyFilter(css(v)), target);
+    }
+
+    let best = null, bestScore = Infinity;
+    for (let i = 0; i < 30; i++) {
+      let v = [Math.random(), Math.random(), Math.random()*10, Math.random()*360, Math.random()*2, Math.random()*2];
+      for (let step = 1; step > 0.0001; step *= 0.9) {
+        for (let j = 0; j < v.length; j++) {
+          const orig = v[j];
+          v[j] += step * (Math.random() > 0.5 ? 1 : -1);
+          const s = score(v);
+          if (s < bestScore) { bestScore = s; best = [...v]; }
+          else v[j] = orig;
+        }
+      }
+    }
+
+    const f = css(best);
+    return [
+      `invert(${(clamp(f[0][1],0,1)*100).toFixed(0)}%)`,
+      `sepia(${(clamp(f[1][1],0,1)*100).toFixed(0)}%)`,
+      `saturate(${(clamp(f[2][1],0,20)*100).toFixed(0)}%)`,
+      `hue-rotate(${clamp(f[3][1],0,360).toFixed(0)}deg)`,
+      `brightness(${(clamp(f[4][1],0,10)*100).toFixed(0)}%)`,
+      `brightness(${(clamp(f[5][1],0,10)*100).toFixed(0)}%)`,
+    ].join(' ');
+  }
+
+  // Cache solved filters per color so theme switching is instant
+  const cache = {};
+
+  function applyIconColor() {
+    const raw = getComputedStyle(document.documentElement)
+      .getPropertyValue('--color-icon').trim();
+    if (!raw) return false;
+
+    let rgb;
+    if (raw.startsWith('#')) {
+      rgb = hexToRgb(raw);
+    } else if (raw.startsWith('rgb')) {
+      rgb = raw.match(/\d+/g).map(Number).slice(0, 3);
+    } else {
+      return false;
+    }
+
+    const key = rgb.join(',');
+    if (!cache[key]) {
+      cache[key] = solve(new Color(...rgb));
+    }
+
+    document.documentElement.style.setProperty('--filter-icon', cache[key]);
+    return true;
+  }
+
+  function init() {
+    if (!applyIconColor()) return;
+
+    // Watch for data-theme attribute changes on <html> — re-apply immediately
+    new MutationObserver(function(mutations) {
+      for (const m of mutations) {
+        if (m.attributeName === 'data-theme') {
+          applyIconColor();
+          break;
+        }
+      }
+    }).observe(document.documentElement, { attributes: true });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+<script data-goatcounter="https://distrohopper.gocounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+<script src="https://giscus.app/client.js"
+        data-repo="osowoso/Distrohopper"
+        data-repo-id="R_kgDOJHu9MQ"
+        data-category="General"
+        data-category-id="DIC_kwDOJHu9Mc4CVBGm"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="preferred_color_scheme"
+        data-lang="cs"
+        crossorigin="anonymous"
+        async></script>
+</body>
+</html>

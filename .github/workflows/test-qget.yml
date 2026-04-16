@@ -1,0 +1,70 @@
+name: "Test qget and actions"
+
+on:
+  push:
+    paths:
+      - 'actions/**'
+      - 'qget'
+      - 'action'
+      - 'tests/**'
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  test-qget:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y curl shellcheck
+
+      - name: Run test runner
+        run: |
+          chmod +x tests/test-all.sh
+          ./tests/test-all.sh
+
+      - name: Run verify-releases
+        run: |
+          chmod +x tests/verify-releases.sh
+          ./tests/verify-releases.sh
+
+  test-clitest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y curl
+          curl -s https://raw.githubusercontent.com/aureliojargas/clitest/refs/heads/main/clitest -o clitest
+          chmod +x clitest
+
+      - name: Run clitest
+        run: |
+          ./clitest tests/test.md
+
+  shellcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run shellcheck on qget
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
+          shellcheck -S error qget || exit 1
+
+      - name: Run shellcheck on action
+        run: |
+          shellcheck -S error action || exit 1
+
+      - name: Run shellcheck on actions
+        run: |
+          for f in actions/*; do
+            shellcheck -S error "$f" || echo "Issues in $f"
+          done

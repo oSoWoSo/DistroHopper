@@ -1,0 +1,20 @@
+# Template file for 'gobolinux'
+OSNAME="gobolinux"
+PRETTY="GoboLinux"
+BASEDOF="-"
+DESCRIPTION="Experimental Linux distribution that redefines the entire filesystem hierarchy"
+HOMEPAGE="https://gobolinux.org/"
+CREDENTIALS="-"
+
+
+RELEASES=""
+
+
+function get_() {
+    local HASH=""
+    local ISO="GoboLinux-${RELEASE}-x86_64.iso"
+    local URL="https://gobolinux.neonsys.org/${RELEASE}-iso"
+    HASH=$(curl -sL https://gobolinux.org/downloads.html | grep -oP 'SHA256: \K[a-f0-9]+')
+    echo "${URL}/${ISO} ${HASH}"
+}
+
