@@ -113,6 +113,7 @@
     </a>
 
     <!-- Scripts -->
+    <script src="distros-releases.js"></script>
     <script src="distros.js"></script>
     <script>
     // DistributionHub-style initialization
@@ -158,6 +159,11 @@
             card.setAttribute('data-category', distro.category || 'other');
             card.setAttribute('data-name', (distro.name || '').toLowerCase());
             
+            // Get based-on info from releases data
+            const releaseInfo = Object.values(window.distrosReleases || {}).find(d => d.name?.toLowerCase() === distro.name?.toLowerCase());
+            const basedof = releaseInfo?.basedof || '';
+            const basedofHtml = basedof ? `<span class="badge bg-secondary ms-2" style="font-size: 0.7rem;">Based on: ${basedof}</span>` : '';
+            
             const downloadBtn = distro.downloadLink 
                 ? `<a href="${distro.downloadLink}" class="btn btn-download flex-grow-1" target="_blank" rel="noopener"><i class="fas fa-download me-2"></i>Download</a>`
                 : '';
@@ -176,6 +182,7 @@
                             ${distro.websiteLink ? `<a href="${distro.websiteLink}" class="distro-title-link" target="_blank" rel="noopener">` : ''}
                             <strong>${distro.name || 'Unknown'}</strong>
                             ${distro.websiteLink ? '</a>' : ''}
+                            ${basedofHtml}
                         </h5>
                         <div class="card-text distro-version">
                             <strong>Version:</strong> ${cleanVersion || 'N/A'}
