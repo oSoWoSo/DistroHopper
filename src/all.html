@@ -179,8 +179,14 @@
             background: var(--bg-primary, #1a1a1a);
         }
         
-        .release-table td a {
+        .release-table td a.download-link {
             color: var(--green, #8BC53F);
+            text-decoration: none;
+            font-size: 1.2rem;
+        }
+        
+        .release-table td a.download-link:hover {
+            color: var(--yellow, #FFD700);
         }
         
         .release-table td.disabled {
@@ -275,6 +281,7 @@
     </div>
 
     <script src="../distros.js"></script>
+    <script src="../distros-releases.js"></script>
     <script>
         // Distros data from distributionhub (211 distros)
         const distros = window.distributions || [];
@@ -329,9 +336,12 @@
         // Show download modal with release × edition table
         function showDownloads(distroId) {
             const distro = distros.find(d => d.name?.toLowerCase() === distroId.toLowerCase() || d.id?.toLowerCase() === distroId.toLowerCase());
+            const releasesData = window.distrosReleases || {};
+            
+            // Find matching release data (case-insensitive)
+            const releaseInfo = Object.values(releasesData).find(d => d.name?.toLowerCase() === distroId.toLowerCase());
             
             if (!distro) {
-                // Fallback - just open homepage
                 window.open('https://github.com/oSoWoSo/DistroHopper', '_blank');
                 return;
             }
@@ -342,13 +352,50 @@
             
             modalTitle.textContent = `Download ${distro.name}`;
             
-            // Build release × edition table if we have releases/editions data
-            // For now, show the download link and a message about using DistroHopper
             const downloadLink = distro.downloadLink;
+            const releases = releaseInfo?.releases || [];
+            const editions = releaseInfo?.editions || [];
             
             let html = '';
+            
+            // If we have releases and editions, show table
+            if (releases.length > 0 && editions.length > 0) {
+                html += `<h3 style="margin-top: 0;">Select Version & Edition</h3>`;
+                html += `<table class="release-table">`;
+                
+                // Header row with editions
+                html += `<tr><th>Version</th>`;
+                editions.forEach(edition => {
+                    html += `<th>${edition}</th>`;
+                });
+                html += `</tr>`;
+                
+                // Data rows for each release
+                releases.forEach((release, idx) => {
+                    html += `<tr><td><strong>${release}</strong></td>`;
+                    editions.forEach((edition, edIdx) => {
+                        // For now, show link to homepage as placeholder (actual URLs require get_() function)
+                        html += `<td><a href="${distro.websiteLink || '#'}" target="_blank" class="download-link">⬇</a></td>`;
+                    });
+                    html += `</tr>`;
+                });
+                
+                html += `</table>`;
+                html += `<p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem;">Click ⬇ to download. For direct ISO links, use DistroHopper.</p>`;
+            } else if (releases.length > 0) {
+                // Just releases, no editions
+                html += `<h3 style="margin-top: 0;">Available Versions</h3>`;
+                html += `<table class="release-table">`;
+                html += `<tr><th>Version</th><th>Download</th></tr>`;
+                releases.slice(0, 10).forEach(release => {
+                    html += `<tr><td><strong>${release}</strong></td><td><a href="${distro.websiteLink || '#'}" target="_blank" class="download-link">⬇</a></td></tr>`;
+                });
+                html += `</table>`;
+            }
+            
+            // Always show direct download buttons
             if (downloadLink) {
-                html += `<div style="text-align: center; margin-bottom: 1rem;">
+                html += `<div style="text-align: center; margin: 1rem 0;">
                     <a href="${downloadLink}" target="_blank" rel="noopener" class="download-btn" style="font-size: 1.2rem; padding: 1rem 2rem;">
                         ⬇ Download Latest Version
                     </a>
@@ -363,7 +410,7 @@
                 </div>`;
             }
             
-            html += `<div style="text-align: center; margin-top: 1.5rem; padding: 1rem; background: var(--bg-secondary); border-radius: 8px;">
+            html += `<div style="text-align: center; margin-top: 1rem; padding: 1rem; background: var(--bg-secondary); border-radius: 8px;">
                 <p style="margin-bottom: 0.5rem;">For other versions and editions, use DistroHopper:</p>
                 <code style="background: var(--bg-primary); padding: 0.25rem 0.5rem; border-radius: 4px;">./distrohopper</code>
             </div>`;
