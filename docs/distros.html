@@ -248,7 +248,7 @@
         
         // Also try after a short delay as backup
         setTimeout(function() {
-            if (document.querySelectorAll('.distro-card-wrapper').length === 0 && distributions.length > 0) {
+            if (document.querySelectorAll('.distro-card').length === 0 && distributions.length > 0) {
                 console.log('Backup render triggered');
                 renderDistros();
             }
