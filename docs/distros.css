@@ -164,6 +164,30 @@ html {
     transform: translateY(-1px);
 }
 
+.btn-torrent {
+    background: linear-gradient(45deg, 
+        #9b59b6 0%, 
+        #8e44ad 50%, 
+        #9b59b6 100%
+    );
+    background-size: 200% auto;
+    text-shadow: 2px 2px rgba(0, 0, 0, 0.2);
+    border: none;
+    color: #ffffff;
+    font-weight: bold;
+    padding: 0.8rem 1.5rem;
+    border-radius: 10px;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.9rem;
+}
+
+.btn-torrent:hover {
+    background-position: right center;
+    color: #ffffff;
+}
+
 .btn-download i {
     margin-right: 8px;
     transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -788,23 +812,4 @@ footer a:hover {
 
 .release-table td a.download-link:hover {
     text-decoration: underline;
-}
-
-.btn-torrent {
-    background: linear-gradient(45deg, 
-        #9b59b6 0%, 
-        #8e44ad 50%, 
-        #9b59b6 100%
-    );
-    background-size: 200% auto;
-    text-shadow: 2px 2px rgba(0, 0, 0, 0.2);
-    border: none;
-    color: #ffffff;
-    font-weight: bold;
-    padding: 0.8rem 1.5rem;
-    border-radius: 10px;
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-size: 0.9rem;
 }
