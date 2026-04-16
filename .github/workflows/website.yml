@@ -3,6 +3,9 @@ on:
   push:
     paths:
       - '*.md'
+      - 'src/*.html'
+      - 'src/*.css'
+      - 'src/*.js'
       - 'docs/*.css'
       - 'docs/*.js'
       - .github/workflows/website.yml
