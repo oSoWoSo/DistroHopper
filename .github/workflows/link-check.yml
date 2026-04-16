@@ -22,6 +22,25 @@ jobs:
       - name: Check external links
         uses: lycheev/lychee-action@v1.10.0
         with:
-          args: --verbose --no-progress --cache --max-cache-age 7d --header 'User-Agent: Mozilla/5.0 (compatible; DistroHopper/1.0)' https://almalinux.org https://archlinux.org https://debian.org https://ubuntu.com https://fedoraproject.org https://gentoo.org https://voidlinux.org https://manjaro.org https://opensuse.org https://nixos.org https://freebsd.org https://openbsd.org https://netbsd.org --include https://*$osowoso.org
+          args: >
+            --verbose
+            --no-progress
+            --cache
+            --max-cache-age 7d
+            --header 'User-Agent: Mozilla/5.0 (compatible; DistroHopper/1.0)'
+            https://almalinux.org
+            https://archlinux.org
+            https://debian.org
+            https://ubuntu.com
+            https://fedoraproject.org
+            https://gentoo.org
+            https://voidlinux.org
+            https://manjaro.org
+            https://opensuse.org
+            https://nixos.org
+            https://freebsd.org
+            https://openbsd.org
+            https://netbsd.org
+            --include https://*$osowoso.org
           fail-on-empty: false
           fail-on-warning: false
