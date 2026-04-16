@@ -242,7 +242,7 @@
 
     <main class="container">
         <div class="page-header">
-            <h1>All Distributions (211 total)</h1>
+            <h1>Supported Distributions</h1>
             <p>Linux distributions supported by DistroHopper. Click on a distribution to visit its homepage.</p>
         </div>
 
@@ -308,49 +308,75 @@
             
             grid.innerHTML = filtered.map(distro => {
                 const category = distro.category || 'other';
-                const downloadLink = distro.downloadLink || '#';
-                const websiteLink = distro.websiteLink || '#';
+                const distroId = distro.name || 'Unknown';
                 
                 return `
                     <div class="distro-card" data-category="${category}">
                         <h3>
-                            <a href="${websiteLink}" target="_blank" rel="noopener">${distro.name || 'Unknown'}</a>
+                            <a href="${distro.websiteLink || '#'}" target="_blank" rel="noopener">${distro.name || 'Unknown'}</a>
                         </h3>
                         <p class="distro-description">${distro.description || ''}</p>
                         <div class="distro-meta">
                             <span class="category-badge category-${category}">${categoryLabels[category] || category}</span>
                             ${distro.version ? `<span>${distro.version}</span>` : ''}
                         </div>
-                        <a href="${downloadLink}" target="_blank" rel="noopener" class="download-btn">Download</a>
+                        <button class="download-btn" onclick="showDownloads('${distroId.replace(/'/g, "\\'")}')">Download</button>
                     </div>
                 `;
             }).join('');
         }
         
-        // Show download modal
-        function showDownloads(id, name, releases, editions) {
+        // Show download modal with release × edition table
+        function showDownloads(distroId) {
+            const distro = distros.find(d => d.name?.toLowerCase() === distroId.toLowerCase() || d.id?.toLowerCase() === distroId.toLowerCase());
+            
+            if (!distro) {
+                // Fallback - just open homepage
+                window.open('https://github.com/oSoWoSo/DistroHopper', '_blank');
+                return;
+            }
+            
             const modal = document.getElementById('modalOverlay');
             const modalTitle = document.getElementById('modalTitle');
             const modalBody = document.getElementById('modalBody');
             
-            modalTitle.textContent = `Download ${name}`;
+            modalTitle.textContent = `Download ${distro.name}`;
             
-            // Simple approach: show releases list (actual download URLs would need get_() function)
-            if (releases.length === 0) {
-                modalBody.innerHTML = '<p>No releases available for download.</p>';
-            } else {
-                let html = '<p>Available releases:</p><ul style="list-style: none; padding: 0;">';
-                releases.forEach(release => {
-                    html += `<li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border-color);">
-                        <strong>${release}</strong>
-                        <span style="color: var(--text-muted);"> - See homepage for downloads</span>
-                    </li>`;
-                });
-                html += '</ul>';
-                html += `<p style="margin-top: 1rem;"><a href="https://github.com/oSoWoSo/DistroHopper" target="_blank" class="download-btn" style="display: inline-block;">Get with DistroHopper</a></p>`;
-                modalBody.innerHTML = html;
+            // Build release × edition table if we have releases/editions data
+            // For now, show the download link and a message about using DistroHopper
+            const downloadLink = distro.downloadLink;
+            
+            let html = '';
+            if (downloadLink) {
+                html += `<div style="text-align: center; margin-bottom: 1rem;">
+                    <a href="${downloadLink}" target="_blank" rel="noopener" class="download-btn" style="font-size: 1.2rem; padding: 1rem 2rem;">
+                        ⬇ Download Latest Version
+                    </a>
+                </div>`;
             }
             
+            if (distro.torrent) {
+                html += `<div style="text-align: center; margin-bottom: 1rem;">
+                    <a href="${distro.torrent}" target="_blank" rel="noopener" class="download-btn" style="background: #9b59b6; font-size: 1.2rem; padding: 1rem 2rem;">
+                        🧲 Download Torrent
+                    </a>
+                </div>`;
+            }
+            
+            html += `<div style="text-align: center; margin-top: 1.5rem; padding: 1rem; background: var(--bg-secondary); border-radius: 8px;">
+                <p style="margin-bottom: 0.5rem;">For other versions and editions, use DistroHopper:</p>
+                <code style="background: var(--bg-primary); padding: 0.25rem 0.5rem; border-radius: 4px;">./distrohopper</code>
+            </div>`;
+            
+            if (distro.websiteLink) {
+                html += `<div style="text-align: center; margin-top: 1rem;">
+                    <a href="${distro.websiteLink}" target="_blank" rel="noopener" style="color: var(--link-color);">
+                        Visit official website →
+                    </a>
+                </div>`;
+            }
+            
+            modalBody.innerHTML = html;
             modal.classList.add('active');
         }
         
