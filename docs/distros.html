@@ -149,8 +149,6 @@
         // Get distributions from window.distributions
         const distributions = window.distributions || [];
         
-        console.log('Distributions loaded:', distributions.length);
-        
         function createDistroCard(distro) {
             const cleanVersion = (distro.version || '').replace(/\sx86_64/i, '');
             const iconSrc = distro.icon || 'img/distro/default-distro.png';
@@ -195,7 +193,6 @@
         }
         
         function renderDistros() {
-            console.log('Rendering distros, currentFilter:', currentFilter, 'searchTerm:', searchTerm);
             distroList.innerHTML = '';
             
             const filtered = distributions.filter(distro => {
@@ -205,13 +202,9 @@
                 return matchesCategory && matchesSearch;
             });
             
-            console.log('Filtered count:', filtered.length);
-            
             filtered.forEach(distro => {
                 distroList.appendChild(createDistroCard(distro));
             });
-            
-            console.log('Rendered', filtered.length, 'cards');
         }
         
         // Search functionality
@@ -240,7 +233,6 @@
         setTimeout(function() {
             // Backup render in case of timing issues
             if (document.querySelectorAll('.distro-card-wrapper').length === 0) {
-                console.log('Backup render triggered');
                 renderDistros();
             }
         }, 500);
