@@ -4,238 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Distributions - DistroHopper</title>
-    <meta name="description" content="Supported Linux distributions for DistroHopper">
+    <meta name="description" content="List of Linux distributions supported by DistroHopper, automatically updated from distributionhub.">
     
+    <!-- Site styles -->
     <link rel="stylesheet" href="style.css">
     
+    <!-- DistributionHub styles -->
+    <link rel="stylesheet" href="lib/bootstrap.min.css">
+    <link rel="stylesheet" href="lib/fa.all.min.css">
+    <link rel="stylesheet" href="lib/animate.min.css">
+    <link rel="stylesheet" href="distros.css">
+    
     <style>
-        /* Distros page styling */
-        .distros-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
-            padding: 1rem 0;
+        /* Override site styles for distributionhub theme */
+        body {
+            background-color: #1a1a1a;
+            color: #ffffff;
         }
-        
-        .distro-card {
-            border: 1px solid var(--border-color, #444);
-            border-radius: 8px;
-            padding: 1rem;
-            background: var(--bg-secondary, #2d2d2d);
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
+        .page-wrapper {
+            background-color: #1a1a1a;
         }
-        
-        .distro-card:hover {
-            border-color: var(--green, #8BC53F);
-            box-shadow: 0 0 10px rgba(139, 197, 63, 0.2);
-        }
-        
-        .distro-card h3 {
-            margin: 0 0 0.5rem 0;
-            font-size: 1.2rem;
-        }
-        
-        .distro-card h3 a {
-            color: var(--green, #8BC53F);
-            text-decoration: none;
-        }
-        
-        .distro-card h3 a:hover {
-            text-decoration: underline;
-        }
-        
-        .distro-description {
-            color: var(--text-secondary, #aaa);
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-            flex-grow: 1;
-        }
-        
-        .distro-meta {
-            font-size: 0.8rem;
-            color: var(--text-muted, #666);
-            margin-bottom: 0.75rem;
-        }
-        
-        .distro-meta span {
-            margin-right: 1rem;
-        }
-        
-        .download-btn {
-            display: inline-block;
-            padding: 0.5rem 1rem;
-            background: var(--green, #8BC53F);
-            color: var(--bg-primary, #1a1a1a);
-            text-decoration: none;
-            border-radius: 4px;
-            font-weight: bold;
-            text-align: center;
-            cursor: pointer;
-            border: none;
-        }
-        
-        .download-btn:hover {
-            background: var(--yellow, #FFD700);
-        }
-        
-        .category-badge {
-            display: inline-block;
-            padding: 0.2rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: bold;
-            margin-right: 0.5rem;
-        }
-        
-        .category-beginner { background: #4CAF50; color: white; }
-        .category-advanced { background: #FF9800; color: white; }
-        .category-lightweight { background: #2196F3; color: white; }
-        .category-other { background: #9E9E9E; color: white; }
-        
-        .basedof-badge {
-            display: inline-block;
-            padding: 0.2rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            background: var(--bg-primary, #333);
-            color: var(--text-secondary, #aaa);
-            border: 1px solid var(--border-color, #555);
-            margin-right: 0.5rem;
-        }
-        
-        /* Search and filters */
-        .distros-filters {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-            align-items: center;
-        }
-        
-        .distros-search {
-            flex: 1;
-            min-width: 200px;
-            padding: 0.5rem;
-            border: 1px solid var(--border-color, #444);
-            border-radius: 4px;
-            background: var(--bg-secondary, #2d2d2d);
-            color: var(--text-primary, #fff);
-        }
-        
-        .filter-buttons {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-        
-        .filter-btn {
-            padding: 0.4rem 0.8rem;
-            border: 1px solid var(--border-color, #444);
-            border-radius: 4px;
-            background: transparent;
-            color: var(--text-primary, #fff);
-            cursor: pointer;
-        }
-        
-        .filter-btn:hover, .filter-btn.active {
-            border-color: var(--green, #8BC53F);
-            color: var(--green, #8BC53F);
-        }
-        
-        /* Modal for release/edition selection */
-        .modal-overlay {
+        /* Hide default TOC since distributionhub has its own layout */
+        #TOC {
             display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .modal-overlay.active {
-            display: flex;
-        }
-        
-        .modal-content {
-            background: var(--bg-secondary, #2d2d2d);
-            border: 1px solid var(--border-color, #444);
-            border-radius: 8px;
-            padding: 1.5rem;
-            max-width: 90vw;
-            max-height: 80vh;
-            overflow: auto;
-        }
-        
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid var(--border-color, #444);
-        }
-        
-        .modal-close {
-            background: none;
-            border: none;
-            color: var(--text-primary, #fff);
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-        
-        .release-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        .release-table th, .release-table td {
-            padding: 0.5rem;
-            border: 1px solid var(--border-color, #444);
-            text-align: center;
-        }
-        
-        .release-table th {
-            background: var(--bg-primary, #1a1a1a);
-        }
-        
-        .release-table td a.download-link {
-            color: var(--green, #8BC53F);
-            text-decoration: none;
-            font-size: 1.2rem;
-        }
-        
-        .release-table td a.download-link:hover {
-            color: var(--yellow, #FFD700);
-        }
-        
-        .release-table td .download-link.disabled {
-            color: var(--text-muted, #666);
-            cursor: not-allowed;
-            opacity: 0.5;
-            text-decoration: none;
-        }
-        
-        .page-header {
-            margin-bottom: 1.5rem;
-        }
-        
-        .page-header h1 {
-            margin: 0;
-        }
-        
-        .page-header p {
-            color: var(--text-secondary, #aaa);
-            margin: 0.5rem 0 0 0;
         }
     </style>
 </head>
 <body>
+    <!-- Theme toggle -->
     <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
     <script>
         function toggleTheme(){
@@ -251,49 +47,63 @@
         })();
     </script>
 
+    <!-- Navigation -->
     <nav>
-        <ul>
-            <li><a href="https://osowoso.org">oSoWoSo</a></li>
-            <li>⏮️</a></li>
-            <li><a href="index.html" class="active">Home</a></li>
-            <li><a href="CODE_OF_CONDUCT.html">CODE OF CONDUCT</a></li>
-            <li><a href="CONTRIBUTING.html">CONTRIBUTING</a></li>
-            <li><a href="README-web.html">README-web</a></li>
-            <li><a href="SECURITY.html">SECURITY</a></li>
-            <li><a href="distros.html">Distros</a></li>
-            <li><a href="all.html">All</a></li>
-            <li><a href="stars.html">stars</a></li>
-            <li>⏭️</a></li>
-        </ul>
-        <ul>
-            <li><a href="https://github.com/oSoWoSo/DistroHopper/releases/latest">⏬ release</a></li>
-            <li><a href="https://github.com/oSoWoSo/DistroHopper/archive/refs/heads/main.zip">📦repo zip</a></li>
-            <li><a href="https://github.com/oSoWoSo/DistroHopper">🔗git</a></li>
-        </ul>
+        <div class="nav-content">
+            <a href="https://osowoso.org" class="nav-brand">oSoWoSo</a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="CODE_OF_CONDUCT.html">CODE OF CONDUCT</a></li>
+                <li><a href="CONTRIBUTING.html">CONTRIBUTING</a></li>
+                <li><a href="README-web.html">README-web</a></li>
+                <li><a href="SECURITY.html">SECURITY</a></li>
+                <li><a href="distros.html" class="active">distros</a></li>
+                <li><a href="stars.html">stars</a></li>
+            </ul>
+            <div class="nav-buttons">
+                <a href="https://github.com/oSoWoSo/DistroHopper/releases/latest" class="nav-btn">⏬ release</a>
+                <a href="https://github.com/oSoWoSo/DistroHopper/archive/refs/heads/main.zip" class="nav-btn">📦repo zip</a>
+                <a href="https://github.com/oSoWoSo/DistroHopper" class="nav-btn">🔗git</a>
+            </div>
+        </div>
     </nav>
 
-    <div id="TOC"></div>
+    <!-- Particles background -->
+    <div id="particles-js"></div>
 
-    <main class="container">
-        <div class="page-header">
-            <h1>Supported Distributions</h1>
-            <p>Linux distributions supported by DistroHopper. Click on a distribution to visit its homepage.</p>
-        </div>
-
-        <div class="distros-filters">
-            <input type="text" id="distroSearch" class="distros-search" placeholder="Search distributions...">
-            <div class="filter-buttons">
-                <button class="filter-btn active" data-filter="all">All</button>
-                <button class="filter-btn" data-filter="beginner">Beginner</button>
-                <button class="filter-btn" data-filter="advanced">Advanced</button>
-                <button class="filter-btn" data-filter="lightweight">Lightweight</button>
+    <!-- Main content -->
+    <main class="container main-content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="text-start subtle-glow animate__animated animate__fadeIn">
+                Welcome to <strong class="text-gradient">DistroHub</strong>
+            </h1>
+            <div class="d-flex align-items-center gap-3">
+                <a href="https://github.com/oSoWoSo/distributionhub" target="_blank" rel="noopener" class="github-link subtle-glow">
+                    <i class="fab fa-github"></i>
+                </a>
             </div>
         </div>
 
-        <div class="distros-grid" id="distroGrid">
-            <!-- Distros will be rendered here -->
+        <p class="text-center mb-4" style="color: #aaa;">
+            Below is the list of Linux distributions supported by DistroHopper.<br>
+            This list is automatically updated from <a href="https://github.com/oSoWoSo/distributionhub" style="color: #8CFFFA;">distributionhub</a>.
+        </p>
+
+        <div class="search-container mb-4 animate__animated animate__fadeIn">
+            <div class="search-filter-group">
+                <div class="search-input-wrapper">
+                    <input type="text" id="distroSearch" class="form-control bg-dark text-light" placeholder="Search distributions or details.." aria-label="Search distributions">
+                </div>
+                <div class="filter-buttons">
+                    <button class="btn btn-outline-info btn-sm filter-btn" data-filter="beginner">Beginner</button>
+                    <button class="btn btn-outline-info btn-sm filter-btn" data-filter="advanced">Advanced</button>
+                    <button class="btn btn-outline-info btn-sm filter-btn" data-filter="lightweight">Lightweight</button>
+                    <button class="btn btn-outline-info btn-sm filter-btn" data-filter="torrent">Torrent</button>
+                </div>
+            </div>
         </div>
-    </main>
+
+        <div class="row" id="distroList"></div>
 
     <!-- Modal for release/edition selection -->
     <div class="modal-overlay" id="modalOverlay">
@@ -307,247 +117,218 @@
             </div>
         </div>
     </div>
+</main>
 
+    <!-- Scroll to top button -->
+    <a href="#" class="btn btn-primary scroll-to-top" aria-label="Scroll to top">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+
+    <!-- Scripts -->
     <script src="distros.js"></script>
     <script src="distros-releases.js"></script>
     <script>
-        // Distros data from distributionhub (211 distros)
-        const distros = window.distributions || [];
+    // DistributionHub-style initialization
+    document.addEventListener("DOMContentLoaded", function() {
+        // Scroll to top functionality
+        const scrollToTop = document.querySelector('.scroll-to-top');
+        if (scrollToTop) {
+            scrollToTop.style.display = 'none';
+            
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    scrollToTop.style.display = 'flex';
+                } else {
+                    if (window.pageYOffset <= 300) {
+                        scrollToTop.style.display = 'none';
+                    }
+                }
+            });
+            
+            scrollToTop.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        }
         
-        // Current filter state
+        // Initialize distributions from distros.js
+        const distroList = document.getElementById('distroList');
+        const distroSearch = document.getElementById('distroSearch');
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        
         let currentFilter = 'all';
         let searchTerm = '';
         
-        // Category labels
-        const categoryLabels = {
-            'beginner': 'Beginner',
-            'advanced': 'Advanced', 
-            'lightweight': 'Lightweight'
-        };
+        // Get distributions from window.distributions
+        const distributions = window.distributions || [];
         
-        // Render distro cards
-        function renderDistros() {
-            const grid = document.getElementById('distroGrid');
+        function createDistroCard(distro) {
+            const cleanVersion = distro.version.replace(/\sx86_64/i, '');
+            const iconSrc = distro.icon || 'img/distro/default-distro.png';
             
-            const filtered = distros.filter(distro => {
-                const matchesFilter = currentFilter === 'all' || distro.category === currentFilter;
-                const matchesSearch = (!distro.name || distro.name.toLowerCase().includes(searchTerm.toLowerCase())) || 
-                    (distro.description && distro.description.toLowerCase().includes(searchTerm.toLowerCase()));
-                return matchesFilter && matchesSearch;
+            const card = document.createElement('div');
+            card.className = 'col-md-4 mb-4 distro-card-wrapper';
+            card.setAttribute('data-category', distro.category || 'other');
+            card.setAttribute('data-name', distro.name.toLowerCase());
+            
+            const downloadBtn = distro.downloadLink 
+                ? `<a href="${distro.downloadLink}" class="btn btn-download flex-grow-1" target="_blank" rel="noopener"><i class="fas fa-download me-2"></i>Download</a>`
+                : '';
+            
+            const torrentBtn = distro.torrent
+                ? `<a href="${distro.torrent}" class="btn btn-torrent flex-grow-1" target="_blank" rel="noopener"><i class="fas fa-magnet me-2"></i>Torrent</a>`
+                : '';
+            
+            const moreOptionsBtn = `<button class="btn btn-outline-info flex-grow-1" onclick="showDownloadModal({name:'${distro.name}',icon:'${distro.icon}',downloadLink:'${distro.downloadLink || ''}',torrent:'${distro.torrent || ''}'})"><i class="fas fa-cog me-2"></i>More</button>`;
+            
+            card.innerHTML = `
+                <div class="card h-100">
+                    <div class="card-img-container">
+                        <img src="${iconSrc}" class="card-img-top" alt="${distro.name} logo" loading="lazy" onerror="this.src='img/distro/tux.png'">
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">
+                            ${distro.websiteLink ? `<a href="${distro.websiteLink}" class="distro-title-link" target="_blank" rel="noopener">` : ''}
+                            <strong>${distro.name}</strong>
+                            ${distro.websiteLink ? '</a>' : ''}
+                        </h5>
+                        <div class="card-text distro-version">
+                            <strong>Version:</strong> ${cleanVersion}
+                        </div>
+                        <p class="card-text flex-grow-1">${distro.description || ''}</p>
+                        <div class="mt-auto d-flex gap-2">
+                            ${downloadBtn}
+                            ${torrentBtn}
+                            ${moreOptionsBtn}
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            return card;
+        }
+        
+        function renderDistros() {
+            distroList.innerHTML = '';
+            
+            const filtered = distributions.filter(distro => {
+                const matchesCategory = currentFilter === 'all' || (distro.category || 'other') === currentFilter;
+                const matchesSearch = distro.name.toLowerCase().includes(searchTerm) || 
+                    (distro.description && distro.description.toLowerCase().includes(searchTerm));
+                return matchesCategory && matchesSearch;
             });
             
-            if (filtered.length === 0) {
-                grid.innerHTML = '<p style="color: var(--text-secondary);">No distributions found.</p>';
-                return;
-            }
-            
-            grid.innerHTML = filtered.map(distro => {
-                const category = distro.category || 'other';
-                const distroId = distro.name || 'Unknown';
-                
-                // Generate a colored placeholder first (fallback)
-                const colors = ['#E95420', '#3C3B37', '#A80030', '#41B549', '#87CF3E', '#2F2F2F', '#178CDA', '#000000'];
-                const colorIndex = (distro.name || '?').charCodeAt(0) % colors.length;
-                const bgColor = colors[colorIndex];
-                const initial = distro.name ? distro.name.charAt(0).toUpperCase() : '?';
-                
-                // Try to use actual distro icon if available, else fallback to colored placeholder
-                const distroNameLower = (distro.name || '').toLowerCase().replace(/ /g, '');
-                const iconSrc = `img/distro/${distroNameLower}.png`;
-                const iconSvg = `img/distro/${distroNameLower}.svg`;
-                
-                // Check icon availability (we'll use an img with onerror fallback)
-                const iconHtml = `<img src="${iconSrc}" alt="" onerror="this.src='${iconSvg}';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='flex'}" style="width: 32px; height: 32px; border-radius: 50%; margin-right: 0.5rem; object-fit: contain; display: none;" /><div class="icon-fallback" style="width: 32px; height: 32px; background: ${bgColor}; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 14px; margin-right: 0.5rem; display: flex;">${initial}</div>`;
-                
-                // Get based-on info from releases data
-                const releaseInfo = Object.values(window.distrosReleases || {}).find(d => d.name?.toLowerCase() === distro.name?.toLowerCase());
-                const basedof = releaseInfo?.basedof || '';
-                const basedofHtml = basedof ? `<span class="basedof-badge">${basedof}</span>` : '';
-                
-                return `
-                    <div class="distro-card" data-category="${category}">
-                        <div class="distro-header">
-                            <a href="${distro.websiteLink || '#'}" target="_blank" rel="noopener" style="display: flex; align-items: center; text-decoration: none; color: inherit;">
-                                ${iconHtml}<h3>${distro.name || 'Unknown'}</h3>
-                            </a>
-                        </div>
-                        <p class="distro-description">${distro.description || ''}</p>
-                        <div class="distro-meta">
-                            <span class="category-badge category-${category}">${categoryLabels[category] || category}</span>
-                            ${basedofHtml}
-                            ${distro.version ? `<span>${distro.version}</span>` : ''}
-                        </div>
-                        <button class="download-btn" onclick="showDownloads('${distroId.replace(/'/g, "\\'")}')">Download</button>
-                    </div>
-                `;
-            }).join('');
+            filtered.forEach(distro => {
+                distroList.appendChild(createDistroCard(distro));
+            });
         }
-        
-        // Show download modal with release × edition table
-        function showDownloads(distroId) {
-            const distro = distros.find(d => d.name?.toLowerCase() === distroId.toLowerCase() || d.id?.toLowerCase() === distroId.toLowerCase());
-            const releasesData = window.distrosReleases || {};
-            
-            // Find matching release data (case-insensitive)
-            const releaseInfo = Object.values(releasesData).find(d => d.name?.toLowerCase() === distroId.toLowerCase());
-            
-            if (!distro) {
-                window.open('https://github.com/oSoWoSo/DistroHopper', '_blank');
-                return;
-            }
-            
-            const modal = document.getElementById('modalOverlay');
-            const modalTitle = document.getElementById('modalTitle');
-            const modalBody = document.getElementById('modalBody');
-            
-            // Generate a colored placeholder for icon
-            const colors = ['#E95420', '#3C3B37', '#A80030', '#41B549', '#87CF3E', '#2F2F2F', '#178CDA', '#000000'];
-            const colorIndex = distro.name.charCodeAt(0) % colors.length;
-            const bgColor = colors[colorIndex];
-            const initial = distro.name ? distro.name.charAt(0).toUpperCase() : '?';
-            const iconHtml = `<div style="width: 48px; height: 48px; background: ${bgColor}; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 20px; margin-right: 1rem; vertical-align: middle;">${initial}</div>`;
-            
-            modalTitle.innerHTML = `${iconHtml}${distro.name}`;
-            
-            // Get based-on info from release data
-            const releaseInfo = Object.values(window.distrosReleases || {}).find(d => d.name?.toLowerCase() === distroId.toLowerCase());
-            const basedof = releaseInfo?.basedof || '';
-            
-            // Add based-on info if available
-            let basedofHtml = '';
-            if (basedof) {
-                basedofHtml = `<p style="color: var(--text-muted); margin: 0.5rem 0;">
-                    <strong>Based on:</strong> ${basedof}
-                </p>`;
-            }
-            
-            const downloadLink = distro.downloadLink;
-            const releases = releaseInfo?.releases || [];
-            const editions = releaseInfo?.editions || [];
-            
-            let html = '';
-            
-            // Based-on info
-            html += basedofHtml;
-            
-            // If we have releases and editions, show table
-            if (releases.length > 0 && editions.length > 0) {
-                html += `<h3 style="margin-top: 0;">Select Version & Edition</h3>`;
-                html += `<table class="release-table">`;
-                
-                // Header row with editions
-                html += `<tr><th>Version</th>`;
-                editions.forEach(edition => {
-                    html += `<th>${edition}</th>`;
-                });
-                html += `</tr>`;
-                
-                // Data rows for each release
-                releases.forEach((release, idx) => {
-                    html += `<tr><td><strong>${release}</strong></td>`;
-                    editions.forEach((edition, edIdx) => {
-                        // Check if download URL exists in releaseInfo.downloads
-                        const downloadUrl = releaseInfo?.downloads?.[release]?.[edition];
-                        if (downloadUrl) {
-                            // Active download link
-                            html += `<td><a href="${downloadUrl}" target="_blank" class="download-link" title="${edition} ${release}">⬇</a></td>`;
-                        } else if (distro.downloadLink) {
-                            // Use general download link for latest (fallback)
-                            html += `<td><a href="${distro.downloadLink}" target="_blank" class="download-link" title="${edition} ${release} (latest)">⬇</a></td>`;
-                        } else {
-                            // No download available - show disabled
-                            html += `<td><span class="download-link disabled" title="Not available">✗</span></td>`;
-                        }
-                    });
-                    html += `</tr>`;
-                });
-                
-                html += `</table>`;
-                html += `<p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem;">Click ⬇ to download. For direct ISO links, use DistroHopper.</p>`;
-            } else if (releases.length > 0) {
-                // Just releases, no editions
-                html += `<h3 style="margin-top: 0;">Available Versions</h3>`;
-                html += `<table class="release-table">`;
-                html += `<tr><th>Version</th><th>Download</th></tr>`;
-                releases.slice(0, 10).forEach(release => {
-                    // Check if download URL exists in releaseInfo.downloads
-                    const downloadUrl = releaseInfo?.downloads?.[release]?.['default'] || releaseInfo?.downloads?.[release]?.[''];
-                    if (downloadUrl) {
-                        html += `<tr><td><strong>${release}</strong></td><td><a href="${downloadUrl}" target="_blank" class="download-link" title="${release}">⬇</a></td></tr>`;
-                    } else if (distro.downloadLink) {
-                        html += `<tr><td><strong>${release}</strong></td><td><a href="${distro.downloadLink}" target="_blank" class="download-link" title="${release} (latest)">⬇</a></td></tr>`;
-                    } else {
-                        html += `<tr><td><strong>${release}</strong></td><td><span class="download-link disabled" title="Not available">✗</span></td></tr>`;
-                    }
-                });
-                html += `</table>`;
-            }
-            
-            // Always show direct download buttons
-            if (downloadLink) {
-                html += `<div style="text-align: center; margin: 1rem 0;">
-                    <a href="${downloadLink}" target="_blank" rel="noopener" class="download-btn" style="font-size: 1.2rem; padding: 1rem 2rem;">
-                        ⬇ Download Latest Version
-                    </a>
-                </div>`;
-            }
-            
-            if (distro.torrent) {
-                html += `<div style="text-align: center; margin-bottom: 1rem;">
-                    <a href="${distro.torrent}" target="_blank" rel="noopener" class="download-btn" style="background: #9b59b6; font-size: 1.2rem; padding: 1rem 2rem;">
-                        🧲 Download Torrent
-                    </a>
-                </div>`;
-            }
-            
-            html += `<div style="text-align: center; margin-top: 1rem; padding: 1rem; background: var(--bg-secondary); border-radius: 8px;">
-                <p style="margin-bottom: 0.5rem;">For other versions and editions, use DistroHopper:</p>
-                <code style="background: var(--bg-primary); padding: 0.25rem 0.5rem; border-radius: 4px;">./distrohopper</code>
-            </div>`;
-            
-            if (distro.websiteLink) {
-                html += `<div style="text-align: center; margin-top: 1rem;">
-                    <a href="${distro.websiteLink}" target="_blank" rel="noopener" style="color: var(--link-color);">
-                        Visit official website →
-                    </a>
-                </div>`;
-            }
-            
-            modalBody.innerHTML = html;
-            modal.classList.add('active');
-        }
-        
-        // Close modal
-        function closeModal() {
-            document.getElementById('modalOverlay').classList.remove('active');
-        }
-        
-        // Close modal on overlay click
-        document.getElementById('modalOverlay').addEventListener('click', function(e) {
-            if (e.target === this) closeModal();
-        });
         
         // Search functionality
-        document.getElementById('distroSearch').addEventListener('input', function(e) {
-            searchTerm = e.target.value;
+        distroSearch.addEventListener('input', function(e) {
+            searchTerm = e.target.value.toLowerCase();
             renderDistros();
         });
         
         // Filter buttons
-        document.querySelectorAll('.filter-btn').forEach(btn => {
+        filterButtons.forEach(btn => {
             btn.addEventListener('click', function() {
                 const filter = this.getAttribute('data-filter');
-                currentFilter = filter;
+                currentFilter = filter === currentFilter ? 'all' : filter;
                 
-                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                
+                filterButtons.forEach(b => b.classList.remove('active'));
+                if (currentFilter !== 'all') {
+                    this.classList.add('active');
+                }
                 renderDistros();
             });
         });
         
         // Initial render
         renderDistros();
+        
+        // Modal functions for release/edition selection
+        window.showDownloadModal = function(distro) {
+            const modal = document.getElementById('modalOverlay');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+            
+            if (!modal || !modalTitle || !modalBody) return;
+            
+            const iconHtml = distro.icon 
+                ? `<img src="${distro.icon}" alt="" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px; vertical-align: middle;" />`
+                : '';
+            modalTitle.innerHTML = `${iconHtml}${distro.name}`;
+            
+            // Get release info from distros-releases.js
+            const releases = window.distrosReleases || {};
+            const releaseData = Object.values(releases).find(r => 
+                r.name?.toLowerCase() === distro.name?.toLowerCase()
+            );
+            
+            if (releaseData && releaseData.releases) {
+                // Build release × edition table
+                let html = '<table class="release-table"><thead><tr><th>Release</th>';
+                
+                // Get unique editions
+                const editions = new Set();
+                releaseData.releases.forEach(r => {
+                    if (r.editions) r.editions.forEach(e => editions.add(e));
+                });
+                
+                // Header row with editions
+                Array.from(editions).forEach(edition => {
+                    html += `<th>${edition}</th>`;
+                });
+                html += '</tr></thead><tbody>';
+                
+                // Data rows
+                releaseData.releases.forEach(release => {
+                    html += `<tr><td>${release.version || release.name || 'Latest'}</td>`;
+                    Array.from(editions).forEach(edition => {
+                        const editionData = release.editionsObj?.[edition];
+                        if (editionData?.url) {
+                            html += `<td><a href="${editionData.url}" class="download-link" target="_blank">Download</a></td>`;
+                        } else {
+                            html += '<td>-</td>';
+                        }
+                    });
+                    html += '</tr>';
+                });
+                html += '</tbody></table>';
+                
+                modalBody.innerHTML = html;
+            } else {
+                // Fallback: show direct download button
+                const downloadUrl = distro.downloadLink || '';
+                const torrentUrl = distro.torrent || '';
+                let html = '<div style="text-align: center; padding: 2rem;">';
+                if (downloadUrl) {
+                    html += `<a href="${downloadUrl}" class="btn btn-download" target="_blank">Direct Download</a>`;
+                }
+                if (torrentUrl) {
+                    html += ` <a href="${torrentUrl}" class="btn btn-torrent" target="_blank">Torrent</a>`;
+                }
+                if (!downloadUrl && !torrentUrl) {
+                    html += '<p>No download options available.</p>';
+                }
+                html += '</div>';
+                modalBody.innerHTML = html;
+            }
+            
+            modal.classList.add('active');
+        };
+        
+        window.closeModal = function() {
+            const modal = document.getElementById('modalOverlay');
+            if (modal) modal.classList.remove('active');
+        };
+        
+        // Close modal on outside click
+        document.addEventListener('click', function(e) {
+            const modal = document.getElementById('modalOverlay');
+            if (modal && e.target === modal) closeModal();
+        });
+    });
     </script>
 </body>
 </html>
