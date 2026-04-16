@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'exodia-os'
+OSNAME="Exodia OS"
+PRETTY="Exodia OS"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://exodia-os.github.io/"
+DESCRIPTION="A customized distro For all cybersecurity fields."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://omansh.vercel.app/api/raw/?path=/ExodiaOS/latest/home/exodia-home-2024.02.21-x86_64.iso"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

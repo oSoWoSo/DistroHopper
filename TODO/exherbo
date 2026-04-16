@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'exherbo'
+OSNAME="exherbo"
+PRETTY="exherbo"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://www.exherbolinux.org/"
+DESCRIPTION="A stable and flexible distribution for developers."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://stages.exherbolinux.org/x86_64-pc-linux-gnu/exherbo-x86_64-pc-linux-gnu-gcc-current.tar.xz"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

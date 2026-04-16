@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'axos'
+OSNAME="AxOS"
+PRETTY="AxOS"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://www.axos-project.com/"
+DESCRIPTION="The Linux experience, enhanced."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://github.com/AxOS-project/AxOS/releases/download/25.01-2/AxOS-25.01-x86_64.iso"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

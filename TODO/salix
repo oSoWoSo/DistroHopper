@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'salix'
+OSNAME="Salix"
+PRETTY="Salix"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://www.salixos.org/"
+DESCRIPTION="Linux for the lazy Slacker."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://sourceforge.net/projects/salix/files/15.0/salix64-xfce-15.0.iso/download"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

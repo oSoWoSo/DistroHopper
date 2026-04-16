@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'porteux'
+OSNAME="PorteuX"
+PRETTY="PorteuX"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://github.com/porteux/porteux/"
+DESCRIPTION="A Linux distro based on Slackware."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://github.com/porteux/porteux/releases/download/v1.9/porteux-v1.9-current-cinnamon-6.4.6-x86_64.iso"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

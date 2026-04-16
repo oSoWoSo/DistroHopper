@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'draugeros'
+OSNAME="DraugerOS"
+PRETTY="DraugerOS"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://wmlive.sourceforge.net/"
+DESCRIPTION="An Ubuntu-based gaming distro."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://download-optimizer.draugeros.org/ISOs/Drauger_OS-7.7-AMD64.iso"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

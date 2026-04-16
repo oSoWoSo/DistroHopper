@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'kumander-linux'
+OSNAME="Kumander Linux"
+PRETTY="Kumander Linux"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://www.kumander.org/"
+DESCRIPTION="A distro inspired by good ol' Windows 7"
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://dl.kumander.org/kumander-linux-2.0-live-amd64.iso"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

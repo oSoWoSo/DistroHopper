@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'lingmo-os'
+OSNAME="Lingmo OS"
+PRETTY="Lingmo OS"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://lingmo.org/en"
+DESCRIPTION="An operating system based on Linux."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://releases.lingmo.org.cn/releases/3.0rc"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

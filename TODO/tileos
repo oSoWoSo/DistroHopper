@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'tileos'
+OSNAME="TileOS"
+PRETTY="TileOS"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://tile-os.com/"
+DESCRIPTION="Debian-based distro with tiling wms."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://downloads.tile-os.com/stable/sway/tileos-sway-1.2.1-desktop-amd64.iso"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

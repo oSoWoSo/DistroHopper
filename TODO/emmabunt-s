@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'emmabunt-s'
+OSNAME="Emmabuntüs"
+PRETTY="Emmabuntüs"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://emmabuntus.org/"
+DESCRIPTION="An all-in-one GNU/Linux distribution."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://sourceforge.net/projects/emmabuntus/files/Emmabuntus_DE5/Images/1.03/emmabuntus-de5-amd64-12.8-1.03.iso"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

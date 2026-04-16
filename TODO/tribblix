@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'tribblix'
+OSNAME="Tribblix"
+PRETTY="Tribblix"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="http://tribblix.org/"
+DESCRIPTION="An open source illumos based os."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://pkgs.tribblix.org/iso/tribblix-0m35.iso"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

@@ -440,3 +440,54 @@ ul, ol {
   h2 { font-size: 1.3rem; } /* Smaller h2 for small screens */
   h3 { font-size: 1.1rem; } /* Smaller h3 for small screens */
 }
+
+/* ========================================
+   Distributions Gallery
+   ======================================== */
+.distro-category {
+  margin: 2rem 0;
+}
+
+.distro-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.distro-card {
+  background: var(--gray2);
+  border: 1px solid var(--green);
+  border-radius: 8px;
+  padding: 1rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.distro-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.distro-card h3 {
+  margin: 0 0 0.5rem 0;
+  color: var(--link-color);
+  font-size: 1rem;
+}
+
+.distro-card .version {
+  color: var(--silver);
+  font-size: 0.85rem;
+  margin: 0 0 0.5rem 0;
+}
+
+.distro-card .description {
+  color: var(--gray-light);
+  font-size: 0.8rem;
+  margin: 0 0 0.5rem 0;
+}
+
+.distro-card a {
+  display: inline-block;
+  color: var(--green);
+  font-size: 0.85rem;
+}

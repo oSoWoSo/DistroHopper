@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'xebian'
+OSNAME="Xebian"
+PRETTY="Xebian"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://xebian.org/"
+DESCRIPTION="A Debian based system that is much like Xubuntu."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://xebian.org/download/xebian-unstable-amd64.hybrid.iso"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

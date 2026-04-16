@@ -1,0 +1,29 @@
+# Template file for 'hyperbola'
+OSNAME="Hyperbola"
+PRETTY="Hyperbola"
+BASEDOF=""
+HOMEPAGE="https://www.hyperbola.info/"
+DESCRIPTION="A fully free, stable, secure, simple and lts distro."
+CREDENTIALS="-"
+
+function releases_() {
+
+}
+
+function editions_() {
+
+}
+
+function get_() {
+    local ISO=""
+    local HASH=""
+    local URL="https://repo.hyperbola.info:50000/other/live_images/gnu-plus-linux-libre/hyperbola-milky-way-latest/hyperbola-milky-way-v0.4.4-dual.iso"
+    local DATA=""
+
+    if [[ -n "$URL" ]]; then
+        ISO="${URL##*/}"
+        VM_PATH=""
+        echo "download="$URL""
+        echo "iso="$ISO""
+    fi
+}

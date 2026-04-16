@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'parchlinux'
+OSNAME="ParchLinux"
+PRETTY="ParchLinux"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://parchlinux.com/en"
+DESCRIPTION="A distro based on the popular Arch Linux. "
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://mirror.parchlinux.com/plasma/ParchLinux-plasma-latest.iso"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

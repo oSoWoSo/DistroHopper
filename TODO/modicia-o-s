@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'modicia-o-s'
+OSNAME="MODICIA O.S."
+PRETTY="MODICIA O.S."
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://www.modiciaos.cloud/"
+DESCRIPTION="A complete linux os for pro multimedia users."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://sourceforge.net/projects/modicia-o-s/files/latest/download"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

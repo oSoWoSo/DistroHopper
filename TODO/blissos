@@ -1,0 +1,29 @@
+# Template file for 'blissos'
+OSNAME="BlissOS"
+PRETTY="BlissOS"
+BASEDOF=""
+HOMEPAGE="https://blissos.org/"
+DESCRIPTION="An Android-based open source OS․"
+CREDENTIALS="-"
+
+function releases_() {
+
+}
+
+function editions_() {
+
+}
+
+function get_() {
+    local ISO=""
+    local HASH=""
+    local URL="https://sourceforge.net/projects/blissos-x86/files/Official/BlissOS16/Gapps/Generic/Bliss-v16.9.7-x86_64-OFFICIAL-gapps-20241011.iso/download"
+    local DATA=""
+
+    if [[ -n "$URL" ]]; then
+        ISO="${URL##*/}"
+        VM_PATH=""
+        echo "download="$URL""
+        echo "iso="$ISO""
+    fi
+}

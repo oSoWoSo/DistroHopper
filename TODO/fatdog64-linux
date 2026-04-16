@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'fatdog64-linux'
+OSNAME="Fatdog64 Linux"
+PRETTY="Fatdog64 Linux"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://distro.ibiblio.org/fatdog/web/"
+DESCRIPTION="A small yet versatile 64-bit multi-user Linux distro."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://distro.ibiblio.org/fatdog/iso/Fatdog64-903.iso"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

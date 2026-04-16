@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'serpent-os'
+OSNAME="Serpent OS"
+PRETTY="Serpent OS"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://serpentos.com/"
+DESCRIPTION="A modern, powerful, and open-source OS."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://download.serpentos.com/serpent-os-0.24.6-gnome.iso"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

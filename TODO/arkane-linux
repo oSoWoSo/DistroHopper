@@ -1,0 +1,29 @@
+# Template file for 'arkane-linux'
+OSNAME="Arkane Linux"
+PRETTY="Arkane Linux"
+BASEDOF=""
+HOMEPAGE="https://arkanelinux.org/"
+DESCRIPTION="An opinionated, immutable, atomic distro."
+CREDENTIALS="-"
+
+function releases_() {
+
+}
+
+function editions_() {
+
+}
+
+function get_() {
+    local ISO=""
+    local HASH=""
+    local URL="https://download.arkanelinux.org/iso/arkanelinux-arkdep-2024.10.26/arkanelinux-arkdep-2024.10.26-uefi_only.iso"
+    local DATA=""
+
+    if [[ -n "$URL" ]]; then
+        ISO="${URL##*/}"
+        VM_PATH=""
+        echo "download="$URL""
+        echo "iso="$ISO""
+    fi
+}

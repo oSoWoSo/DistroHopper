@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'ultramarine-linux'
+OSNAME="Ultramarine Linux"
+PRETTY="Ultramarine Linux"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://ultramarine-linux.org/"
+DESCRIPTION="A Fedora-based enhanced distro."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://images.fyralabs.com/isos/ultramarine/40/ultramarine-flagship-40-live-x86_64.iso"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

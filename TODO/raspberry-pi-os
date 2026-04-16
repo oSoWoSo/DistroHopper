@@ -1,0 +1,29 @@
+# Template file for 'raspberry-pi-os'
+OSNAME="Raspberry Pi OS"
+PRETTY="Raspberry Pi OS"
+BASEDOF=""
+HOMEPAGE="https://www.raspberrypi.com/software/operating-systems/"
+DESCRIPTION="An OS optimized for Raspberry Pi devices."
+CREDENTIALS="-"
+
+function releases_() {
+
+}
+
+function editions_() {
+
+}
+
+function get_() {
+    local ISO=""
+    local HASH=""
+    local URL="https://downloads.raspberrypi.com/raspios_arm64/images/raspios_arm64-2024-10-28/2024-10-22-raspios-bookworm-arm64.img.xz"
+    local DATA=""
+
+    if [[ -n "$URL" ]]; then
+        ISO="${URL##*/}"
+        VM_PATH=""
+        echo "download="$URL""
+        echo "iso="$ISO""
+    fi
+}

@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'stratos'
+OSNAME="StratOS"
+PRETTY="StratOS"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://stratos-linux.org/"
+DESCRIPTION="A new distro that uses scripts from Bedrock Linux."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://github.com/StratOS-Linux/gnome-iso/releases/download/v2025.03.06/StratOS-2025.03.06-x86_64.iso"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

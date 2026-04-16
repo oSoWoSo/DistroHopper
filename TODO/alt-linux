@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'alt-linux'
+OSNAME="ALT Linux"
+PRETTY="ALT Linux"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://getalt.org/en/"
+DESCRIPTION="RPM-based distro focused on stability and security."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://nightly.altlinux.org/p11/release/alt-p11-kde-20241212-x86_64.iso"
     local DATA=""
 
     if [[ -n "$URL" ]]; then
