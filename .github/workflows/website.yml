@@ -8,6 +8,7 @@ on:
       - 'src/*.js'
       - 'docs/*.css'
       - 'docs/*.js'
+      - 'docs/*.html'
       - .github/workflows/website.yml
   workflow_dispatch:
 
