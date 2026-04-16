@@ -2,7 +2,7 @@
 
 Add supported Linux distributions to the DistroHopper website (dh.osowoso.org) with:
 1. ~~**Distros page** - Card grid showing all distros from `public/` directory with real information (name, homepage, description)~~ ✅
-2. **Download button** - Button that opens version/edition dropdown with direct download links ⏳
+2. ~~**Download button** - Button that opens version/edition dropdown with direct download links~~ ✅
 3. ~~**"all" page** - Page showing ALL distributions from the previous distributionhub project~~ ✅
 4. **CI link checking** - Links verified automatically by CI ⏳
 
