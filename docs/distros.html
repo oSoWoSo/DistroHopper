@@ -117,7 +117,8 @@
     <script src="distros.js"></script>
     <script>
     // DistributionHub-style initialization
-    document.addEventListener("DOMContentLoaded", function() {
+    // Run immediately to ensure scripts are loaded
+    (function() {
         // Scroll to top functionality
         const scrollToTop = document.querySelector('.scroll-to-top');
         if (scrollToTop) {
@@ -127,9 +128,7 @@
                 if (window.pageYOffset > 300) {
                     scrollToTop.style.display = 'flex';
                 } else {
-                    if (window.pageYOffset <= 300) {
-                        scrollToTop.style.display = 'none';
-                    }
+                    scrollToTop.style.display = 'none';
                 }
             });
             
@@ -149,6 +148,9 @@
         
         // Get distributions from window.distributions
         const distributions = window.distributions || [];
+        
+        // Debug: log distribution count
+        console.log('Loaded distributions:', distributions.length);
         
         function createDistroCard(distro) {
             const cleanVersion = (distro.version || '').replace(/\sx86_64/i, '');
@@ -200,6 +202,7 @@
         }
         
         function renderDistros() {
+            console.log('Rendering distros, count:', distributions.length);
             distroList.innerHTML = '';
             
             const filtered = distributions.filter(distro => {
@@ -209,9 +212,13 @@
                 return matchesCategory && matchesSearch;
             });
             
+            console.log('Filtered count:', filtered.length);
+            
             filtered.forEach(distro => {
                 distroList.appendChild(createDistroCard(distro));
             });
+            
+            console.log('Rendered cards:', distroList.children.length);
         }
         
         // Search functionality
@@ -234,16 +241,19 @@
             });
         });
         
-        // Initial render - try immediately and with delay as backup
-        renderDistros();
+        // Initial render
+        if (distributions.length > 0) {
+            renderDistros();
+        }
         
+        // Also try after a short delay as backup
         setTimeout(function() {
-            // Backup render in case of timing issues
-            if (document.querySelectorAll('.distro-card-wrapper').length === 0) {
+            if (document.querySelectorAll('.distro-card-wrapper').length === 0 && distributions.length > 0) {
+                console.log('Backup render triggered');
                 renderDistros();
             }
-        }, 500);
-    });
+        }, 1000);
+    })();
     </script>
 </body>
 </html>
