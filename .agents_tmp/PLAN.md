@@ -1,10 +1,10 @@
 # 1. OBJECTIVE
 
 Add supported Linux distributions to the DistroHopper website (dh.osowoso.org) with:
-1. **Distros page** - Card grid showing all distros from `public/` directory with real information (name, homepage, description)
-2. **Download button** - Button that opens version/edition dropdown with direct download links
-3. **"all" page** - Page showing ALL distributions from the previous distributionhub project
-4. **CI link checking** - Links verified automatically by CI
+1. ~~**Distros page** - Card grid showing all distros from `public/` directory with real information (name, homepage, description)~~ ✅
+2. **Download button** - Button that opens version/edition dropdown with direct download links ⏳
+3. ~~**"all" page** - Page showing ALL distributions from the previous distributionhub project~~ ✅
+4. **CI link checking** - Links verified automatically by CI ⏳
 
 The UI must follow site's light/dark theme toggle and match existing DistroHopper design (Courier New font, green/yellow accents, card-based layout).
 
@@ -71,6 +71,54 @@ The UI must follow site's light/dark theme toggle and match existing DistroHoppe
   [DL] = available  [X] = disabled/grayed out
   ```
 - **Reference**: `public/*` files have RELEASES, EDITIONS, and get_() function
+
+### Step 3a: Extract and embed distro data in HTML
+- **Goal**: Embed distro release/edition data directly in HTML page
+- **Method**: 
+  1. Build data at generate time from `public/*` files
+  2. Embed as JSON in `<script>` tag or data-* attributes
+  3. Data structure per distro:
+     ```javascript
+     {
+       "debian": {
+         "name": "Debian",
+         "homepage": "https://www.debian.org",
+         "description": "Complete Free Operating System...",
+         "releases": ["12.11.0", "11.11.0", "10.13.0"],
+         "editions": ["xfce", "mate", "lxqt", "lxde", "kde", "gnome", "cinnamon", "netinst", "standard"],
+         "downloads": {
+           "12.11.0": {
+             "xfce": "https://cdimage.debian.org/.../debian-live-12.11.0-amd64-xfce.iso",
+             "mate": "https://cdimage.debian.org/.../debian-live-12.11.0-amd64-mate.iso",
+             ...
+           }
+         },
+         "disabled": [["10.13.0", "mate"], ["10.13.0", "kde"]] // unavailable combos
+       }
+     }
+     ```
+- **Output**: `docs/distros.html` embeds all distro data
+
+### Step 3b: Implement download modal/table UI
+- **Goal**: Interactive modal showing release × edition table
+- **Method**:
+  1. Add button with `onclick="showDownloads('debian')"` 
+  2. Modal HTML (hidden by default):
+     ```html
+     <div id="download-modal-debian" class="modal">
+       <div class="modal-content">
+         <span class="close">&times;</span>
+         <h2>Debian - Downloads</h2>
+         <table class="download-table">
+           <tr><th></th><th>xfce</th><th>mate</th><th>kde</th><th>gnome</th></tr>
+           <tr><td>12.x</td><td><a href="...">⬇</a></td><td><a href="...">⬇</a></td>...</tr>
+           <tr><td>11.x</td><td><a href="...">⬇</a></td><td class="disabled">✗</td>...</tr>
+         </table>
+       </div>
+     </div>
+     ```
+  3. CSS for modal + disabled cells (grayed out)
+  4. JavaScript: `showDownloads(id)`, `closeModal()`, click outside to close
 
 ### Step 4: Create all.html page for distributionhub distros
 - **Goal**: Page showing ALL distributions from previous distributionhub project
