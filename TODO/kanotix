@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'kanotix'
+OSNAME="Kanotix"
+PRETTY="Kanotix"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://kanotix.com/"
+DESCRIPTION="A rock-solid Linux based on Debian."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://iso.kanotix.com/kanotix64-slowfire-nightly-KDE.iso"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

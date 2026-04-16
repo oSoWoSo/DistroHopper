@@ -1,0 +1,29 @@
+# Template file for 'linux-kamarada'
+OSNAME="Linux Kamarada"
+PRETTY="Linux Kamarada"
+BASEDOF=""
+HOMEPAGE="https://linuxkamarada.com/en/"
+DESCRIPTION="A Linux distro based on the great openSUSE Leap."
+CREDENTIALS="-"
+
+function releases_() {
+
+}
+
+function editions_() {
+
+}
+
+function get_() {
+    local ISO=""
+    local HASH=""
+    local URL="https://sourceforge.net/projects/kamarada/files/15.5/Linux_Kamarada_15.5.x86_64-15.5-Build5.78.iso/download"
+    local DATA=""
+
+    if [[ -n "$URL" ]]; then
+        ISO="${URL##*/}"
+        VM_PATH=""
+        echo "download="$URL""
+        echo "iso="$ISO""
+    fi
+}

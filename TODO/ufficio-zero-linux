@@ -1,0 +1,29 @@
+# Template file for 'ufficio-zero-linux'
+OSNAME="Ufficio Zero Linux"
+PRETTY="Ufficio Zero Linux"
+BASEDOF=""
+HOMEPAGE="https://www.ufficiozero.org/index.php?alias=home-page2"
+DESCRIPTION="A business-focused Linux distro."
+CREDENTIALS="-"
+
+function releases_() {
+
+}
+
+function editions_() {
+
+}
+
+function get_() {
+    local ISO=""
+    local HASH=""
+    local URL="https://sourceforge.net/projects/ufficiozero/files/11-desktop/x86_64/iso/UZL-11_2-desktop-x86_64.iso/download"
+    local DATA=""
+
+    if [[ -n "$URL" ]]; then
+        ISO="${URL##*/}"
+        VM_PATH=""
+        echo "download="$URL""
+        echo "iso="$ISO""
+    fi
+}

@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'minios'
+OSNAME="MiniOS"
+PRETTY="MiniOS"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://minios.dev/"
+DESCRIPTION="A compact os designed for everyday tasks."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://minios.dev/download.html?d=bookworm&de=xfce&pv=standard&a=amd64&v=v4.1.0&lang=en"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

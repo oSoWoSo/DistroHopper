@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'catos'
+OSNAME="CatOS"
+PRETTY="CatOS"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://catos.info/en/"
+DESCRIPTION="Out-of-the-box Arch-based distribution."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://drive.google.com/file/d/1nYW2ji_LamnKzI0yquKjJtIp3qYp_FOG/view?usp=sharing"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

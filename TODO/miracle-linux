@@ -1,0 +1,29 @@
+# Template file for 'miracle-linux'
+OSNAME="Miracle Linux"
+PRETTY="Miracle Linux"
+BASEDOF=""
+HOMEPAGE="https://www.miraclelinux.com/"
+DESCRIPTION="A Japanese Linux distro based on RHEL."
+CREDENTIALS="-"
+
+function releases_() {
+
+}
+
+function editions_() {
+
+}
+
+function get_() {
+    local ISO=""
+    local HASH=""
+    local URL="https://repo.dist.miraclelinux.net/miraclelinux/isos/9.4-released/x86_64/MIRACLELINUX-9.4-rtm-minimal-x86_64.iso"
+    local DATA=""
+
+    if [[ -n "$URL" ]]; then
+        ISO="${URL##*/}"
+        VM_PATH=""
+        echo "download="$URL""
+        echo "iso="$ISO""
+    fi
+}

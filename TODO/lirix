@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'lirix'
+OSNAME="Lirix"
+PRETTY="Lirix"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://caesar-rylan.60.nu/lirix/"
+DESCRIPTION="An XFree86/Linux with MaXX Interactive Desktop."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://mega.nz/file/zRJz2BiK#94PY_77sv3vHl01PzsLyOfdtX_fIlkHrFAb0mG5SaSo"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

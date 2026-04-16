@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'heliumos'
+OSNAME="HeliumOS"
+PRETTY="HeliumOS"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://www.heliumos.org/"
+DESCRIPTION="An atomic desktop os for your devices."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://dl-heliumos.b-cdn.net/heliumos/releases/test/10_Alpha/HeliumOS-10-alpha_rev2-x86_64-boot.iso"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'mx-linux'
+OSNAME="MX Linux"
+PRETTY="MX Linux"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://mxlinux.org/"
+DESCRIPTION="A Debian-based and user-friendly distro."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://sourceforge.net/projects/mx-linux/files/Final/Xfce/MX-23.5_x64.iso/download"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

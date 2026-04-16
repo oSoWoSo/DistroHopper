@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'makululinux'
+OSNAME="MakuluLinux"
+PRETTY="MakuluLinux"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://www.makululinux.com/wp/"
+DESCRIPTION="A whole world of possibilities."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://sourceforge.net/projects/makulu/files/downloads/LinDoz/MakuluLinux-LinDoz-2025-02-17.iso/download"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

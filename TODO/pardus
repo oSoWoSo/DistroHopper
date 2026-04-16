@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'pardus'
+OSNAME="Pardus"
+PRETTY="Pardus"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://pardus.org.tr/"
+DESCRIPTION="Turkish-based, user-friendly Linux distribution."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://indir.pardus.org.tr/ISO/Pardus23/Pardus-23.3-GNOME-amd64.iso"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

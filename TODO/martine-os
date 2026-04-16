@@ -1,0 +1,29 @@
+# Template file for 'martine-os'
+OSNAME="Martine OS"
+PRETTY="Martine OS"
+BASEDOF=""
+HOMEPAGE="https://martine-os.martinet.pl/"
+DESCRIPTION="An os designed for everyday computer users."
+CREDENTIALS="-"
+
+function releases_() {
+
+}
+
+function editions_() {
+
+}
+
+function get_() {
+    local ISO=""
+    local HASH=""
+    local URL="https://server510932.nazwa.pl/download/MartineOS/Martine%20OS%204.0_Crystal_Empire_build_14022024_v2_amd64.iso"
+    local DATA=""
+
+    if [[ -n "$URL" ]]; then
+        ISO="${URL##*/}"
+        VM_PATH=""
+        echo "download="$URL""
+        echo "iso="$ISO""
+    fi
+}

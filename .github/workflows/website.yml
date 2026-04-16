@@ -34,6 +34,12 @@ jobs:
       - name: Install Pandoc
         run: sudo apt-get update && sudo apt-get install -y pandoc
 
+      - name: Generate distros.js from actions
+        run: |
+          # Generate distros.js from local actions files
+          ./action --distros src/distros.js
+          echo "Generated distros.js with $(wc -l < src/distros.js) lines"
+
       - name: Make pages
         run: |
           mkdir -p docs

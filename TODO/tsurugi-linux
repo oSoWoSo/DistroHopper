@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'tsurugi-linux'
+OSNAME="Tsurugi Linux"
+PRETTY="Tsurugi Linux"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://tsurugi-linux.org/"
+DESCRIPTION="A DFIR open source project that is totally free."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://archive.org/download/tsurugi_linux__2024.1/tsurugi_linux_2024.1.iso"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

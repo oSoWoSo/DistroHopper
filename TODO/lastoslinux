@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'lastoslinux'
+OSNAME="LastOSLinux"
+PRETTY="LastOSLinux"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://www.lastos.org/lastoslinux/"
+DESCRIPTION="Linux for Windows users."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://sourceforge.net/projects/lastoslinux/files/ISOs/LastOSLinux_amd64_2025-01-18_RC4-B2.iso/download"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

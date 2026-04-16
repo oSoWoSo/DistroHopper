@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'zenned'
+OSNAME="zenned"
+PRETTY="zenned"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://zenned.gitlab.io/"
+DESCRIPTION="The basic software that makes your pc work."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://drive.google.com/file/d/1TfeNLn9Wxk-QvDrxnwDNe03yw7mkxdbg/view?usp=drive_link"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

@@ -1,0 +1,29 @@
+# Template file for 'regata-os'
+OSNAME="Regata OS"
+PRETTY="Regata OS"
+BASEDOF=""
+HOMEPAGE="https://get.regataos.com.br/"
+DESCRIPTION="A gaming-focused, user-friendly Linux distro."
+CREDENTIALS="-"
+
+function releases_() {
+
+}
+
+function editions_() {
+
+}
+
+function get_() {
+    local ISO=""
+    local HASH=""
+    local URL="https://sourceforge.net/projects/regataos/files/regataos-24.1/Regata_OS_24.1_en-US.x86_64-24.1.0.iso/download"
+    local DATA=""
+
+    if [[ -n "$URL" ]]; then
+        ISO="${URL##*/}"
+        VM_PATH=""
+        echo "download="$URL""
+        echo "iso="$ISO""
+    fi
+}

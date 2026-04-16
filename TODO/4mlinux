@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for '4mlinux'
+OSNAME="4MLinux"
+PRETTY="4MLinux"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://4mlinux.com/"
+DESCRIPTION="A miniature Linux distribution."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://sourceforge.net/projects/linux4m/files/48.0/livecd/4MLinux-48.0-64bit.iso/download"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

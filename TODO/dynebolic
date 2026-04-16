@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'dynebolic'
+OSNAME="Dynebolic"
+PRETTY="Dynebolic"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://dyne.org/dynebolic/"
+DESCRIPTION="A 100% free GNU+Linux distribution."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://files.dyne.org/dynebolic/dynebolic-4.0.0-beta.iso"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

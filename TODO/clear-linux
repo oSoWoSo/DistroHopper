@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'clear-linux'
+OSNAME="Clear Linux"
+PRETTY="Clear Linux"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://www.clearlinux.org/"
+DESCRIPTION="An Intel-optimized performance-focused distro."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://cdn.download.clearlinux.org/releases/42950/clear/clear-42950-live-desktop.iso"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

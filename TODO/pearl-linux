@@ -1,0 +1,29 @@
+# Template file for 'pearl-linux'
+OSNAME="Pearl Linux"
+PRETTY="Pearl Linux"
+BASEDOF=""
+HOMEPAGE="https://www.pearllinux.net/"
+DESCRIPTION="The perfect desktop for all with Compiz wm."
+CREDENTIALS="-"
+
+function releases_() {
+
+}
+
+function editions_() {
+
+}
+
+function get_() {
+    local ISO=""
+    local HASH=""
+    local URL="https://sourceforge.net/projects/pearl-linux-mate-12/files/PearlMATE_Full_12-09-30-2024_amd64.iso/download"
+    local DATA=""
+
+    if [[ -n "$URL" ]]; then
+        ISO="${URL##*/}"
+        VM_PATH=""
+        echo "download="$URL""
+        echo "iso="$ISO""
+    fi
+}

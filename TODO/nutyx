@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'nutyx'
+OSNAME="NuTyX"
+PRETTY="NuTyX"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://nutyx.org/en/"
+DESCRIPTION="A very flexible, complete GNU/Linux distro."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://sourceforge.net/projects/nutyx/files/ISOs/systemv/NuTyX_x86_64-25.02.5-XFCE4.iso"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

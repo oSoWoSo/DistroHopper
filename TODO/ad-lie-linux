@@ -1,0 +1,29 @@
+# Template file for 'ad-lie-linux'
+OSNAME="Adélie Linux"
+PRETTY="Adélie Linux"
+BASEDOF=""
+HOMEPAGE="https://www.adelielinux.org/"
+DESCRIPTION="An independent distro for privacy and freedom."
+CREDENTIALS="-"
+
+function releases_() {
+
+}
+
+function editions_() {
+
+}
+
+function get_() {
+    local ISO=""
+    local HASH=""
+    local URL="https://distfiles.adelielinux.org/adelie/1.0-beta6/iso/adelie-live-kde-x86_64-1.0-beta6-20241223.iso"
+    local DATA=""
+
+    if [[ -n "$URL" ]]; then
+        ISO="${URL##*/}"
+        VM_PATH=""
+        echo "download="$URL""
+        echo "iso="$ISO""
+    fi
+}

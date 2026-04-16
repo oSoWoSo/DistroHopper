@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'refracta'
+OSNAME="Refracta"
+PRETTY="Refracta"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://refracta.org/"
+DESCRIPTION="An os designed for home computer users."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://get.refracta.org/files/daedalus/refracta_12.3_xfce_amd64-20250217_1004.iso"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

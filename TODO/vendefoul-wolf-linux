@@ -1,0 +1,29 @@
+# Template file for 'vendefoul-wolf-linux'
+OSNAME="Vendefoul Wolf Linux"
+PRETTY="Vendefoul Wolf Linux"
+BASEDOF=""
+HOMEPAGE="https://vendefoulwolf.wordpress.com/"
+DESCRIPTION="A free full GNU/Linux distribution."
+CREDENTIALS="-"
+
+function releases_() {
+
+}
+
+function editions_() {
+
+}
+
+function get_() {
+    local ISO=""
+    local HASH=""
+    local URL="https://sourceforge.net/projects/vendefoul-wolf-linux/files/Vendefoul%20Wolf%20Excalibur/Plasma%2064%20Bits/Vendefoul-Excalibur-KDE_Plasma_amd64_v310125.iso/download"
+    local DATA=""
+
+    if [[ -n "$URL" ]]; then
+        ISO="${URL##*/}"
+        VM_PATH=""
+        echo "download="$URL""
+        echo "iso="$ISO""
+    fi
+}

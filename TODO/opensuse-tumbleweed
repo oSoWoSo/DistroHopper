@@ -1,0 +1,29 @@
+# Template file for 'opensuse-tumbleweed'
+OSNAME="openSUSE Tumbleweed"
+PRETTY="openSUSE Tumbleweed"
+BASEDOF=""
+HOMEPAGE="https://www.opensuse.org/"
+DESCRIPTION="Versatile Linux with robust community support."
+CREDENTIALS="-"
+
+function releases_() {
+
+}
+
+function editions_() {
+
+}
+
+function get_() {
+    local ISO=""
+    local HASH=""
+    local URL="https://download.opensuse.org/tumbleweed/iso/openSUSE-Tumbleweed-NET-x86_64-Current.iso"
+    local DATA=""
+
+    if [[ -n "$URL" ]]; then
+        ISO="${URL##*/}"
+        VM_PATH=""
+        echo "download="$URL""
+        echo "iso="$ISO""
+    fi
+}

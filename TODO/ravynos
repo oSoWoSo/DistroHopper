@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'ravynos'
+OSNAME="ravynOS"
+PRETTY="ravynOS"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://ravynos.com/"
+DESCRIPTION="Finesse of macOS. Freedom of FreeBSD."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://github.com/ravynsoft/ravynos/releases/download/v0.5.2/ravynOS_0.5.2_f15_amd64.iso"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

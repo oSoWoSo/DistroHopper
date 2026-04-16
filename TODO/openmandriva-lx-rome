@@ -1,0 +1,29 @@
+# Template file for 'openmandriva-lx-rome'
+OSNAME="OpenMandriva Lx ROME"
+PRETTY="OpenMandriva Lx ROME"
+BASEDOF=""
+HOMEPAGE="https://www.openmandriva.org/"
+DESCRIPTION="A user-friendly, rolling-release RPM-based distro."
+CREDENTIALS="-"
+
+function releases_() {
+
+}
+
+function editions_() {
+
+}
+
+function get_() {
+    local ISO=""
+    local HASH=""
+    local URL="https://file-store.openmandriva.org/api/v1/file_stores/2765eed82445ea0121431b5469fddb32e4b3fd7b"
+    local DATA=""
+
+    if [[ -n "$URL" ]]; then
+        ISO="${URL##*/}"
+        VM_PATH=""
+        echo "download="$URL""
+        echo "iso="$ISO""
+    fi
+}

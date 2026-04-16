@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'kaisen-linux'
+OSNAME="Kaisen Linux"
+PRETTY="Kaisen Linux"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://kaisenlinux.org/"
+DESCRIPTION="The distribution for professional IT."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://iso.kaisenlinux.org/rolling/kaisenlinuxrolling3.0RC3-amd64-MATE.iso"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

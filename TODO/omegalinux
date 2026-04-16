@@ -1,0 +1,29 @@
+# Template file for 'omegalinux'
+OSNAME="OmegaLinux"
+PRETTY="OmegaLinux"
+BASEDOF=""
+HOMEPAGE="https://ohjhas.github.io/omega-linux-en/index.html"
+DESCRIPTION="A lightweight OS with LXDE based on Ubuntu."
+CREDENTIALS="-"
+
+function releases_() {
+
+}
+
+function editions_() {
+
+}
+
+function get_() {
+    local ISO=""
+    local HASH=""
+    local URL="https://github.com/ohjhas/omega-linux/releases/download/3.0/omegalinux-3.0-seaopen-amd64.iso"
+    local DATA=""
+
+    if [[ -n "$URL" ]]; then
+        ISO="${URL##*/}"
+        VM_PATH=""
+        echo "download="$URL""
+        echo "iso="$ISO""
+    fi
+}

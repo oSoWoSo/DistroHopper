@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'backbox-linux'
+OSNAME="BackBox Linux"
+PRETTY="BackBox Linux"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://linux.backbox.org/"
+DESCRIPTION="A pentesting and security oriented distro."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://backbox.mirror.garr.it/backbox-9-desktop-amd64.iso"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

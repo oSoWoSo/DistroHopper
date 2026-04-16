@@ -1,0 +1,29 @@
+# Template file for 'window-maker-live'
+OSNAME="Window Maker Live"
+PRETTY="Window Maker Live"
+BASEDOF=""
+HOMEPAGE="https://wmlive.sourceforge.net/"
+DESCRIPTION="A Debian-based distro with WMaker."
+CREDENTIALS="-"
+
+function releases_() {
+
+}
+
+function editions_() {
+
+}
+
+function get_() {
+    local ISO=""
+    local HASH=""
+    local URL="https://sourceforge.net/projects/wmlive/files/wmlive-bookworm-12.8/wmlive-bookworm_12.8-amd64.iso/download"
+    local DATA=""
+
+    if [[ -n "$URL" ]]; then
+        ISO="${URL##*/}"
+        VM_PATH=""
+        echo "download="$URL""
+        echo "iso="$ISO""
+    fi
+}

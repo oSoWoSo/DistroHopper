@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'zorin-os'
+OSNAME="Zorin OS"
+PRETTY="Zorin OS"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://zorin.com/os/"
+DESCRIPTION="Easy transition from Windows to Linux."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://zorin.mirrors.itworxx.de/17/Zorin-OS-17.2-Core-64-bit.iso"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

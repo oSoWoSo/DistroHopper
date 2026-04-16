@@ -537,9 +537,49 @@ EOF
     exit 0
 }
 
+function make_distros_js() {
+    # Generate distros.js from actions files for website display
+    local OUTPUT_FILE="${1:-distros.js}"
+    echo "window.distributions = [" > "${OUTPUT_FILE}"
+
+    local FIRST=true
+    for file in actions/*; do
+        OS="${file##*/}"
+
+        # Source the action file to get variables
+        . "${file}"
+
+        if [ "$FIRST" = true ]; then
+            FIRST=false
+        else
+            echo "," >> "${OUTPUT_FILE}"
+        fi
+
+        # Parse releases - get just the release names
+        local RELEASE_LIST
+        RELEASE_LIST=$(echo "$RELEASES" | tr ' ' '\n' | head -1)
+
+        # Create JSON object for this distribution
+        printf '    { "name": "%s", "version": "%s", "icon": "img/distro/%s.svg", "downloadLink": "", "description": "%s", "websiteLink": "%s", "category": "%s"}' \
+            "$OSNAME" \
+            "$RELEASE_LIST" \
+            "$OS" \
+            "$DESCRIPTION" \
+            "$HOMEPAGE" \
+            "advanced" >> "${OUTPUT_FILE}"
+    done
+
+    echo -e "\n];" >> "${OUTPUT_FILE}"
+    echo "Generated ${OUTPUT_FILE} with $(ls actions/* | wc -l) distributions"
+}
+
 if [ "${1}" == -t ] || [ "${1}" == --test ]; then
     OPERATION='test'
     shift
+elif [ "${1}" == --distros ]; then
+    # Generate distros.js for website
+    make_distros_js "${2}"
+    exit 0
 else
     OPERATION='show'
 fi

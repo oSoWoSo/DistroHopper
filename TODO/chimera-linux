@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'chimera-linux'
+OSNAME="Chimera Linux"
+PRETTY="Chimera Linux"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://chimera-linux.org/"
+DESCRIPTION="A modern, general-purpose Linux distribution."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://repo.chimera-linux.org/live/20250214/chimera-linux-x86_64-LIVE-20250214-gnome.iso"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

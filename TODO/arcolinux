@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'arcolinux'
+OSNAME="ArcoLinux"
+PRETTY="ArcoLinux"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://www.arcolinux.info/"
+DESCRIPTION="An Arch-based learning/teaching project."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://ant.seedhost.eu/arcolinux/iso/v25.03.05/arcoplasma-v25.03.05-x86_64.iso"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

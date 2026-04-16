@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'sdesk'
+OSNAME="SDesk"
+PRETTY="SDesk"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://stevestudios.net/"
+DESCRIPTION="A minimalist distribution."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://stevestudios.net/wp-content/uploads/2024/09/sdesk-2024.09.16-x86_64.iso"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

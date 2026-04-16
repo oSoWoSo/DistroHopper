@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'mocaccinoos'
+OSNAME="MocaccinoOS"
+PRETTY="MocaccinoOS"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://www.mocaccino.org/"
+DESCRIPTION="A minimal Linux meta-distribution."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://github.com/mocaccinoOS/mocaccino/releases/download/v1.8.1/MocaccinoOS-GNOME-0.20250213.iso.tar.xz"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

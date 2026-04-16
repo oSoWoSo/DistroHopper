@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'tucana-linux'
+OSNAME="Tucana Linux"
+PRETTY="Tucana Linux"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://www.tucanalinux.org/"
+DESCRIPTION="An customizable distro built entirely from scratch."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://ftp2.osuosl.org/pub/tucana-linux/stable/iso/tucana-3.1-gnome.iso"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

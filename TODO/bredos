@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'bredos'
+OSNAME="BredOS"
+PRETTY="BredOS"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://bredos.org/"
+DESCRIPTION="A user-friendly Arch-based Linux distribution."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://github.com/BredOS/BredOS-iso/releases/download/2025-01-26/BredOS-2025.01.26-x86_64.iso"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

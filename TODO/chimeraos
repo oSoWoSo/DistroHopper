@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'chimeraos'
+OSNAME="ChimeraOS"
+PRETTY="ChimeraOS"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://chimeraos.org/"
+DESCRIPTION="Bringing the console gaming experience to PC."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://github.com/ChimeraOS/install-media/releases/download/2025-01-24_7a488b9/chimeraos-2025.01.24-x86_64.iso"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

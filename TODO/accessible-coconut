@@ -1,0 +1,29 @@
+# Template file for 'accessible-coconut'
+OSNAME="Accessible-Coconut"
+PRETTY="Accessible-Coconut"
+BASEDOF=""
+HOMEPAGE="https://zendalona.com/accessible-coconut/"
+DESCRIPTION="A GNU/Linux OS derived from Ubuntu-MATE."
+CREDENTIALS="-"
+
+function releases_() {
+
+}
+
+function editions_() {
+
+}
+
+function get_() {
+    local ISO=""
+    local HASH=""
+    local URL="https://sourceforge.net/projects/accessible-coconut/files/latest/download"
+    local DATA=""
+
+    if [[ -n "$URL" ]]; then
+        ISO="${URL##*/}"
+        VM_PATH=""
+        echo "download="$URL""
+        echo "iso="$ISO""
+    fi
+}

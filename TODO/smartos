@@ -1,0 +1,29 @@
+# Template file for 'smartos'
+OSNAME="SmartOS"
+PRETTY="SmartOS"
+BASEDOF=""
+HOMEPAGE="https://www.tritondatacenter.com/smartos"
+DESCRIPTION="A powerful os optimized for cloud computing."
+CREDENTIALS="-"
+
+function releases_() {
+
+}
+
+function editions_() {
+
+}
+
+function get_() {
+    local ISO=""
+    local HASH=""
+    local URL="https://us-central.manta.mnx.io/Joyent_Dev/public/SmartOS/20250206T001102Z/smartos-20250206T001102Z.iso"
+    local DATA=""
+
+    if [[ -n "$URL" ]]; then
+        ISO="${URL##*/}"
+        VM_PATH=""
+        echo "download="$URL""
+        echo "iso="$ISO""
+    fi
+}

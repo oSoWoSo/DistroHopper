@@ -1,0 +1,29 @@
+# Template file for 'hellosystem'
+OSNAME="helloSystem"
+PRETTY="helloSystem"
+BASEDOF=""
+HOMEPAGE="https://hellosystem.github.io/"
+DESCRIPTION="A desktop system with a focus on simplicity."
+CREDENTIALS="-"
+
+function releases_() {
+
+}
+
+function editions_() {
+
+}
+
+function get_() {
+    local ISO=""
+    local HASH=""
+    local URL="https://github.com/helloSystem/ISO/releases/download/r0.8.1/hello-0.8.1_0H324-FreeBSD-13.1-amd64.iso"
+    local DATA=""
+
+    if [[ -n "$URL" ]]; then
+        ISO="${URL##*/}"
+        VM_PATH=""
+        echo "download="$URL""
+        echo "iso="$ISO""
+    fi
+}

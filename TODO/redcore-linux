@@ -1,0 +1,29 @@
+# Template file for 'redcore-linux'
+OSNAME="Redcore Linux"
+PRETTY="Redcore Linux"
+BASEDOF=""
+HOMEPAGE="https://redcorelinux.org/"
+DESCRIPTION="A distro based on Gentoo Linux testing branch."
+CREDENTIALS="-"
+
+function releases_() {
+
+}
+
+function editions_() {
+
+}
+
+function get_() {
+    local ISO=""
+    local HASH=""
+    local URL="https://mirror.alpix.eu/redcorelinux/amd64/iso-next/Redcore.Linux.Hardened.24xx.Unukalhai.KDE.RC1.amd64.iso"
+    local DATA=""
+
+    if [[ -n "$URL" ]]; then
+        ISO="${URL##*/}"
+        VM_PATH=""
+        echo "download="$URL""
+        echo "iso="$ISO""
+    fi
+}

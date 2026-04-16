@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'athena-os'
+OSNAME="Athena OS"
+PRETTY="Athena OS"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://athenaos.org/"
+DESCRIPTION="Cybersecurity-focused, secure, and modern OS."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://github.com/Athena-OS/athena/releases/download/v23.11/athena-rolling-x86_64.iso"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'puppy-linux'
+OSNAME="Puppy Linux"
+PRETTY="Puppy Linux"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://puppylinux-woof-ce.github.io/"
+DESCRIPTION="Lightweight and highly portable Linux distribution."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://rockedge.org/kernels/data/ISO/Bookworm_Pup64/BookwormPup64_10.0.10.iso"
     local DATA=""
 
     if [[ -n "$URL" ]]; then

@@ -1,9 +1,9 @@
-# Template file for 'mageia'
-OSNAME="Mageia"
-PRETTY="Mageia"
+# Template file for 'elive'
+OSNAME="Elive"
+PRETTY="Elive"
 BASEDOF=""
-HOMEPAGE="https://www.mageia.org/en/"
-DESCRIPTION="RPM-based Linux distro forked from Mandriva."
+HOMEPAGE="https://www.elivecd.org/"
+DESCRIPTION="Turn old PCs into high-performance machines."
 CREDENTIALS="-"
 
 function releases_() {
@@ -17,7 +17,7 @@ function editions_() {
 function get_() {
     local ISO=""
     local HASH=""
-    local URL="https://www.mageia.org/en/downloads/get/?q=Mageia-9-Live-Plasma-x86_64.iso"
+    local URL="https://www.elivecd.org/downloads/retro/3.8.32/39c35954dc/elive_3.8.32_retro_hybrid_amd64.iso"
     local DATA=""
 
     if [[ -n "$URL" ]]; then
