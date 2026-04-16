@@ -219,6 +219,13 @@ _build_nav() {
 		echo "  <li><a href=\"${slug}.html\"${active}>${label}</a></li>" >> "$nav_file"
 	done
 
+	# Add static links to Distros and All pages
+	local distros_active all_active
+	[ "$current" = "distros" ] && distros_active=' class="active"'
+	[ "$current" = "all" ] && all_active=' class="active"'
+	echo "  <li><a href=\"distros.html\"${distros_active}>Distros</a></li>" >> "$nav_file"
+	echo "  <li><a href=\"all.html\"${all_active}>All</a></li>" >> "$nav_file"
+
 	echo '</ul></nav>' >> "$nav_file"
 }
 

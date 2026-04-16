@@ -214,8 +214,11 @@
             color: var(--yellow, #FFD700);
         }
         
-        .release-table td.disabled {
+        .release-table td .download-link.disabled {
             color: var(--text-muted, #666);
+            cursor: not-allowed;
+            opacity: 0.5;
+            text-decoration: none;
         }
         
         .page-header {
@@ -342,13 +345,19 @@
                 const category = distro.category || 'other';
                 const distroId = distro.name || 'Unknown';
                 
-                // Generate a colored placeholder for icon
+                // Generate a colored placeholder first (fallback)
                 const colors = ['#E95420', '#3C3B37', '#A80030', '#41B549', '#87CF3E', '#2F2F2F', '#178CDA', '#000000'];
-                const colorIndex = distro.name.charCodeAt(0) % colors.length;
+                const colorIndex = (distro.name || '?').charCodeAt(0) % colors.length;
                 const bgColor = colors[colorIndex];
                 const initial = distro.name ? distro.name.charAt(0).toUpperCase() : '?';
                 
-                const iconHtml = `<div style="width: 32px; height: 32px; background: ${bgColor}; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 14px; margin-right: 0.5rem;">${initial}</div>`;
+                // Try to use actual distro icon if available, else fallback to colored placeholder
+                const distroNameLower = (distro.name || '').toLowerCase().replace(/ /g, '');
+                const iconSrc = `img/distro/${distroNameLower}.png`;
+                const iconSvg = `img/distro/${distroNameLower}.svg`;
+                
+                // Check icon availability (we'll use an img with onerror fallback)
+                const iconHtml = `<img src="${iconSrc}" alt="" onerror="this.src='${iconSvg}';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='flex'}" style="width: 32px; height: 32px; border-radius: 50%; margin-right: 0.5rem; object-fit: contain; display: none;" /><div class="icon-fallback" style="width: 32px; height: 32px; background: ${bgColor}; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 14px; margin-right: 0.5rem; display: flex;">${initial}</div>`;
                 
                 // Get based-on info from releases data
                 const releaseInfo = Object.values(window.distrosReleases || {}).find(d => d.name?.toLowerCase() === distro.name?.toLowerCase());
@@ -437,8 +446,18 @@
                 releases.forEach((release, idx) => {
                     html += `<tr><td><strong>${release}</strong></td>`;
                     editions.forEach((edition, edIdx) => {
-                        // For now, show link to homepage as placeholder (actual URLs require get_() function)
-                        html += `<td><a href="${distro.websiteLink || '#'}" target="_blank" class="download-link">⬇</a></td>`;
+                        // Check if download URL exists in releaseInfo.downloads
+                        const downloadUrl = releaseInfo?.downloads?.[release]?.[edition];
+                        if (downloadUrl) {
+                            // Active download link
+                            html += `<td><a href="${downloadUrl}" target="_blank" class="download-link" title="${edition} ${release}">⬇</a></td>`;
+                        } else if (distro.downloadLink) {
+                            // Use general download link for latest (fallback)
+                            html += `<td><a href="${distro.downloadLink}" target="_blank" class="download-link" title="${edition} ${release} (latest)">⬇</a></td>`;
+                        } else {
+                            // No download available - show disabled
+                            html += `<td><span class="download-link disabled" title="Not available">✗</span></td>`;
+                        }
                     });
                     html += `</tr>`;
                 });
@@ -451,7 +470,15 @@
                 html += `<table class="release-table">`;
                 html += `<tr><th>Version</th><th>Download</th></tr>`;
                 releases.slice(0, 10).forEach(release => {
-                    html += `<tr><td><strong>${release}</strong></td><td><a href="${distro.websiteLink || '#'}" target="_blank" class="download-link">⬇</a></td></tr>`;
+                    // Check if download URL exists in releaseInfo.downloads
+                    const downloadUrl = releaseInfo?.downloads?.[release]?.['default'] || releaseInfo?.downloads?.[release]?.[''];
+                    if (downloadUrl) {
+                        html += `<tr><td><strong>${release}</strong></td><td><a href="${downloadUrl}" target="_blank" class="download-link" title="${release}">⬇</a></td></tr>`;
+                    } else if (distro.downloadLink) {
+                        html += `<tr><td><strong>${release}</strong></td><td><a href="${distro.downloadLink}" target="_blank" class="download-link" title="${release} (latest)">⬇</a></td></tr>`;
+                    } else {
+                        html += `<tr><td><strong>${release}</strong></td><td><span class="download-link disabled" title="Not available">✗</span></td></tr>`;
+                    }
                 });
                 html += `</table>`;
             }

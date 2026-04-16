@@ -1,0 +1,27 @@
+name: Link Checker
+on:
+  push:
+    branches:
+      - main
+      - all
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * 0'  # Weekly on Sundays
+
+permissions:
+  contents: read
+
+jobs:
+  link-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛎️ Checkout
+        uses: actions/checkout@v6
+
+      - name: Check external links
+        uses: lycheev/lychee-action@v1.10.0
+        with:
+          args: --verbose --no-progress --cache --max-cache-age 7d --header 'User-Agent: Mozilla/5.0 (compatible; DistroHopper/1.0)' https://almalinux.org https://archlinux.org https://debian.org https://ubuntu.com https://fedoraproject.org https://gentoo.org https://voidlinux.org https://manjaro.org https://opensuse.org https://nixos.org https://freebsd.org https://openbsd.org https://netbsd.org --include https://*$osowoso.org
+          fail-on-empty: false
+          fail-on-warning: false
