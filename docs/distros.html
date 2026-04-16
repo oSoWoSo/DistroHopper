@@ -233,8 +233,16 @@
             });
         });
         
-        // Initial render
+        // Initial render - try immediately and with delay as backup
         renderDistros();
+        
+        setTimeout(function() {
+            // Backup render in case of timing issues
+            if (document.querySelectorAll('.distro-card-wrapper').length === 0) {
+                console.log('Backup render triggered');
+                renderDistros();
+            }
+        }, 500);
     });
     </script>
 </body>
