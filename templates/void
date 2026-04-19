@@ -1,0 +1,50 @@
+# Template file for 'void'
+OSNAME="void"
+PRETTY="Void Linux"
+ICON="void.svg"
+CATEGORY="advanced"
+BASEDOF="-"
+HOMEPAGE="https://voidlinux.org"
+DESCRIPTION="General purpose operating system. Its package system allows you to quickly install, update and remove software; software is provided in binary packages or can be built directly from sources"
+CREDENTIALS="anon:voidlinux root:voidlinux"
+
+function releases_() {
+    echo current
+}
+
+function editions_() {
+    echo glibc musl xfce-glibc xfce-musl
+}
+
+function arch_() {
+    echo "amd64 aarch64 i686"
+}
+
+function get_() {
+    local DATE="" HASH="" ISO="" VARIANT="" ARCH_KW=""
+    local URL="https://repo-default.voidlinux.org/live/current"
+
+    case "${EDITION}" in
+        glibc) VARIANT="base";;
+        musl) VARIANT="musl";;
+        xfce-glibc) VARIANT="xfce";;
+        xfce-musl) VARIANT="xfce-musl";;
+    esac
+
+    case "${ARCH}" in
+        aarch64) ARCH_KW="aarch64";;
+        asahi) ARCH_KW="asahi";;
+        i686) ARCH_KW="i686";;
+        *) ARCH_KW="x86_64";;
+    esac
+
+    # Different parsing for i686 (date is in different position)
+    if [ "${ARCH}" == "i686" ]; then
+        DATE=$(web_pipe "$URL" | grep "^<a href=\"void-live-i686-" | tail -1 | sed 's/.*void-live-i686-\(.*\)-.*/\1/' | cut -d'-' -f1)
+    else
+        DATE=$(web_pipe "$URL" | grep "^<a href=\"void-live-${ARCH_KW}-" | cut -d'-' -f5 | tail -1)
+    fi
+    ISO="void-live-${ARCH_KW}-${DATE}-${VARIANT}.iso"
+    HASH="$(web_pipe "${URL}/sha256sum.txt" | grep "${ISO}" | cut -d' ' -f4)"
+    echo "${URL}/${ISO} ${HASH}"
+}

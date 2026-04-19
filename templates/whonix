@@ -1,0 +1,148 @@
+# Template file for 'whonix'
+OSNAME="whonix"
+PRETTY="Whonix"
+ICON="whonix.svg"
+CATEGORY="security"
+BASEDOF="Debian"
+HOMEPAGE="https://www.whonix.org"
+DESCRIPTION="Superior Internet Privacy with Whonix(tm) - delivering maximum anonymity and security"
+CREDENTIALS="-"
+
+function arch_() {
+    echo "amd64"
+}
+
+function releases_() {
+    local VERSIONS=""
+    VERSIONS=$(curl --disable --silent --location "https://download.whonix.org/libvirt" | grep -oP 'title="\K[0-9.]+' | sort -V | tail -n 3)
+    echo "${VERSIONS}"
+}
+
+function editions_() {
+    # mixed = Gateway CLI (headless) + Workstation LXQt (recommended)
+    echo CLI LXQt mixed
+}
+
+function get_() {
+    local HASH=""
+    local ISO=""
+    local URL="https://download.whonix.org/libvirt/${RELEASE}"
+
+    case "${EDITION}" in
+        CLI)   ISO="Whonix-CLI-${RELEASE}.Intel_AMD64.qcow2.libvirt.xz";;
+        LXQt)  ISO="Whonix-LXQt-${RELEASE}.Intel_AMD64.qcow2.libvirt.xz";;
+        mixed) ISO="Whonix-CLI-${RELEASE}.Intel_AMD64.qcow2.libvirt.xz";;
+    esac
+
+    HASH=$(curl --disable --silent --location "${URL}/${ISO}.sha512sums" 2>/dev/null | cut -d' ' -f1 | head -n1)
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+function _whonix_extract() {
+    local ARCHIVE="${1}"
+    local PATTERN="${2}"
+    local XZ="${ARCHIVE}.xz"
+    local URL="https://download.whonix.org/libvirt/${RELEASE}"
+
+    if [ ! -f "${XZ}" ] && [ ! -f "${ARCHIVE}" ]; then
+        web_get "${URL}/${XZ}" "."
+    fi
+    if [ -f "${XZ}" ]; then
+        unxz -k "${XZ}" && rm -f "${XZ}"
+    fi
+    if [ -n "${PATTERN}" ]; then
+        tar -xf "${ARCHIVE}" --wildcards "${PATTERN}" 2>/dev/null
+    else
+        tar -xf "${ARCHIVE}"
+    fi
+    rm -f "${ARCHIVE}"
+}
+
+function distro_specific() {
+    local URL="https://download.whonix.org/libvirt/${RELEASE}"
+    local CLI_BUNDLE="Whonix-CLI-${RELEASE}.Intel_AMD64.qcow2.libvirt"
+    local LXQT_BUNDLE="Whonix-LXQt-${RELEASE}.Intel_AMD64.qcow2.libvirt"
+    local QE="${QUICKEMU:-quickemu}"
+
+    pushd "${VM_PATH}" > /dev/null || return
+
+    case "${EDITION}" in
+        CLI)
+            _whonix_extract "${CLI_BUNDLE}"
+            ;;
+        LXQt)
+            _whonix_extract "${LXQT_BUNDLE}"
+            ;;
+        mixed)
+            # Extract full CLI bundle (includes license), discard CLI workstation
+            _whonix_extract "${CLI_BUNDLE}"
+            rm -f Whonix-Workstation-CLI-*.qcow2
+            # Extract only LXQt workstation from second bundle
+            _whonix_extract "${LXQT_BUNDLE}" "Whonix-Workstation-LXQt-*.qcow2"
+            ;;
+    esac
+
+    if [ -f WHONIX_BINARY_LICENSE_AGREEMENT ]; then
+        cat WHONIX_BINARY_LICENSE_AGREEMENT > /dev/tty
+        echo > /dev/tty
+        read -r -n 1 -p "Do you agree? [y/N] " REPLY < /dev/tty > /dev/tty
+        echo > /dev/tty
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            touch WHONIX_BINARY_LICENSE_AGREEMENT_accepted
+        else
+            touch WHONIX_BINARY_LICENSE_AGREEMENT_denied
+            popd > /dev/null || true
+            exit 0
+        fi
+    fi
+
+    for f in Whonix-*.qcow2; do
+        [ -f "$f" ] || continue
+        if [[ "$f" =~ Gateway ]]; then
+            mkdir -p "gateway"
+            mv "$f" "gateway/disk.qcow2"
+        elif [[ "$f" =~ Workstation ]]; then
+            mkdir -p "workstation"
+            mv "$f" "workstation/disk.qcow2"
+        fi
+    done
+
+    # Gateway: user network (internet/Tor) + socket NIC for internal network to Workstation
+    # Waits for gateway monitor socket (= QEMU is running), then launches Workstation
+    local GW_DISPLAY=""
+    [[ "${EDITION}" == "LXQt" ]] || GW_DISPLAY=$'\ndisplay="none"'
+
+    cat > "../${VM_PATH}-gateway.conf" << EOF
+#!${QE} --vm
+guest_os="linux"
+boot="legacy"
+disk_img="${VM_PATH}/gateway/disk.qcow2"${GW_DISPLAY}
+extra_args="-device virtio-net-pci,netdev=int -netdev socket,id=int,listen=:4321"
+(until nc -z 127.0.0.1 4321 2>/dev/null; do sleep 1; done
+ ${QE} --vm "\${VM%-gateway.conf}-workstation.conf") &
+EOF
+    chmod u+x "../${VM_PATH}-gateway.conf"
+
+    # Workstation: only internal socket NIC connected to Gateway
+    cat > "../${VM_PATH}-workstation.conf" << EOF
+#!${QE} --vm
+guest_os="linux"
+boot="legacy"
+disk_img="${VM_PATH}/workstation/disk.qcow2"
+network="none"
+extra_args="-device virtio-net-pci,netdev=int -netdev socket,id=int,connect=127.0.0.1:4321"
+EOF
+    chmod u+x "../${VM_PATH}-workstation.conf"
+
+    # Placeholder so make_vm_config skips creating a broken main conf
+    cat > "../${VM_PATH}.conf" << EOF
+# Whonix: start Gateway — Workstation launches automatically.
+# ${QE} --vm ${VM_PATH}-gateway.conf
+EOF
+
+    echo -e "\nWhonix setup complete!" > /dev/tty
+    echo "  ${QE} --vm ${VM_PATH}-gateway.conf" > /dev/tty
+    echo "  (Workstation starts automatically once Gateway is ready)" > /dev/tty
+
+    popd > /dev/null || true
+}

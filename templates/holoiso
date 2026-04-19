@@ -1,0 +1,21 @@
+# Template file for 'holoiso'
+OSNAME="holoiso"
+PRETTY="HoloISO"
+ICON="holoiso.svg"
+CATEGORY="beginner"
+BASEDOF="-"
+HOMEPAGE="https://github.com/HoloISO/holoiso"
+DESCRIPTION="Bring the Steam Decks SteamOS Holo redistribution and provide a close-to-official SteamOS experience"
+CREDENTIALS="-"
+
+function releases_() {
+    echo "latest"
+}
+
+function get_() {
+    local HASH=""
+    local URL=""
+    RELEASE="$(web_pipe "https://github.com/HoloISO/releases/releases" | grep -o -e 'releases/tag/[[:digit:]]\+\(\.[[:digit:]]\+\)*' | head -n 1 | cut -d'/' -f 3)"
+    URL=$(web_pipe "https://api.github.com/repos/HoloISO/releases/releases" | jq -r ".[] | select(.tag_name==\"${RELEASE}\") | .body" | sed -n 's/.*\(https:\/\/[^ ]*holoiso\.ru\.eu\.org\/[^ ]*\.iso\).*/\1/p' | head -n 1)
+    echo "${URL} ${HASH}"
+}

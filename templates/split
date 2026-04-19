@@ -1,0 +1,21 @@
+# Template file for 'split'
+OSNAME="split"
+PRETTY="Split Linux"
+ICON="tux.svg"
+CATEGORY="advanced"
+BASEDOF="Void Linux"
+HOMEPAGE="https://splitlinux.org/"
+DESCRIPTION="General operating system optimized for safely navigating hostile environments like the Internet and physical checkpoints"
+CREDENTIALS="-"
+
+function releases_() {
+    echo latest
+}
+
+function get_() {
+    local HASH=""
+    local PART=""
+    PART=$(curl -sL https://kevcrumb.gitlab.io/split-mklive/ | grep -oP "href='\K[^']+\.iso" | head -1)
+    HASH=$(curl -sL https://kevcrumb.gitlab.io/split-mklive/ | grep -oP '(?<=<pre>)[a-f0-9]+(?=\s)' | head -1)
+    echo "${PART} ${HASH}"
+}

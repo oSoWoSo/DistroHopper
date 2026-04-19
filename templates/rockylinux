@@ -1,0 +1,55 @@
+# Template file for 'rockylinux'
+OSNAME="rockylinux"
+PRETTY="Rocky Linux"
+ICON="rocky.svg"
+CATEGORY="advanced"
+DW_CATEGORY="Desktop, Server"
+BASEDOF="RHEL"
+HOMEPAGE="https://rockylinux.org"
+DESCRIPTION="Open-source enterprise operating system designed to be 100% bug-for-bug compatible with Red Hat Enterprise Linux"
+CREDENTIALS="-"
+
+function releases_() {
+    # Get all available versions from download directory
+    web_pipe "https://download.rockylinux.org/pub/rocky/" | grep -o '>[0-9]\.[0-9][^<]*' | sed 's/>//' | sort -Vr
+}
+
+function editions_() {
+    echo minimal dvd boot
+}
+
+function arch_() {
+    echo "amd64 aarch64 ppc64le riscv64 s390x"
+}
+
+function get_() {
+    if [[ "${RELEASE}" =~ ^8. ]] && [[ "${EDITION}" == "dvd" ]]; then
+        EDITION="dvd1"
+    fi
+    
+    local HASH=""
+    local ARCH_KW="${ARCH:-amd64}"
+    
+    case "${ARCH}" in
+        aarch64) ARCH_KW="aarch64";;
+        ppc64le) ARCH_KW="ppc64le";;
+        riscv64) ARCH_KW="riscv64";;
+        s390x) ARCH_KW="s390x";;
+        *) ARCH_KW="x86_64";;
+    esac
+    
+    local ISO="Rocky-${RELEASE}-${ARCH_KW}-${EDITION}.iso"
+    local URL="https://download.rockylinux.org/pub/rocky/${RELEASE}/isos/${ARCH_KW}"
+    
+    HASH=$(web_pipe "${URL}/CHECKSUM" 2>/dev/null | grep "${ISO}" | grep SHA256 | cut -d' ' -f1)
+    
+    if [[ -z "$HASH" ]]; then
+        HASH=$(web_pipe "${URL}/SHA256SUMS" 2>/dev/null | grep "${ISO}" | cut -d' ' -f1)
+    fi
+    
+    echo "${URL}/${ISO} ${HASH}"
+}
+
+function specific_tweaks() {
+   echo "disk_size=\"32G\"" >> "${CONF_FILE}"
+}
