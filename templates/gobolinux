@@ -10,13 +10,13 @@ DESCRIPTION="Experimental Linux distribution that redefines the entire filesyste
 CREDENTIALS="-"
 
 function releases_() {
-    echo $(curl -sL https://gobolinux.org/downloads.html | grep -oP 'href="https://gobolinux\.neonsys\.org/\K[^"]+(?=-iso)' | sed 's|.*/||' | sort -u)
+    echo $(curl -sL https://gobolinux.org/downloads.html | grep -oP 'href="https://gobolinux\.neonsys\.org/\K[^"]+(?=-ISO)' | sed 's|/.*||' | sort -u)
 }
 
 function get_() {
     local HASH=""
     local ISO="GoboLinux-${RELEASE}-x86_64.iso"
-    local URL="https://gobolinux.neonsys.org/${RELEASE}-iso"
+    local URL="https://gobolinux.neonsys.org/${RELEASE}-ISO"
     HASH=$(curl -sL https://gobolinux.org/downloads.html | grep -oP 'SHA256: \K[a-f0-9]+')
     echo "${URL}/${ISO} ${HASH}"
 }
