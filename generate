@@ -326,11 +326,11 @@ function web_get() {
 
 	# Test mode for ISO
 	if [ "${OPERATION}" == "show" ]; then
-		test_result "${OS}" "${RELEASE}" "${EDITION}" "${URL}"
+		test_result "${OS}" "${ARCH:-amd64}" "${RELEASE}" "${EDITION}" "${URL}"
 		exit 0
 	elif [ "${OPERATION}" == "test" ]; then
 		CHECK=$(web_check "${URL}" && echo "PASS" || echo "FAIL")
-		test_result "${OS}" "${RELEASE}" "${EDITION}" "${URL}" "${CHECK}"
+		test_result "${OS}" "${ARCH:-amd64}" "${RELEASE}" "${EDITION}" "${URL}" "${CHECK}"
 		exit 0
 	elif [ "${OPERATION}" == "download" ]; then
 		DIR="$(pwd)"
@@ -360,11 +360,11 @@ function zsync_get() {
 	local URL="${1}"
 	# Test mode for ISO
 	if [ "${OPERATION}" == "show" ]; then
-		test_result "${OS}" "${RELEASE}" "${EDITION}" "${URL}"
+		test_result "${OS}" "${ARCH:-amd64}" "${RELEASE}" "${EDITION}" "${URL}"
 		exit 0
 	elif [ "${OPERATION}" == "test" ]; then
 		CHECK=$(web_check "${URL}" && echo "PASS" || echo "FAIL")
-		test_result "${OS}" "${RELEASE}" "${EDITION}" "${URL}" "${CHECK}"
+		test_result "${OS}" "${ARCH:-amd64}" "${RELEASE}" "${EDITION}" "${URL}" "${CHECK}"
 		exit 0
 	elif command -v zsync &>/dev/null; then
 		if [ -n "${3}" ]; then
