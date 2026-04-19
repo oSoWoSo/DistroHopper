@@ -57,8 +57,12 @@
 !/website
 
 # TODO OS templates + not supported source for website
+!/TODO
+/TODO/*
+!/TODO/distrowatch
 !/TODO/distros-data.js
 !/TODO/all
+
 
 # website generator
 !/web-create
