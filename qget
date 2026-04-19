@@ -14,11 +14,10 @@ else
 fi
 
 export LC_ALL=C
-#TODO: config file
-#TOshare="/usr/share/qget"
-TOshare="./"
-TOpublic="$TOshare/public"
-TOactions="$TOshare/actions"
+SCRIPT_DIR="$(dirname "$(realpath "$0")")"
+TEMPLATES_DIR="${TEMPLATES_DIR:-${SCRIPT_DIR}/templates}"
+PUBLIC_DIR="${PUBLIC_DIR:-${SCRIPT_DIR}/public}"
+qgetVersion="0.5"
 
 function cleanup() {
     if [ -n "$(jobs -p)" ]; then
@@ -28,7 +27,7 @@ function cleanup() {
 
 function show_os_info() {
     # shellcheck source=public/alpine
-    . "${TOpublic}/${1}"
+    . "${PUBLIC_DIR}/${1}"
     echo
     echo " ${PRETTY}"
     echo $"    Website: ${HOMEPAGE}"
@@ -36,13 +35,16 @@ function show_os_info() {
     echo $"Description: ${DESCRIPTION}"
     echo $"Credentials: ${CREDENTIALS}"
     echo $"Releases: ${RELEASES}" | fmt -w $(tput cols)
-    if [[ $(type -t "editions_") == function ]]; then
-        echo -n $"Editions: ${EDITIONS}" | fmt -w $(tput cols)
+    if [ -n "${EDITIONS}" ]; then
+        echo $"Editions: ${EDITIONS}" | fmt -w $(tput cols)
+    fi
+    if [ -n "${ARCHITECTURES}" ]; then
+        echo $"Architectures: ${ARCHITECTURES}" | fmt -w $(tput cols)
     fi
 }
 
 function os_support() {
-    DIR="${TOactions}"
+    DIR="${TEMPLATES_DIR}"
     for file in "$DIR"/*; do
         if [[ -f "$file" ]]; then
             filename="${file##*/}"
@@ -266,7 +268,7 @@ function csv_data() {
     fi
 
     for OS in $(os_support); do
-        . "${TOactions}/${OS}"
+        . "${TEMPLATES_DIR}/${OS}"
         local EDITIONS=""
         DISPLAY_NAME="${PRETTY}"
 
@@ -341,10 +343,10 @@ function test_all() {
         FUNC="ubuntu"
     fi
     local URL=""
-    . "${TOactions}/${OS}"
+    . "${TEMPLATES_DIR}/${OS}"
 
     for RELEASE in $(releases_); do
-        . "${TOactions}/${OS}"
+        . "${TEMPLATES_DIR}/${OS}"
         if [ "${OS}" == 'rebornos' ]; then
           if curl -I "https://cdn.soulharsh007.dev/RebornOS-ISO/${ISO}"; then
             test_result "${OS} ${RELEASE} ${URL} PASS"
@@ -352,7 +354,7 @@ function test_all() {
             test_result "${OS} ${RELEASE} ${URL} FAIL"
           fi
         elif [[ $(type -t editions_) == function ]]; then
-            . "${TOactions}/${OS}"
+            . "${TEMPLATES_DIR}/${OS}"
             for EDITION in $(editions_); do
                 validate_release releases_
                 URL=$(get_ | cut -d' ' -f1 | head -n 1)
@@ -364,7 +366,7 @@ function test_all() {
                 fi
             done
         elif [[ "${OS}" == "windows"* ]]; then
-            . "${TOactions}/${OS}"
+            . "${TEMPLATES_DIR}/${OS}"
             languages_
             for I18N in "${I18NS[@]}"; do
                 validate_release releases_
@@ -605,7 +607,7 @@ EOF
         fi
 
         # OS specific tweaks
-        #. "${TOactions}/${OS}"
+        #. "${TEMPLATES_DIR}/${OS}"
         #specific_tweaks 2>/dev/null
         if [ "${OS}" == "ubuntu" ] && [[ ${RELEASE} == *"daily"*  ]]; then
             # Minimum to install lobster testing is 18GB but 32GB are allocated for headroom
@@ -638,8 +640,8 @@ EOF
 }
 
 function open_homepage() {
-    # shellcheck source=actions/alpine
-    . "actions/${1}"
+    # shellcheck source=templates/alpine
+    . "${TEMPLATES_DIR}/${1}"
     local XDG_OPEN=""
     if [ -z "${PRETTY}" ]; then
         error_specify_os
@@ -664,8 +666,8 @@ function create_vm() {
         check_hash "${ISO}" "${HASH}"
     fi
     # shellcheck disable=SC2076
-    . "${TOactions}/${OS}"
-    "distro_specific" 2>/dev/null
+    . "${TEMPLATES_DIR}/${OS}"
+    declare -f distro_specific > /dev/null && distro_specific
     make_vm_config "${ISO}"
 }
 
@@ -752,8 +754,8 @@ run_itself() {
     fi
 
     os_supported
-    # shellcheck source=actions/alpine
-    . "${TOactions}/${OS}"
+    # shellcheck source=templates/alpine
+    . "${TEMPLATES_DIR}/${OS}"
 
     if [ -n "${2}" ]; then
         RELEASE="${2}"
@@ -823,8 +825,8 @@ function run_ui() {
     fi
     OS=$(gum filter --height=17 --header="Select an OS:" $(os_support))
     #os_info "${OS}" > "$TMPFILE"
-    # shellcheck source=actions/alpine
-    . "${TOpublic}/${OS}"
+    # shellcheck source=templates/alpine
+    . "${PUBLIC_DIR}/${OS}"
     RELEASE=$(gum filter --height=9 --header="Select $OS release:" ${RELEASES})
     if declare -F editions_ > /dev/null; then
         EDITION=$(gum filter --height=9 --header="Select $OS  $RELEASE edition:" ${EDITIONS})
@@ -866,6 +868,7 @@ Arguments:
   --version                                : Show version
   --help                                   : Show this help message
   --ui                                     : Run in UI mode
+  --arch       <arch>                      : Set architecture (default: x86_64)
 ------------------------------------ Flags -------------------------------------
 --create-config:
   --disable-unattended                     : Force qget not to set up an unattended installation
@@ -891,6 +894,8 @@ fi
 QUICKEMU=$(resolve_quickemu)
 I18NS=()
 OPERATION=""
+ARCH="x86_64"
+ARCH="x86_64"
 CURL=$(command -v curl)
 if [ ! -x "${CURL}" ]; then
     echo $"ERROR! curl not found. Please install curl"
@@ -959,9 +964,14 @@ case "${1}" in
             test_all "${1}"
             exit 0
         fi;;
+    --list-os|-list-os) os_support; exit 0;;
     --list-csv|-list-csv|list|list_csv) list_csv;;
     --list-json|-list-json|list_json) list_json;;
     --list|-list) list_supported;;
+    -a|--arch)
+        ARCH="${2}"
+        shift 2
+        ;;
     -*) error_not_supported_argument;;
 esac
 
