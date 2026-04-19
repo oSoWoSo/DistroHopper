@@ -1,18 +1,58 @@
 root = true
 
+[dh]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+indent_style = tabs
+indent_size = 4
+trim_trailing_whitespace = true
+
+[qget]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+indent_style = tabs
+indent_size = 4
+trim_trailing_whitespace = true
+
+[generate]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+indent_style = tabs
+indent_size = 4
+trim_trailing_whitespace = true
+
+[web-create]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+indent_style = tabs
+indent_size = 4
+trim_trailing_whitespace = true
+
 [quickemu]
 charset = utf-8
 end_of_line = lf
 insert_final_newline = true
-indent_style = space
-indent_size = 2
+indent_style = tabs
+indent_size = 4
 trim_trailing_whitespace = true
 
 [quickget]
 charset = utf-8
 end_of_line = lf
 insert_final_newline = true
-indent_style = space
+indent_style = tabs
+indent_size = 4
+trim_trailing_whitespace = true
+
+[templates/*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+indent_style = tabs
 indent_size = 4
 trim_trailing_whitespace = true
 
