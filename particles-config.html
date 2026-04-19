@@ -1,0 +1,60 @@
+<script>
+// particles.js — same config as predloha, colors adapt to theme
+(function initParticles() {
+    const dark = (document.documentElement.getAttribute('data-theme') || 'dark') === 'dark';
+    const colors = dark
+        ? ['#ffffff', '#87cefa', '#4FD2D7', '#8CFFFA']
+        : ['#000000', '#444444', '#1a7a80', '#2d5a3d'];
+
+    particlesJS('particles-js', {
+        particles: {
+            number: { value: 150, density: { enable: true, value_area: 800 } },
+            color: { value: colors },
+            shape: { type: 'circle' },
+            opacity: { value: dark ? 0.6 : 0.4, random: true },
+            size: { value: 5, random: true },
+            line_linked: { enable: false },
+            move: { enable: true, speed: 0.2, direction: 'none', random: true, straight: false, out_mode: 'out', bounce: false }
+        },
+        interactivity: {
+            detect_on: 'canvas',
+            events: { onhover: { enable: true, mode: 'bubble' }, onclick: { enable: true, mode: 'repulse' }, resize: true },
+            modes: { bubble: { distance: 250, size: 0, duration: 2, opacity: 0, speed: 3 }, repulse: { distance: 400, duration: 0.4 } }
+        },
+        retina_detect: true
+    });
+})();
+
+// Re-init particles when theme changes
+const _origToggle = window.toggleTheme;
+window.toggleTheme = function() {
+    _origToggle();
+    if (window.pJSDom && window.pJSDom.length) {
+        window.pJSDom[0].pJS.fn.vendors.destroypJS();
+        window.pJSDom = [];
+    }
+    (function initParticles() {
+        const dark = (document.documentElement.getAttribute('data-theme') || 'dark') === 'dark';
+        const colors = dark
+            ? ['#ffffff', '#87cefa', '#4FD2D7', '#8CFFFA']
+            : ['#000000', '#444444', '#1a7a80', '#2d5a3d'];
+        particlesJS('particles-js', {
+            particles: {
+                number: { value: 150, density: { enable: true, value_area: 800 } },
+                color: { value: colors },
+                shape: { type: 'circle' },
+                opacity: { value: dark ? 0.6 : 0.4, random: true },
+                size: { value: 5, random: true },
+                line_linked: { enable: false },
+                move: { enable: true, speed: 0.2, direction: 'none', random: true, straight: false, out_mode: 'out', bounce: false }
+            },
+            interactivity: {
+                detect_on: 'canvas',
+                events: { onhover: { enable: true, mode: 'bubble' }, onclick: { enable: true, mode: 'repulse' }, resize: true },
+                modes: { bubble: { distance: 250, size: 0, duration: 2, opacity: 0, speed: 3 }, repulse: { distance: 400, duration: 0.4 } }
+            },
+            retina_detect: true
+        });
+    })();
+};
+</script>
