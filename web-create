@@ -8,30 +8,31 @@
 # License: MIT
 #
 
-BUILD_VERSION='0.0.3'
+BUILD_VERSION='0.0.5'
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SRC_DIR="${SRC_DIR:-website-source}"
+OUT_DIR="${OUT_DIR:-website}"
+PUBLIC_DIR="${PUBLIC_DIR:-public}"
 # Source shared functions
 # shellcheck source=lib.sh
 source "${SCRIPT_DIR}/lib.sh"
 
 # Load .env — project dir takes priority
 check_variables() {
-    if [ -z "$TITLE" ]; then
-        return 1
-    fi
+	if [ -z "$TITLE" ]; then
+		return 1
+	fi
 }
 if [ -f ".env" ]; then
-    source ".env"
-    check_variables && echo 'Using .env'
-
-elif [ -f "src/.env" ]; then
-    source "src/.env"
-    check_variables && echo 'Using src/.env'
-
+	source ".env"
+	check_variables && echo 'Using .env'
+elif [ -f "${SRC_DIR}/.env" ]; then
+	source "${SRC_DIR}/.env"
+	check_variables && echo 'Using ${SRC_DIR}/.env'
 elif [ -f "${SCRIPT_DIR}/.env" ]; then
-    source "${SCRIPT_DIR}/.env"
-    check_variables && echo 'Using .env'
+	source "${SCRIPT_DIR}/.env"
+	check_variables && echo 'Using .env'
 fi
 
 # ---------------------------------------------------------------------------
@@ -53,8 +54,20 @@ _detect_repo() {
 		return
 	fi
 
-	local raw
-	raw=$(git remote get-url "$(git remote | head -n 1)" 2>/dev/null)
+	# Prefer SSH remote over HTTPS if available
+	local raw ssh_remote https_remote
+	while IFS= read -r remote; do
+		local url
+		url=$(git remote get-url "$remote" 2>/dev/null)
+		if [[ "$url" =~ ^git@ || "$url" =~ ^ssh:// ]]; then
+			ssh_remote="$url"
+			break
+		else
+			https_remote="${https_remote:-$url}"
+		fi
+	done < <(git remote)
+
+	raw="${ssh_remote:-$https_remote}"
 
 	if [ -z "$raw" ]; then
 		_r "No git remote found — repo buttons will be disabled"
@@ -66,6 +79,8 @@ _detect_repo() {
 	local https_url
 	if [[ "$raw" =~ ^git@ ]]; then
 		https_url=$(echo "$raw" | sed 's|git@\(.*\):\(.*\)\.git|https://\1/\2|; s|git@\(.*\):\(.*\)|https://\1/\2|')
+	elif [[ "$raw" =~ ^ssh:// ]]; then
+		https_url=$(echo "$raw" | sed 's|ssh://git@\(.*\)|https://\1|')
 	else
 		https_url="${raw%.git}"
 	fi
@@ -136,14 +151,12 @@ _check_release() {
 
 	case "$REPO_PLATFORM" in
 		github)
-    local auth_header=""
-    [ -n "${GITHUB_TOKEN:-}" ] && auth_header="-H \"Authorization: Bearer ${GITHUB_TOKEN}\""
-    http_code=$(curl -sf -o /dev/null -w "%{http_code}" \
-        -H "Accept: application/vnd.github+json" \
-        ${auth_header:+"-H" "Authorization: Bearer ${GITHUB_TOKEN}"} \
-        "https://api.github.com/repos/${slug}/releases/latest" 2>/dev/null)
-    [ "$http_code" = "200" ] && REPO_HAS_RELEASE=1
-    ;;
+			http_code=$(curl -sf -o /dev/null -w "%{http_code}" \
+				-H "Accept: application/vnd.github+json" \
+				${GITHUB_TOKEN:+-H "Authorization: Bearer ${GITHUB_TOKEN}"} \
+				"https://api.github.com/repos/${slug}/releases/latest" 2>/dev/null)
+			[ "$http_code" = "200" ] && REPO_HAS_RELEASE=1
+			;;
 		gitlab)
 			local encoded_slug
 			encoded_slug="${slug//\//%2F}"
@@ -162,7 +175,7 @@ _check_release() {
 	esac
 
 	if [ "$REPO_HAS_RELEASE" = "1" ]; then
-		printf "%-12s %s\n" "Release:" found
+		printf "%-12s %s\n" "Release:" "found"
 	else
 		printf "%-12s ${RED}%s${NC}\n" "Release:" "No"
 	fi
@@ -184,13 +197,15 @@ add_validation() {
 ' >> "$output"
 }
 
+# Build main nav for root pages
+# Includes links to subdirs defined in SUBDIRS
 _build_nav() {
 	local current="$1"
 	local nav_file="$2"
 
 	echo '<nav><ul>' > "$nav_file"
 	echo '  <li><a href="https://osowoso.org">oSoWoSo</a></li>' >> "$nav_file"
-	echo "  <li>⏮️</a></li>" >> "$nav_file"
+	echo "  <li>⏮️</li>" >> "$nav_file"
 
 	local home_active=""
 	[ "$current" = "index" ] && home_active=' class="active"'
@@ -206,8 +221,9 @@ _build_nav() {
 	[ -n "$REPO_ZIP_URL" ] && echo "  <li><a href=\"${REPO_ZIP_URL}\">📦repo zip</a></li>" >> "$nav_file"
 	[ -n "$REPO_URL" ]     && echo "  <li><a href=\"${REPO_URL}\">🔗git</a></li>" >> "$nav_file"
 
-	echo "  <li>⏭️</a></li>" >> "$nav_file"
+	echo "  <li>⏭️</li>" >> "$nav_file"
 
+	# Root .md pages
 	for md in *.md; do
 		[ -f "$md" ] || continue
 		[ "$md" = "README.md" ] && continue
@@ -219,12 +235,20 @@ _build_nav() {
 		echo "  <li><a href=\"${slug}.html\"${active}>${label}</a></li>" >> "$nav_file"
 	done
 
+	# Add static links to Distros and All pages
+	local distros_active all_active
+	[ "$current" = "distros" ] && distros_active=' class="active"'
+	[ "$current" = "all" ] && all_active=' class="active"'
+	echo "  <li><a href=\"distros.html\"${distros_active}>Distros</a></li>" >> "$nav_file"
+	echo "  <li><a href=\"all.html\"${all_active}>All</a></li>" >> "$nav_file"
+
 	echo '</ul></nav>' >> "$nav_file"
 }
 
 _build_goatcounter_snippet() {
 	local url="$1"
-	local file="docs/_goatcounter.html"
+	url=$(echo "$url" | rev | cut -d'/' -f1 | rev)
+	local file="${OUT_DIR}/_goatcounter.html"
 	cat > "$file" <<EOF
 <script data-goatcounter="https://${url}/count"
         async src="//gc.zgo.at/count.js"></script>
@@ -234,7 +258,7 @@ EOF
 
 _build_giscus_snippet() {
 	local repo="$1" repo_id="$2" category="$3" category_id="$4"
-	local file="docs/_giscus.html"
+	local file="${OUT_DIR}/_giscus.html"
 	cat > "$file" <<EOF
 <script src="https://giscus.app/client.js"
         data-repo="${repo}"
@@ -254,6 +278,53 @@ EOF
 	echo "$file"
 }
 
+# Recursively build all .md files in a subdir
+_build_subdir() {
+	local subdir="$1"
+	local title="$2"
+	shift 2
+	local extra_after=("$@")
+
+	local out_dir="${OUT_DIR}/${subdir}"
+	mkdir -p "$out_dir"
+
+	# Copy src assets into subdir output
+	cp ${SRC_DIR}/style.css "$out_dir/" 2>/dev/null
+
+	for md in "${subdir}"/*.md; do
+		[ -f "$md" ] || continue
+
+		local file slug output meta_title nav_file
+		file="${md##*/}"
+		slug="${file%.md}"
+		output="${out_dir}/${slug}.html"
+		meta_title="${slug//_/ }"
+		nav_file="${out_dir}/_nav_${slug}.html"
+
+		_build_subnav "$slug" "$subdir" "$nav_file"
+
+		printf "${YELLOW}%-12s${NC} %s\n" "processing:" "$md → $output"
+		pandoc "$md" -f gfm -s \
+			--css=style.css \
+			--toc \
+			--toc-depth=3 \
+			--include-before-body=${SRC_DIR}/toggle.html \
+			--include-before-body=${SRC_DIR}/toc.html \
+			--include-before-body="$nav_file" \
+			--include-after-body=${SRC_DIR}/svg-color.html \
+			"${extra_after[@]}" \
+			--metadata title="$meta_title" \
+			-o "$output"
+		rm -f "$nav_file"
+	done
+
+	# Recurse into nested subdirs
+	for d in "${subdir}"/*/; do
+		[ -d "$d" ] || continue
+		_build_subdir "${d%/}" "$title" "${extra_after[@]}"
+	done
+}
+
 # ---------------------------------------------------------------------------
 # Argument definitions
 # format: "short|long|value|description|action"
@@ -269,6 +340,7 @@ ARGS=(
 	"i|giscus-repo-id|<id>|Giscus repo ID|giscus_repo_id"
 	"c|giscus-category|<n>|Giscus category name|giscus_category"
 	"C|giscus-cat-id|<id>|Giscus category ID|giscus_category_id"
+	"d|subdir|<dir>|Add subdir to build|subdir_arg"
 )
 
 _build_optstring() {
@@ -284,6 +356,614 @@ _build_optstring() {
 }
 
 # ---------------------------------------------------------------------------
+# Distro card generators
+# ---------------------------------------------------------------------------
+
+_icon_color() {
+	local name="$1"
+	local -a colors=('#E95420' '#3C3B37' '#A80030' '#41B549' '#87CF3E' '#2F2F2F' '#178CDA' '#1d6fa4')
+	local code
+	printf -v code '%d' "'${name:0:1}" 2>/dev/null || code=63
+	echo "${colors[$((code % 8))]}"
+}
+
+_icon_html() {
+	local osname="$1" pretty="$2" icon_hint="$3"
+	local color initial src
+	color=$(_icon_color "$pretty")
+	initial="${pretty:0:1}"
+	initial="${initial^^}"
+	src=""
+	local icon_base="${icon_hint%.*}"
+	# Priority: icon_hint (from ${PUBLIC_DIR}/, strip ext first) → osname → fallback
+	if [ -n "$icon_base" ] && [ -f "icons/${icon_base}.svg" ]; then src="icons/${icon_base}.svg"
+	elif [ -n "$icon_base" ] && [ -f "icons/${icon_base}.png" ]; then src="icons/${icon_base}.png"
+	elif [ -f "icons/${osname}.svg" ]; then src="icons/${osname}.svg"
+	elif [ -f "icons/${osname}.png" ]; then src="icons/${osname}.png"
+	fi
+	if [ -n "$src" ]; then
+		printf '<img src="%s" alt="%s" class="distro-icon-large" width="128" height="128" loading="lazy" onerror="this.style.display='"'"'none'"'"';this.nextElementSibling.style.display='"'"'flex'"'"'"><div class="distro-icon-fallback-large" style="width:128px;height:128px;background:%s;display:none">%s</div>' \
+			"$src" "$pretty" "$color" "$initial"
+	else
+		printf '<div class="distro-icon-fallback-large" style="width:128px;height:128px;background:%s">%s</div>' \
+			"$color" "$initial"
+	fi
+}
+
+_card_html() {
+	local osname="$1" pretty="$2" basedof="$3" description="$4"
+	local homepage="$5" categories="$6" supported="$7" icon_hint="${8}"
+	local meta_html=""
+	local osname_safe
+	osname_safe="${osname//\'/\\\'}"
+
+	if [ "$supported" = "true" ]; then
+		meta_html+='<span class="supported-badge">supported</span>'
+	fi
+	# Show first two DistroWatch category tags
+	if [ -n "$categories" ]; then
+		local IFS_old=$IFS
+		IFS=','
+		local c i=0
+		for c in $categories; do
+			c="${c# }"
+			c="${c% }"
+			[ -z "$c" ] && continue
+			[ "$c" = "other" ] && continue
+			meta_html+="<span class=\"category-badge\">${c}</span>"
+			(( i++ )); [ "$i" -ge 2 ] && break
+		done
+		IFS=$IFS_old
+	fi
+	local basedof_html=""
+	if [ -n "$basedof" ] && [ "$basedof" != "-" ]; then
+		local basedof_links="" basedof_word
+		for basedof_word in $basedof; do
+			[ -n "$basedof_links" ] && basedof_links+=" "
+			basedof_links+="<a href=\"#\" onclick=\"setSearch('${basedof_word}');return false;\">${basedof_word}</a>"
+		done
+		basedof_html=" <span class=\"basedof-inline\">Based on: ${basedof_links}</span>"
+	fi
+
+	local meta_row=""
+	[ -n "$meta_html" ] && meta_row="<div class=\"distro-meta\">${meta_html}</div>"
+
+	local inline_icon="" icon_hint_base="${icon_hint%.*}"
+	if [ -n "$icon_hint_base" ] && [ -f "icons/${icon_hint_base}.svg" ]; then
+		inline_icon="<img src=\"icons/${icon_hint_base}.svg\" alt=\"\" class=\"card-title-icon\" aria-hidden=\"true\" loading=\"lazy\">"
+	elif [ -n "$icon_hint_base" ] && [ -f "icons/${icon_hint_base}.png" ]; then
+		inline_icon="<img src=\"icons/${icon_hint_base}.png\" alt=\"\" class=\"card-title-icon\" aria-hidden=\"true\" loading=\"lazy\">"
+	elif [ -f "icons/${osname}.svg" ]; then
+		inline_icon="<img src=\"icons/${osname}.svg\" alt=\"\" class=\"card-title-icon\" aria-hidden=\"true\" loading=\"lazy\">"
+	elif [ -f "icons/${osname}.png" ]; then
+		inline_icon="<img src=\"icons/${osname}.png\" alt=\"\" class=\"card-title-icon\" aria-hidden=\"true\" loading=\"lazy\">"
+	fi
+
+	cat <<EOF
+<div class="distro-card" data-categories="${categories}" data-supported="${supported}" data-osname="${osname}" data-basedof="${basedof}" data-pretty="${pretty,,}">
+  <div class="distro-card-icon-area">
+    $(_icon_html "$osname" "$pretty" "$icon_hint")
+  </div>
+  <div class="distro-card-body">
+    <h3>${inline_icon}<a href="${homepage}" target="_blank" rel="noopener">${pretty}</a>${basedof_html}</h3>
+    <hr class="distro-divider">
+    ${meta_row}
+    <p class="distro-description">${description}</p>
+    <div class="distro-actions">
+      <button class="download-btn" onclick="showDownloads('${osname_safe}')"><img src="icons/floppy.svg" alt="Download"> Direct Download</button>
+    </div>
+  </div>
+</div>
+EOF
+}
+
+_generate_distro_cards() {
+	local supported="true"
+
+	for pub_file in ${PUBLIC_DIR}/*; do
+		[ -f "$pub_file" ] || continue
+
+		local OSNAME="" PRETTY="" ICON="" CATEGORY="" BASEDOF="" DESCRIPTION="" HOMEPAGE=""
+		# shellcheck disable=SC1090
+		eval "$(grep -E '^(OSNAME|PRETTY|ICON|CATEGORY|BASEDOF|DESCRIPTION|HOMEPAGE)=' "$pub_file" | head -7)"
+
+		[ -z "$OSNAME" ] && continue
+
+		# Prefer DW_CATEGORY from TODO/distrowatch/ for consistent categories
+		local categories="$CATEGORY"
+		local DW_CATEGORY=""
+		if [ -f "TODO/distrowatch/${OSNAME}" ]; then
+			eval "$(grep '^DW_CATEGORY=' "TODO/distrowatch/${OSNAME}")"
+		fi
+		if [ -z "$DW_CATEGORY" ] && [ -n "$PRETTY" ]; then
+			local _dw_match
+			_dw_match=$(grep -rl "^PRETTY=\"${PRETTY}\"" TODO/distrowatch/ 2>/dev/null | head -1)
+			[ -n "$_dw_match" ] && eval "$(grep '^DW_CATEGORY=' "$_dw_match")"
+		fi
+		[ -n "$DW_CATEGORY" ] && categories="$DW_CATEGORY"
+
+		_card_html "$OSNAME" "$PRETTY" "$BASEDOF" "$DESCRIPTION" "$HOMEPAGE" "$categories" "$supported" "$ICON"
+	done
+}
+
+_generate_distro_data_js() {
+	echo 'window._distroData = {'
+	local first=1
+	for pub_file in ${PUBLIC_DIR}/*; do
+		[ -f "$pub_file" ] || continue
+		local OSNAME="" PRETTY="" ICON="" CATEGORY="" BASEDOF="" HOMEPAGE="" RELEASES="" EDITIONS="" ARCHITECTURES=""
+		eval "$(grep -E '^(OSNAME|PRETTY|ICON|CATEGORY|BASEDOF|HOMEPAGE|RELEASES|EDITIONS|ARCHITECTURES)=' "$pub_file" | head -11)"
+		[ -z "$OSNAME" ] && continue
+		local hp_esc releases_esc basedof_esc editions_esc archs_esc
+		hp_esc="${HOMEPAGE//\"/\\\"}"
+		releases_esc="${RELEASES//\"/\\\"}"
+		basedof_esc="${BASEDOF//\"/\\\"}"
+		editions_esc="${EDITIONS//\"/\\\"}"
+		archs_esc="${ARCHITECTURES//\"/\\\"}"
+
+		# Build URLs map from TODO/all (populated by ./action --all)
+		local tmp_entries=""
+
+		while IFS= read -r line; do
+			if [[ "$line" =~ ^"${OSNAME} "([^:]+):[[:space:]]+(https?://[^[:space:]]+) ]]; then
+				local key url
+				key="${BASH_REMATCH[1]%% }"
+				url="${BASH_REMATCH[2]}"
+				key="${key//\"/\\\"}"
+				url="${url//\"/\\\"}"
+				[ -n "$tmp_entries" ] && tmp_entries+=","
+				tmp_entries+="\"${key}\":\"${url}\""
+			fi
+		done < <(grep "^${OSNAME} " TODO/all 2>/dev/null)
+
+		local urls_js=""
+		[ -n "$tmp_entries" ] && urls_js=",\"urls\":{${tmp_entries}}"
+
+		[ "$first" = "0" ] && echo ','
+		first=0
+		printf '  "%s": {"homepage":"%s","releases":"%s","editions":"%s","basedof":"%s","architectures":"%s"%s}' \
+			"$OSNAME" "$hp_esc" "$releases_esc" "${editions_esc:-}" "$basedof_esc" "$archs_esc" "$urls_js"
+	done
+	echo ''
+	echo '};'
+
+	# _dwData: DW metadata for ALL distros that have a TODO/distrowatch/ file
+	echo 'window._dwData = {'
+	first=1
+	for dw_file in TODO/distrowatch/*; do
+		[ -f "$dw_file" ] || continue
+		local OSNAME="" PRETTY="" BASEDOF="" HOMEPAGE="" DESCRIPTION=""
+		local DW_ARCHITECTURE="" DW_DESKTOP="" DW_CATEGORY="" DW_URL=""
+		eval "$(grep -E '^(OSNAME|PRETTY|BASEDOF|HOMEPAGE|DESCRIPTION|DW_ARCHITECTURE|DW_DESKTOP|DW_CATEGORY|DW_URL)=' "$dw_file")"
+		[ -z "$OSNAME" ] && continue
+		local hp_esc basedof_esc desc_esc arch_esc desktop_esc cat_esc url_esc
+		hp_esc="${HOMEPAGE//\"/\\\"}"
+		basedof_esc="${BASEDOF//\"/\\\"}"
+		desc_esc="${DESCRIPTION//\"/\\\"}"
+		arch_esc="${DW_ARCHITECTURE//\"/\\\"}"
+		desktop_esc="${DW_DESKTOP//\"/\\\"}"
+		cat_esc="${DW_CATEGORY//\"/\\\"}"
+		url_esc="${DW_URL:-"https://distrowatch.com/${OSNAME}"}"
+		url_esc="${url_esc//\"/\\\"}"
+		[ "$first" = "0" ] && echo ','
+		first=0
+		printf '  "%s": {"pretty":"%s","homepage":"%s","basedof":"%s","description":"%s","dw_arch":"%s","dw_desktop":"%s","dw_category":"%s","dw_url":"%s"}' \
+			"$OSNAME" "${PRETTY//\"/\\\"}" "$hp_esc" "$basedof_esc" "$desc_esc" \
+			"$arch_esc" "$desktop_esc" "$cat_esc" "$url_esc"
+	done
+	echo ''
+	echo '};'
+}
+
+_generate_distros_data_js_file() {
+	local out="${OUT_DIR}/distros-data.js"
+	echo 'window.distrosData = [' > "$out"
+	local first=1
+
+	# Unsupported distros — from TODO/distrowatch/ (skip those already in ${PUBLIC_DIR}/)
+	for dw_file in TODO/distrowatch/*; do
+		[ -f "$dw_file" ] || continue
+		local OSNAME="" PRETTY="" BASEDOF="" HOMEPAGE="" DESCRIPTION=""
+		local DW_ARCHITECTURE="" DW_DESKTOP="" DW_CATEGORY="" DW_URL=""
+		# shellcheck disable=SC1090
+		eval "$(grep -E '^(OSNAME|PRETTY|BASEDOF|HOMEPAGE|DESCRIPTION|DW_ARCHITECTURE|DW_DESKTOP|DW_CATEGORY|DW_URL)=' "$dw_file")"
+		[ -z "$OSNAME" ] && continue
+		[ -f "${PUBLIC_DIR}/${OSNAME}" ] && continue  # skip supported
+
+		[ "$first" = "0" ] && echo ',' >> "$out"
+		first=0
+
+		local hp_esc basedof_esc desc_esc cat_esc arch_esc desktop_esc url_esc
+		hp_esc="${HOMEPAGE//\"/\\\"}"
+		basedof_esc="${BASEDOF//\"/\\\"}"
+		desc_esc="${DESCRIPTION//\"/\\\"}"
+		cat_esc="${DW_CATEGORY//\"/\\\"}"
+		arch_esc="${DW_ARCHITECTURE//\"/\\\"}"
+		desktop_esc="${DW_DESKTOP//\"/\\\"}"
+		url_esc="${DW_URL:-"https://distrowatch.com/${OSNAME}"}"
+		url_esc="${url_esc//\"/\\\"}"
+
+		printf '  {"id":"%s","name":"%s","basedof":"%s","description":"%s","homepage":"%s","dw_category":"%s","dw_arch":"%s","dw_desktop":"%s","dw_url":"%s"}' \
+			"$OSNAME" "${PRETTY//\"/\\\"}" "$basedof_esc" "$desc_esc" "$hp_esc" \
+			"$cat_esc" "$arch_esc" "$desktop_esc" "$url_esc" >> "$out"
+	done
+
+	echo '' >> "$out"
+	echo '];' >> "$out"
+	printf "${GREEN}%-12s${NC} %s\n" "generated:" "$out"
+}
+
+_generate_distros_page() {
+	local type="$1"
+	local title h1 desc support_filter_html
+	if [ "$type" = "distros" ]; then
+		title="Distros — DistroHopper"
+		h1="Supported Distributions"
+		desc="All distributions directly supported by DistroHopper."
+		support_filter_html=''
+	else
+		title="All Distributions — DistroHopper"
+		h1="All Distributions"
+		desc='All distributions available in DistroHopper. Supported ones <span class="supported-badge">supported</span> show version &amp; edition details.'
+		support_filter_html='
+        <button class="filter-btn" data-filter-support="supported">Supported</button>
+        <button class="filter-btn" data-filter-support="unsupported">Unsupported</button>'
+	fi
+
+	local nav_file="${OUT_DIR}/_nav_${type}.html"
+	_build_nav "$type" "$nav_file"
+	local nav_html
+	nav_html=$(cat "$nav_file")
+	rm -f "$nav_file"
+
+	local toggle_html svg_color_html particles_init_html floppy_inline
+	toggle_html=$(cat ${SRC_DIR}/toggle.html)
+	svg_color_html=$(cat ${SRC_DIR}/svg-color.html)
+	particles_init_html=$(cat ${SRC_DIR}/particles-config.html)
+	floppy_inline=$(sed 's/ width="[0-9]*"//; s/ height="[0-9]*"//' icons/floppy.svg | tr -d '\n' | tr -s ' ')
+
+	local data_js
+	data_js=$(_generate_distro_data_js)
+
+	local cards
+	cards=$(_generate_distro_cards "$type")
+
+	local unsupported_section=""
+	if [ "$type" = "all" ]; then
+		unsupported_section='<script src="distros-data.js"></script>
+<script>
+(function(){
+  if (!window.distrosData) return;
+  var grid = document.getElementById("distroGrid");
+  var colors = ["#E95420","#3C3B37","#A80030","#41B549","#87CF3E","#2F2F2F","#178CDA","#1d6fa4"];
+  window.distrosData.forEach(function(d) {
+    if (window._distroData && window._distroData[d.id||d.name]) return;
+    var nm = d.name || "?";
+    var oid = d.id || nm;
+    var bg = colors[nm.charCodeAt(0) % 8];
+    var dwIcon = "https://distrowatch.com/images/yvzhuwbpy/"+oid+".png";
+    var cats = d.dw_category || "";
+    var catBadges = "";
+    cats.split(",").slice(0,2).forEach(function(c){
+      c = c.trim();
+      if (c) catBadges += "<span class=\"category-badge\">"+c+"</span>";
+    });
+    var card = document.createElement("div");
+    card.className = "distro-card";
+    card.dataset.categories = cats;
+    card.dataset.supported = "false";
+    card.dataset.osname = oid;
+    card.dataset.basedof = d.basedof || "";
+    card.innerHTML =
+      "<div class=\"distro-card-icon-area\">"
+      + "<img src=\"icons/"+oid+".svg\" alt=\""+nm+"\" class=\"distro-icon-large\" width=\"128\" height=\"128\" loading=\"lazy\""
+      + " onerror=\"this.src='icons/"+oid+".png';this.onerror=function(){this.src='"+dwIcon+"';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='flex'}}\">"
+      + "<div class=\"distro-icon-fallback-large\" style=\"width:128px;height:128px;background:"+bg+";display:none\">"+nm.charAt(0).toUpperCase()+"</div>"
+      + "</div>"
+      + "<div class=\"distro-card-body\">"
+      + "<h3>"+(d.homepage?"<a href=\""+d.homepage+"\" target=\"_blank\" rel=\"noopener\">"+nm+"</a>":nm)+"</h3>"
+      + "<hr class=\"distro-divider\">"
+      + "<div class=\"distro-meta\">"+catBadges+"</div>"
+      + "<p class=\"distro-description\">"+(d.description||"")+"</p>"
+      + "<div class=\"distro-actions\">"
+      + "<button class=\"download-btn\" onclick=\"showDownloads(\x27"+oid+"\x27)\">&#x2139; Info</button>"
+      + "</div>"
+      + "</div>";
+    grid.appendChild(card);
+  });
+  _buildCategoryFilters();
+  if (typeof filterDistros === "function") filterDistros();
+})();
+</script>'
+	fi
+
+	cat > "${OUT_DIR}/${type}.html" <<HTML
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${title}</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="particles-js" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none"></div>
+<div style="position:relative;z-index:1">
+${toggle_html}
+${nav_html}
+<main class="container distros-container">
+  <div class="page-header">
+    <h1>${h1}</h1>
+    <p>${desc}</p>
+  </div>
+  <div class="distros-filters">
+    <input type="text" id="distroSearch" class="distros-search" placeholder="Search distributions...">
+    <div class="filter-buttons">
+      <button class="filter-btn active" data-filter-support="all">All</button>
+      ${support_filter_html}
+    </div>
+    <div class="filter-buttons filter-buttons-categories" id="catFilters"></div>
+  </div>
+  <div class="distros-grid" id="distroGrid">
+${cards}
+  </div>
+</main>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-content">
+    <button class="modal-close" onclick="closeModal()" style="float:right;margin:-0.5rem -0.5rem 0 0">&times;</button>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+${data_js}
+
+function _dwInfoHtml(dw) {
+  if (!dw) return '';
+  var rows = '';
+  if (dw.dw_desktop)  rows += '<tr><th>Desktop</th><td>'+dw.dw_desktop+'</td></tr>';
+  if (dw.dw_arch)     rows += '<tr><th>Architecture</th><td>'+dw.dw_arch+'</td></tr>';
+  if (dw.dw_category) rows += '<tr><th>Category</th><td>'+dw.dw_category+'</td></tr>';
+  if (dw.basedof && dw.basedof !== '-') rows += '<tr><th>Based on</th><td>'+dw.basedof+'</td></tr>';
+  var html = '';
+  if (rows) html += '<table class="dw-meta-table">'+rows+'</table>';
+  if (dw.description) html += '<p class="distro-description">'+dw.description+'</p>';
+  if (dw.dw_url) html += '<p class="modal-note">Source: <a href="'+dw.dw_url+'" target="_blank" rel="noopener">DistroWatch.com</a></p>';
+  return html;
+}
+
+function showDownloads(osname) {
+  var d  = window._distroData && window._distroData[osname];
+  var dw = window._dwData && window._dwData[osname];
+  var card = document.querySelector('[data-osname="'+osname+'"]');
+  var pretty = card ? card.querySelector('h3 a, h3') : null;
+  var name = pretty ? (pretty.textContent.trim()||osname) : osname;
+  if (dw && dw.pretty && name === osname) name = dw.pretty;
+
+  var colors = ['#E95420','#3C3B37','#A80030','#41B549','#87CF3E','#2F2F2F','#178CDA','#1d6fa4'];
+  var bg = colors[name.charCodeAt(0) % 8];
+
+  var svgSrc = 'icons/'+osname+'.svg';
+  var pngSrc = 'icons/'+osname+'.png';
+  var dwSrc  = 'https://distrowatch.com/images/yvzhuwbpy/'+osname+'.png';
+  var iconHtml = '<img class="modal-distro-icon" src="'+svgSrc+'" alt="'+name+'" onerror="this.src=\''+pngSrc+'\';this.onerror=function(){this.src=\''+dwSrc+'\';this.onerror=function(){this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'}}">'
+               + '<div class="modal-distro-icon-fallback" style="background:'+bg+';display:none">'+name.charAt(0).toUpperCase()+'</div>';
+
+  var hp = (dw && dw.homepage) || (d && d.homepage) || '';
+  var basedof = (dw && dw.basedof) || (d && d.basedof) || '';
+  var html = '<div class="modal-distro-header">'
+    + iconHtml
+    + '<div class="modal-distro-title"><h2>'+name+'</h2>'
+    + (basedof && basedof !== '-' ? '<div class="modal-basedof">Based on: '+basedof+'</div>' : '')
+    + (hp ? '<a href="'+hp+'" target="_blank" rel="noopener" class="modal-homepage-link">&#x1f310; '+hp+'</a>' : '')
+    + '</div></div>';
+
+  if (d) {
+    html += _dwInfoHtml(dw);
+    var rels  = d.releases      ? d.releases.trim().split(/\s+/).filter(Boolean)      : [];
+    var eds   = d.editions      ? d.editions.trim().split(/\s+/).filter(Boolean)      : [];
+    var archs = d.architectures ? d.architectures.trim().split(/\s+/).filter(Boolean) : [];
+    var urls  = d.urls || {};
+
+    function _buildMatrix(filterArch) {
+      var urlsForArch = {};
+      if (filterArch) {
+        Object.keys(urls).forEach(function(k) {
+          var parts = k.split(' ');
+          var archIdx = parts.indexOf(filterArch);
+          if (archIdx !== -1) {
+            var stripped = parts.filter(function(_,i){ return i !== archIdx; }).join(' ');
+            urlsForArch[stripped] = urls[k];
+          }
+        });
+      } else {
+        urlsForArch = urls;
+      }
+      function dlCell(key) {
+        var url = urlsForArch[key];
+        return url
+          ? '<td><a href="'+url+'" target="_blank" rel="noopener" class="dl-link" title="'+key+'">${floppy_inline}</a></td>'
+          : '<td><span class="dl-disabled">&#x2717;</span></td>';
+      }
+      var t = '';
+      if (rels.length && eds.length) {
+        t += '<div class="table-wrap"><table class="release-table"><tr><th>Version</th>';
+        eds.forEach(function(e){ t += '<th class="th-edition"><span>'+e+'</span></th>'; });
+        t += '<th class="th-spacer"></th></tr>';
+        rels.forEach(function(r){
+          t += '<tr><td>'+r+'</td>';
+          eds.forEach(function(e){ t += dlCell(r+' '+e); });
+          t += '<td class="th-spacer"></td></tr>';
+        });
+        t += '</table></div>';
+      } else if (rels.length) {
+        t += '<table class="release-table"><tr><th>Version</th><th>Download</th></tr>';
+        rels.forEach(function(r){
+          t += '<tr><td>'+r+'</td>'+dlCell(r)+'</tr>';
+        });
+        t += '</table>';
+      }
+      return t;
+    }
+
+    var archesInUrls = archs.filter(function(a){ return Object.keys(urls).some(function(k){ return k.split(' ').indexOf(a) !== -1; }); });
+
+    if (archesInUrls.length > 1) {
+      html += '<div class="filter-buttons arch-switcher">';
+      archesInUrls.forEach(function(a, i) {
+        html += '<button class="filter-btn'+(i===0?' active':'')+'" data-arch-btn="'+a+'" onclick="_switchArch(this)">'+a+'</button>';
+      });
+      html += '</div>';
+      archesInUrls.forEach(function(a, i) {
+        html += '<div data-arch-matrix="'+a+'"'+(i===0?'':' style="display:none"')+'>';
+        html += _buildMatrix(a);
+        html += '</div>';
+      });
+    } else {
+      html += _buildMatrix(archesInUrls[0] || null);
+    }
+
+    html += '<p class="modal-note">Or <a href="https://github.com/oSoWoSo/DistroHopper" target="_blank" rel="noopener">install DistroHopper</a> and quickly try any supported OS</p>';
+  } else {
+    html += _dwInfoHtml(dw);
+    if (!dw) html += '<p style="opacity:0.6;font-size:0.9rem">No data available.</p>';
+  }
+
+  document.getElementById('modalBody').innerHTML = html;
+  document.getElementById('modalOverlay').classList.add('active');
+  document.querySelectorAll('#modalBody .release-table').forEach(function(tbl) {
+    tbl.addEventListener('mouseover', function(e) {
+      var cell = e.target.closest('td,th');
+      if (!cell || cell.classList.contains('th-spacer')) return;
+      var idx = cell.cellIndex;
+      tbl.querySelectorAll('.col-hover').forEach(function(c){ c.classList.remove('col-hover'); });
+      tbl.querySelectorAll('tr').forEach(function(row){
+        var c = row.cells[idx];
+        if (c && !c.classList.contains('th-spacer')) c.classList.add('col-hover');
+      });
+    });
+    tbl.addEventListener('mouseleave', function() {
+      tbl.querySelectorAll('.col-hover').forEach(function(c){ c.classList.remove('col-hover'); });
+    });
+  });
+}
+
+function _switchArch(btn) {
+  var arch = btn.dataset.archBtn;
+  var modal = document.getElementById('modalBody');
+  modal.querySelectorAll('[data-arch-btn]').forEach(function(b) {
+    b.classList.toggle('active', b.dataset.archBtn === arch);
+  });
+  modal.querySelectorAll('[data-arch-matrix]').forEach(function(m) {
+    m.style.display = m.dataset.archMatrix === arch ? '' : 'none';
+  });
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('active');
+}
+
+document.getElementById('modalOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+function setSearch(q) {
+  var inp = document.getElementById('distroSearch');
+  if (inp) { inp.value = q; filterDistros(); }
+}
+
+// Category filter buttons — built dynamically from cards present in the DOM
+function _buildCategoryFilters() {
+  var catCount = {};
+  document.querySelectorAll('.distro-card').forEach(function(card) {
+    (card.dataset.categories || '').split(',').forEach(function(c) {
+      c = c.trim();
+      if (c) catCount[c] = (catCount[c]||0) + 1;
+    });
+  });
+  var container = document.getElementById('catFilters');
+  if (!container) return;
+  container.innerHTML = '';
+  Object.keys(catCount).sort().forEach(function(cat) {
+    var btn = document.createElement('button');
+    btn.className = 'filter-btn';
+    btn.dataset.filterCat = cat;
+    btn.textContent = cat;
+    btn.addEventListener('click', function() {
+      var active = _activeFilters.category === cat;
+      _activeFilters.category = active ? null : cat;
+      document.querySelectorAll('[data-filter-cat]').forEach(function(b) {
+        b.classList.toggle('active', b.dataset.filterCat === _activeFilters.category);
+      });
+      filterDistros();
+    });
+    container.appendChild(btn);
+  });
+}
+
+var _activeFilters = { support: null, category: null };
+function filterDistros() {
+  var q = ((document.getElementById('distroSearch')||{}).value || '').toLowerCase();
+  document.querySelectorAll('.distro-card').forEach(function(card) {
+    var text = (card.dataset.osname||'') + ' '
+      + ((card.querySelector('h3 a,h3')||{textContent:''}).textContent||'') + ' '
+      + (card.dataset.basedof||'') + ' '
+      + (card.dataset.categories||'');
+    var nameMatch = !q || text.toLowerCase().includes(q);
+    var isSupported = card.dataset.supported === 'true';
+    var supportMatch = !_activeFilters.support
+      || (_activeFilters.support === 'supported'   && isSupported)
+      || (_activeFilters.support === 'unsupported' && !isSupported);
+    var catMatch = !_activeFilters.category
+      || (card.dataset.categories || '').split(',').some(function(c) {
+           return c.trim() === _activeFilters.category;
+         });
+    card.style.display = (nameMatch && supportMatch && catMatch) ? '' : 'none';
+  });
+}
+
+document.getElementById('distroSearch').addEventListener('input', filterDistros);
+
+document.querySelectorAll('[data-filter-support]').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    var f = this.dataset.filterSupport;
+    if (f === 'all') {
+      _activeFilters.support = null;
+      _activeFilters.category = null;
+      var inp = document.getElementById('distroSearch');
+      if (inp) inp.value = '';
+      document.querySelectorAll('[data-filter-cat]').forEach(function(b) { b.classList.remove('active'); });
+      document.querySelectorAll('[data-filter-support]').forEach(function(b) {
+        b.classList.toggle('active', b.dataset.filterSupport === 'all');
+      });
+    } else {
+      _activeFilters.support = f;
+      document.querySelectorAll('[data-filter-support]').forEach(function(b) {
+        b.classList.toggle('active', b.dataset.filterSupport === f);
+      });
+    }
+    filterDistros();
+  });
+});
+
+_buildCategoryFilters();
+</script>
+
+${unsupported_section}
+
+${svg_color_html}
+<script src="particles.min.js"></script>
+${particles_init_html}
+</body>
+</html>
+HTML
+
+	printf "${GREEN}%-12s${NC} %s\n" "generated:" "${OUT_DIR}/${type}.html"
+}
+
+# ---------------------------------------------------------------------------
 # Targets
 # ---------------------------------------------------------------------------
 
@@ -294,21 +974,25 @@ target_build() { ## Builds the website
 	local giscus_repo_id="$4"
 	local giscus_category="$5"
 	local giscus_category_id="$6"
-	local count
+	local subdir_arg="$7"
+	local count cname
 
-	_g "Creating: $title"
-	count=$(find ./ -name '*.md' | wc -l)
+	count=$(find ./ -maxdepth 1 -name '*.md' | wc -l)
 	_detect_repo
 
 	if [ -z "$title" ]; then
 		_r "No website title provided — using generated one!"
 		title=$(basename "$(pwd)" | sed 's/_/ /g')
 	fi
+	_g "Creating: $title"
 
-	[ -f docs/CNAME ] && cp docs/CNAME src/
-	rm -rf docs && mkdir -p docs
-	cp -r src/* docs/
-	rm -f docs/toggle.html docs/toc.html docs/svg-color.html
+	[ -f ${OUT_DIR}/CNAME ] && cp ${OUT_DIR}/CNAME ${SRC_DIR}/
+	rm -rf "${OUT_DIR}" && mkdir -p "${OUT_DIR}"
+	cp -r ${SRC_DIR}/* ${OUT_DIR}/
+	rm -f ${OUT_DIR}/toggle.html ${OUT_DIR}/toc.html ${OUT_DIR}/svg-color.html
+
+	cname=$(cat ${OUT_DIR}/CNAME 2>/dev/null)
+	[ -n "$cname" ] && printf "%-12s ${GREEN}%s${NC}\n" "CNAME:" "$cname"
 
 	local extra_after=()
 	if [ -n "$goatcounter_url" ]; then
@@ -321,23 +1005,26 @@ target_build() { ## Builds the website
 			"$giscus_repo" "$giscus_repo_id" "$giscus_category" "$giscus_category_id")")
 	fi
 
+	# Build root pages
 	if [ "$count" = 1 ]; then
 		for file in *.md; do
 			[ -f "$file" ] || continue
-			local nav_file="docs/_nav.html"
+			local nav_file="${OUT_DIR}/_nav.html"
 			_build_nav "index" "$nav_file"
 			printf "${YELLOW}%-12s${NC} %s\n" "processing:" "$file → index.html"
 			pandoc "$file" -f gfm -s \
 				--css=style.css \
 				--toc \
 				--toc-depth=3 \
-				--include-before-body=src/toggle.html \
-				--include-before-body=src/toc.html \
+				--include-before-body=${SRC_DIR}/particles-loader.html \
+				--include-before-body=${SRC_DIR}/toggle.html \
+				--include-before-body=${SRC_DIR}/toc.html \
 				--include-before-body="$nav_file" \
-				--include-after-body=src/svg-color.html \
+				--include-after-body=${SRC_DIR}/svg-color.html \
+				--include-after-body=${SRC_DIR}/particles-config.html \
 				"${extra_after[@]}" \
 				--metadata title="$title" \
-				-o docs/index.html
+				-o ${OUT_DIR}/index.html
 			rm -f "$nav_file"
 		done
 
@@ -347,17 +1034,17 @@ target_build() { ## Builds the website
 
 			local output meta_title current
 			if [ "$file" = "README.md" ]; then
-				output="docs/index.html"
+				output="${OUT_DIR}/index.html"
 				meta_title="$title"
 				current="index"
 			else
-				output="docs/${file%.md}.html"
+				output="${OUT_DIR}/${file%.md}.html"
 				meta_title="${file%.md}"
 				meta_title="${meta_title//_/ }"
 				current="${file%.md}"
 			fi
 
-			local nav_file="docs/_nav_${current}.html"
+			local nav_file="${OUT_DIR}/_nav_${current}.html"
 			_build_nav "$current" "$nav_file"
 
 			printf "${YELLOW}%-12s${NC} %s\n" "processing:" "$file → $output"
@@ -365,10 +1052,12 @@ target_build() { ## Builds the website
 				--css=style.css \
 				--toc \
 				--toc-depth=3 \
-				--include-before-body=src/toggle.html \
-				--include-before-body=src/toc.html \
+				--include-before-body=${SRC_DIR}/particles-loader.html \
+				--include-before-body=${SRC_DIR}/toggle.html \
+				--include-before-body=${SRC_DIR}/toc.html \
 				--include-before-body="$nav_file" \
-				--include-after-body=src/svg-color.html \
+				--include-after-body=${SRC_DIR}/svg-color.html \
+				--include-after-body=${SRC_DIR}/particles-config.html \
 				"${extra_after[@]}" \
 				--metadata title="$meta_title" \
 				-o "$output"
@@ -378,14 +1067,33 @@ target_build() { ## Builds the website
 		_re "ERROR: No .md files found!"
 	fi
 
-	rm -f docs/_goatcounter.html docs/_giscus.html
+	# Build subdirs — from .env SUBDIRS array + --subdir argument
+	local all_subdirs=("${SUBDIRS[@]:-}")
+	[ -n "$subdir_arg" ] && all_subdirs+=("$subdir_arg")
+
+	for subdir in "${all_subdirs[@]:-}"; do
+		[ -d "$subdir" ] || { _y "Subdir not found: $subdir"; continue; }
+		_g "Building subdir: $subdir"
+		_build_subdir "$subdir" "$title" "${extra_after[@]}"
+	done
+
+	# Copy icons
+	cp -r icons ${OUT_DIR}/
+
+	# Generate distros-data.js from ${PUBLIC_DIR}/
+	_generate_distros_data_js_file
+
+	# Generate distros pages
+	_generate_distros_page distros
+	_generate_distros_page all
+
+	rm -f ${OUT_DIR}/_goatcounter.html ${OUT_DIR}/_giscus.html
 }
 
 errorMessage='ERROR: No functions found!
 Create a target function with the format:
 target_name() { ## Description here'
 
-# Target: help
 target_help() { ## Show this help message
 	_b "Website Build System
               v$BUILD_VERSION
@@ -409,27 +1117,29 @@ target_help() { ## Show this help message
 	echo -e "\nScript will use .env file if found\n"
 }
 
-target_serve() { ## Serve site locally out of docs folder
+target_serve() { ## Serve site locally out of website folder
 	local title="$1"
 	local goatcounter_url="$2"
 	local giscus_repo="$3"
 	local giscus_repo_id="$4"
 	local giscus_category="$5"
 	local giscus_category_id="$6"
+	local subdir_arg="$7"
 
-	if [ ! -f docs/index.html ]; then
+	if [ ! -f ${OUT_DIR}/index.html ]; then
 		_r "Site not built!"
 		if _confirm 'Build first?'; then
 			target_build "$title" "$goatcounter_url" \
 				"$giscus_repo" "$giscus_repo_id" \
-				"$giscus_category" "$giscus_category_id"
+				"$giscus_category" "$giscus_category_id" \
+				"$subdir_arg"
 		else
 			_re "Exiting"
 		fi
 	fi
 
 	_g 'Press Ctrl+C to stop'
-	python3 -m http.server -d docs 8000
+	python3 -m http.server -d "${OUT_DIR}" 8000
 }
 
 # ---------------------------------------------------------------------------
@@ -466,6 +1176,7 @@ main() {
 	local giscus_repo_id="${GISCUS_REPO_ID:-}"
 	local giscus_category="${GISCUS_CATEGORY:-}"
 	local giscus_category_id="${GISCUS_CATEGORY_ID:-}"
+	local subdir_arg=""
 
 	while getopts "$(_build_optstring)" opt; do
 		for entry in "${ARGS[@]}"; do
@@ -485,25 +1196,24 @@ main() {
 	done
 	shift $((OPTIND - 1))
 
-	# Positional argument as target (backwards compatibility: ./web-create -b)
+	# Positional argument as target (backwards compatibility: ./web-create build)
 	if [[ "$target" == "help" && -n "${1:-}" ]]; then
 		target="${1}"
 		shift
 	fi
 
 	local func_name="target_${target//-/_}"
-	#shellcheck disable=SC2016,2086
-	declare -f "$func_name" > /dev/null || _re 'Unknown target: $target. Run '$0 --help' for available targets.'
+	declare -f "$func_name" > /dev/null || _re "Unknown target: $target. Run $0 --help for available targets."
 
 	case "$target" in
 		build|serve)
 			"$func_name" "${title:-}" "$goatcounter_url" \
 				"$giscus_repo" "$giscus_repo_id" \
-				"$giscus_category" "$giscus_category_id" ;;
+				"$giscus_category" "$giscus_category_id" \
+				"$subdir_arg" ;;
 		*)
 			"$func_name" "$@" ;;
 	esac
 }
 
 main "$@"
-
