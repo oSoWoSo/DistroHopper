@@ -1,6 +1,8 @@
 # Template file for 'cachyos'
 OSNAME="cachyos"
 PRETTY="CachyOS"
+ICON="cachy.svg"
+CATEGORY="advanced"
 BASEDOF="Arch"
 DESCRIPTION="Designed to deliver lightning-fast speeds and stability, ensuring a smooth and enjoyable computing experience every time you use it"
 HOMEPAGE="https://cachyos.org"
@@ -9,12 +11,14 @@ CREDENTIALS="-"
 
 RELEASES="latest"
 EDITIONS="handheld desktop"
+ARCHITECTURES="amd64"
+
+
 
 function get_() {
     local HASH=""
     local URL=""
-    URL="$(web_pipe "https://cachyos.org/download/" | tr '&' '
-' | grep "ISO/${EDITION}" | grep -v 'iso.sha' | grep -v 'iso.sig' | cut -d';' -f2)"
+    URL="$(web_pipe "https://cachyos.org/download/" | tr '&' '\n' | grep "ISO/${EDITION}" | grep -v 'iso.sha' | grep -v 'iso.sig' | cut -d';' -f2)"
     HASH=$(web_pipe "${URL}.sha256" | cut -d' ' -f1)
     echo "${URL} ${HASH}"
 }

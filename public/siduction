@@ -1,6 +1,8 @@
 # Template file for 'siduction'
 OSNAME="siduction"
 PRETTY="siduction"
+ICON="siduction.svg"
+CATEGORY="advanced"
 BASEDOF="Debian"
 DESCRIPTION="Operating system based on the Linux kernel and the GNU project. In addition, there are applications and libraries from Debian"
 HOMEPAGE="https://siduction.org"
@@ -9,19 +11,21 @@ CREDENTIALS="-"
 
 RELEASES="latest"
 EDITIONS="xorg xfce nox lxqt kde"
+ARCHITECTURES="amd64"
+
+
 
 function get_() {
+    local RELEASE="Shine_on"
     local HASH=""
     local DATE=""
     local ISO=""
-    local NAME=""
     local URL=""
-    NAME=$(web_pipe "https://mirror.math.princeton.edu/pub/siduction/iso/" | grep folder | cut -d'"' -f8 | tr -d '/')
-    URL="https://mirrors.dotsrc.org/siduction/iso/${NAME}/${EDITION}"
+    URL="https://mirror.math.princeton.edu/pub/siduction/iso/${RELEASE}/${EDITION}"
     DATE=$(web_pipe "${URL}"| grep .iso.md5 | cut -d'-' -f6 | cut -d'.' -f1)
     HASH=$(web_pipe "${URL}/${ISO}.md5" | cut -d' ' -f1)
     VERSION=$(web_pipe "${URL}"| grep .iso.md5 | cut -d'-' -f2)
-    ISO="siduction-${VERSION}-${NAME}-${EDITION}-amd64-${DATE}.iso"
+    ISO="siduction-${VERSION}-${RELEASE}-${EDITION}-amd64-${DATE}.iso"
     echo "${URL}/${ISO} ${HASH}"
 }
 

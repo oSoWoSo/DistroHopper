@@ -1,6 +1,8 @@
 # Template file for 'vxlinux'
 OSNAME="vxlinux"
 PRETTY="VX Linux"
+ICON="vxlinux.svg"
+CATEGORY="advanced"
 BASEDOF="Void"
 DESCRIPTION="Pre-configured, secure systemd-free Plasma desktop with focus on convenience, performance and simplicity. Based on the excellent Void Linux"
 HOMEPAGE="https://vxlinux.org"
@@ -8,6 +10,9 @@ CREDENTIALS="-"
 
 
 RELEASES="4.2"
+
+ARCHITECTURES="amd64"
+
 
 
 function get_() {

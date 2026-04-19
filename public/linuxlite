@@ -1,6 +1,8 @@
 # Template file for 'linuxlite'
 OSNAME="linuxlite"
 PRETTY="Linux Lite"
+ICON="lite.svg"
+CATEGORY="beginner"
 BASEDOF="Debian Ubuntu"
 DESCRIPTION="Your first simple, fast and free stop in the world of Linux"
 HOMEPAGE="https://www.linuxliteos.com"
@@ -8,6 +10,9 @@ CREDENTIALS="-"
 
 
 RELEASES="6.6 6.4 6.2 6.0"
+
+ARCHITECTURES="amd64"
+
 
 
 function get_() {

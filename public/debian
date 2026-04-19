@@ -1,27 +1,45 @@
 # Template file for 'debian'
 OSNAME="debian"
 PRETTY="Debian"
+ICON="debian.svg"
+CATEGORY="beginner"
 BASEDOF="-"
 DESCRIPTION="Complete Free Operating System with perfect level of ease of use and stability"
 HOMEPAGE="https://www.debian.org"
 CREDENTIALS="-"
 
 
-RELEASES="12.11.0 11.11.0 10.13.0"
+RELEASES="13.4.0 12.13.0 11.11.0"
 EDITIONS="xfce standard netinst mate lxqt lxde kde gnome cinnamon"
+ARCHITECTURES="amd64"
+
+
+function arch_() {
+    echo "amd64"
+}
 
 function get_() {
     local DEBCURRENT=""
     local HASH=""
-    local ISO="debian-live-${RELEASE}-amd64-${EDITION}.iso"
-    local URL="https://cdimage.debian.org/cdimage/archive/${RELEASE}-live/amd64/iso-hybrid"
+    local ISO="debian-live-${RELEASE}-${ARCH:-amd64}-${EDITION}.iso"
+    local URL="https://cdimage.debian.org/cdimage/archive/${RELEASE}-live/${ARCH:-amd64}/iso-hybrid"
     DEBCURRENT=$(web_pipe "https://cdimage.debian.org/debian-cd/" | grep '\.[0-9]/' | cut -d'>' -f 9 | cut -d'/' -f 1)
-    case "${RELEASE}" in
-        "${DEBCURRENT}") URL="https://cdimage.debian.org/debian-cd/${RELEASE}-live/amd64/iso-hybrid";;
+    
+    case "${ARCH}" in
+        arm64)
+            URL="https://cdimage.debian.org/cdimage/archive/${RELEASE}-live/arm64/iso-dvd"
+            ;;
+        *)
+            case "${RELEASE}" in
+                "${DEBCURRENT}") URL="https://cdimage.debian.org/debian-cd/${RELEASE}-live/amd64/iso-hybrid";;
+            esac
+            ;;
     esac
+    
     if [ "${EDITION}" == "netinst" ]; then
         URL="${URL/-live/}"
         URL="${URL/hybrid/cd}"
+        URL="${URL/iso-dvd/iso-cd}"
         ISO="${ISO/-live/}"
     fi
     HASH=$(web_pipe "${URL}/SHA512SUMS" | grep "${ISO}" | cut -d' ' -f1 | head -n 1)

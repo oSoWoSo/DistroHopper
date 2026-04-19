@@ -1,6 +1,8 @@
 # Template file for 'chimeralinux'
 OSNAME="chimeralinux"
 PRETTY="Chimera Linux"
+ICON="chimera.svg"
+CATEGORY="advanced"
 BASEDOF="-"
 DESCRIPTION="Modern, general-purpose non-GNU Linux distribution"
 HOMEPAGE="https://chimera-linux.org"
@@ -9,6 +11,9 @@ CREDENTIALS="anon:chimera root:chimera"
 
 RELEASES="latest"
 EDITIONS="gnome base"
+ARCHITECTURES="amd64"
+
+
 
 function get_() {
     local DATE=""

@@ -1,11 +1,19 @@
 # Template file for 'windows'
 OSNAME="windows"
 PRETTY="Windows"
+ICON="windows.svg"
+CATEGORY="beginner"
 BASEDOF="-"
 DESCRIPTION="Whether you’re gaming, studying, running a business, or running a household, Windows helps you get it done"
 HOMEPAGE="https://www.microsoft.com/en-us/windows"
 CREDENTIALS="-"
 GUEST="windows"
 
-RELEASES=""
+RELEASES="11 10"
+
+ARCHITECTURES="amd64"
+
+
+
+
 

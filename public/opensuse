@@ -1,13 +1,18 @@
 # Template file for 'opensuse'
 OSNAME="opensuse"
 PRETTY="openSUSE"
+ICON="opensuse.svg"
+CATEGORY="beginner"
 BASEDOF="-"
 DESCRIPTION="The makers choice for sysadmins, developers and desktop users"
 HOMEPAGE="https://www.opensuse.org"
 CREDENTIALS="-"
 
 
-RELEASES="tumbleweed microos aeon 15.6 15.5 15.4 15.3 15.2 15.1 15.0"
+RELEASES="15.6 15.5 15.4 15.3 15.2 15.1 15.0 tumbleweed microos aeon"
+
+ARCHITECTURES="amd64"
+
 
 
 function get_() {

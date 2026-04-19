@@ -1,14 +1,19 @@
 # Template file for 'solus'
 OSNAME="solus"
 PRETTY="Solus"
+ICON="solus.svg"
+CATEGORY="beginner"
 BASEDOF="-"
 DESCRIPTION="Designed for home computing. Every tweak enables us to deliver a cohesive computing experience"
 HOMEPAGE="https://getsol.us"
 CREDENTIALS="-"
 
 
-RELEASES=""
-EDITIONS=""
+RELEASES="2026-04-18 2025-11-29 2025-01-26 2024-10-14"
+EDITIONS="Xfce Plasma GNOME Budgie"
+ARCHITECTURES="amd64"
+
+
 
 function get_() {
     local HASH=""

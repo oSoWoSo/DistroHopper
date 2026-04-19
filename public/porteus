@@ -1,14 +1,19 @@
 # Template file for 'porteus'
 OSNAME="porteus"
 PRETTY="Porteus"
+ICON="porteus.svg"
+CATEGORY="lightweight"
 BASEDOF="Slackware"
 DESCRIPTION="Complete linux operating system that is optimized to run from CD, USB flash drive, hard drive, or other bootable storage media"
 HOMEPAGE="http://www.porteus.org"
 CREDENTIALS="-"
 
 
-RELEASES="5.01"
-EDITIONS="xfce openbox mate lxqt lxde kde gnome cinnamon"
+RELEASES="5.1 5.01 5.0 4.0 3.2.2 3.2"
+EDITIONS="xfce openbox mate lxqt lxde kde cinnamon"
+ARCHITECTURES="amd64"
+
+
 
 function get_() {
     local HASH=""
@@ -16,7 +21,7 @@ function get_() {
     local URL=""
     edition="${EDITION~~}"
     ISO="Porteus-${edition}-v${RELEASE}-x86_64.iso"
-    URL="https://mirrors.dotsrc.org/porteus/x86_64/Porteus-v${RELEASE}"
+    URL="https://ftp.nluug.nl/os/Linux/distr/porteus/x86_64/Porteus-v${RELEASE}"
     HASH=$(web_pipe "${URL}/sha256sums.txt" | grep "${ISO}" | cut -d' ' -f1)
     echo "${URL}/${ISO} ${HASH}"
 }

@@ -1,6 +1,8 @@
 # Template file for 'bodhi'
 OSNAME="bodhi"
 PRETTY="Bodhi Linux"
+ICON="bodhi.svg"
+CATEGORY="lightweight"
 BASEDOF="Debian Ubuntu"
 DESCRIPTION="Lightweight distribution featuring the fast & fully customizable Moksha Desktop"
 HOMEPAGE="https://www.bodhilinux.com"
@@ -8,7 +10,10 @@ CREDENTIALS="-"
 
 
 RELEASES="7.0.0"
-EDITIONS="standard s76 hwe apppack"
+EDITIONS="s76 standard hwe apppack"
+ARCHITECTURES="amd64"
+
+
 
 function get_() {
     local HASH=""

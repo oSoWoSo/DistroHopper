@@ -1,6 +1,8 @@
 # Template file for 'batocera'
 OSNAME="batocera"
 PRETTY="Batocera"
+ICON="batocera.svg"
+CATEGORY="beginner"
 BASEDOF="-"
 DESCRIPTION="Retro-gaming distribution with the aim of turning any computer/nano computer into a gaming console during a game or permanently"
 HOMEPAGE="https://batocera.org"
@@ -8,6 +10,9 @@ CREDENTIALS="-"
 GUEST="batocera"
 IMAGE_TYPE="img"
 RELEASES="41 40 39 38 37"
+
+ARCHITECTURES="amd64"
+
 
 
 function get_() {

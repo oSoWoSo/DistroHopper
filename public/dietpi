@@ -1,6 +1,8 @@
 # Template file for 'dietpi'
 OSNAME="dietpi"
 PRETTY="DietPi"
+ICON="dietpi.svg"
+CATEGORY="lightweight"
 BASEDOF="Debian"
 DESCRIPTION="Highly optimised minimal Debian OS"
 HOMEPAGE="https://dietpi.com"
@@ -8,7 +10,10 @@ CREDENTIALS="-"
 
 
 RELEASES="uefi bios"
-EDITIONS="Trixie Bullseye Bookworm"
+EDITIONS="Trixie Forky Bookworm"
+ARCHITECTURES="amd64"
+
+
 
 function get_() {
     local HASH=""

@@ -1,6 +1,8 @@
 # Template file for 'slackware'
 OSNAME="slackware"
 PRETTY="slackware"
+ICON="slackware.svg"
+CATEGORY="advanced"
 BASEDOF="-"
 DESCRIPTION="Advanced Linux operating system, designed with the twin goals of ease of use and stability as top priorities"
 HOMEPAGE="http://www.slackware.com"
@@ -9,11 +11,14 @@ CREDENTIALS="-"
 
 RELEASES="15.0 14.2 14.1 14.0 13.37"
 
+ARCHITECTURES="amd64"
+
+
 
 function get_() {
     local HASH=""
     local ISO="slackware64-${RELEASE}-install-dvd.iso"
-    local URL="https://slackware.nl/slackware/slackware-iso/slackware64-${RELEASE}-iso"
+    local URL="https://mirrors.slackware.com/slackware/slackware-iso/slackware64-${RELEASE}-iso"
     HASH=$(web_pipe "${URL}/${ISO}.md5" | cut -d' ' -f1)
     echo "${URL}/${ISO} ${HASH}"
 }

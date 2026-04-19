@@ -1,6 +1,8 @@
 # Template file for 'reactos'
 OSNAME="reactos"
 PRETTY="ReactOS"
+ICON="reactos.svg"
+CATEGORY="advanced"
 BASEDOF="-"
 DESCRIPTION="Imagine running your favorite Windows applications and drivers in an open-source environment you can trust"
 HOMEPAGE="https://reactos.org"
@@ -8,6 +10,9 @@ CREDENTIALS="-"
 GUEST="reactos"
 
 RELEASES="latest"
+
+ARCHITECTURES="amd64"
+
 
 
 function get_() {

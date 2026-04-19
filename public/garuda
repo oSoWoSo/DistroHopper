@@ -1,6 +1,8 @@
 # Template file for 'garuda'
 OSNAME="garuda"
 PRETTY="Garuda Linux"
+ICON="garuda.svg"
+CATEGORY="beginner"
 BASEDOF="Arch"
 DESCRIPTION="Feature rich and easy to use Linux distribution"
 HOMEPAGE="https://garudalinux.org"
@@ -9,6 +11,9 @@ CREDENTIALS="-"
 
 RELEASES="latest"
 EDITIONS="xfce sway mokka kde-lite i3 hyprland gnome dr460nized-gaming dr460nized cinnamon"
+ARCHITECTURES="amd64"
+
+
 
 function get_() {
     local HASH=""

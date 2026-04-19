@@ -1,13 +1,18 @@
 # Template file for 'proxmox-ve'
 OSNAME="proxmox-ve"
 PRETTY="Proxmox VE"
+ICON=""
+CATEGORY="advanced"
 BASEDOF="Debian"
 DESCRIPTION="Proxmox Virtual Environment is a complete, open-source server management platform for enterprise virtualization"
 HOMEPAGE="https://proxmox.com/en/proxmox-virtual-environment"
 CREDENTIALS="-"
 
 
-RELEASES="8.4-1 8.3-1 7.4-1 6.4-1 5.4-1"
+RELEASES="9.1-1 9.0-1 8.4-1 7.4-1 6.4-1 5.4-1"
+
+ARCHITECTURES="amd64"
+
 
 
 function get_() {

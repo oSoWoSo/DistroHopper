@@ -1,14 +1,19 @@
 # Template file for 'biglinux'
 OSNAME="biglinux"
 PRETTY="BigLinux"
+ICON="biglinux.svg"
+CATEGORY="beginner"
 BASEDOF="Manjaro"
 DESCRIPTION="Is the right choice if you want to have an easy and enriching experience with Linux. It has been perfected over more than 19 years, following our motto: 'In search of the perfect system'"
 HOMEPAGE="https://www.biglinux.com.br"
 CREDENTIALS="-"
 
 
-RELEASES="2025-05-12"
-EDITIONS="k614"
+RELEASES="2026-04-18"
+EDITIONS="k619 k618 k612"
+ARCHITECTURES="amd64"
+
+
 
 function get_() {
     local HASH=""

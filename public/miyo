@@ -1,6 +1,8 @@
 # Template file for 'miyo'
 OSNAME="miyolinux"
 PRETTY="MiyoLinux"
+ICON="miyo.svg"
+CATEGORY="lightweight"
 BASEDOF="Devuan"
 DESCRIPTION="Very minimal Linux OS based on Devuan and various Window Managers. "
 HOMEPAGE="https://sourceforge.net/projects/miyolinux/"
@@ -9,6 +11,9 @@ CREDENTIALS="-"
 
 RELEASES="2022"
 EDITIONS="Openbox MATE Kwin JWM Deboot-Ceres"
+ARCHITECTURES="amd64"
+
+
 
 function get_() {
     local EDITION="${1:-}"

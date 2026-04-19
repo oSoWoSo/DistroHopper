@@ -1,6 +1,8 @@
 # Template file for 'tails'
 OSNAME="tails"
 PRETTY="Tails"
+ICON="tails.svg"
+CATEGORY="advanced"
 BASEDOF="Debian"
 DESCRIPTION="Portable operating system that protects against surveillance and censorship"
 HOMEPAGE="https://tails.net"
@@ -8,6 +10,9 @@ CREDENTIALS="-"
 
 
 RELEASES="stable"
+
+ARCHITECTURES="amd64"
+
 
 
 function get_() {

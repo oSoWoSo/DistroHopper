@@ -1,6 +1,8 @@
 # Template file for 'kodachi'
 OSNAME="kodachi"
 PRETTY="Kodachi"
+ICON="kodachi.svg"
+CATEGORY="advanced"
 BASEDOF="Ubuntu"
 DESCRIPTION="Provide you with a secure, anti forensic, and anonymous operating system considering all features that a person who is concerned about privacy would need to have in order to be secure"
 HOMEPAGE="https://www.digi77.com/linux-kodachi/"
@@ -8,6 +10,9 @@ CREDENTIALS="kodachi:r@@t00,root:r@@t00"
 
 
 RELEASES="latest"
+
+ARCHITECTURES="amd64"
+
 
 
 function get_() {

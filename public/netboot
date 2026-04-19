@@ -1,6 +1,8 @@
 # Template file for 'netboot'
 OSNAME="netboot"
 PRETTY="netboot.xyz"
+ICON="netboot.svg"
+CATEGORY="advanced"
 BASEDOF="iPXE"
 DESCRIPTION="Your favorite operating systems in one place"
 HOMEPAGE="https://netboot.xyz"
@@ -8,6 +10,9 @@ CREDENTIALS="-"
 
 
 RELEASES="latest"
+
+ARCHITECTURES="amd64"
+
 
 
 function get_() {

@@ -1,6 +1,8 @@
 # Template file for 'rhino'
 OSNAME="rhino"
 PRETTY="Rhino Linux"
+ICON="rhino.svg"
+CATEGORY="beginner"
 BASEDOF="Ubuntu"
 DESCRIPTION="Re-invents the Ubuntu experience as a rolling-release distribution built on a stable desktop environment. With Pacstall & XFCE"
 HOMEPAGE="https://rhinolinux.org/"
@@ -8,6 +10,9 @@ CREDENTIALS="-"
 
 
 RELEASES="2025.1"
+
+ARCHITECTURES="amd64"
+
 
 
 function get_() {

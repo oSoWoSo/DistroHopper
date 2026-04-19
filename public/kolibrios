@@ -1,6 +1,8 @@
 # Template file for 'kolibrios'
 OSNAME="kolibrios"
 PRETTY="KolibriOS"
+ICON="kolibrios.svg"
+CATEGORY="lightweight"
 BASEDOF="-"
 DESCRIPTION="Tiny yet incredibly powerful and fast operating system"
 HOMEPAGE="http://kolibrios.org"
@@ -9,6 +11,9 @@ kolibrios
 
 RELEASES="latest"
 EDITIONS="ru_RU it_IT es_ES en_US"
+ARCHITECTURES="amd64"
+
+
 
 function get_() {
     local HASH=""

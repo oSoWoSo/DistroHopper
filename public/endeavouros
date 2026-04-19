@@ -1,13 +1,18 @@
 # Template file for 'endeavouros'
 OSNAME="endeavouros"
 PRETTY="EndeavourOS"
+ICON="endeavouros.svg"
+CATEGORY="beginner"
 BASEDOF="Arch"
 DESCRIPTION="Provides an Arch experience without the hassle of installing it manually for both x86_64 and ARM systems"
 HOMEPAGE="https://endeavouros.com"
 CREDENTIALS="-"
 
 
-RELEASES="mercury-neo-2025.03.19 mercury-2025.02.08 gemini-2024.04.20 galileo-neo-2024.01.25 galileo-11-2023"
+RELEASES="titan-2026.03.06 mercury-2025.02.08 mercury-neo-2025.03.19 gemini-2024.04.20 ganymede-neo-2026.01.12"
+
+ARCHITECTURES="amd64"
+
 
 
 function get_() {

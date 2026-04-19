@@ -1,13 +1,18 @@
 # Template file for 'netbsd'
 OSNAME="netbsd"
 PRETTY="NetBSD"
+ICON="netbsd.svg"
+CATEGORY="advanced"
 BASEDOF="-"
 DESCRIPTION="Free, fast, secure, and highly portable Unix-like Open Source operating system. It is available for a wide range of platforms, from large-scale servers and powerful desktop systems to handheld and embedded devices"
 HOMEPAGE="https://www.netbsd.org"
 CREDENTIALS="-"
 GUEST="netbsd"
 
-RELEASES="9.4 9.3 10.1 10.0"
+RELEASES="9.4 9.3 9.2 9.1 9.0 10.1 10.0"
+
+ARCHITECTURES="amd64"
+
 
 
 function get_() {

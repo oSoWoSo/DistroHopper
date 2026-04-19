@@ -1,13 +1,18 @@
 # Template file for 'windows-server'
 OSNAME="windows-server"
 PRETTY="Windows Server"
+ICON="windows.svg"
+CATEGORY="advanced"
 BASEDOF="-"
 DESCRIPTION="Platform for building an infrastructure of connected applications, networks, and web services"
 HOMEPAGE="https://www.microsoft.com/en-us/windows-server"
 CREDENTIALS="-"
 GUEST="windows-server"
 
-RELEASES=""
+RELEASES="2022 2019 2016"
+
+ARCHITECTURES="amd64"
+
 
 
 function get_() {

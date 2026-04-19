@@ -1,6 +1,8 @@
 # Template file for 'gentoo'
 OSNAME="gentoo"
 PRETTY="Gentoo"
+ICON="gentoo.svg"
+CATEGORY="advanced"
 BASEDOF="-"
 DESCRIPTION="Highly flexible, source-based Linux distribution"
 HOMEPAGE="https://www.gentoo.org"
@@ -9,6 +11,9 @@ CREDENTIALS="-"
 
 RELEASES="latest"
 EDITIONS="minimal livegui"
+ARCHITECTURES="amd64"
+
+
 
 function get_() {
     local HASH=""

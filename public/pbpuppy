@@ -1,14 +1,19 @@
 # Template file for 'pbpuppy'
 OSNAME="pbpuppy"
 PRETTY="PeaBee's Puppy Linux"
+ICON=""
+CATEGORY="lightweight"
 BASEDOF="Void,Ubuntu,Debian,Slackware"
 DESCRIPTION="Puppy Linux releases from Github. Brought to you by: peabee"
 HOMEPAGE="https://sourceforge.net/projects/pb-gh-releases"
 CREDENTIALS="-"
 
 
-RELEASES="250502 250501 250404 250402 250314 250301"
-EDITIONS="VoidPup64 S15Pup64 BookwormPup64-ghtest"
+RELEASES="260401 260301"
+EDITIONS="VoidPup64 TrixiePup64Wayland TrixiePup64Retro S15Pup64 ResolutePup64-alpha BookwormPup64-ghtest"
+ARCHITECTURES="amd64"
+
+
 
 function get_() {
     local HASH=""

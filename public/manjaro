@@ -1,6 +1,8 @@
 # Template file for 'manjaro'
 OSNAME="manjaro"
 PRETTY="Manjaro"
+ICON="manjaro.svg"
+CATEGORY="beginner"
 BASEDOF="Arch"
 DESCRIPTION="Versatile, free, and open-source Linux operating system designed with a strong focus on safeguarding user privacy and offering extensive control over hardware"
 HOMEPAGE="https://manjaro.org"
@@ -8,7 +10,10 @@ CREDENTIALS="-"
 
 
 RELEASES="xfce sway plasma i3 gnome cinnamon"
-EDITIONS="minimal full"
+
+ARCHITECTURES="amd64"
+
+
 
 function get_() {
     local HASH=""
@@ -25,13 +30,8 @@ function get_() {
         cinnamon|i3) TYPE="community";;
     esac
 
-    if [ "${EDITION}" == "minimal" ] && [ "${TYPE}" != "sway" ]; then
-        EDITION=".minimal"
-    else
-        EDITION=""
-    fi
-
     if [ "${RELEASE}" == "sway" ]; then
+        #https://manjaro-sway.download/download?file=manjaro-sway-26.0.0-260215-linux612.iso
         URL=$(echo "${MANIFEST}" | jq -r '.[] | select(.name|test("^manjaro-sway-.*[.]iso$")) | .url')
     else
         URL="$(echo "${MANIFEST}" | jq -r ."${TYPE}.${RELEASE}${EDITION}".image)"

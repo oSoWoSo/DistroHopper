@@ -1,19 +1,36 @@
 # Template file for 'alma'
 OSNAME="alma"
 PRETTY="AlmaLinux"
-BASEDOF="Fedora RedHat"
+ICON="alma.svg"
+CATEGORY="beginner"
+BASEDOF="Fedora RHEL"
 DESCRIPTION="Community distribution, focused on long-term stability, providing a robust production-grade platform. Binary compatible with RHEL®"
 HOMEPAGE="https://almalinux.org/"
 CREDENTIALS="-"
 
 
-RELEASES="9 8"
+RELEASES="9 8 10"
 EDITIONS="minimal dvd boot"
+ARCHITECTURES="amd64 aarch64 ppc64le s390x"
+
+
+function arch_() {
+    echo "amd64 aarch64 ppc64le s390x"
+}
 
 function get_() {
     local HASH=""
-    local ISO="AlmaLinux-${RELEASE}-latest-x86_64-${EDITION}.iso"
-    local URL="https://repo.almalinux.org/almalinux/${RELEASE}/isos/x86_64"
+    local ARCH_KW="${ARCH:-amd64}"
+    
+    case "${ARCH}" in
+        aarch64) ARCH_KW="aarch64";;
+        ppc64le) ARCH_KW="ppc64le";;
+        s390x) ARCH_KW="s390x";;
+        *) ARCH_KW="x86_64";;
+    esac
+    
+    local ISO="AlmaLinux-${RELEASE}-latest-${ARCH_KW}-${EDITION}.iso"
+    local URL="https://repo.almalinux.org/almalinux/${RELEASE}/isos/${ARCH_KW}"
     HASH="$(web_pipe "${URL}/CHECKSUM" | grep "(${ISO}" | cut -d' ' -f4)"
     echo "${URL}/${ISO} ${HASH}"
 }

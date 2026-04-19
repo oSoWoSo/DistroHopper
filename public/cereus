@@ -1,6 +1,8 @@
 # Template file for 'cereus'
 OSNAME="cereus"
 PRETTY="Cereus Linux"
+ICON="cereus.svg"
+CATEGORY="beginner"
 BASEDOF="Void"
 DESCRIPTION="Void-based distribution focused on give an user-friendly experience."
 HOMEPAGE="https://sourceforge.net/projects/cereus-linux"
@@ -9,6 +11,9 @@ CREDENTIALS="-"
 
 RELEASES="latest"
 EDITIONS="xfce musl-xfce musl-lxqt musl-base lxqt base"
+ARCHITECTURES="amd64"
+
+
 
 function get_() {
     local EDITION="${1:-}"

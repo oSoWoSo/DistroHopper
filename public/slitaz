@@ -1,6 +1,8 @@
 # Template file for 'slitaz'
 OSNAME="slitaz"
 PRETTY="SliTaz"
+ICON="slitaz.svg"
+CATEGORY="lightweight"
 BASEDOF="-"
 DESCRIPTION="Simple, fast and low resource Linux OS for servers & desktops"
 HOMEPAGE="https://www.slitaz.org"
@@ -8,6 +10,9 @@ CREDENTIALS="-"
 
 
 RELEASES="preinit loram core64 core-5in1 core"
+
+ARCHITECTURES="amd64"
+
 
 
 function get_() {

@@ -1,14 +1,19 @@
 # Template file for 'sparkylinux'
 OSNAME="sparkylinux"
 PRETTY="SparkyLinux"
+ICON="sparky.png"
+CATEGORY="beginner"
 BASEDOF="Debian"
 DESCRIPTION="Fast, lightweight and fully customizable operating system which offers several versions for different use cases"
 HOMEPAGE="https://sparkylinux.org"
 CREDENTIALS="-"
 
 
-RELEASES="7.7"
+RELEASES="8.2"
 EDITIONS="xfce minimalgui minimalcli mate lxqt kde"
+ARCHITECTURES="amd64"
+
+
 
 function get_() {
     local HASH=""

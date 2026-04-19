@@ -1,13 +1,18 @@
 # Template file for 'guix'
 OSNAME="guix"
 PRETTY="Guix"
+ICON="guix.svg"
+CATEGORY="advanced"
 BASEDOF="-"
 DESCRIPTION="Distribution of the GNU operating system developed by the GNU Project—which respects the freedom of computer users"
 HOMEPAGE="https://guix.gnu.org"
 CREDENTIALS="-"
 
 
-RELEASES="1.4.0 1.3.0"
+RELEASES="1.5.0 1.4.0 1.3.0"
+
+ARCHITECTURES="amd64"
+
 
 
 function get_() {

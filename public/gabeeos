@@ -1,6 +1,8 @@
 # Template file for 'gabeeos'
 OSNAME="gabeeos"
 PRETTY="GabeeOSLinux"
+ICON="gabeeos.svg"
+CATEGORY="beginner"
 BASEDOF="Void"
 DESCRIPTION="Brings the necessary software to satisfy the daily needs of an end user in a simple and aesthetically pleasing desktop environment."
 HOMEPAGE="https://sourceforge.net/projects/gabeeoslinux/"
@@ -8,7 +10,10 @@ CREDENTIALS="anon:voidlinux,root:voidlinux"
 
 
 RELEASES="latest"
-EDITIONS="i3-gaps Qtile Openbox"
+EDITIONS="Qtile i3-gaps Hyprland"
+ARCHITECTURES="amd64"
+
+
 
 function get_() {
     local HASH=""

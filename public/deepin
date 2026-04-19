@@ -1,13 +1,18 @@
 # Template file for 'deepin'
 OSNAME="deepin"
 PRETTY="Deepin"
+ICON="deepin.svg"
+CATEGORY="beginner"
 BASEDOF="Debian"
 DESCRIPTION="Beautiful UI design, intimate human-computer interaction, and friendly community environment make you feel at home"
 HOMEPAGE="https://www.deepin.org"
 CREDENTIALS="-"
 
 
-RELEASES="25-alpha 23.1 23 20.9"
+RELEASES="25.1.0 25.0.10 25.0.1 23.1 20.9"
+
+ARCHITECTURES="amd64"
+
 
 
 function get_() {

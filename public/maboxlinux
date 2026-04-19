@@ -1,6 +1,8 @@
 # Template file for 'maboxlinux'
 OSNAME="maboxlinux"
 PRETTY="Mabox Linux"
+ICON="mabox.svg"
+CATEGORY="lightweight"
 BASEDOF="Manjaro"
 DESCRIPTION="Lightweight, functional and easy to customize Openbox desktop"
 HOMEPAGE="https://maboxlinux.org"
@@ -8,6 +10,9 @@ CREDENTIALS="-"
 
 
 RELEASES="latest"
+
+ARCHITECTURES="amd64"
+
 
 
 function get_() {

@@ -1,6 +1,8 @@
 # Template file for 'kali'
 OSNAME="kali"
 PRETTY="Kali Linux"
+ICON="kali.svg"
+CATEGORY="advanced"
 BASEDOF="Debian"
 DESCRIPTION="The most advanced Penetration Testing Distribution"
 HOMEPAGE="https://www.kali.org"
@@ -8,6 +10,9 @@ CREDENTIALS="-"
 
 
 RELEASES="kali-weekly current"
+
+ARCHITECTURES="amd64"
+
 
 
 function get_() {

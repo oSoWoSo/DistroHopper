@@ -1,6 +1,8 @@
 # Template file for 'archlinux'
 OSNAME="archlinux"
 PRETTY="Arch Linux"
+ICON="arch.svg"
+CATEGORY="advanced"
 BASEDOF="-"
 DESCRIPTION="Lightweight and flexible Linux® distribution that tries to Keep It Simple"
 HOMEPAGE="https://archlinux.org"
@@ -9,6 +11,12 @@ CREDENTIALS="-"
 
 RELEASES="latest"
 
+ARCHITECTURES="x86_64"
+
+
+function arch_() {
+    echo "x86_64"
+}
 
 function get_() {
     local HASH=""

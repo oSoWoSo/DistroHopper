@@ -1,6 +1,8 @@
 # Template file for 'ghostbsd'
 OSNAME="ghostbsd"
 PRETTY="GhostBSD"
+ICON="ghostbsd.svg"
+CATEGORY="beginner"
 BASEDOF="FreeBSD"
 DESCRIPTION="Simple, elegant desktop BSD Operating System"
 HOMEPAGE="https://www.ghostbsd.org"
@@ -9,6 +11,9 @@ freebsd
 
 RELEASES="25.01-R14.2p1 24.10.1 24.07.3"
 EDITIONS="xfce mate"
+ARCHITECTURES="amd64"
+
+
 
 function get_() {
     local ISO=""

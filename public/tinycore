@@ -1,6 +1,8 @@
 # Template file for 'tinycore'
 OSNAME="tinycore"
 PRETTY="Tiny Core Linux"
+ICON="tinycore.svg"
+CATEGORY="lightweight"
 BASEDOF="-"
 DESCRIPTION="Highly modular based system with community build extensions"
 HOMEPAGE="http://www.tinycorelinux.net"
@@ -9,6 +11,9 @@ CREDENTIALS="-"
 
 RELEASES="15 14"
 EDITIONS="TinyCorePure64 TinyCore CorePure64 CorePlus Core"
+ARCHITECTURES="amd64"
+
+
 
 function get_() {
     local ARCH="x86"

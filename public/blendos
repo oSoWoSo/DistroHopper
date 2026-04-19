@@ -1,19 +1,31 @@
 # Template file for 'blendos'
 OSNAME="blendos"
 PRETTY="BlendOS"
+ICON="blendos.svg"
+CATEGORY="beginner"
 BASEDOF="Arch"
 DESCRIPTION="A seamless blend of all Linux distributions. Allows you to have an immutable, atomic and declarative Arch Linux system, with application support from several Linux distributions & Android"
 HOMEPAGE="https://blendos.co"
 CREDENTIALS="-"
 
 
-RELEASES="latest"
+RELEASES="23.06"
+
+ARCHITECTURES="amd64"
+
 
 
 function get_() {
-    local HASH=$(web_pipe "https://git.blendos.co/api/v4/projects/32/jobs/artifacts/main/raw/checksum?job=build-job | cut -d' ' -f1")
-    local ISO="blendOS.iso"
-    local URL="https://git.blendos.co/api/v4/projects/32/jobs/artifacts/main/raw/${ISO}?job=build-job"
+    local version="${RELEASE}"
+    local ISO="blendOS-${version}-x86_64-gnome.iso"
+    local URL="https://images.blendos.co/track/gnome/${ISO}"
+    local HASH=""
+    # Get SHA256 hash from the SHA256SUMS file
+    HASH=$(web_pipe "${URL}.sha256" 2>/dev/null | grep "${ISO}" | cut -d' ' -f1)
+    # If hash not found, try without .sha256 extension (some hosts use SHA256SUMS file)
+    if [[ -z "$HASH" ]]; then
+        HASH=$(web_pipe "https://images.blendos.co/track/gnome/SHA256SUMS" 2>/dev/null | grep "${ISO}" | cut -d' ' -f1)
+    fi
     echo "${URL} ${HASH}"
 }
 

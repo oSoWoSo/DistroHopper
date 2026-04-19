@@ -1,14 +1,19 @@
 # Template file for 'mxlinux'
 OSNAME="mxlinux"
 PRETTY="MX Linux"
+ICON="mxlinux.svg"
+CATEGORY="beginner"
 BASEDOF="Debian Antix"
 DESCRIPTION="Designed to combine elegant and efficient desktops with high stability and solid performance"
 HOMEPAGE="https://mxlinux.org"
 CREDENTIALS="-"
 
 
-RELEASES="23.6"
+RELEASES="25.1"
 EDITIONS="Xfce KDE Fluxbox"
+ARCHITECTURES="amd64"
+
+
 
 function get_() {
     local HASH=""

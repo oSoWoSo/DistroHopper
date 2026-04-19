@@ -1,6 +1,8 @@
 # Template file for 'loc-os'
 OSNAME="loc-os"
 PRETTY="Loc-OS Linux"
+ICON="locos.svg"
+CATEGORY="lightweight"
 BASEDOF="Debian"
 DESCRIPTION="Distribution of GNU/Linux focused on low resource consumption."
 HOMEPAGE="https://loc-os.com"
@@ -9,6 +11,9 @@ CREDENTIALS="-"
 
 RELEASES="latest"
 EDITIONS="xfce lxde kde"
+ARCHITECTURES="amd64"
+
+
 
 function get_() {
     local HASH=""

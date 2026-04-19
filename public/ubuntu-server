@@ -1,13 +1,18 @@
 # Template file for 'ubuntu-server'
 OSNAME="ubuntu-server"
 PRETTY="Ubuntu Server"
+ICON="ubuntu-server.svg"
+CATEGORY="advanced"
 BASEDOF="Debian"
 DESCRIPTION="Brings economic and technical scalability to your datacentre, public or private. Whether you want to deploy an OpenStack cloud, a Kubernetes cluster or a 50,000-node render farm, Ubuntu Server delivers the best value scale-out performance available"
 HOMEPAGE="https://ubuntu.com/server"
 CREDENTIALS="-"
 
 
-RELEASES=""
+RELEASES="26.04 25.10 24.04 22.04 20.04 18.04 16.04 14.04 ubuntu-24.04.4-live-server-amd64.iso daily-live"
+
+ARCHITECTURES="amd64 ubuntu-24.04.4-live-server-amd64.iso"
+
 
 
 function get_() {

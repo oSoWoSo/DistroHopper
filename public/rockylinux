@@ -1,28 +1,52 @@
 # Template file for 'rockylinux'
 OSNAME="rockylinux"
 PRETTY="Rocky Linux"
-BASEDOF="RedHat"
+ICON="rocky.svg"
+CATEGORY="advanced"
+BASEDOF="RHEL"
 DESCRIPTION="Open-source enterprise operating system designed to be 100% bug-for-bug compatible with Red Hat Enterprise Linux"
 HOMEPAGE="https://rockylinux.org"
 CREDENTIALS="-"
 
 
-RELEASES="9.5 9.4 9.3 9.2 9.1 9.0 8.9 8.8 8.7 8.6 8.5 8.4 8.3"
+RELEASES="9.7/ 9.6/ 9.5/ 9.4/ 9.3/ 9.2/ 9.1/ 9.0/ 8.9/ 8.8/ 8.7/ 8.6/ 8.5/ 8.4/ 8.10/"
 EDITIONS="minimal dvd boot"
+ARCHITECTURES="amd64 aarch64 ppc64le riscv64 s390x"
+
+
+function arch_() {
+    echo "amd64 aarch64 ppc64le riscv64 s390x"
+}
 
 function get_() {
     if [[ "${RELEASE}" =~ ^8. ]] && [[ "${EDITION}" == "dvd" ]]; then
         EDITION="dvd1"
     fi
+    
     local HASH=""
-    local ISO="Rocky-${RELEASE}-x86_64-${EDITION}.iso"
-    local URL=""
-    URL="https://dl.rockylinux.org/vault/rocky/${RELEASE}/isos/x86_64"
-    HASH=$(web_pipe "${URL}/CHECKSUM" | grep "SHA256" | grep "${ISO})" | cut -d' ' -f4)
+    local ARCH_KW="${ARCH:-amd64}"
+    
+    case "${ARCH}" in
+        aarch64) ARCH_KW="aarch64";;
+        ppc64le) ARCH_KW="ppc64le";;
+        riscv64) ARCH_KW="riscv64";;
+        s390x) ARCH_KW="s390x";;
+        *) ARCH_KW="x86_64";;
+    esac
+    
+    local ISO="Rocky-${RELEASE}-${ARCH_KW}-${EDITION}.iso"
+    local URL="https://download.rockylinux.org/pub/rocky/${RELEASE}/isos/${ARCH_KW}"
+    
+    HASH=$(web_pipe "${URL}/CHECKSUM" 2>/dev/null | grep "${ISO}" | grep SHA256 | cut -d' ' -f1)
+    
+    if [[ -z "$HASH" ]]; then
+        HASH=$(web_pipe "${URL}/SHA256SUMS" 2>/dev/null | grep "${ISO}" | cut -d' ' -f1)
+    fi
+    
     echo "${URL}/${ISO} ${HASH}"
 }
 
 function specific_tweaks() {
-  echo "disk_size=\"32G\"" >> "${CONF_FILE}"
+   echo "disk_size=\"32G\"" >> "${CONF_FILE}"
 }
 

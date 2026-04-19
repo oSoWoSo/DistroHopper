@@ -1,6 +1,8 @@
 # Template file for 'redox-os'
 OSNAME="redox-os"
 PRETTY="Redox OS"
+ICON="redox.png"
+CATEGORY="advanced"
 BASEDOF="-"
 DESCRIPTION="Microkernel-based operating system, with a large number of supported programs and components, to create a full-featured user and application environment"
 HOMEPAGE="https://www.redox-os.org"
@@ -9,13 +11,22 @@ CREDENTIALS="-"
 
 RELEASES="livedisk harddrive"
 EDITIONS="server desktop demo"
+ARCHITECTURES="x86_64 aarch64 i586 i686 riscv64gc"
+
+
+function arch_() {
+    echo "x86_64 aarch64 i586 i686 riscv64gc"
+}
 
 function get_() {
     local HASH=""
     local ISO=""
-    local URL="https://static.redox-os.org/img/x86_64"
+    local ARCH_KW="${ARCH:-x86_64}"
+    local URL="https://static.redox-os.org/img/${ARCH_KW}"
     local DATA
-    DATA="$(curl -s "${URL}/SHA256SUM" | grep ".iso" | grep "${EDITION}" | grep "${RELEASE}")"
+    local RELEASE_PATTERN="${RELEASE}"
+    [[ "${RELEASE}" == "livedisk" ]] && RELEASE_PATTERN="livedisk|redox-live"
+    DATA="$(curl -s "${URL}/SHA256SUM" | grep -E "\.iso|\.img" | grep "${EDITION}" | grep -E "${RELEASE_PATTERN}")"
     ISO="$(echo "${DATA}" | cut -d '*' -f2)"
     HASH="$(echo "${DATA}" | cut -d' ' -f1)"
     echo "${URL}/${ISO} ${HASH}"

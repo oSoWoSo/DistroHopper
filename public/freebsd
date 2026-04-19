@@ -1,14 +1,19 @@
 # Template file for 'freebsd'
 OSNAME="freebsd"
 PRETTY="FreeBSD"
+ICON="freebsd.svg"
+CATEGORY="advanced"
 BASEDOF="-"
 DESCRIPTION="Operating system used to power modern servers, desktops, and embedded platforms"
 HOMEPAGE="https://www.freebsd.org"
 CREDENTIALS="-"
 freebsd
 
-RELEASES="14.2 14.1 13.5 13.4"
+RELEASES="15.0 14.4 14.3 13.5"
 EDITIONS="dvd1 disc1"
+ARCHITECTURES="amd64"
+
+
 
 function get_() {
     local HASH=""

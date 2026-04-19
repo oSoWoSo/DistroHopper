@@ -1,6 +1,8 @@
 # Template file for 'slint'
 OSNAME="slint"
 PRETTY="Slint"
+ICON=""
+CATEGORY="advanced"
 BASEDOF="Slackware"
 DESCRIPTION="Easy-to-use, versatile, blind-friendly Linux distribution for 64-bit computers. Slint is based on Slackware and borrows tools from Salix"
 HOMEPAGE="https://slint.fr"
@@ -8,6 +10,9 @@ CREDENTIALS="-"
 
 
 RELEASES="15.0-5"
+
+ARCHITECTURES="amd64"
+
 
 
 function get_() {

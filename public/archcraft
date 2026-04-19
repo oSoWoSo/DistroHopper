@@ -1,6 +1,8 @@
 # Template file for 'archcraft'
 OSNAME="archcraft"
 PRETTY="Archcraft"
+ICON="archcraft.svg"
+CATEGORY="advanced"
 BASEDOF="Arch"
 DESCRIPTION="Yet another minimal Linux distribution, based on Arch Linux"
 HOMEPAGE="https://archcraft.io"
@@ -8,6 +10,9 @@ CREDENTIALS="-"
 
 
 RELEASES="latest"
+
+ARCHITECTURES="amd64"
+
 
 
 function get_() {
