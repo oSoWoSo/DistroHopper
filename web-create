@@ -593,6 +593,43 @@ _generate_distros_data_js_file() {
 	printf "${GREEN}%-12s${NC} %s\n" "generated:" "$out"
 }
 
+# Generate list of available icons at build time
+_generate_icons_list_js() {
+	local out="${OUT_DIR}/icons-available.js"
+	echo 'window.iconsAvailable = {' > "$out"
+	local first=1
+
+	# Collect all icon files from icons/ directory
+	for icon_file in icons/*; do
+		[ -f "$icon_file" ] || continue
+		local basename
+		basename="${icon_file##*/}"
+		local name="${basename%.*}"
+		local ext="${basename##*.}"
+		
+		[ "$first" = "0" ] && echo ',' >> "$out"
+		first=0
+		
+		# Store as: "name": {"svg": true, "png": true}
+		case "$ext" in
+			svg)
+				# Check if PNG also exists
+				if [ -f "icons/${name}.png" ]; then
+					printf '  "%s": {"svg":true,"png":true}' "$name" >> "$out"
+				else
+					printf '  "%s": {"svg":true}' "$name" >> "$out"
+				fi
+				;;
+			png)
+				printf '  "%s": {"png":true}' "$name" >> "$out"
+				;;
+		esac
+	done
+
+	echo '};' >> "$out"
+	printf "${GREEN}%-12s${NC} %s\n" "generated:" "$out"
+}
+
 _generate_distros_page() {
 	local type="$1"
 	local title h1 desc support_filter_html
@@ -604,7 +641,7 @@ _generate_distros_page() {
 	else
 		title="All Distributions — DistroHopper"
 		h1="All Distributions"
-		desc='All distributions available in DistroHopper. Supported ones <span class="supported-badge">supported</span> show version &amp; edition details.'
+		desc='All distributions (from DistroWatch). Supported ones <span class="supported-badge">supported</span> show version &amp; edition details.'
 		support_filter_html='
         <button class="filter-btn" data-filter-support="supported">Supported</button>
         <button class="filter-btn" data-filter-support="unsupported">Unsupported</button>'
@@ -631,17 +668,18 @@ _generate_distros_page() {
 	local unsupported_section=""
 	if [ "$type" = "all" ]; then
 		unsupported_section='<script src="distros-data.js"></script>
-<script>
-(function(){
+	<script>
+	(function(){
   if (!window.distrosData) return;
   var grid = document.getElementById("distroGrid");
   var colors = ["#E95420","#3C3B37","#A80030","#41B549","#87CF3E","#2F2F2F","#178CDA","#1d6fa4"];
+  var dwBase = "https://distrowatch.com/images/yvzhuwbpy/";
+
   window.distrosData.forEach(function(d) {
     if (window._distroData && window._distroData[d.id||d.name]) return;
     var nm = d.name || "?";
     var oid = d.id || nm;
     var bg = colors[nm.charCodeAt(0) % 8];
-    var dwIcon = "https://distrowatch.com/images/yvzhuwbpy/"+oid+".png";
     var cats = d.dw_category || "";
     var catBadges = "";
     cats.split(",").slice(0,2).forEach(function(c){
@@ -654,14 +692,17 @@ _generate_distros_page() {
     card.dataset.supported = "false";
     card.dataset.osname = oid;
     card.dataset.basedof = d.basedof || "";
+    var iconSrc = dwBase + oid + ".png";
+    var largeIconHtml =
+        "<img src=\""+iconSrc+"\" alt=\""+nm+"\" class=\"distro-icon-large\" width=\"128\" height=\"128\" loading=\"lazy\" onerror=\"this.style.display=\x27none\x27;this.nextElementSibling.style.display=\x27flex\x27\">"
+      + "<div class=\"distro-icon-fallback-large\" style=\"width:128px;height:128px;background:"+bg+";display:none\">"+nm.charAt(0).toUpperCase()+"</div>";
+
+    var titleIconHtml = "<img src=\""+iconSrc+"\" alt=\"\" class=\"card-title-icon\" aria-hidden=\"true\" loading=\"lazy\" onerror=\"this.style.display=\x27none\x27\">";
+
     card.innerHTML =
-      "<div class=\"distro-card-icon-area\">"
-      + "<img src=\"icons/"+oid+".svg\" alt=\""+nm+"\" class=\"distro-icon-large\" width=\"128\" height=\"128\" loading=\"lazy\""
-      + " onerror=\"this.src='icons/"+oid+".png';this.onerror=function(){this.src='"+dwIcon+"';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='flex'}}\">"
-      + "<div class=\"distro-icon-fallback-large\" style=\"width:128px;height:128px;background:"+bg+";display:none\">"+nm.charAt(0).toUpperCase()+"</div>"
-      + "</div>"
+      "<div class=\"distro-card-icon-area\">" + largeIconHtml + "</div>"
       + "<div class=\"distro-card-body\">"
-      + "<h3>"+(d.homepage?"<a href=\""+d.homepage+"\" target=\"_blank\" rel=\"noopener\">"+nm+"</a>":nm)+"</h3>"
+      + "<h3>" + titleIconHtml + (d.homepage?"<a href=\""+d.homepage+"\" target=\"_blank\" rel=\"noopener\">"+nm+"</a>":nm)+"</h3>"
       + "<hr class=\"distro-divider\">"
       + "<div class=\"distro-meta\">"+catBadges+"</div>"
       + "<p class=\"distro-description\">"+(d.description||"")+"</p>"
@@ -717,6 +758,7 @@ ${cards}
   </div>
 </div>
 
+<script src="icons-available.js"></script>
 <script>
 ${data_js}
 
@@ -744,12 +786,22 @@ function showDownloads(osname) {
 
   var colors = ['#E95420','#3C3B37','#A80030','#41B549','#87CF3E','#2F2F2F','#178CDA','#1d6fa4'];
   var bg = colors[name.charCodeAt(0) % 8];
+  var dwBase = 'https://distrowatch.com/images/yvzhuwbpy/';
+  var iconsAvailable = window.iconsAvailable || {};
 
-  var svgSrc = 'icons/'+osname+'.svg';
-  var pngSrc = 'icons/'+osname+'.png';
-  var dwSrc  = 'https://distrowatch.com/images/yvzhuwbpy/'+osname+'.png';
-  var iconHtml = '<img class="modal-distro-icon" src="'+svgSrc+'" alt="'+name+'" onerror="this.src=\''+pngSrc+'\';this.onerror=function(){this.src=\''+dwSrc+'\';this.onerror=function(){this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'}}">'
-               + '<div class="modal-distro-icon-fallback" style="background:'+bg+';display:none">'+name.charAt(0).toUpperCase()+'</div>';
+  // Get icon src based on build-time availability
+  var iconSrc;
+  var info = iconsAvailable[osname];
+  if (info && info.svg) iconSrc = 'icons/'+osname+'.svg';
+  else if (info && info.png) iconSrc = 'icons/'+osname+'.png';
+  else iconSrc = dwBase + osname + '.png';
+
+  var isDwIcon = iconSrc.indexOf(dwBase) === 0;
+  var iconHtml = isDwIcon
+    ? '<img class="modal-distro-icon" src="'+iconSrc+'" alt="'+name+'" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">'
+      + '<div class="modal-distro-icon-fallback" style="background:'+bg+';display:none">'+name.charAt(0).toUpperCase()+'</div>'
+    : '<img class="modal-distro-icon" src="'+iconSrc+'" alt="'+name+'">'
+      + '<div class="modal-distro-icon-fallback" style="background:'+bg+';display:none">'+name.charAt(0).toUpperCase()+'</div>';
 
   var hp = (dw && dw.homepage) || (d && d.homepage) || '';
   var basedof = (dw && dw.basedof) || (d && d.basedof) || '';
@@ -1079,6 +1131,9 @@ target_build() { ## Builds the website
 
 	# Copy icons
 	cp -r icons ${OUT_DIR}/
+
+	# Generate icons-available.js (list of icons present at build time)
+	_generate_icons_list_js
 
 	# Generate distros-data.js from ${PUBLIC_DIR}/
 	_generate_distros_data_js_file
