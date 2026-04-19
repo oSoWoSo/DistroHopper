@@ -13,21 +13,21 @@ function releases_() {
     local RELS=""
     RELS=$(web_pipe "https://dl-cdn.alpinelinux.org/alpine/" | grep '"v' | cut -d'"' -f2 | tr -d / | sort -Vr | head -n 10)
     for REL in ${RELS}; do
-        if web_check "https://dl-cdn.alpinelinux.org/alpine/${RELEASE}/releases/x86_64/"; then
+        if web_check "https://dl-cdn.alpinelinux.org/alpine/${REL}/releases/x86_64/"; then
             echo -n "${REL} "
         fi
     done
 }
 
 function arch_() {
-    echo "x86_64 x86 aarch64 armhf armv7 ppc64le loongarch64 riscv64 s390x"
+    echo x86_64 x86 aarch64 armhf armv7 ppc64le loongarch64 riscv64 s390x
 }
 
 function get_() {
     local HASH=""
     local ISO=""
     local ARCH_KW="${ARCH:-x86_64}"
-    
+
     case "${ARCH}" in
         x86) ARCH_KW="x86";;
         aarch64) ARCH_KW="aarch64";;
@@ -38,7 +38,7 @@ function get_() {
         s390x) ARCH_KW="s390x";;
         *) ARCH_KW="x86_64";;
     esac
-    
+
     local URL="https://dl-cdn.alpinelinux.org/alpine/${RELEASE}/releases/${ARCH_KW}"
     local VERSION=""
     VERSION=$(web_pipe "${URL}/latest-releases.yaml" | awk '/"Xen"/{found=0} {if(found) print} /"Virtual"/{found=1}' | grep 'version:' | awk '{print $2}')
