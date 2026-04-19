@@ -749,6 +749,9 @@ ${nav_html}
 ${cards}
   </div>
 </main>
+<footer class="site-footer">
+  <p>Data for unsupported distributions provided by <a href="https://distrowatch.com" target="_blank" rel="noopener">DistroWatch.com</a>. Page design inspired by <a href="https://github.com/ufuayk" target="_blank" rel="noopener">ufuayk</a>.</p>
+</footer>
 </div>
 
 <div class="modal-overlay" id="modalOverlay">
