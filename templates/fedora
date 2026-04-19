@@ -14,16 +14,23 @@ function releases_() {
 }
 
 function editions_() {
+    local ARCH_KW=""
+    case "${ARCH}" in
+        aarch64) ARCH_KW="aarch64";;
+        ppc64le) ARCH_KW="ppc64le";;
+        s390x)   ARCH_KW="s390x";;
+        *)       ARCH_KW="x86_64";;
+    esac
     #shellcheck disable=SC2046,SC2005
     if [[ -z ${RELEASE} ]]; then
-          echo $(web_pipe "https://getfedora.org/releases.json" | jq -r "map(select(.arch==\"${ARCH:-amd64}\" and .variant!=\"Labs\" and .variant!=\"IoT\" and .variant!=\"Container\" and .variant!=\"Cloud\" and .variant!=\"Everything\"  and .subvariant!=\"Security\" and .subvariant!=\"Server_KVM\" and .subvariant!=\"SoaS\")) | map(.subvariant) | unique | .[]")
+          echo $(web_pipe "https://getfedora.org/releases.json" | jq -r "map(select(.arch==\"${ARCH_KW}\" and .variant!=\"Labs\" and .variant!=\"IoT\" and .variant!=\"Container\" and .variant!=\"Cloud\" and .variant!=\"Everything\"  and .subvariant!=\"Security\" and .subvariant!=\"Server_KVM\" and .subvariant!=\"SoaS\")) | map(.subvariant) | unique | .[]")
     else
-        echo $(web_pipe "https://getfedora.org/releases.json" | jq -r "map(select(.arch==\"${ARCH:-amd64}\" and .version==\"${RELEASE/_/ }\" and .variant!=\"Labs\" and .variant!=\"IoT\" and .variant!=\"Container\" and .variant!=\"Cloud\" and .variant!=\"Everything\"  and .subvariant!=\"Security\" and .subvariant!=\"Server_KVM\" and .subvariant!=\"SoaS\")) | map(.subvariant) | unique | .[]")
+        echo $(web_pipe "https://getfedora.org/releases.json" | jq -r "map(select(.arch==\"${ARCH_KW}\" and .version==\"${RELEASE/_/ }\" and .variant!=\"Labs\" and .variant!=\"IoT\" and .variant!=\"Container\" and .variant!=\"Cloud\" and .variant!=\"Everything\"  and .subvariant!=\"Security\" and .subvariant!=\"Server_KVM\" and .subvariant!=\"SoaS\")) | map(.subvariant) | unique | .[]")
     fi
 }
 
 function arch_() {
-    echo "amd64"
+    echo "amd64 aarch64 ppc64le s390x"
 }
 
 function get_() {
@@ -32,7 +39,13 @@ function get_() {
     local JSON=""
     local URL=""
     local VARIANT=""
-    local ARCH_KW="${ARCH:-amd64}"
+    local ARCH_KW=""
+    case "${ARCH}" in
+        aarch64) ARCH_KW="aarch64";;
+        ppc64le) ARCH_KW="ppc64le";;
+        s390x)   ARCH_KW="s390x";;
+        *)       ARCH_KW="x86_64";;
+    esac
     case ${EDITION} in
         Server|Kinoite|Onyx|Silverblue|Sericea|Workstation) VARIANT="${EDITION}";;
         *) VARIANT="Spins";;
