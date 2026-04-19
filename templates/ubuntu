@@ -154,13 +154,13 @@ function releases_() {
 	case "${OS}" in
 		ubuntu)
 			echo "${SUPPORTED_VERSIONS[@]}" daily-live;;
-		kubuntu|lubuntu|ubuntukylin|ubuntu-mate|ubuntustudio|xubuntu)
+		kubuntu|lubuntu|ubuntu-kylin|ubuntu-mate|ubuntustudio|xubuntu)
 			# after 16.04
 			echo "${SUPPORTED_VERSIONS[@]:1}" daily-live;;
 		ubuntu-budgie)
 			# after 18.04
 			echo "${SUPPORTED_VERSIONS[@]:2}" daily-live;;
-		edubuntu|ubuntu-unity|ubuntucinnamon)
+		edubuntu|ubuntu-unity|ubuntu-cinnamon)
 			# after 23.10
 			echo "${SUPPORTED_VERSIONS[@]:5}" daily-live;;
 	esac
@@ -176,6 +176,11 @@ function get_() {
 	local URL=""
 	local DATA=""
 	local ARCH_KW="${ARCH:-amd64}"
+	local CDIMAGE_OS="${OS}"
+	case "${OS}" in
+		ubuntu-cinnamon) CDIMAGE_OS="ubuntucinnamon";;
+		ubuntu-kylin)    CDIMAGE_OS="ubuntukylin";;
+	esac
 
 	if [[ "${RELEASE}" == "daily"* ]] && [ "${OS}" == "ubuntustudio" ]; then
 		# Ubuntu Studio daily-live images are in the dvd directory
@@ -183,18 +188,18 @@ function get_() {
 	fi
 	if [[ "${RELEASE}" == "jammy-daily" ]]; then
 		if [[ "${OS}" == "ubuntustudio" ]]; then
-			URL="https://cdimage.ubuntu.com/${OS}/jammy/dvd/current"
+			URL="https://cdimage.ubuntu.com/${CDIMAGE_OS}/jammy/dvd/current"
 		else
-			URL="https://cdimage.ubuntu.com/${OS}/jammy/daily-live/current"
+			URL="https://cdimage.ubuntu.com/${CDIMAGE_OS}/jammy/daily-live/current"
 		fi
 		VM_PATH="${OS}-jammy-live"
 	elif [[ "${RELEASE}" == "daily"* ]] || [ "${RELEASE}" == "dvd" ]; then
-		URL="https://cdimage.ubuntu.com/${OS}/${RELEASE}/current"
+		URL="https://cdimage.ubuntu.com/${CDIMAGE_OS}/${RELEASE}/current"
 		VM_PATH="${OS}-${RELEASE}"
 	elif [ "${OS}" == "ubuntu" ]; then
 		URL="https://releases.ubuntu.com/${RELEASE}"
 	else
-		URL="https://cdimage.ubuntu.com/${OS}/releases/${RELEASE}/release"
+		URL="https://cdimage.ubuntu.com/${CDIMAGE_OS}/releases/${RELEASE}/release"
 	fi
 	if web_check "${URL}/SHA256SUMS"; then
 		DATA=$(web_pipe "${URL}/SHA256SUMS" | grep 'desktop\|dvd\|install' | grep "${ARCH_KW}" | grep iso | grep -v "+mac")
