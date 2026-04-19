@@ -109,7 +109,7 @@ function choose_vms_dir() {
 }
 
 function install_dh() {
-	cp -f dh quickget quickemu quickreport chunkcheck "$PATH_PREFIX" >/dev/null 2>&1 || $root cp -f dh quickget quickemu quickreport chunkcheck "$PATH_PREFIX"
+	cp -f dh qget quickemu quickreport chunkcheck "$PATH_PREFIX" >/dev/null 2>&1 || $root cp -f dh qget quickemu quickreport chunkcheck "$PATH_PREFIX"
 	cd /tmp/
 	wget https://github.com/oSoWoSo/distro-svg/archive/refs/heads/main.zip
 	unzip main.zip
@@ -196,7 +196,7 @@ function renew_ready_vms() {
 		DESKTOP_FILE="${DH_CONFIG_DIR}/ready/${VMname}.desktop"
 		type='Application'
 		name="${VMname}"
-		comment=$(quickget "$VMname" | grep 'Description:' | cut -f2)
+		comment=$(qget "$VMname" | grep 'Description:' | cut -f2)
 		version="${version}"
 		execmd="sh -c 'cd ${VMS_DIR} && quickemu -vm ${vm_conf};$SHELL'"
 		icon="${icon_file}"
@@ -248,11 +248,12 @@ function renew_supported_vms() {
 	mkdir -p "$DH_CONFIG_DIR"/supported
 	#run_in_terminal
 	# get supported VMs
-	quickget | awk 'NR==3,/zorin/' | grep -o '[^ ]*' >"$DH_CONFIG_DIR/supported.md"
+	qget | awk 'NR==3,/zorin/' | grep -o '[^ ]*' >"$DH_CONFIG_DIR/supported.md"
 	while read -r get_name; do
 		VMname=$(echo "$get_name" | tr ' ' '_')
-		releases=$(quickget "$VMname" | grep 'Releases' | cut -f2 | sed 's/^ //' | sed 's/ *$//')
-		editions=$(quickget "$VMname" | grep 'Editions' | cut -f2 | sed 's/^ //' | sed 's/ *$//')
+		releases=$(qget "$VMname" | grep 'Releases' | cut -f2 | sed 's/^ //' | sed 's/ *$//')
+		editions=$(qget "$VMname" | grep 'Editions' | cut -f2 | sed 's/^ //' | sed 's/ *$//')
+		architectures=$(qget "$VMname" | grep "Architectures" | cut -f2 | sed "s/^ //" | sed "s/ *$//")
 		icon_name="$DH_ICON_DIR/$get_name"
 		if [ -f "$icon_name.svg" ]; then
 			icon_file="$icon_name.svg"
@@ -267,12 +268,14 @@ function renew_supported_vms() {
 		DESKTOP_FILE="$DH_CONFIG_DIR/supported/$VMname.desktop"
 		type="Application"
 		name="$get_name"
+		arch_opts="${architectures:-x86_64}"
+		arch_opts_fmt=$(echo "$arch_opts" | tr ' ' '!')
 		if [ -z "$editions" ]; then
-			execmd="sh -c 'cd ${VMS_DIR} && GDK_BACKEND=x11 yad --form --field=\"Release:CB\" \"${releases// /$replace}\" | cut -d\"|\" -f1 | xargs -I{} sh -c \"quickget ${get_name} {}\";$SHELL'"
+			execmd="sh -c 'cd ${VMS_DIR} && GDK_BACKEND=x11 yad --form --field=\"Architecture:CB\" \"$arch_opts_fmt\" --field=\"Release:CB\" \"${releases// /$replace}\" | cut -d\"|\" -f2 | xargs -I{} sh -c \"qget --arch {} ${get_name} {}\";$SHELL'"
 		elif [ "$interminal" = "yes" ]; then
 			terminal="true"
 		else
-			execmd="sh -c 'cd ${VMS_DIR} && GDK_BACKEND=x11 yad --form --separator=\" \" --field=\"Release:CB\" \"${releases// /$replace}\" --field=\"Edition:CB\" \"${editions// /$replace}\" | xargs -I{} sh -c \"quickget ${get_name} {}\";$SHELL'"
+			execmd="sh -c 'cd ${VMS_DIR} && GDK_BACKEND=x11 yad --form --separator=\" \" --field=\"Architecture:CB\" \"$arch_opts_fmt\" --field=\"Release:CB\" \"${releases// /$replace}\" --field=\"Edition:CB\" \"${editions// /$replace}\" | cut -d\"|\" -f2- | xargs -I{} sh -c \"qget --arch {} ${get_name} {}\";$SHELL'"
 		fi
 		icon="$icon_file"
 		categories='System;Virtualization;'
