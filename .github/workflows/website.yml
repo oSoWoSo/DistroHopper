@@ -1,15 +1,16 @@
-name: Build GitHub Pages from md files
+name: Build and deploy website
 on:
   push:
+    branches: [main]
     paths:
-      - '*.md'
-      - 'docs/*.css'
-      - 'docs/*.js'
-      - .github/workflows/website.yml
+      - 'website-source/**'
+      - 'public/**'
+      - 'web-create'
+      - '.github/workflows/website.yml'
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -36,32 +37,31 @@ jobs:
 
       - name: Make pages
         run: |
-          mkdir -p docs
+          mkdir -p website
           ./web-create -b
 
       - name: Check if docs changed
         id: diff
         run: |
-          if git diff --quiet HEAD~1 HEAD -- docs/; then
+          if git diff --quiet HEAD~1 HEAD -- website/; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Upload artifact
-        if: steps.diff.outputs.changed == 'true'
-        uses: actions/upload-pages-artifact@v4
-        with:
-          path: 'docs/'
+      - name: Deploy to website branch
+        run: |
+          git config --global user.name "oSoWoSo-bot"
+          git config --global user.email "osowoso@disroot.org"
 
-  deploy:
-    needs: build
-    if: needs.build.outputs.docs_changed == 'true'
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          TMPDIR=$(mktemp -d)
+          cp -r website/. "$TMPDIR/"
+
+          git checkout --orphan website-tmp
+          git rm -rf . --quiet
+
+          cp -r "$TMPDIR/." .
+
+          git add -A
+          git commit -m "Deploy website from ${GITHUB_SHA::8}"
+          git push origin HEAD:website --force
