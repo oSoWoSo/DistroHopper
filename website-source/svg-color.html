@@ -1,0 +1,162 @@
+<script>
+(function () {
+  function hexToRgb(hex) {
+    hex = hex.trim().replace(/^#/, '');
+    if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+    const n = parseInt(hex, 16);
+    return [n >> 16 & 255, n >> 8 & 255, n & 255];
+  }
+
+  function clamp(v, min, max) {
+    return Math.min(Math.max(v, min), max);
+  }
+
+  function Color(r, g, b) {
+    this.r = r / 255;
+    this.g = g / 255;
+    this.b = b / 255;
+  }
+
+  Color.prototype.applyFilter = function (funcs) {
+    let [r, g, b] = [this.r * 255, this.g * 255, this.b * 255];
+
+    function multiply(matrix) {
+      const nr = clamp(r * matrix[0] + g * matrix[1] + b * matrix[2], 0, 255);
+      const ng = clamp(r * matrix[3] + g * matrix[4] + b * matrix[5], 0, 255);
+      const nb = clamp(r * matrix[6] + g * matrix[7] + b * matrix[8], 0, 255);
+      r = nr; g = ng; b = nb;
+    }
+
+    function hueRotate(angle) {
+      const a = angle / 180 * Math.PI;
+      const sin = Math.sin(a), cos = Math.cos(a);
+      multiply([
+        0.213 + cos*0.787 - sin*0.213, 0.715 - cos*0.715 - sin*0.715, 0.072 - cos*0.072 + sin*0.928,
+        0.213 - cos*0.213 + sin*0.143, 0.715 + cos*0.285 + sin*0.140, 0.072 - cos*0.072 - sin*0.283,
+        0.213 - cos*0.213 - sin*0.787, 0.715 - cos*0.715 + sin*0.715, 0.072 + cos*0.928 + sin*0.072,
+      ]);
+    }
+
+    function sepia(v) {
+      multiply([
+        0.393 + 0.607*(1-v), 0.769 - 0.769*(1-v), 0.189 - 0.189*(1-v),
+        0.349 - 0.349*(1-v), 0.686 + 0.314*(1-v), 0.168 - 0.168*(1-v),
+        0.272 - 0.272*(1-v), 0.534 - 0.534*(1-v), 0.131 + 0.869*(1-v),
+      ]);
+    }
+
+    function saturate(v) {
+      multiply([
+        0.213 + 0.787*v, 0.715 - 0.715*v, 0.072 - 0.072*v,
+        0.213 - 0.213*v, 0.715 + 0.285*v, 0.072 - 0.072*v,
+        0.213 - 0.213*v, 0.715 - 0.715*v, 0.072 + 0.928*v,
+      ]);
+    }
+
+    for (const [fn, val] of funcs) {
+      if (fn === 'invert')    { r = clamp((1-r/255)*255*val + r/255*255*(1-val),0,255); g = clamp((1-g/255)*255*val + g/255*255*(1-val),0,255); b = clamp((1-b/255)*255*val + b/255*255*(1-val),0,255); }
+      if (fn === 'sepia')     sepia(val);
+      if (fn === 'saturate')  saturate(val);
+      if (fn === 'hueRotate') hueRotate(val);
+      if (fn === 'brightness'){ r = clamp(r*val,0,255); g = clamp(g*val,0,255); b = clamp(b*val,0,255); }
+    }
+
+    return new Color(r, g, b);
+  };
+
+  function loss(result, target) {
+    return (
+      Math.pow(result.r*255 - target.r*255, 2) +
+      Math.pow(result.g*255 - target.g*255, 2) +
+      Math.pow(result.b*255 - target.b*255, 2)
+    );
+  }
+
+  function solve(target) {
+    function css(v) {
+      return [
+        ['invert',    clamp(v[0], 0, 1)],
+        ['sepia',     clamp(v[1], 0, 1)],
+        ['saturate',  clamp(v[2], 0, 20)],
+        ['hueRotate', clamp(v[3], 0, 360)],
+        ['brightness',clamp(v[4], 0, 10)],
+        ['brightness',clamp(v[5], 0, 10)],
+      ];
+    }
+
+    function score(v) {
+      return loss(new Color(0,0,0).applyFilter(css(v)), target);
+    }
+
+    let best = null, bestScore = Infinity;
+    for (let i = 0; i < 30; i++) {
+      let v = [Math.random(), Math.random(), Math.random()*10, Math.random()*360, Math.random()*2, Math.random()*2];
+      for (let step = 1; step > 0.0001; step *= 0.9) {
+        for (let j = 0; j < v.length; j++) {
+          const orig = v[j];
+          v[j] += step * (Math.random() > 0.5 ? 1 : -1);
+          const s = score(v);
+          if (s < bestScore) { bestScore = s; best = [...v]; }
+          else v[j] = orig;
+        }
+      }
+    }
+
+    const f = css(best);
+    return [
+      `invert(${(clamp(f[0][1],0,1)*100).toFixed(0)}%)`,
+      `sepia(${(clamp(f[1][1],0,1)*100).toFixed(0)}%)`,
+      `saturate(${(clamp(f[2][1],0,20)*100).toFixed(0)}%)`,
+      `hue-rotate(${clamp(f[3][1],0,360).toFixed(0)}deg)`,
+      `brightness(${(clamp(f[4][1],0,10)*100).toFixed(0)}%)`,
+      `brightness(${(clamp(f[5][1],0,10)*100).toFixed(0)}%)`,
+    ].join(' ');
+  }
+
+  // Cache solved filters per color so theme switching is instant
+  const cache = {};
+
+  function applyIconColor() {
+    const raw = getComputedStyle(document.documentElement)
+      .getPropertyValue('--color-icon').trim();
+    if (!raw) return false;
+
+    let rgb;
+    if (raw.startsWith('#')) {
+      rgb = hexToRgb(raw);
+    } else if (raw.startsWith('rgb')) {
+      rgb = raw.match(/\d+/g).map(Number).slice(0, 3);
+    } else {
+      return false;
+    }
+
+    const key = rgb.join(',');
+    if (!cache[key]) {
+      cache[key] = solve(new Color(...rgb));
+    }
+
+    document.documentElement.style.setProperty('--filter-icon', cache[key]);
+    return true;
+  }
+
+  function init() {
+    if (!applyIconColor()) return;
+
+    // Watch for data-theme attribute changes on <html> — re-apply immediately
+    new MutationObserver(function(mutations) {
+      for (const m of mutations) {
+        if (m.attributeName === 'data-theme') {
+          applyIconColor();
+          break;
+        }
+      }
+    }).observe(document.documentElement, { attributes: true });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
