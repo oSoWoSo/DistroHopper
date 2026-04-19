@@ -16,6 +16,7 @@ define_variables() {
 	color=$(( RANDOM % 255 + 1 ))
 	progname="${progname:="${0##*/}"}"
 	configdir="$HOME/.config/$progname"
+	SCRIPT_DIR="$(dirname "$(realpath "$0")")"
 	tmpdir="/tmp"
 	version='0.70'
 	vms=(*.conf)
@@ -55,10 +56,18 @@ define_variables() {
 		tmpdir="$(pwd)/tmp"
 	fi
 
-  if [ "$TERMUX" == 1 ]; then
-    QUICKGET=./quickget
-  else
+  if [ -f "${configdir}/quickget_cmd" ]; then
+    QUICKGET="$(cat "${configdir}/quickget_cmd")"
+  elif command -v qget >/dev/null 2>&1; then
+    QUICKGET=qget
+  elif [ -x "${SCRIPT_DIR}/qget" ]; then
+    QUICKGET="${SCRIPT_DIR}/qget"
+  elif command -v quickget >/dev/null 2>&1; then
     QUICKGET=quickget
+  elif [ -x "${SCRIPT_DIR}/quickget" ]; then
+    QUICKGET="${SCRIPT_DIR}/quickget"
+  else
+    QUICKGET="${SCRIPT_DIR}/qget"
   fi
 	# use configdir
 	if [ -f "${configdir}/border" ]; then
@@ -77,17 +86,17 @@ define_variables() {
 		spinner="globe"
 	fi
 }
+ARCH="x86_64"
 
 generate_supported() {
 	echo "Extracting OS Editions and Releases..."
 	rm -rf "$tmpdir/distros"
 	mkdir -p "$tmpdir/distros"
-	"$QUICKGET" | awk 'NR==2,/zorin/' | cut -d':' -f2 | grep -o '[^ ]*' > $tmpdir/supported
+	"$QUICKGET" --list-os 2>/dev/null > "$tmpdir/supported"
 	while read -r get_name; do
-		supported=$($QUICKGET "$get_name" | awk 'NF && NR>=5 && NR<=8')
 		echo "$get_name"
-		echo "$supported" > "$tmpdir/distros/${get_name}"
-	done < $tmpdir/supported
+		"$QUICKGET" --show "$get_name" 2>/dev/null > "$tmpdir/distros/${get_name}"
+	done < "$tmpdir/supported"
 }
 
 if_needed() {
@@ -132,13 +141,32 @@ gum_choose_os() {
 gum_choose_release() {
 	title="Choose release"
 	show_header
-	release=$(echo "$choices" | grep 'Releases' | cut -f2 | grep -o '[^ ]*' | gum choose --prompt='Choose release')
+	release=$(echo "$choices" | grep 'Releases' | cut -d: -f2 | grep -o '[^ ]*' | gum choose --prompt='Choose release')
+}
+
+gum_choose_arch() {
+	arch_file="$tmpdir/distros/$os"
+	architectures="x86_64"
+	if [ -f "$arch_file" ]; then
+		architectures=$(grep -i "Architectures:" "$arch_file" | cut -d: -f2 | sed "s/^ //")
+	fi
+	[ -z "$architectures" ] && architectures="x86_64"
+	local arch_count
+	arch_count=$(echo "$architectures" | wc -w)
+	if [ "$arch_count" -gt 1 ]; then
+		title="Choose architecture"
+		show_header
+		ARCH=$(echo "$architectures" | tr ' ' '\n' | gum choose --prompt="Choose architecture")
+		ARCH="${ARCH:-x86_64}"
+	else
+		ARCH="${architectures}"
+	fi
 }
 
 gum_choose_edition() {
 	title="Choose edition"
 	show_header
-	edition=$(echo "$choices" | grep 'Editions' | cut -f2 | grep -o '[^ ]*' | gum choose --prompt='Choose edition')
+	edition=$(echo "$choices" | grep 'Editions' | cut -d: -f2 | grep -o '[^ ]*' | gum choose --prompt='Choose edition')
 }
 
 gum_filter_os() {
@@ -147,11 +175,30 @@ gum_filter_os() {
 }
 
 gum_filter_release() {
-	release=$(echo "$choices" | grep 'Releases:' | cut -f2 | grep -o '[^ ]*' | gum filter --sort)
+	release=$(echo "$choices" | grep 'Releases:' | cut -d: -f2 | grep -o '[^ ]*' | gum filter --sort)
 }
 
 gum_filter_edition() {
-	edition=$(echo "$choices" | grep 'Editions:' | cut -f2 | grep -o '[^ ]*' | gum filter --sort)
+	edition=$(echo "$choices" | grep 'Editions:' | cut -d: -f2 | grep -o '[^ ]*' | gum filter --sort)
+}
+
+gum_filter_arch() {
+	arch_file="$tmpdir/distros/$os"
+	architectures="x86_64"
+	if [ -f "$arch_file" ]; then
+		architectures=$(grep -i "Architectures:" "$arch_file" | cut -d: -f2 | sed "s/^ //")
+	fi
+	[ -z "$architectures" ] && architectures="x86_64"
+	local arch_count
+	arch_count=$(echo "$architectures" | wc -w)
+	if [ "$arch_count" -gt 1 ]; then
+		title="Filter architecture"
+		show_header
+		ARCH=$(echo "$architectures" | tr ' ' '\n' | gum filter --sort --placeholder="architecture (default: x86_64)")
+		ARCH="${ARCH:-x86_64}"
+	else
+		ARCH="${architectures}"
+	fi
 }
 
 gum_choose_VM() {
@@ -178,17 +225,14 @@ create_VM() {
 	gum_filter_os
 	if [ -z "$os" ]; then exit 100
 	elif ! echo "$choices" | grep -q "Editions:"; then
-		#clear
 		gum_filter_release
-		#clear
-		"$QUICKGET" "$os" "$release"
+		gum_filter_arch
+		"$QUICKGET" --arch "$ARCH" "$os" "$release"
 	else
-		#clear
 		gum_filter_release
-		#clear
 		gum_filter_edition
-		#clear
-		"$QUICKGET" "$os" "$release" "$edition"
+		gum_filter_arch
+		"$QUICKGET" --arch "$ARCH" "$os" "$release" "$edition"
 	fi
 	show_headers
 }
@@ -199,8 +243,8 @@ create_VM2() {
 	elif [ "$(echo "$choices" | wc -l)" = 1 ]; then
 		clear
 		gum_choose_release
-		#gum spin --spinner $spinner --show-output --title="Downloading $os $/release" -- "$QUICKGET" "$os" "$release"
-		"$QUICKGET" "$os" "$release"
+		gum_choose_arch
+		"$QUICKGET" --arch "$ARCH" "$os" "$release"
 		if [ -f "${configdir}/default_vm_config" ]; then
 			echo 'Adding default values to config...'
 			cat "${configdir}/default_vm_config" >> "$os-$release.conf"
@@ -209,7 +253,8 @@ create_VM2() {
 		clear
 		gum_choose_release
 		gum_choose_edition
-		gum spin --spinner $spinner --show-output --title="Downloading $os $release $edition" -- "$QUICKGET" "$os" "$release" "$edition"
+		gum_choose_arch
+		gum spin --spinner $spinner --show-output --title="Downloading $os $release $edition" -- "$QUICKGET" --arch "$ARCH" "$os" "$release" "$edition"
 		if [ -f "${configdir}/default_vm_config" ]; then
 			echo 'Adding default values to config...'
 			cat "${configdir}/default_vm_config" >> "$os-$release-$edition.conf"
@@ -253,12 +298,17 @@ custom_quickemu_command() {
 }
 
 run_VM() {
+	if [ -z "$chosen" ]; then
+		gum style --foreground 1 "No VM selected!"
+		show_headers
+		return 1
+	fi
 	title="Starting $chosen..."
 	show_header
 	if [ -f "${configdir}/command" ]; then
 		quickemu < "${configdir}/command" -vm "$chosen.conf"
 	else
-			quickemu -vm "$chosen.conf"
+		quickemu -vm "$chosen.conf"
 	fi
 	show_headers
 }
@@ -278,7 +328,6 @@ gum_choose_running() {
 	fi
 }
 
-#TODO:
 gum_choose_runnings() {
 	pid_files=( */*.pid )
 	if [ ${#pid_files[@]} -gt 0 ]; then
@@ -301,7 +350,7 @@ gum_choose_VM_to_delete() {
 	if ls | grep ".conf" ; then
 		chosen=$(echo ${vms[@]%.*} | tr " " "\n" | gum filter --height "$height" --no-limit)
 		echo 'Removing config(s)...'
-		rm -r $chosen & rm $chosen.conf
+		rm -r "$chosen" ; rm "$chosen".conf
 	else
 		echo "No VMs to delete"
 	fi
@@ -329,15 +378,20 @@ gum_choose_VM_to_delete3() {
 }
 
 delete_VM() {
-	#chosen_to_delete=$(cat $chosen | while read line; echo $line | rev | cut -d'.' -f2-5 | rev; done)
-	echo "#TODO"
-	echo $chosen | tr " " "\n" | while read line 
-	do
-		echo 'Removing dir(s)...'
-		rm -r $(echo $line | rev | cut -d'.' -f2-5 | rev)
+	if [ -z "$chosen" ]; then
+		gum style --foreground 1 "No VM selected!"
+		return 1
+	fi
+	for vm_name in $chosen; do
+		vm_dir="${vm_name}"
+		vm_conf="${vm_name}.conf"
+		if [ -d "$vm_dir" ]; then
+			gum confirm "Really delete $vm_name directory?" && rm -rf "$vm_dir"
+		fi
+		if [ -f "$vm_conf" ]; then
+			gum confirm "Really delete $vm_conf?" && rm -f "$vm_conf"
+		fi
 	done
-	echo 'Removing config(s)...'
-	rm $(echo "$chosen")
 }
 
 ## ADVANCED
@@ -511,7 +565,6 @@ kill_vm() {
 	fi
 }
 
-#TODO:
 kill_vms() {
 	gum_choose_runnings
 	if [ -n "$selected" ]; then
@@ -572,6 +625,16 @@ use_color() {
 	if [ -f "${configdir}/color" ]; then
 		BORDER_FOREGROUND=$(cat ${configdir}/color)
 	fi
+}
+
+change_quickget_cmd() {
+	title="Choose download command"
+	show_header
+	cmd=$(printf 'qget\nquickget\n./qget\n./quickget' | gum filter --height 4 --prompt="Choose or type: " --no-strict)
+	[ -z "$cmd" ] && return
+	mkdir -p "${configdir}"
+	echo "$cmd" > "${configdir}/quickget_cmd"
+	QUICKGET="$cmd"
 }
 
 change_spinner() {
@@ -697,12 +760,16 @@ show_header_vms() {
 }
 
 show_header_tip() {
+	tip3=$(shuf -n 1 "$tmpdir/supported" 2>/dev/null)
+	if [ -z "$tip3" ]; then
+		header_tip=$(gum style --padding "0 1" --border="$BORDER" --border-foreground $color "No OS data — run regenerate supported")
+		return
+	fi
 	tip1=$(gum style --bold --foreground "$color2" "Tip: ")
 	tip2=$(gum style "try ")
-	tip3=$(shuf -n 1 "$tmpdir/supported")
 	tip4=$(gum style --bold --foreground="$color" "$tip3")
 	tip5=$(gum join "$tip1" "$tip2" "$tip4")
-	tip6=$("$QUICKGET" "$tip3" | awk 'NR==3,NR==7')
+	tip6=$("$QUICKGET" --show "$tip3" 2>/dev/null | awk 'NR==2,NR==6')
 	tip7=$(gum style --width=77 "$tip6")
 	tip8=$(gum join --vertical --align top "$tip5" "$tip7")
 	header_tip=$(gum style --padding "0 1" --border="$BORDER" --border-foreground $color "$tip8")
@@ -854,6 +921,7 @@ set default config for VMs
 edit VM config
 custom quickemu command
 add new distro
+create desktop entry
 back to main menu
 exit $progname" | gum filter --height "$height")
 	case $start in
@@ -861,6 +929,7 @@ exit $progname" | gum filter --height "$height")
 		'edit VM config' ) edit_VM_config;;
 		'custom quickemu command' ) custom_quickemu_command;;
 		'add new distro' ) add_new_distro;;
+		'create desktop entry' ) create_desktop_entry;;
 		'test ISOs download' ) test_ISOs_download;;
 		'show ISOs URLs' ) show_ISOs_urls;;
 		'back to main menu') clear; show_headers; break;;
@@ -904,6 +973,7 @@ show_menu_settings() {
 	height=13
 	start=$(echo "update $progname
 regenerate supported
+download command
 icons
 accent color
 borders color
@@ -915,6 +985,7 @@ exit $progname" | gum filter --height "$height")
 	case $start in
 		"update $progname" ) update_quicktui;;
 		'regenerate supported' ) generate_supported;;
+		'download command' ) change_quickget_cmd;;
 		'icons' ) icons_or;;
 		'accent color' ) change_color;;
 		'borders color' ) change_borders_color;;
@@ -935,6 +1006,7 @@ show_menu_settings_icons() {
 	height=13
 	start=$(echo " update $progname
  regenerate supported
+ download command
 󱌝 icons
  accent color
  borders color
@@ -946,6 +1018,7 @@ show_menu_settings_icons() {
 	case $start in
 		" update $progname" ) update_quicktui;;
 		' regenerate supported' ) generate_supported;;
+		' download command' ) change_quickget_cmd;;
 		'󱌝 icons' ) icons_or;;
 		' accent color' ) change_color;;
 		' borders color' ) change_borders_color;;
