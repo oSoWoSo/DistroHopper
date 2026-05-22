@@ -1,0 +1,778 @@
+source /home/z/Projekty/dh/lib.sh
+OS Release Option
+alma 8 boot
+alma 8 dvd
+alma 8 minimal
+alma 9 boot
+alma 9 dvd
+alma 9 minimal
+alpine v3.14 
+alpine v3.15 
+alpine v3.16 
+alpine v3.17 
+alpine v3.18 
+alpine v3.19 
+alpine v3.20 
+alpine v3.21 
+alpine v3.22 
+alpine v3.23 
+android 7.1 x86
+android 7.1 x86_64
+android 8.1 x86
+android 8.1 x86_64
+android 9.0 x86
+android 9.0 x86_64
+antix 21 base-runit
+antix 21 base-sysv
+antix 21 core-runit
+antix 21 core-sysv
+antix 21 full-runit
+antix 21 full-sysv
+antix 21 net-runit
+antix 21 net-sysv
+antix 22 base-runit
+antix 22 base-sysv
+antix 22 core-runit
+antix 22 core-sysv
+antix 22 full-runit
+antix 22 full-sysv
+antix 22 net-runit
+antix 22 net-sysv
+antix 23 base-runit
+antix 23 base-sysv
+antix 23 core-runit
+antix 23 core-sysv
+antix 23 full-runit
+antix 23 full-sysv
+antix 23 net-runit
+antix 23 net-sysv
+antix 23.1 base-runit
+antix 23.1 base-sysv
+antix 23.1 core-runit
+antix 23.1 core-sysv
+antix 23.1 full-runit
+antix 23.1 full-sysv
+antix 23.1 net-runit
+antix 23.1 net-sysv
+archcraft latest 
+archlinux latest 
+artixlinux 20260402 base-dinit
+artixlinux 20260402 base-openrc
+artixlinux 20260402 base-runit
+artixlinux 20260402 base-s6
+artixlinux 20260402 cinnamon-dinit
+artixlinux 20260402 cinnamon-openrc
+artixlinux 20260402 cinnamon-runit
+artixlinux 20260402 cinnamon-s6
+artixlinux 20260402 lxde-dinit
+artixlinux 20260402 lxde-openrc
+artixlinux 20260402 lxde-runit
+artixlinux 20260402 lxde-s6
+artixlinux 20260402 lxqt-dinit
+artixlinux 20260402 lxqt-openrc
+artixlinux 20260402 lxqt-runit
+artixlinux 20260402 lxqt-s6
+artixlinux 20260402 mate-dinit
+artixlinux 20260402 mate-openrc
+artixlinux 20260402 mate-runit
+artixlinux 20260402 mate-s6
+artixlinux 20260402 plasma-dinit
+artixlinux 20260402 plasma-openrc
+artixlinux 20260402 plasma-runit
+artixlinux 20260402 plasma-s6
+artixlinux 20260402 xfce-dinit
+artixlinux 20260402 xfce-openrc
+artixlinux 20260402 xfce-runit
+artixlinux 20260402 xfce-s6
+azurelinux 3.0 
+batocera 38 
+batocera 39 
+batocera 40 
+batocera 41 
+batocera 42 
+bazzite latest deck-gnome
+bazzite latest deck-plasma
+bazzite latest gnome
+bazzite latest plasma
+biglinux 2026-04-18 k612
+biglinux 2026-04-18 k618
+biglinux 2026-04-18 k619
+blendos latest 
+bodhi 7.0.0 hwe
+bodhi 7.0.0 s76
+bodhi 7.0.0 standard
+bunsenlabs boron 
+cachyos latest desktop
+cachyos latest handheld
+centos-stream 10 boot
+centos-stream 10 dvd1
+centos-stream 9 boot
+centos-stream 9 dvd1
+chimeralinux latest base
+chimeralinux latest gnome
+crunchbang++ 10.1 
+crunchbang++ 11.2 
+crunchbang++ 12.0 
+crunchbang++ 9.0 
+debian 11.11.0 cinnamon
+debian 11.11.0 gnome
+debian 11.11.0 kde
+debian 11.11.0 lxde
+debian 11.11.0 lxqt
+debian 11.11.0 mate
+debian 11.11.0 netinst
+debian 11.11.0 standard
+debian 11.11.0 xfce
+debian 12.13.0 cinnamon
+debian 12.13.0 gnome
+debian 12.13.0 kde
+debian 12.13.0 lxde
+debian 12.13.0 lxqt
+debian 12.13.0 mate
+debian 12.13.0 netinst
+debian 12.13.0 standard
+debian 12.13.0 xfce
+debian 13.4.0 cinnamon
+debian 13.4.0 gnome
+debian 13.4.0 kde
+debian 13.4.0 lxde
+debian 13.4.0 lxqt
+debian 13.4.0 mate
+debian 13.4.0 netinst
+debian 13.4.0 standard
+debian 13.4.0 xfce
+deepin 20.9 
+deepin 23.1 
+deepin 25.0.1 
+deepin 25.0.10 
+deepin 25.1.0 
+devuan chimaera 
+devuan daedalus 
+dragonflybsd 5.0.0 
+dragonflybsd 5.0.1 
+dragonflybsd 5.0.2 
+dragonflybsd 5.2.0 
+dragonflybsd 5.2.1 
+dragonflybsd 5.2.2 
+dragonflybsd 5.4.0 
+dragonflybsd 5.4.1 
+dragonflybsd 5.4.2 
+dragonflybsd 5.4.3 
+dragonflybsd 5.6.0 
+dragonflybsd 5.6.1 
+dragonflybsd 5.6.2 
+dragonflybsd 5.6.3 
+dragonflybsd 5.8.0 
+dragonflybsd 5.8.1 
+dragonflybsd 5.8.2 
+dragonflybsd 5.8.3 
+dragonflybsd 6.0.0 
+dragonflybsd 6.0.1 
+dragonflybsd 6.2.1 
+dragonflybsd 6.2.2 
+dragonflybsd 6.4.0 
+dragonflybsd 6.4.1 
+dragonflybsd 6.4.2 
+easyos 5.8.5 
+easyos 5.9 
+edubuntu 24.04 
+edubuntu 25.10 
+edubuntu daily-live 
+elementary 7.0 
+elementary 7.1 
+elementary 8.0 
+elementary 8.1 
+endeavouros ganymede-neo-2026.01.12 
+endeavouros gemini-2024.04.20 
+endeavouros mercury-2025.02.08 
+endeavouros mercury-neo-2025.03.19 
+endeavouros titan-2026.03.06 
+endless 6.0.4 base
+endless 6.0.4 en
+endless 6.0.4 es
+endless 6.0.4 fr
+endless 6.0.4 pt_BR
+fedora 42 Atomic
+fedora 42 Budgie
+fedora 42 COSMIC
+fedora 42 COSMIC-Atomic
+fedora 42 Cinnamon
+fedora 42 KDE
+fedora 42 KDE_Mobile
+fedora 42 Kinoite
+fedora 42 LXDE
+fedora 42 LXQt
+fedora 42 Mate
+fedora 42 MiracleWM
+fedora 42 Onyx
+fedora 42 Sericea
+fedora 42 Server
+fedora 42 Silverblue
+fedora 42 Sway
+fedora 42 Workstation
+fedora 42 Xfce
+fedora 42 i3
+fedora 43 Atomic
+fedora 43 Budgie
+fedora 43 COSMIC
+fedora 43 COSMIC-Atomic
+fedora 43 Cinnamon
+fedora 43 KDE
+fedora 43 KDE_Mobile
+fedora 43 Kinoite
+fedora 43 LXDE
+fedora 43 LXQt
+fedora 43 Mate
+fedora 43 MiracleWM
+fedora 43 Onyx
+fedora 43 Sericea
+fedora 43 Server
+fedora 43 Silverblue
+fedora 43 Sway
+fedora 43 Workstation
+fedora 43 Xfce
+fedora 43 i3
+fedora 44_Beta Atomic
+fedora 44_Beta Budgie
+fedora 44_Beta COSMIC
+fedora 44_Beta COSMIC-Atomic
+fedora 44_Beta Cinnamon
+fedora 44_Beta KDE
+fedora 44_Beta KDE_Mobile
+fedora 44_Beta Kinoite
+fedora 44_Beta LXDE
+fedora 44_Beta LXQt
+fedora 44_Beta Mate
+fedora 44_Beta MiracleWM
+fedora 44_Beta Onyx
+fedora 44_Beta Sericea
+fedora 44_Beta Server
+fedora 44_Beta Silverblue
+fedora 44_Beta Sway
+fedora 44_Beta Workstation
+fedora 44_Beta Xfce
+fedora 44_Beta i3
+freebsd 13.5 disc1
+freebsd 13.5 dvd1
+freebsd 14.3 disc1
+freebsd 14.3 dvd1
+freebsd 14.4 disc1
+freebsd 14.4 dvd1
+freebsd 15.0 disc1
+freebsd 15.0 dvd1
+freedos 1.2 
+freedos 1.3 
+freedos 1.4 
+garuda latest cinnamon
+garuda latest dr460nized
+garuda latest dr460nized-gaming
+garuda latest gnome
+garuda latest hyprland
+garuda latest i3
+garuda latest kde-lite
+garuda latest mokka
+garuda latest sway
+garuda latest xfce
+gentoo latest livegui
+gentoo latest minimal
+ghostbsd 25.01-R14.2p1 mate
+ghostbsd 25.01-R14.2p1 xfce
+ghostbsd 25.02-R14.3p2 mate
+ghostbsd 25.02-R14.3p2 xfce
+ghostbsd 26.1-R15.0p2 mate
+ghostbsd 26.1-R15.0p2 xfce
+gnomeos 40.0 
+gnomeos 41.0 
+gnomeos 42.0 
+gnomeos 43.0 
+gnomeos 44.0 
+gnomeos 46.0 
+gnomeos 47.0 
+gnomeos 48.0 
+gnomeos 49.0 
+gnomeos 50.0 
+gnomeos nightly 
+guix 1.4.0 
+guix 1.5.0 
+haiku r1beta3 x86_64
+haiku r1beta3 x86_gcc2h
+haiku r1beta4 x86_64
+haiku r1beta4 x86_gcc2h
+haiku r1beta5 x86_64
+haiku r1beta5 x86_gcc2h
+kali current 
+kali kali-weekly 
+kdeneon testing 
+kdeneon unstable 
+kdeneon user 
+kolibrios latest en_US
+kolibrios latest es_ES
+kolibrios latest ru_RU
+kubuntu 16.04 
+kubuntu 18.04 
+kubuntu 20.04 
+kubuntu 22.04 
+kubuntu 24.04 
+kubuntu 25.10 
+kubuntu daily-live 
+linuxlite 6.0 
+linuxlite 6.2 
+linuxlite 6.4 
+linuxlite 6.6 
+linuxmint 20.2 cinnamon
+linuxmint 20.2 mate
+linuxmint 20.2 xfce
+linuxmint 20.3 cinnamon
+linuxmint 20.3 mate
+linuxmint 20.3 xfce
+linuxmint 21 cinnamon
+linuxmint 21 mate
+linuxmint 21 xfce
+linuxmint 21.1 cinnamon
+linuxmint 21.1 mate
+linuxmint 21.1 xfce
+linuxmint 21.2 cinnamon
+linuxmint 21.2 mate
+linuxmint 21.2 xfce
+linuxmint 21.3 cinnamon
+linuxmint 21.3 mate
+linuxmint 21.3 xfce
+linuxmint 22 cinnamon
+linuxmint 22 mate
+linuxmint 22 xfce
+linuxmint 22.1 cinnamon
+linuxmint 22.1 mate
+linuxmint 22.1 xfce
+lmde 6 cinnamon
+lubuntu 16.04 
+lubuntu 18.04 
+lubuntu 20.04 
+lubuntu 22.04 
+lubuntu 24.04 
+lubuntu 25.10 
+lubuntu daily-live 
+maboxlinux latest 
+macos big-sur 
+macos catalina 
+macos mojave 
+macos monterey 
+macos sequoia 
+macos sonoma 
+macos tahoe 
+macos ventura 
+mageia 9 GNOME
+mageia 9 Plasma
+mageia 9 Xfce
+manjaro cinnamon full
+manjaro cinnamon minimal
+manjaro gnome full
+manjaro gnome minimal
+manjaro i3 full
+manjaro i3 minimal
+manjaro plasma full
+manjaro plasma minimal
+manjaro sway full
+manjaro sway minimal
+manjaro xfce full
+manjaro xfce minimal
+mxlinux 25.1 Fluxbox
+mxlinux 25.1 KDE
+mxlinux 25.1 Xfce
+netboot latest 
+netbsd 10.0 
+netbsd 10.1 
+netbsd 9.3 
+netbsd 9.4 
+nitrux latest 
+nixos 25.11 graphical
+nixos 25.11 minimal
+nixos unstable graphical
+nixos unstable minimal
+nwg-shell 2025.06.08 
+nwg-shell 2025.07.01 
+openbsd 6.8 
+openbsd 6.9 
+openbsd 7.0 
+openbsd 7.1 
+openbsd 7.2 
+openbsd 7.3 
+openbsd 7.4 
+openbsd 7.5 
+openbsd 7.6 
+openbsd 7.7 
+openbsd 7.8 
+openindiana 20240426 gui
+openindiana 20240426 minimal
+openindiana 20240426 text
+openindiana 20241026 gui
+openindiana 20241026 minimal
+openindiana 20241026 text
+openindiana 20250402 gui
+openindiana 20250402 minimal
+openindiana 20250402 text
+openindiana 20250606 gui
+openindiana 20250606 minimal
+openindiana 20250606 text
+openindiana 20251026 gui
+openindiana 20251026 minimal
+openindiana 20251026 text
+opensuse 15.0 
+opensuse 15.1 
+opensuse 15.2 
+opensuse 15.3 
+opensuse 15.4 
+opensuse 15.5 
+opensuse 15.6 
+opensuse 16.0 
+opensuse 16.1 
+opensuse microos 
+opensuse tumbleweed 
+oraclelinux 7.7 
+oraclelinux 7.8 
+oraclelinux 7.9 
+oraclelinux 8.4 
+oraclelinux 8.5 
+oraclelinux 8.6 
+oraclelinux 8.7 
+oraclelinux 8.8 
+oraclelinux 8.9 
+oraclelinux 9.0 
+oraclelinux 9.1 
+oraclelinux 9.2 
+oraclelinux 9.3 
+parrotsec 7.1 home
+parrotsec 7.1 security
+pclinuxos latest kde
+pclinuxos latest kde-darkstar
+pclinuxos latest mate
+pclinuxos latest xfce
+peppermint latest debian-gnome
+peppermint latest debian-xfce
+peppermint latest devuan-gnome
+peppermint latest devuan-xfce
+popos 20.04 intel
+popos 20.04 nvidia
+popos 22.04 intel
+popos 22.04 nvidia
+popos 24.04 intel
+popos 24.04 nvidia
+porteus 5.01 cinnamon
+porteus 5.01 gnome
+porteus 5.01 kde
+porteus 5.01 lxde
+porteus 5.01 lxqt
+porteus 5.01 mate
+porteus 5.01 openbox
+porteus 5.01 xfce
+primtux 7 2022-10
+proxmox-ve 5.4-1 
+proxmox-ve 6.4-1 
+proxmox-ve 7.4-1 
+proxmox-ve 8.4-1 
+proxmox-ve 9.0-1 
+proxmox-ve 9.1-1 
+pureos 10.3 gnome
+pureos 10.3 plasma
+reactos latest 
+rebornos latest 
+rockylinux 10.0 boot
+rockylinux 10.0 dvd
+rockylinux 10.0 minimal
+rockylinux 8.3 boot
+rockylinux 8.3 dvd
+rockylinux 8.3 minimal
+rockylinux 8.4 boot
+rockylinux 8.4 dvd
+rockylinux 8.4 minimal
+rockylinux 8.5 boot
+rockylinux 8.5 dvd
+rockylinux 8.5 minimal
+rockylinux 8.6 boot
+rockylinux 8.6 dvd
+rockylinux 8.6 minimal
+rockylinux 8.7 boot
+rockylinux 8.7 dvd
+rockylinux 8.7 minimal
+rockylinux 8.8 boot
+rockylinux 8.8 dvd
+rockylinux 8.8 minimal
+rockylinux 8.9 boot
+rockylinux 8.9 dvd
+rockylinux 8.9 minimal
+rockylinux 9.0 boot
+rockylinux 9.0 dvd
+rockylinux 9.0 minimal
+rockylinux 9.1 boot
+rockylinux 9.1 dvd
+rockylinux 9.1 minimal
+rockylinux 9.2 boot
+rockylinux 9.2 dvd
+rockylinux 9.2 minimal
+rockylinux 9.3 boot
+rockylinux 9.3 dvd
+rockylinux 9.3 minimal
+rockylinux 9.4 boot
+rockylinux 9.4 dvd
+rockylinux 9.4 minimal
+rockylinux 9.5 boot
+rockylinux 9.5 dvd
+rockylinux 9.5 minimal
+rockylinux 9.6 boot
+rockylinux 9.6 dvd
+rockylinux 9.6 minimal
+siduction latest kde
+siduction latest lxqt
+siduction latest nox
+siduction latest xfce
+siduction latest xorg
+slackware 13.37 
+slackware 14.0 
+slackware 14.1 
+slackware 14.2 
+slackware 15.0 
+slax latest debian
+slax latest slackware
+slint 15.0-10 
+slitaz core 
+slitaz core-5in1 
+slitaz core64 
+slitaz loram 
+slitaz preinit 
+solus 2024-10-14 Budgie
+solus 2024-10-14 GNOME
+solus 2024-10-14 Plasma
+solus 2024-10-14 Xfce
+solus 2025-01-26 Budgie
+solus 2025-01-26 GNOME
+solus 2025-01-26 Plasma
+solus 2025-01-26 Xfce
+solus 2025-11-29 Budgie
+solus 2025-11-29 GNOME
+solus 2025-11-29 Plasma
+solus 2025-11-29 Xfce
+solus 2026-04-18 Budgie
+solus 2026-04-18 GNOME
+solus 2026-04-18 Plasma
+solus 2026-04-18 Xfce
+sparkylinux 8.2 kde
+sparkylinux 8.2 lxqt
+sparkylinux 8.2 mate
+sparkylinux 8.2 minimalcli
+sparkylinux 8.2 minimalgui
+sparkylinux 8.2 xfce
+spirallinux latest Budgie
+spirallinux latest Builder
+spirallinux latest Cinnamon
+spirallinux latest Gnome
+spirallinux latest LXQt
+spirallinux latest Mate
+spirallinux latest Plasma
+spirallinux latest XFCE
+tails stable 
+tinycore 14 Core
+tinycore 14 CorePlus
+tinycore 14 CorePure64
+tinycore 14 TinyCore
+tinycore 14 TinyCorePure64
+tinycore 15 Core
+tinycore 15 CorePlus
+tinycore 15 CorePure64
+tinycore 15 TinyCore
+tinycore 15 TinyCorePure64
+trisquel 10.0.1 kde
+trisquel 10.0.1 lxde
+trisquel 10.0.1 mate
+trisquel 10.0.1 sugar
+trisquel 11.0 kde
+trisquel 11.0 lxde
+trisquel 11.0 mate
+trisquel 11.0 sugar
+tuxedo-os current 
+ubuntu 14.04 
+ubuntu 16.04 
+ubuntu 18.04 
+ubuntu 20.04 
+ubuntu 22.04 
+ubuntu 24.04 
+ubuntu 25.10 
+ubuntu daily-live 
+ubuntu-budgie 18.04 
+ubuntu-budgie 20.04 
+ubuntu-budgie 22.04 
+ubuntu-budgie 24.04 
+ubuntu-budgie 25.10 
+ubuntu-budgie daily-live 
+ubuntu-mate 16.04 
+ubuntu-mate 18.04 
+ubuntu-mate 20.04 
+ubuntu-mate 22.04 
+ubuntu-mate 24.04 
+ubuntu-mate 25.10 
+ubuntu-mate daily-live 
+ubuntu-server 14.04 
+ubuntu-server 16.04 
+ubuntu-server 18.04 
+ubuntu-server 20.04 
+ubuntu-server 22.04 
+ubuntu-server 24.04 
+ubuntu-server 25.10 
+ubuntu-server 26.04 
+ubuntu-server daily-live 
+ubuntu-unity 24.04 
+ubuntu-unity 25.10 
+ubuntu-unity daily-live 
+ubuntucinnamon 24.04 
+ubuntucinnamon 25.10 
+ubuntucinnamon daily-live 
+ubuntukylin 16.04 
+ubuntukylin 18.04 
+ubuntukylin 20.04 
+ubuntukylin 22.04 
+ubuntukylin 24.04 
+ubuntukylin 25.10 
+ubuntukylin daily-live 
+ubuntustudio 16.04 
+ubuntustudio 18.04 
+ubuntustudio 20.04 
+ubuntustudio 22.04 
+ubuntustudio 24.04 
+ubuntustudio 25.10 
+ubuntustudio daily-live 
+vanillaos 22.10 
+vanillaos 22.10-r1 
+vanillaos 22.10-r2 
+vanillaos 22.10-r3 
+vanillaos 22.10-r4 
+vanillaos 22.10-r5 
+vanillaos 22.10-r6 
+vanillaos 22.10-r7 
+vanillaos 22.10-r7.5 
+vanillaos 22.10-r8 
+void 20230628 glibc
+void 20230628 musl
+void 20230628 xfce-glibc
+void 20230628 xfce-musl
+void 20240314 glibc
+void 20240314 musl
+void 20240314 xfce-glibc
+void 20240314 xfce-musl
+void 20250202 glibc
+void 20250202 musl
+void 20250202 xfce-glibc
+void 20250202 xfce-musl
+windows 10 Arabic
+windows 10 Brazilian Portuguese
+windows 10 Bulgarian
+windows 10 Chinese (Simplified)
+windows 10 Chinese (Traditional)
+windows 10 Croatian
+windows 10 Czech
+windows 10 Danish
+windows 10 Dutch
+windows 10 English (United States)
+windows 10 English International
+windows 10 Estonian
+windows 10 Finnish
+windows 10 French Canadian
+windows 10 French
+windows 10 German
+windows 10 Greek
+windows 10 Hebrew
+windows 10 Hungarian
+windows 10 Italian
+windows 10 Japanese
+windows 10 Korean
+windows 10 Latvian
+windows 10 Lithuanian
+windows 10 Norwegian
+windows 10 Polish
+windows 10 Portuguese
+windows 10 Romanian
+windows 10 Russian
+windows 10 Serbian Latin
+windows 10 Slovak
+windows 10 Slovenian
+windows 10 Spanish (Mexico)
+windows 10 Spanish
+windows 10 Swedish
+windows 10 Thai
+windows 10 Turkish
+windows 10 Ukrainian
+windows 11 Arabic
+windows 11 Brazilian Portuguese
+windows 11 Bulgarian
+windows 11 Chinese (Simplified)
+windows 11 Chinese (Traditional)
+windows 11 Croatian
+windows 11 Czech
+windows 11 Danish
+windows 11 Dutch
+windows 11 English (United States)
+windows 11 English International
+windows 11 Estonian
+windows 11 Finnish
+windows 11 French Canadian
+windows 11 French
+windows 11 German
+windows 11 Greek
+windows 11 Hebrew
+windows 11 Hungarian
+windows 11 Italian
+windows 11 Japanese
+windows 11 Korean
+windows 11 Latvian
+windows 11 Lithuanian
+windows 11 Norwegian
+windows 11 Polish
+windows 11 Portuguese
+windows 11 Romanian
+windows 11 Russian
+windows 11 Serbian Latin
+windows 11 Slovak
+windows 11 Slovenian
+windows 11 Spanish (Mexico)
+windows 11 Spanish
+windows 11 Swedish
+windows 11 Thai
+windows 11 Turkish
+windows 11 Ukrainian
+windows-server 2016 Chinese (Simplified)
+windows-server 2016 English (United States)
+windows-server 2016 French
+windows-server 2016 German
+windows-server 2016 Italian
+windows-server 2016 Japanese
+windows-server 2016 Russian
+windows-server 2016 Spanish
+windows-server 2019 Chinese (Simplified)
+windows-server 2019 English (United States)
+windows-server 2019 French
+windows-server 2019 German
+windows-server 2019 Italian
+windows-server 2019 Japanese
+windows-server 2019 Russian
+windows-server 2019 Spanish
+windows-server 2022 Chinese (Simplified)
+windows-server 2022 English (United States)
+windows-server 2022 French
+windows-server 2022 German
+windows-server 2022 Italian
+windows-server 2022 Japanese
+windows-server 2022 Russian
+windows-server 2022 Spanish
+xubuntu 16.04 
+xubuntu 18.04 
+xubuntu 20.04 
+xubuntu 22.04 
+xubuntu 24.04 
+xubuntu 25.10 
+xubuntu daily-live 
+zorin 16 core64
+zorin 16 education64
+zorin 16 lite64
+zorin 17 core64
+zorin 17 education64
+zorin 17 lite64
+zorin 18 core64
+zorin 18 education64
+zorin 18 lite64

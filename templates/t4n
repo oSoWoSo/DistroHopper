@@ -1,0 +1,41 @@
+# Template file for 't4n'
+OSNAME=t4n
+PRETTY="T4n OS"
+LOGO=""
+ICON="t4n.svg"
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/t4n.png"
+CATEGORY="Desktop, Live Medium, Lightwight"
+BASEDOF="Void"
+DESCRIPTION="Lightweight, fast and minimalist Linux distribution based on Void Linux with vanilla Xfce desktop"
+HOMEPAGE="https://t4n-labs.github.io/t4n-os"
+CREDENTIALS="anon:voidlinux,root:voidlinux"
+GPG="https://sourceforge.net/projects/t4n-os/files/t4n-public.key"
+RSS="https://sourceforge.net/projects/t4n-os/rss?path=/"
+DW=""
+
+function releases_() {
+	echo latest
+}
+
+function editions_() {
+	echo base xfce xfce-wayland
+}
+
+function get_() {
+	#local REL=$(echo "${EDITION}" | tr '[:lower:]' '[:upper:]')
+
+	local ISOS=$(web_pipe "https://sourceforge.net/projects/t4n-os/rss?path=/" | grep 'title><!\[CDATA' | cut -d'[' -f3 | cut -d']' -f1 | grep '.iso')
+	local QEMU_ARCH="x86_64"
+	case "${EDITION}" in
+		base) USE="Base" ;;
+		'xfce-wayland') USE="XFCE-Wayland" ;;
+		xfce) USE="XFCE" ;;
+	esac
+	local URL="https://sourceforge.net/projects/t4n-os/files/T4n-OS_${USE}"
+	local ISO="T4nOS-${QEMU_ARCH}-${USE}.iso"
+	local HASH=$(web_pipe "${URL}/SHA256SUMS" | cut -d' ' -f1)
+	echo "${URL}/${ISO} ${HASH}"
+}
+
+#https://sourceforge.net/projects/t4n-os/files/t4n-public.key/download
+#https://sourceforge.net/projects/t4n-os/files/T4n-OS_XFCE/SHA256SUMS.sig/download

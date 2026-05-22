@@ -1,21 +1,36 @@
 # Template file for 'archcraft'
 OSNAME="archcraft"
 PRETTY="Archcraft"
+LOGO=""
 ICON="archcraft.svg"
-CATEGORY="advanced"
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/archcraft.png"
+CATEGORY="Advanced"
 BASEDOF="Arch"
 HOMEPAGE="https://archcraft.io"
 DESCRIPTION="Yet another minimal Linux distribution, based on Arch Linux"
 CREDENTIALS="-"
+GPG=""
+RSS="https://sourceforge.net/projects/archcraft/rss?path=/"
+DW=""
 
 function releases_() {
-    echo latest
+	echo latest
 }
 
 function get_() {
-    local HASH=""
-    local URL=""
-    URL="https://sourceforge.net/projects/archcraft/files/${RELEASE}/download"
-    URL="$(web_redirect "${URL}" | cut -d? -f1)"
-    echo "${URL} ${HASH}"
+	local HASH=""
+	local ISO=""
+	local URL=""
+	local RSS_ISO
+	RSS_ISO=$(web_pipe "https://sourceforge.net/projects/archcraft/rss?path=/" | grep -oP '(?<=<link>)[^<]*\.iso(?=/download)' | head -1)
+	ISO=$(basename "${RSS_ISO}")
+	local VER
+	VER=$(echo "${RSS_ISO}" | grep -oP '(?<=/files/)[^/]+')
+	URL="https://sourceforge.net/projects/archcraft/files/${VER}/${ISO}"
+	HASH=$(web_pipe "${URL}.sha256sum/download" | awk '{print $1}')
+	echo "${URL}/download ${HASH}"
+}
+
+function config_() {
+	echo "disk_size=\"32G\"" >> "${CONF_FILE}"
 }

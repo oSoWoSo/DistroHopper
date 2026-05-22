@@ -1,0 +1,63 @@
+# Template file for 'lazylinux'
+OSNAME=lazylinux
+PRETTY="LazyLinux"
+LOGO=""
+ICON="lazylinux.svg"
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/lazylinux.png"
+CATEGORY="Lightweight"
+BASEDOF="Void"
+DESCRIPTION="Designed specifically for developers, tinkerers, and power users"
+HOMEPAGE="https://lazylinuxos.github.io"
+CREDENTIALS="anon:voidlinux,root:voidlinux"
+GPG="https://sourceforge.net/projects/lazylinux/files/iso/sha256sum.txt.asc"
+RSS="https://sourceforge.net/projects/lazylinux/rss?path=/iso"
+DW=""
+MAGNET="magnet:?xt=urn:btih:QRWQ6SFARQBGXLPE4RUDCMTQFEFZ6BMM&dn=lazylinux-live-x86_64-6.19.10_1-20260326.iso&xl=5728149504&tr.1=udp%3A%2F%2Ffosstorrents.com%3A6969%2Fannounce&tr.2=udp%3A%2F%2Ffosstorrents.com%3A6969%2Fannounce&tr.3=http%3A%2F%2Ffosstorrents.com%3A6969%2Fannounce&tr.4=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr.5=http%3A%2F%2Fthetracker.org%3A80%2Fannounce"
+CHAT="https://matrix.to/#/#lazylinux-support:matrix.org"
+
+function releases_() {
+	echo latest
+}
+
+function get_() {
+	local ISO
+	ISO=$(web_pipe "https://sourceforge.net/projects/lazylinux/rss?path=/iso" | grep 'title><!\[CDATA' | cut -d'/' -f3 | grep '\.iso' | cut -d']' -f1 | head -1)
+	local URL="https://sourceforge.net/projects/lazylinux/files/iso"
+	local HASH
+	HASH=$(web_pipe "${URL}/sha256sum.txt" | grep "${ISO}" | cut -d' ' -f1)
+	echo "${URL}/${ISO} ${HASH}"
+}
+
+# 🔐 Verify LazyLinux ISO
+# 1. Import the signing key
+#gpg --keyserver hkps://keys.openpgp.org --recv-key 875272EBA4078439FDB3B2422DBA5E7770CC2227
+#
+# 2. Verify the key fingerprint
+#
+# gpg --fingerprint 875272EBA4078439FDB3B2422DBA5E7770CC2227
+#
+# You should see:
+#
+# 8752 72EB A407 8439 FDB3  B242 2DBA 5E77 70CC 2227
+#
+# 3. Verify the checksum signature
+#
+# gpg --verify sha256sum.txt.asc sha256sum.txt
+#
+# Expected output:
+#
+# Good signature from "LazyLinux ..."
+#
+# 4. Verify the ISO checksum
+#
+# sha256sum -c sha256sum.txt
+#
+# Expected output:
+#
+# LazyLinux.iso: OK
+#
+# ✅ If all steps pass, your ISO is authentic and safe to use.
+
+#https://sourceforge.net/projects/lazylinux/files/iso/sha256sum.txt/download
+#https://sourceforge.net/projects/lazylinux/files/iso/sha256sum.txt.asc/download
+#https://sourceforge.net/projects/lazylinux/files/iso/lazylinux-live-x86_64-20260403-xfce.iso/download

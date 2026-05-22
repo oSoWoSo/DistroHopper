@@ -1,78 +1,141 @@
 #!/usr/bin/env bash
-#shellcheck disable=SC1090
-#
+# shellcheck disable=SC2317
+# shellcheck source=lib.sh
 
 SCRIPT_DIR="$(dirname "$(realpath "$0")")"
+source "${SCRIPT_DIR}/lib.sh"
+
+export PUBLIC_DIR="${PUBLIC_DIR:-${SCRIPT_DIR}/public}"
 TEMPLATES_DIR="${TEMPLATES_DIR:-${SCRIPT_DIR}/templates}"
-PUBLIC_DIR="${PUBLIC_DIR:-${SCRIPT_DIR}/public}"
-generateVersion="0.5"
+
+generateVersion="0.6"
+
+check_hash() {
+	local iso=""
+	local hash="$2"
+	local status="OK"
+
+	if [ "${OPERATION}" == "download" ]; then
+		iso="${1}"
+	else
+		iso="${VM_PATH}/${1}"
+	fi
+
+	local hash_algo
+	case ${#hash} in
+	32) hash_algo=md5sum ;;
+	40) hash_algo=sha1sum ;;
+	64) hash_algo=sha256sum ;;
+	128) hash_algo=sha512sum ;;
+	*) status="UNKNOWN" ;;
+	esac
+
+	if [[ "$status" != "UNKNOWN" ]]; then
+		if ! echo "${hash} ${iso}" | ${hash_algo} --check --status; then
+			status="FAIL"
+		fi
+	fi
+
+	if [[ "$status" == "FAIL" ]]; then
+		echo $"ERROR!"
+		exit 1
+	fi
+}
 
 function write_output() {
+	unset -f config_ editions_ arch_ get_ releases_ extract_
+	unset GUEST IMAGE_TYPE DW_ARCHITECTURE DW_CATEGORY DW_DESKTOP DW_URL ORIGIN EDITIONS
 	. "${TEMPLATES_DIR}/${OS}"
-	# Load the list of RELEASES (format: "OS ARCH RELEASE EDITION")
-	RELEASES=$(cut -d: -f1 < "${PUBLIC_DIR}/tmp_${OS}" | cut -d' ' -f3 | sort -ur | paste -sd ' ')
-	# Check if 'edition' function exists and load it if present
-	if grep -q 'GUEST' "${TEMPLATES_DIR}/${OS}"; then
-		GUEST=$(printf 'GUEST="%s"\n' "$(grep 'GUEST' < "${TEMPLATES_DIR}/${OS}" | cut -d'"' -f2)")
-	else
-		GUEST=$(echo -e "\n")
+
+	local DAT="${PUBLIC_DIR}/tmp_${OS}.dat"
+	if [ ! -s "${DAT}" ]; then
+		echo "WARNING: no entries collected for ${OS}, skipping"
+		return 1
 	fi
-	if grep -q 'IMAGE_TYPE' "${TEMPLATES_DIR}/${OS}"; then
-		IMAGE_TYPE=$(printf 'IMAGE_TYPE="%s"\n' "$(grep 'IMAGE_TYPE' < "${TEMPLATES_DIR}/${OS}" | cut -d'"' -f2)")
-	else
-		IMAGE_TYPE=$(echo -e "\n")
-	fi
-	if grep -q 'function edition' "${TEMPLATES_DIR}/${OS}"; then
-		. "${TEMPLATES_DIR}/${OS}"
-		EDITIONS=$(printf 'EDITIONS="%s"\n' "$(cut -d: -f1 < "${PUBLIC_DIR}/tmp_${OS}" | cut -d' ' -f4 | sort -ur | paste -sd ' ')")
-		if [ -z "$RELEASES" ] || [ -z "$EDITIONS" ]; then
-			exit 1
+
+	# In test mode, only PASS rows count; otherwise everything emitted is OK.
+	local _filter='OK'
+	[ "${OPERATION}" == "test" ] && _filter='PASS'
+
+	# Collect releases/editions per arch from structured tmp_${OS}.dat
+	declare -A _arch_releases=() _arch_editions=()
+	local _all_archs="" _arch _rel _ed _url _st
+	while IFS=$'\t' read -r _arch _rel _ed _url _st; do
+		[[ "${_st}" == "${_filter}" ]] || continue
+		[ -n "${_arch}" ] || continue
+		[[ " ${_all_archs} " == *" ${_arch} "* ]] || _all_archs+=" ${_arch}"
+		_arch_releases[${_arch}]+=" ${_rel}"
+		[ "${_ed}" != "-" ] && [ -n "${_ed}" ] && _arch_editions[${_arch}]+=" ${_ed}"
+	done < "${DAT}"
+
+	_all_archs=$(printf '%s\n' ${_all_archs} | sort -u | grep -v '^$' | paste -sd ' ')
+	[ -z "${_all_archs}" ] && { echo "WARNING: no PASS entries for ${OS}, skipping"; return 1; }
+
+	# Default sets = union across archs
+	local _default_rel _default_ed _all_rel="" _all_ed=""
+	local _a
+	for _a in ${_all_archs}; do
+		_all_rel+=" ${_arch_releases[${_a}]}"
+		_all_ed+=" ${_arch_editions[${_a}]}"
+	done
+	_default_rel=$(printf '%s\n' ${_all_rel} | sort -ur | grep -v '^$' | paste -sd ' ')
+	_default_ed=$(printf '%s\n'  ${_all_ed}  | sort -u  | grep -v '^$' | paste -sd ' ')
+
+	# Per-arch overrides (only emitted when they differ from default)
+	local _override_lines=""
+	for _a in ${_all_archs}; do
+		local _ar _ae
+		_ar=$(printf '%s\n' ${_arch_releases[${_a}]} | sort -ur | grep -v '^$' | paste -sd ' ')
+		_ae=$(printf '%s\n' ${_arch_editions[${_a}]} | sort -u  | grep -v '^$' | paste -sd ' ')
+		if [ "${_ar}" != "${_default_rel}" ]; then
+			_override_lines+="RELEASES_${_a}=\"${_ar}\""$'\n'
 		fi
-	else
-		EDITIONS=$(echo -e "\n")
-		if [ -z "$RELEASES" ]; then
-			exit 1
+		if [ -n "${_default_ed}" ] && [ "${_ae}" != "${_default_ed}" ]; then
+			_override_lines+="EDITIONS_${_a}=\"${_ae}\""$'\n'
 		fi
-	fi
+	done
 
-	# Load ARCHITECTURES (unique architectures from tmp file)
-	if grep -q 'function arch_' "${TEMPLATES_DIR}/${OS}"; then
-		. "${TEMPLATES_DIR}/${OS}"
-		ARCHITECTURES=$(printf 'ARCHITECTURES="%s"\n' "$(arch_)")
-		# Include arch_() function in template
-		ARCH_FUNC=$(printf '\nfunction arch_() {\n    echo "%s"\n}\n' "$(arch_)")
-	else
-		ARCHITECTURES=$(printf 'ARCHITECTURES="%s"\n' "$(cut -d: -f1 < "${PUBLIC_DIR}/tmp_${OS}" | cut -d' ' -f2 | sort -u | paste -sd ' ')")
-		ARCH_FUNC=""
-	fi
+	{
+		printf '# Template file for '\''%s'\''\n' "$OS"
+		printf 'OSNAME="%s"\n' "${OSNAME:-${OS}}"
+		printf 'PRETTY="%s"\n' "${PRETTY:-}"
+		printf 'LOGO="%s"\n' "${LOGO:-}"
+		printf 'ICON="%s"\n' "${ICON:-}"
+		printf 'ICON_ONLINE="%s"\n' "${ICON_ONLINE:-}"
+		printf 'CATEGORY="%s"\n' "${CATEGORY:-}"
+		printf 'BASEDOF="%s"\n' "${BASEDOF:-}"
+		printf 'DESCRIPTION="%s"\n' "${DESCRIPTION:-}"
+		printf 'HOMEPAGE="%s"\n' "${HOMEPAGE:-}"
+		printf 'CREDENTIALS="%s"\n' "${CREDENTIALS:-}"
+		printf 'GPG="%s"\n' "${GPG:-}"
+		printf 'RSS="%s"\n' "${RSS:-}"
+		printf 'DW="%s"\n' "${DW:-}"
+		printf 'MAGNET="%s"\n' "${MAGNET:-}"
+		printf 'CHAT="%s"\n' "${CHAT:-}"
+		for _key in GUEST IMAGE_TYPE DW_ARCHITECTURE DW_CATEGORY DW_DESKTOP DW_URL ORIGIN; do
+			local _val="${!_key}"
+			[ -n "${_val}" ] && printf '%s="%s"\n' "${_key}" "${_val}"
+		done
+		echo
+		printf 'RELEASES="%s"\n' "${_default_rel}"
+		[ -n "${_default_ed}" ] && printf 'EDITIONS="%s"\n' "${_default_ed}"
+		printf 'QEMU_ARCH="%s"\n' "${_all_archs}"
+		if [ -n "${_override_lines}" ]; then
+			echo
+			printf '%s' "${_override_lines}"
+		fi
 
-	echo
-	REST=$(sed -n '/^function get_()/,$p' "${TEMPLATES_DIR}/${OS}")
-	# Create and save the template with all collected information
-	printf '# Template file for '\''%s'\''
-OSNAME="%s"
-PRETTY="%s"
-ICON="%s"
-CATEGORY="%s"
-BASEDOF="%s"
-DESCRIPTION="%s"
-HOMEPAGE="%s"
-CREDENTIALS="%s"
-%s
-%s
-RELEASES="%s"
-%s
-%s
+		# Embed all template functions verbatim so public/<OS> is self-contained.
+		# get_entries_ is excluded — it's a build-time helper from lib.sh.
+		while IFS= read -r _decl; do
+			local _fn="${_decl#function }"; _fn="${_fn%%(*}"
+			[[ "${_fn}" == "get_entries_" ]] && continue
+			echo
+			sed -n "/^${_decl}/,/^}/p" "${TEMPLATES_DIR}/${OS}" | sed '1s/^function //'
+		done < <(grep "^function " "${TEMPLATES_DIR}/${OS}")
+	} >"${PUBLIC_DIR}/${OS}"
 
-%s
-
-%s
-
-' "$OS" "$OSNAME" "$PRETTY" "$ICON" "$CATEGORY" "$BASEDOF" "$DESCRIPTION" "$HOMEPAGE" "$CREDENTIALS" "$GUEST" "$IMAGE_TYPE" "$RELEASES" "$EDITIONS" "$ARCHITECTURES" "$ARCH_FUNC" "$REST" | tee -a "${PUBLIC_DIR}/${OS}"
-	# Append content from tmp_${OS} to TODO/all and remove the temporary file
-	cat "${PUBLIC_DIR}/tmp_${OS}" >> TODO/all
-	#rm "${PUBLIC_DIR}/tmp_${OS}"
-	echo
+	echo "wrote ${PUBLIC_DIR}/${OS}"
 }
 
 function is_arch_supported() {
@@ -89,181 +152,137 @@ function is_arch_supported() {
 	[[ " ${SUPPORTED} " == *" ${CHECK_ARCH} "* ]]
 }
 
-function test_result() {
-	local OS="${1}"
-	local ARCH="${2:-amd64}"
-	local RELEASE="${3}"
-	local EDITION="${4:-}"
-	local URL="${5:-}"
-	local RESULT="${6:-}"
-
-	if [ -n "${EDITION}" ]; then
-		OS="${OS} ${ARCH} ${RELEASE} ${EDITION}"
-	else
-		OS="${OS} ${ARCH} ${RELEASE}"
-	fi
-
-	if [ -n "${RESULT}" ]; then
-		OS=$(printf "%-40s" "${OS}")
-		echo -e "${OS} ${URL}"
-	else
-		OS=$(printf "%-41s" "${OS}:")
-		echo -e "${OS} ${URL}"
-	fi
-}
-
-function test_all() {
+function _iterate_os() {
 	OS="${1}"
 	mkdir -p "${PUBLIC_DIR}"
-	rm -f "${PUBLIC_DIR}/${OS}"
-	touch "${PUBLIC_DIR}/${OS}"
-	rm -f "${PUBLIC_DIR}/tmp_${OS}"
-	touch "${PUBLIC_DIR}/tmp_${OS}"
+	rm -f "${PUBLIC_DIR}/${OS}" "${PUBLIC_DIR}/tmp_${OS}" "${PUBLIC_DIR}/tmp_${OS}.dat"
+	touch "${PUBLIC_DIR}/tmp_${OS}" "${PUBLIC_DIR}/tmp_${OS}.dat"
+
+	# Per-OS HTTP cache — exported so child shells / subshells see it.
+	# Wiped on RETURN so each OS gets a fresh cache.
+	export _WEB_CACHE_DIR
+	_WEB_CACHE_DIR="$(mktemp -d -t "dh-webcache-${OS}-XXXXXX")"
+	trap 'rm -rf "${_WEB_CACHE_DIR}"; unset _WEB_CACHE_DIR' RETURN
+
+	unset -f get_ releases_ editions_ arch_ config_ extract_
 	. "${TEMPLATES_DIR}/${OS}"
 
+	local ARCHS
 	if [[ $(type -t "arch_") == function ]]; then
 		ARCHS=$(arch_)
 	else
 		ARCHS="amd64"
 	fi
 
-	if [[ "${OS}" == *ubuntu* && "${OS}" != "ubuntu-server" ]]; then
-		FUNC="ubuntu"
-	fi
-
-	echo "${OS}
-"
-
+	# Cache releases per arch once (releases_ may depend on ARCH/EDITION)
 	for ARCH in ${ARCHS}; do
-		for RELEASE in $("releases_"); do
+		for RELEASE in $(releases_); do
 			. "${TEMPLATES_DIR}/${OS}"
-			if [[ $(type -t "editions_") == function ]]; then
-				for EDITION in $(editions_""); do
-					. "${TEMPLATES_DIR}/${OS}"
-					URL=$(get_ | cut -d' ' -f1 | head -n 1)
-					if [ "${OPERATION}" == "show" ]; then
-						test_result "${OS}" "${ARCH}" "${RELEASE}" "${EDITION}" "${URL}" | tee -a "${PUBLIC_DIR}/tmp_${OS}"
-					elif [ "${OPERATION}" == "test" ]; then
-						CHECK=$(web_check "${URL}" && echo "PASS" || echo "FAIL")
-						test_result "${OS}" "${ARCH}" "${RELEASE}" "${EDITION}" "${URL}" "${CHECK}" | tee -a "${PUBLIC_DIR}/tmp_${OS}"
-					fi
-				done
-			elif [[ "${OS}" == "windows"* ]]; then
-				languages_
-				for I18N in "${I18NS[@]}"; do
-					if [ "${OPERATION}" == "show" ]; then
-						test_result "${OS}" "${ARCH}" "${RELEASE}" "${I18N}" "" | tee -a "${PUBLIC_DIR}/tmp_${OS}"
-					elif [ "${OPERATION}" == "test" ]; then
-						test_result "${OS}" "${ARCH}" "${RELEASE}" "${I18N}" "${URL}" "SKIP" | tee -a "${PUBLIC_DIR}/tmp_${OS}"
-					fi
-				done
-			elif [[ "${OS}" == "macos" ]]; then
-				(get_) | tee -a "${PUBLIC_DIR}/tmp_${OS}"
-			elif [ "${OS}" == "ubuntu-server" ]; then
-				(get_) | tee -a "${PUBLIC_DIR}/tmp_${OS}"
-			elif [[ "${OS}" == *ubuntu* ]]; then
-				(get_) | tee -a "${PUBLIC_DIR}/tmp_${OS}"
-			else
-				URL=$(get_ | cut -d' ' -f1 | head -n 1)
-				if [ "${OPERATION}" == "show" ]; then
-					test_result "${OS}" "${ARCH}" "${RELEASE}" "${EDITION}" "${URL}" | tee -a "${PUBLIC_DIR}/tmp_${OS}"
-				elif [ "${OPERATION}" == "test" ]; then
-					CHECK=$(web_check "${URL}" && echo "PASS" || echo "FAIL")
-					test_result "${OS}" "${ARCH}" "${RELEASE}" "${EDITION}" "${URL}" "${CHECK}" | tee -a "${PUBLIC_DIR}/tmp_${OS}"
-				fi
-			fi
+			get_entries_ "${OS}" "${ARCH}" "${RELEASE}" "${OPERATION}" "${PUBLIC_DIR}" "${TEMPLATES_DIR}"
 		done
 	done
 }
 
-function get_releases() {
-	OS="${1}"
-	mkdir -p "${PUBLIC_DIR}"
-	rm -f "${PUBLIC_DIR}/${OS}"
-	#touch "${PUBLIC_DIR}/${OS}"
-	rm -f "${PUBLIC_DIR}/tmp_${OS}"
-	touch "${PUBLIC_DIR}/tmp_${OS}"
-	. "${TEMPLATES_DIR}/${OS}"
+# Verify a checksum file against a GPG signature.
+#
+# Usage: verify_gpg SUMS_URL KEY_SOURCE
+#   SUMS_URL    — URL of the SHA256SUMS / MD5SUMS file already used for hash check
+#   KEY_SOURCE  — value of GPG="" from the template:
+#                   ""                → skip (no GPG configured)
+#                   "FINGERPRINT"     → fetch key from keyserver
+#                   "https://..."     → download key from URL
+#
+# Signature URL is derived as SUMS_URL + ".asc" (fallback: ".gpg").
+function verify_gpg() {
+	local SUMS_URL="${1}"
+	local KEY_SOURCE="${2:-${GPG:-}}"
+	local SIG_FILE="" KEY_FILE="" SUMS_FILE="" GPG_HOME=""
 
-	if [[ $(type -t "arch_") == function ]]; then
-		ARCHS=$(arch_)
+	if [ -z "${KEY_SOURCE}" ]; then
+		return 0
+	fi
+
+	if ! command -v gpg &>/dev/null; then
+		echo "WARNING: gpg not found — skipping signature verification"
+		return 1
+	fi
+
+	SIG_FILE=$(mktemp)
+	SUMS_FILE=$(mktemp)
+	GPG_HOME=$(mktemp -d)
+	chmod 700 "${GPG_HOME}"
+
+	# Download SUMS file
+	curl --disable --silent --location -o "${SUMS_FILE}" "${SUMS_URL}" 2>/dev/null || {
+		echo "WARNING: Failed to download SUMS file for GPG check — ${SUMS_URL}"
+		rm -f "${SIG_FILE}" "${SUMS_FILE}"; rm -rf "${GPG_HOME}"
+		return 1
+	}
+
+	# Download signature (.asc preferred, fallback .gpg)
+	if ! curl --disable --silent --location --fail -o "${SIG_FILE}" "${SUMS_URL}.asc" 2>/dev/null; then
+		if ! curl --disable --silent --location --fail -o "${SIG_FILE}" "${SUMS_URL}.gpg" 2>/dev/null; then
+			echo "WARNING: No GPG signature found at ${SUMS_URL}.asc or .gpg"
+			rm -f "${SIG_FILE}" "${SUMS_FILE}"; rm -rf "${GPG_HOME}"
+			return 1
+		fi
+	fi
+
+	# Import signing key
+	KEY_FILE=$(mktemp)
+	if [[ "${KEY_SOURCE}" =~ ^https?:// ]]; then
+		curl --disable --silent --location -o "${KEY_FILE}" "${KEY_SOURCE}" 2>/dev/null || {
+			echo "WARNING: Failed to download GPG key — ${KEY_SOURCE}"
+			rm -f "${SIG_FILE}" "${SUMS_FILE}" "${KEY_FILE}"; rm -rf "${GPG_HOME}"
+			return 1
+		}
+		GNUPGHOME="${GPG_HOME}" gpg --quiet --import "${KEY_FILE}" 2>/dev/null
 	else
-		ARCHS="amd64"
+		# Treat as fingerprint — fetch from keyserver
+		GNUPGHOME="${GPG_HOME}" gpg --quiet --keyserver hkps://keyserver.ubuntu.com \
+			--recv-keys "${KEY_SOURCE}" 2>/dev/null || \
+		GNUPGHOME="${GPG_HOME}" gpg --quiet --keyserver hkps://keys.openpgp.org \
+			--recv-keys "${KEY_SOURCE}" 2>/dev/null
 	fi
 
-	if [[ "${OS}" == *ubuntu* && "${OS}" != "ubuntu-server" ]]; then
-		FUNC="ubuntu"
-	fi
-
-	echo "${OS}
-"
-
-	for ARCH in ${ARCHS}; do
-		for RELEASE in $("releases_"); do
-			. "${TEMPLATES_DIR}/${OS}"
-			if [[ $(type -t "editions_") == function ]]; then
-				for EDITION in $(editions_""); do
-					. "${TEMPLATES_DIR}/${OS}"
-					URL=$(get_ | cut -d' ' -f1 | head -n 1)
-					test_result "${OS}" "${ARCH}" "${RELEASE}" "${EDITION}" "${URL}" | tee -a "${PUBLIC_DIR}/tmp_${OS}"
-				done
-			elif [[ "${OS}" == "windows"* ]]; then
-				languages_
-				for I18N in "${I18NS[@]}"; do
-				   test_result "${OS}" "${ARCH}" "${RELEASE}" "${I18N}" "" | tee -a "${PUBLIC_DIR}/tmp_${OS}"
-				done
-			elif [[ "${OS}" == "macos" ]]; then
-				(get_) | tee -a "${PUBLIC_DIR}/tmp_${OS}"
-			elif [ "${OS}" == "ubuntu-server" ]; then
-				(get_) | tee -a "${PUBLIC_DIR}/tmp_${OS}"
-			elif [[ "${OS}" == *ubuntu* ]]; then
-				(get_) | tee -a "${PUBLIC_DIR}/tmp_${OS}"
-			else
-				#validate_release releases_"${OS}"
-				URL=$(get_ | cut -d' ' -f1 | head -n 1)
-				test_result "${OS}" "${ARCH}" "${RELEASE}" "${EDITION}" "${URL}" | tee -a "${PUBLIC_DIR}/tmp_${OS}"
-			fi
-		done
-	done
-}
-
-function check_hash() {
-	local iso=""
-	local hash=""
-	local hash_algo=""
-	if [ "${OPERATION}" == "download" ]; then
-		iso="${1}"
+	local result=0
+	if GNUPGHOME="${GPG_HOME}" gpg --verify "${SIG_FILE}" "${SUMS_FILE}" 2>/dev/null; then
+		echo "GPG OK — ${PRETTY:-${OS}} ${RELEASE}"
 	else
-		iso="${VM_PATH}/${1}"
+		echo "WARNING: GPG verification FAILED — ${PRETTY:-${OS}} ${RELEASE}"
+		result=1
 	fi
-	hash="${2}"
-	# Guess the hash algorithm by the hash length
-	case ${#hash} in
-		32) hash_algo=md5sum;;
-		40) hash_algo=sha1sum;;
-		64) hash_algo=sha256sum;;
-		128) hash_algo=sha512sum;;
-		*) echo "WARNING! Can't guess hash algorithm, not checking ${iso} hash."
-			return;;
-	esac
-	echo -n "Checking ${iso} with ${hash_algo}... "
-	if ! echo "${hash} ${iso}" | ${hash_algo} --check --status; then
-		echo "ERROR!"
-		echo "${iso} doesn't match ${hash}. Try running 'quickget' again."
-		exit 1
-	else
-		echo "Good!"
-	fi
+
+	rm -f "${SIG_FILE}" "${SUMS_FILE}" "${KEY_FILE}"; rm -rf "${GPG_HOME}"
+	return ${result}
 }
 
 # Download a file from the web and pipe it to stdout
 function web_pipe() {
-	curl --disable --silent --location "${1}"
+	local URL="${1}"
+	local key body
+	key=$(_web_cache_key GET "${URL}")
+	if body=$(_web_cache_get_body "${key}"); then
+		printf '%s' "${body}"
+		return 0
+	fi
+	body=$(curl --disable --silent --location "${URL}")
+	printf '%s' "${body}" | _web_cache_put_body "${key}"
+	printf '%s' "${body}"
 }
 
 # Download a JSON file from the web and pipe it to stdout
 function web_pipe_json() {
-	 curl --disable --silent --location --header "Accept: application/json" "${1}"
+	local URL="${1}"
+	local key body
+	key=$(_web_cache_key GET_JSON "${URL}")
+	if body=$(_web_cache_get_body "${key}"); then
+		printf '%s' "${body}"
+		return 0
+	fi
+	body=$(curl --disable --silent --location --header "Accept: application/json" "${URL}")
+	printf '%s' "${body}" | _web_cache_put_body "${key}"
+	printf '%s' "${body}"
 }
 
 # checks if a URL is reachable
@@ -271,7 +290,7 @@ function web_check() {
 	local HEADERS=()
 	local URL="${1}"
 	# Process any headers
-	while (( "$#" )); do
+	while (("$#")); do
 		if [ "${1}" == "--header" ]; then
 			HEADERS+=("${1}" "${2}")
 			shift 2
@@ -279,26 +298,41 @@ function web_check() {
 			shift
 		fi
 	done
+	local key rc
+	key=$(_web_cache_key "HEAD${HEADERS[*]}" "${URL}")
+	if _web_cache_get_status "${key}"; then return 0; fi
+	rc=$?
+	# rc=2 means not cached; otherwise it's the cached exit status
+	if [ "${rc}" != "2" ]; then return "${rc}"; fi
 	curl --silent --location --head --output /dev/null --fail --connect-timeout 30 --max-time 30 --retry 3 "${HEADERS[@]}" "${URL}"
+	rc=$?
+	_web_cache_put_status "${key}" "${rc}"
+	return "${rc}"
 }
 
 # checks if a URL needs to be redirected and returns the final URL
 function web_redirect() {
 	local REDIRECT_URL=""
 	local URL="${1}"
-	# Check for URL redirections
-	# Output to nonexistent directory so the download fails fast
-	REDIRECT_URL=$(curl --silent --location --fail --write-out '%{url_effective}' --output /var/cache/${RANDOM}/${RANDOM} "${URL}" )
-	if [ "${REDIRECT_URL}" != "${URL}" ]; then
+	# Use HEAD to follow redirects without downloading the body.
+	REDIRECT_URL=$(curl --silent --location --head --max-time 10 --write-out '%{url_effective}' --output /dev/null "${URL}" 2>/dev/null)
+	if [ -n "${REDIRECT_URL}" ] && [ "${REDIRECT_URL}" != "${URL}" ]; then
 		echo "${REDIRECT_URL}"
 	else
 		echo "${URL}"
 	fi
 }
 
+function _record_test_result() {
+	local URL="${1}"
+	local CHECK
+	CHECK=$(web_check "${URL}" && echo "PASS" || echo "FAIL")
+	table_add_row "$OS" "${ARCH:-amd64}" "$RELEASE" "$EDITION" "$URL" "$CHECK"
+	printf "%-10s %-15s %-15s %-10s %-30s %-10s\n" "${OS}" "${ARCH:-amd64}" "${RELEASE}" "${EDITION}" "${URL}" "${CHECK}" | tee -a "${PUBLIC_DIR}/tmp_${OS}"
+}
+
 # Download a file from the web
 function web_get() {
-	local CHECK=""
 	local HEADERS=()
 	local URL="${1}"
 	local DIR="${2}"
@@ -315,7 +349,7 @@ function web_get() {
 	URL=$(web_redirect "${URL}")
 
 	# Process any headers
-	while (( "$#" )); do
+	while (("$#")); do
 		if [ "${1}" == "--header" ]; then
 			HEADERS+=("${1}" "${2}")
 			shift 2
@@ -324,13 +358,11 @@ function web_get() {
 		fi
 	done
 
-	# Test mode for ISO
 	if [ "${OPERATION}" == "show" ]; then
-		test_result "${OS}" "${ARCH:-amd64}" "${RELEASE}" "${EDITION}" "${URL}"
+		printf "%-10s %-10s %-10s %-30s %-10s\n" "${OS}" "${ARCH:-amd64}" "${RELEASE}" "${EDITION}" "${URL}"
 		exit 0
 	elif [ "${OPERATION}" == "test" ]; then
-		CHECK=$(web_check "${URL}" && echo "PASS" || echo "FAIL")
-		test_result "${OS}" "${ARCH:-amd64}" "${RELEASE}" "${EDITION}" "${URL}" "${CHECK}"
+		_record_test_result "${URL}"
 		exit 0
 	elif [ "${OPERATION}" == "download" ]; then
 		DIR="$(pwd)"
@@ -353,18 +385,16 @@ function web_get() {
 }
 
 function zsync_get() {
-	local CHECK=""
 	local DIR="${2}"
 	local FILE="${1##*/}"
 	local OUT=""
 	local URL="${1}"
-	# Test mode for ISO
+
 	if [ "${OPERATION}" == "show" ]; then
-		test_result "${OS}" "${ARCH:-amd64}" "${RELEASE}" "${EDITION}" "${URL}"
+		printf "%-10s %-10s %-10s %-30s %-10s\n" "${OS}" "${ARCH:-amd64}" "${RELEASE}" "${EDITION}" "${URL}" | tee -a "${PUBLIC_DIR}/tmp_${OS}"
 		exit 0
 	elif [ "${OPERATION}" == "test" ]; then
-		CHECK=$(web_check "${URL}" && echo "PASS" || echo "FAIL")
-		test_result "${OS}" "${ARCH:-amd64}" "${RELEASE}" "${EDITION}" "${URL}" "${CHECK}"
+		_record_test_result "${URL}"
 		exit 0
 	elif command -v zsync &>/dev/null; then
 		if [ -n "${3}" ]; then
@@ -397,283 +427,190 @@ function zsync_get() {
 	fi
 }
 
-function make_vm_config() {
-	local CONF_FILE=""
-	local IMAGE_FILE=""
-	local ISO_FILE=""
-	local IMAGE_TYPE=""
-	local GUEST=""
-	if [ "${OPERATION}" == "download" ]; then
-		exit 0
-	fi
-	IMAGE_FILE="${1}"
-	ISO_FILE="${2}"
-	case "${OS}" in
-		batocera)
-			GUEST="batocera"
-			IMAGE_TYPE="img";;
-		custom)
-			GUEST="${CUSTOM_OS}"
-			IMAGE_TYPE="${CUSTOM_IMAGE_TYPE}";;
-		dragonflybsd)
-			GUEST="dragonflybsd"
-			IMAGE_TYPE="iso";;
-		easyos)
-			GUEST="linux"
-			IMAGE_TYPE="img";;
-		freebsd|ghostbsd)
-			GUEST="freebsd"
-			IMAGE_TYPE="iso";;
-		haiku)
-			GUEST="haiku"
-			IMAGE_TYPE="iso";;
-		freedos)
-			GUEST="freedos"
-			IMAGE_TYPE="iso";;
-		kolibrios)
-			GUEST="kolibrios"
-			IMAGE_TYPE="iso";;
-		macos)
-			GUEST="macos"
-			IMAGE_TYPE="img";;
-		netbsd)
-			GUEST="netbsd"
-			IMAGE_TYPE="iso";;
-		openbsd)
-			GUEST="openbsd"
-			IMAGE_TYPE="iso";;
-		openindiana)
-			GUEST="solaris"
-			IMAGE_TYPE="iso";;
-		reactos)
-			GUEST="reactos"
-			IMAGE_TYPE="iso";;
-		truenas*)
-			GUEST="truenas"
-			IMAGE_TYPE="iso";;
-		ubuntu*)
-			GUEST="linux"
-			IMAGE_TYPE="iso"
-			# If there is a point in the release, check if it is less than 16.04
-			if [[ "${RELEASE}" != *"daily"* ]]; then
-				if [ "${RELEASE//./}" -lt 1604 ]; then
-					GUEST="linux_old"
-				fi
-			fi
-			;;
-		windows)
-			GUEST="windows"
-			IMAGE_TYPE="iso";;
-		windows-server)
-			GUEST="windows-server"
-			IMAGE_TYPE="iso";;
-		*)
-			GUEST="linux"
-			IMAGE_TYPE="iso";;
-	esac
-
-	CONF_FILE="${VM_PATH}.conf"
-
-	if [ ! -e "${CONF_FILE}" ]; then
-		echo "Making ${CONF_FILE}"
-		cat << EOF > "${CONF_FILE}"
-#!${QUICKEMU} --vm
-guest_os="${GUEST}"
-disk_img="${VM_PATH}/disk.qcow2"
-${IMAGE_TYPE}="${VM_PATH}/${IMAGE_FILE}"
-EOF
-		echo " - Setting ${CONF_FILE} executable"
-		chmod u+x "${CONF_FILE}"
-		if [ -n "${ISO_FILE}" ]; then
-			echo "fixed_iso=\"${VM_PATH}/${ISO_FILE}\"" >> "${CONF_FILE}"
-		fi
-
-		# OS specific tweaks
-		case ${OS} in
-			alma|athenaos|centos-stream|endless|garuda|gentoo|kali|nixos|oraclelinux|popos|rockylinux)
-				echo "disk_size=\"32G\"" >> "${CONF_FILE}";;
-			openindiana)
-				echo "boot=\"legacy\"" >> "${CONF_FILE}"
-				echo "disk_size=\"32G\"" >> "${CONF_FILE}";;
-			batocera)
-				echo "disk_size=\"8G\"" >> "${CONF_FILE}";;
-			bazzite)
-				echo "disk_size=\"64G\"" >> "${CONF_FILE}";;
-			dragonflybsd|haiku|openbsd|netbsd|slackware|slax|tails|tinycore)
-				echo "boot=\"legacy\"" >> "${CONF_FILE}";;
-			deepin)
-				echo "disk_size=\"64G\"" >> "${CONF_FILE}"
-				echo "ram=\"4G\"" >> "${CONF_FILE}"
-				;;
-			freedos)
-				echo "boot=\"legacy\"" >> "${CONF_FILE}"
-				echo "disk_size=\"4G\"" >> "${CONF_FILE}"
-				echo "ram=\"256M\"" >> "${CONF_FILE}"
-				;;
-			kolibrios)
-				echo "boot=\"legacy\"" >> "${CONF_FILE}"
-				echo "disk_size=\"2G\"" >> "${CONF_FILE}"
-				echo "ram=\"128M\"" >> "${CONF_FILE}"
-				;;
-			slint)
-				echo "disk_size=\"50G\"" >> "${CONF_FILE}"
-				;;
-			slitaz)
-				echo "boot=\"legacy\"" >> "${CONF_FILE}"
-				echo "disk_size=\"4G\"" >> "${CONF_FILE}"
-				echo "ram=\"512M\"" >> "${CONF_FILE}"
-				;;
-			truenas-scale|truenas-core)
-				echo "boot=\"legacy\"" >> "${CONF_FILE}"
-				# the rest is non-functional
-				# echo "bootdrive_size=\"5G\"" >> "${CONF_FILE}" # boot drive
-				# echo "1stdrive_size=\"20G\"" >> "${CONF_FILE}" # for testing
-				# echo "2nddrive_size=\"20G\"" >> "${CONF_FILE}" # again, for testing
-				;;
-			ubuntu-server)
-				# 22.04+ fails on LVM build if disk size is < 10G
-				# 22.04.1 fails on auto-install if TPM is disabled
-				echo "disk_size=\"10G\"" >> "${CONF_FILE}"
-				echo "ram=\"4G\"" >> "${CONF_FILE}"
-				if [[ "${RELEASE}" == *"22.04"* ]]; then
-					echo "tpm=\"on\"" >> "${CONF_FILE}"
-				fi
-				;;
-			vanillaos)
-				## Minimum is 50G for abroot, but a 64GB is allocated to give some headroom
-				echo "disk_size=\"64G\"" >> "${CONF_FILE}"
-				;;
-			zorin)
-				case ${EDITION} in
-					education64|edulite64) echo "disk_size=\"32G\"" >> "${CONF_FILE}";;
-				esac;;
-			reactos)
-				echo "boot=\"legacy\"" >> "${CONF_FILE}"
-				echo "disk_size=\"12G\"" >> "${CONF_FILE}"
-				echo "ram=\"2048M\"" >> "${CONF_FILE}"
-				;;
-			macos)
-				echo "disk_size=\"128G\"" >> "${CONF_FILE}"
-				echo "macos_release=\"${RELEASE}\"" >> "${CONF_FILE}"
-				# https://github.com/quickemu-project/quickemu/issues/438
-				if [ "${RELEASE}" == "monterey" ]; then
-					echo "cpu_cores=2" >> "${CONF_FILE}"
-				fi
-				;;
-			proxmox-ve)
-				echo "disk_size=\"20G\"" >> "${CONF_FILE}"
-				echo "ram=\"4G\"" >> "${CONF_FILE}"
-				;;
-		esac
-
-		if [ "${OS}" == "ubuntu" ] && [[ ${RELEASE} == *"daily"*  ]]; then
-			# Minimum to install lobster testing is 18GB but 32GB are allocated for headroom
-			echo "disk_size=\"32G\"" >> "${CONF_FILE}"
-		fi
-
-		if [[ "${OS}" == "windows"* ]]; then
-			echo "disk_size=\"64G\"" >> "${CONF_FILE}"
-		fi
-
-		# Enable TPM for Windows 11 and Windows Server 2022
-		if [[ "${OS}" == "windows" && "${RELEASE}" == "11" || "${OS}" == "windows-server" && "${RELEASE}" == "2022" ]]; then
-			echo "tpm=\"on\"" >> "${CONF_FILE}"
-			echo "secureboot=\"off\"" >> "${CONF_FILE}"
-		fi
-		if [ "${OPERATION}" == ui ]; then
-			echo
-			gum confirm "Run new ${OS} VM?" && quickemu --vm "${CONF_FILE}"
-		fi
-	fi
-	echo -e "\nTo start your ${PRETTY} virtual machine run:"
-	if [ "${OS}" == "slint" ]; then
-		echo -e "    quickemu --vm ${CONF_FILE}\nTo start Slint with braille support run:\n    quickemu --vm --braille --display sdl ${CONF_FILE}"
-	else
-		echo "    quickemu --vm ${CONF_FILE}"
-	fi
-	echo
-	exit 0
+function _write_todo_from_tmp() {
+	{
+		echo "### $(date '+%Y-%m-%d')"
+		printf "| %-12s | %-6s | %-10s | %-16s | %-40s | %-6s |\n" "OS" "Arch" "Release" "Edition" "URL" "Status"
+		printf "|-------------|------|-----------|------------------|----------------------------------------|--------|\n"
+		awk '
+			NF >= 5 && ($NF == "PASS" || $NF == "FAIL") {
+				os=$1; arch=$2; release=$3; check=$NF; url=$(NF-1)
+				edition=(NF >= 6) ? $4 : ""
+				printf "| %-12s | %-6s | %-10s | %-16s | %-40s | %-6s |\n", os, arch, release, edition, url, check
+			}
+		' "${PUBLIC_DIR}"/tmp_* 2>/dev/null | sort -u
+		echo
+	} >>TODO/all
 }
 
-if [ "${1}" == -t ] || [ "${1}" == --test ]; then
-	OPERATION='test'
-	shift
-else
-	OPERATION='show'
-fi
+function show_help() {
+	cat <<EOF
 
-USAGE="
+generate <flag> <argument>
 Usage:
- ./generate <OS>        Generate current <OS> data
- ./generate -t <OS>     Generate current data and show ISO links
- ./generate --all       Generate all data
- ./generate --parallel  Generate all data in parallel
- ./generate --help      Show this usage message
-"
+  <OS>                   Generate current <OS> data
+  -t <OS>                Test ISO links for <OS> (PASS/FAIL)
+  -a --all               Generate all data
+  -t -a                  Test ISO links for all distros
+  -p --parallel          Generate all data in parallel
+  -t -p                  Test ISO links for all distros in parallel
+  -h --help              Show this usage message
+  -v --version           Show version and exit
 
-if [ -z "${1}" ]; then
-	echo "$USAGE" && exit 1
-elif [ -n "${1}" ]; then
-	case "${1}" in
+EOF
+	SUPPORTED=$(ls "$TEMPLATES_DIR/" | grep -v 'tmp_')
+	nOS=$(echo "$SUPPORTED" | wc -w)
+	echo "$nOS Available OS templates:"
+	echo ${SUPPORTED}
+}
 
-	'--parallel')
-		shift
-		rm -f TODO/all ; touch TODO/all
-		# Export functions and variables for parallel subshells
-		export -f write_output test_result test_all get_releases check_hash
-		export -f web_pipe web_pipe_json web_check web_redirect web_get zsync_get make_vm_config
-		export OPERATION TEMPLATES_DIR PUBLIC_DIR
-		#TOTAL=$(ls "${TEMPLATES_DIR}" | wc -l)
-		#DONE_DIR=$(mktemp -d)
-		#export DONE_DIR TOTAL
-		#( while true; do
-		#    DONE=$(ls "$DONE_DIR" 2>/dev/null | wc -l)
-		#    printf "\r  [%d/%d done, %d remaining]" "$DONE" "$TOTAL" "$((TOTAL - DONE))" >&2
-		#    sleep 0.3
-		#  done ) &
-		#MONITOR=$!
-		ls "${TEMPLATES_DIR}" | xargs -P 10 -I {} bash -c '
-export OS="{}"
+function _run_one() {
+	local os="${1}"
+	if [ ! -f "${TEMPLATES_DIR}/${os}" ]; then
+		echo "ERROR: OS \"${os}\" not found!"
+		exit 1
+	fi
+	_iterate_os "${os}"
+	write_output "${os}" || true
+	if [ "${OPERATION}" == "test" ]; then
+		# Skip table_write when running as a parallel worker — parent collects via _write_todo_from_tmp
+		[ -z "${_DH_PARALLEL_WORKER}" ] && table_write ./TODO/all
+	fi
+}
 
-gum spin --spinner minidot --show-stderr --title "$OS" -- bash -c "
-	. ${TEMPLATES_DIR}/$OS
-	get_releases \"$OS\"
-	write_output \"$OS\"
-"
-'
-		#kill $MONITOR 2>/dev/null; wait $MONITOR 2>/dev/null
-		#printf "\r  [%d/%d done]        \n" "$(ls "$DONE_DIR" | wc -l)" "$TOTAL" >&2
-		#rm -rf "$DONE_DIR"
-		cp TODO/all TODO/toSort && sort -u TODO/toSort > TODO/all && rm TODO/toSort
-		;;
+function _run_parallel() {
+	rm -f TODO/all "${PUBLIC_DIR}"/*
+	touch TODO/all
 
-	'--all')
-		#shift
-		rm -f TODO/all ; touch TODO/all
-		# Export functions and variables for parallel subshells
-		export -f write_output test_result test_all get_releases check_hash
-		export -f web_pipe web_pipe_json web_check web_redirect web_get zsync_get make_vm_config
-		export OPERATION TEMPLATES_DIR PUBLIC_DIR
+	local max_jobs
+	max_jobs="$(nproc 2>/dev/null || echo 4)"
+	[ "$max_jobs" -lt 1 ] && max_jobs=1
 
-		for OS_PATH in "$TEMPLATES_DIR"/*; do
-			OS=$(basename "${OS_PATH}")
-			gum spin --spinner globe --show-stderr --title "${OS}" -- bash -c "test_all '${OS}' && write_output '${OS}'"
+	local test_flag=""
+	[ "${OPERATION}" == "test" ] && test_flag="-t"
+
+	# Collect templates list
+	local templates=() t
+	for t in "$TEMPLATES_DIR"/*; do
+		[ -f "$t" ] || continue
+		templates+=("$(basename "$t")")
+	done
+	local total="${#templates[@]}"
+
+	# All worker PIDs — refreshed on every spawn/reap; used by the trap.
+	local -a worker_pids=()
+
+	# shellcheck disable=SC2317
+	_dh_cleanup() {
+		local p
+		for p in "${worker_pids[@]}"; do
+			# Negative PID = whole process group (worker was started with setsid)
+			kill -TERM -- "-${p}" 2>/dev/null
+		done
+		sleep 1
+		for p in "${worker_pids[@]}"; do
+			kill -KILL -- "-${p}" 2>/dev/null
+		done
+		printf '\n[interrupted]\n' >&2
+		exit 130
+	}
+	trap _dh_cleanup INT TERM
+
+	# pid -> os mapping (parallel arrays) for progress reporting
+	local -a worker_os=()
+	local -a worker_status_files=()
+
+	local idx=0 done_count=0
+	while [ "${idx}" -lt "${total}" ] || [ "${#worker_pids[@]}" -gt 0 ]; do
+		# Spawn until pool is full or templates exhausted
+		while [ "${idx}" -lt "${total}" ] && [ "${#worker_pids[@]}" -lt "${max_jobs}" ]; do
+			local os_name="${templates[${idx}]}"
+			idx=$((idx + 1))
+			local status_file
+			status_file="$(mktemp -t "dh-status-${os_name}-XXXXXX")"
+			# setsid puts each worker in its own process group so the trap can
+			# nuke the whole subtree (curl, sub-shells) by killing -PGID.
+			setsid bash -c "
+				start=\$(date +%s)
+				status=done
+				'${SCRIPT_DIR}/generate' ${test_flag} '${os_name}' >/dev/null 2>&1 || status=FAIL
+				end=\$(date +%s)
+				printf '%s %ds\n' \"\$status\" \"\$((end - start))\" >'${status_file}'
+			" &
+			worker_pids+=("$!")
+			worker_os+=("${os_name}")
+			worker_status_files+=("${status_file}")
 		done
 
-		cp TODO/all TODO/toSort && sort -u TODO/toSort > TODO/all && rm TODO/toSort
-		;;
+		# Reap any finished workers (non-blocking)
+		local _alive_p=() _alive_o=() _alive_s=() i
+		for i in "${!worker_pids[@]}"; do
+			local p="${worker_pids[$i]}"
+			if kill -0 "$p" 2>/dev/null; then
+				_alive_p+=("$p")
+				_alive_o+=("${worker_os[$i]}")
+				_alive_s+=("${worker_status_files[$i]}")
+			else
+				wait "$p" 2>/dev/null
+				done_count=$((done_count + 1))
+				local _line
+				_line="$(cat "${worker_status_files[$i]}" 2>/dev/null)"
+				rm -f "${worker_status_files[$i]}"
+				printf '[%d/%d] %-25s %s\n' "${done_count}" "${total}" "${worker_os[$i]}" "${_line:-?}"
+			fi
+		done
+		worker_pids=("${_alive_p[@]}")
+		worker_os=("${_alive_o[@]}")
+		worker_status_files=("${_alive_s[@]}")
 
-	--help)
-		echo "$USAGE" && exit 0
-		;;
+		[ "${idx}" -ge "${total}" ] && [ "${#worker_pids[@]}" -eq 0 ] || sleep 0.2
+	done
 
-	*)
-		if [ ! -f "${TEMPLATES_DIR}/$1" ]; then
-			echo "ERROR: OS \"${1}\" not found!"
-			exit 1
-		fi
-		test_all "${1}"
-		write_output "${1}"
-		;;
+	trap - INT TERM
+	[ "${OPERATION}" == "test" ] && _write_todo_from_tmp
+	printf '\033[0m\033[?47l'
+}
+
+function _run_all() {
+	rm -f TODO/all "${PUBLIC_DIR}"/*
+	touch TODO/all
+
+	for OS_PATH in "$TEMPLATES_DIR"/*; do
+		OS=$(basename "${OS_PATH}")
+		_iterate_os "${OS}"
+		write_output "${OS}" || true
+	done
+
+	[ "${OPERATION}" == "test" ] && _write_todo_from_tmp
+	printf '\033[0m\033[?47l'
+}
+
+# ---------------------------------------------------------------------------
+
+OPERATION='show'
+_args=()
+for _a in "$@"; do
+	case "$_a" in
+	-t | --test) OPERATION='test' ;;
+	*) _args+=("$_a") ;;
 	esac
+done
+set -- "${_args[@]}"
+unset _args _a
+
+table_clear
+
+if [ -z "${1}" ]; then
+	show_help
+	exit 1
 fi
+
+case "${1}" in
+'-p' | '--parallel') _run_parallel ;;
+'-a' | '--all')      _run_all ;;
+'-h' | '--help')     show_help ;;
+'-v' | '--version')  echo "$generateVersion" ;;
+*)                   _run_one "${1}" ;;
+esac
+
+# vim:tabstop=4:shiftwidth=4:noexpandtab

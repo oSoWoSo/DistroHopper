@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 
-
-
 function wayland_check() {
-	session_type=$(loginctl show-session "$XDG_SESSION_ID" -p Type | cut -d= -f2)
+	if [ -n "$XDG_SESSION_ID" ]; then
+		session_type=$(loginctl show-session "$XDG_SESSION_ID" -p Type 2>/dev/null | cut -d= -f2)
+	else
+		session_type=""
+	fi
 	case "$session_type" in
 	wayland)
 		export GDK_BACKEND=x11
@@ -39,7 +41,7 @@ function set_variables() {
 	#bash -x ./dh 2>&1 | tee output.log
 	#progname="${progname:="${0##*/}"}"
 	progname="DistroHopper"
-	version="0.90"
+	version="0.91"
 	#GTK_THEME="alt-dialog"
 	DH_CONFIG_DIR="$HOME/.config/dh"
 	DH_CONFIG="$DH_CONFIG_DIR/config"
@@ -49,7 +51,7 @@ function set_variables() {
 	TMP_DIR="/tmp"
 	terminal="sakura"
 	replace='"!"'
-	export "DH_CONFIG_DIR" "DH_CONFIG" "replace" "DH_ICON_DIR" "PATH_PREFIX" "TMP_DIR" "terminal" "VMS_DIR"
+	export DH_CONFIG_DIR DH_CONFIG replace DH_ICON_DIR PATH_PREFIX TMP_DIR terminal VMS_DIR
 	#check_and_set_mode
 	# Set traps to catch the signals and exit gracefully
 	trap "exit" INT
@@ -108,15 +110,30 @@ function choose_vms_dir() {
 	echo "VMS_DIR=\"$VMS_DIR\"\nexport VMS_DIR" > "$DH_CONFIG"
 }
 
+DH_VERSION_FILE=""
 function install_dh() {
-	cp -f dh qget quickemu quickreport chunkcheck "$PATH_PREFIX" >/dev/null 2>&1 || $root cp -f dh qget quickemu quickreport chunkcheck "$PATH_PREFIX"
-	cd /tmp/
-	wget https://github.com/oSoWoSo/distro-svg/archive/refs/heads/main.zip
-	unzip main.zip
-	cp distro-svg-main/*.svg distro-svg-main/*.png "$DH_ICON_DIR/"
-	#cp -f icons/* "$DH_ICON_DIR/" >/dev/null 2>&1 || $root cp -f icons/* "$DH_ICON_DIR/"
+	DH_VERSION_FILE="$DH_CONFIG_DIR/version"
+	local install_type="fresh"
+
+	if [ -f "$DH_VERSION_FILE" ]; then
+		local old_version
+		old_version=$(cat "$DH_VERSION_FILE")
+		if [ "$old_version" != "$version" ]; then
+			install_type="upgrade"
+			echo "Upgrading DistroHopper $old_version → $version"
+		else
+			install_type="reinstall"
+			echo "DistroHopper $version already installed"
+		fi
+	else
+		echo "Installing DistroHopper $version"
+	fi
+
+	cp -f generate qget q dh quickemu quickreport chunkcheck "$PATH_PREFIX" >/dev/null 2>&1 || $root cp -f generate qget q dh quickemu quickreport chunkcheck "$PATH_PREFIX"
+	cp -f icons/* "$DH_ICON_DIR/" >/dev/null 2>&1 || $root cp -f icons/* "$DH_ICON_DIR/"
 	mkdir -p "$DH_CONFIG_DIR/ready"
 	mkdir -p "$DH_CONFIG_DIR/supported"
+	echo "$version" > "$DH_VERSION_FILE"
 }
 
 # shellcheck disable=SC2154
@@ -147,7 +164,7 @@ function desktop_entry_dh() {
 	DESKTOP_FILE="${TMP_DIR}/dh.desktop"
 	type='Application'
 	name='DistroHopper'
-	comment='Quickly download, create and run VM of any#TODO operating system.'
+	comment='Quickly download, create and run VM of any operating system.'
 	version="${version}"
 	execmd="sh -c 'cd ${VMS_DIR} && dh'"
 	if [ "$interminal" = "yes" ]; then
@@ -176,12 +193,12 @@ function installation_process() {
 #}
 
 function renew_ready_vms() {
-	cd "$VMS_DIR" || echo "ERROR: VMS_DIR not set!"; exit 1
+	cd "$VMS_DIR" || { echo "ERROR: VMS_DIR not set!"; exit 1; }
 	rm -r "$DH_CONFIG_DIR"/ready >/dev/null 2>&1
 	mkdir -p "$DH_CONFIG_DIR"/ready
 	for vm_conf in *.conf; do
-		echo "creating..."
 		VMname=$(basename "$VMS_DIR/$vm_conf" .conf)
+		echo "creating $VMname"
 		# Use fuzzy matching to find the best matching icon file (ready to run VMs)
 		icon_name=$(basename "$VMS_DIR/$vm_conf" .conf | cut -d'-' -f -2)
 		icon_file=$(find "$DH_ICON_DIR" -type f -iname "${icon_name// /}.*")
@@ -189,14 +206,14 @@ function renew_ready_vms() {
 		if [ -z "$icon_file" ]; then
 			icon_name=$(basename "$VMS_DIR/$vm_conf" .conf | cut -d'-' -f1)
 			icon_file=$(find "$DH_ICON_DIR" -type f -iname "${icon_name// /}.*")
-        fi
+		fi
 		if [ -z "$icon_file" ]; then
 			icon_file="$DH_ICON_DIR/tux.svg"
 		fi
 		DESKTOP_FILE="${DH_CONFIG_DIR}/ready/${VMname}.desktop"
 		type='Application'
 		name="${VMname}"
-		comment=$(qget "$VMname" | grep 'Description:' | cut -f2)
+		comment=$(qget "$VMname" | grep 'Description:' | cut -d: -f2)
 		version="${version}"
 		execmd="sh -c 'cd ${VMS_DIR} && quickemu -vm ${vm_conf};$SHELL'"
 		icon="${icon_file}"
@@ -206,7 +223,7 @@ function renew_ready_vms() {
 }
 
 function renew_ready() {
-	cd "$VMS_DIR" || echo "ERROR: VMS_DIR not set!"; exit 1
+	cd "$VMS_DIR" || { echo "ERROR: VMS_DIR not set!"; exit 1; }
 	#	for files in "$VMS_DIR"/*; do
 	#	if [ ! -e *.conf ]; then
 	#		echo $"No .conf files found"
@@ -224,7 +241,7 @@ function renew_ready() {
 		if [ -z "$icon_file" ]; then
 			icon_name=$(basename "$VMS_DIR/$vm_conf" .conf | cut -d'-' -f1)
 			icon_file=$(find "$DH_ICON_DIR" -type f -iname "${icon_name// /}.*")
-        fi
+		fi
 		if [ -z "$icon_file" ]; then
 			icon_file="$DH_ICON_DIR/tux.svg"
 		fi
@@ -243,17 +260,24 @@ EOF
 }
 
 function renew_supported_vms() {
+	local qget_cmd
+	if [ -x "./qget" ]; then
+		qget_cmd="./qget"
+	elif [ -x "$PATH_PREFIX/qget" ]; then
+		qget_cmd="$PATH_PREFIX/qget"
+	else
+		qget_cmd="qget"
+	fi
+
 	echo "Regenerating supported"
 	rm -r "$DH_CONFIG_DIR"/supported >/dev/null 2>&1
 	mkdir -p "$DH_CONFIG_DIR"/supported
-	#run_in_terminal
-	# get supported VMs
-	qget | awk 'NR==3,/zorin/' | grep -o '[^ ]*' >"$DH_CONFIG_DIR/supported.md"
+	$qget_cmd | awk 'NR==3,/zorin/' | grep -o '[^ ]*' >"$DH_CONFIG_DIR/supported.md"
 	while read -r get_name; do
 		VMname=$(echo "$get_name" | tr ' ' '_')
-		releases=$(qget "$VMname" | grep 'Releases' | cut -f2 | sed 's/^ //' | sed 's/ *$//')
-		editions=$(qget "$VMname" | grep 'Editions' | cut -f2 | sed 's/^ //' | sed 's/ *$//')
-		architectures=$(qget "$VMname" | grep "Architectures" | cut -f2 | sed "s/^ //" | sed "s/ *$//")
+		releases=$($qget_cmd "$VMname" | grep 'Releases' | cut -d: -f2 | sed 's/^ //' | sed 's/ *$//')
+		editions=$($qget_cmd "$VMname" | grep 'Editions' | cut -d: -f2 | sed 's/^ //' | sed 's/ *$//')
+		architectures=$($qget_cmd "$VMname" | grep "Architectures" | cut -d: -f2 | sed "s/^ //" | sed "s/ *$//")
 		icon_name="$DH_ICON_DIR/$get_name"
 		if [ -f "$icon_name.svg" ]; then
 			icon_file="$icon_name.svg"
@@ -284,11 +308,35 @@ function renew_supported_vms() {
 }
 
 function distrohopper_about() {
-	echo "#TODO"
-}
+		yad --about --pname=DistroHopper --image="$DH_ICON_DIR"/hop.svg --pversion="$version" \
+		 --copyright=AGPL3 --comments="random comment" --license=ALGPL3 --authors=zenobit --website=dh.osowoso.org \
+		 --website-label="oSoWoSo"
+	}
 
 function help_show() {
-	echo "#TODO"
+	local help_text
+	help_text="$(cat <<EOF
+DistroHopper v. $version
+
+Quick start:
+  ./dh i && dh s g
+
+Arguments:
+  h  help             Show this help
+  d  dir              Set VMs directory
+  i  install          Install DistroHopper
+  m  mode             Set mode (tui/gui)
+  s  supported        Manage supported VMs
+  r  ready            Manage ready-to-run VMs
+  l  language         Switch language
+
+Homepage: dh.osowoso.org
+Source:   github.com/oSoWoSo/distrohopper
+EOF
+)"
+	yad --text-info --title="DistroHopper Help" --window-icon="$DH_ICON_DIR/hop.svg" \
+		--width=600 --height=500 --center --button="Close":0 \
+		--fontname="Monospace" --editable=false <<<"$help_text"
 }
 
 function first_run() {

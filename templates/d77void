@@ -1,0 +1,66 @@
+# Template file for 'd77void'
+OSNAME="d77void"
+PRETTY="d77void"
+LOGO=""
+ICON="tux.svg"
+#ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/arch.png"
+CATEGORY="Desktop, Server"
+BASEDOF="void"
+HOMEPAGE="https://d77void.sourceforge.io"
+DESCRIPTION="Respin of Void GNU/Linux, created to demonstrate the capabilities of Void’s tools, such as void-mklive and void-packages"
+CREDENTIALS="anon:voidlinux,root:voidlinux"
+GPG=""
+RSS="https://sourceforge.net/projects/d77void/rss?path=/"
+DW=""
+
+function releases_() {
+	echo latest
+}
+
+function editions_() {
+	echo awesome bspwm dank dms dwm fluxbox gnome herbstluftwm hyprland i3wm jwm labwc leftwm lxqt mango mango-dms mango-noctalia niri niri-noctalia noctalia openbox plasma qtile river sway wayfire wmd77 xfce
+}
+
+function arch_() {
+	echo amd64
+}
+
+function get_() {
+	local HASH=""
+	local ISO=""
+	local DATE=""
+	local URL=""
+	local DIR=""
+
+	if [ "$QEMU_ARCH" = amd64 ]; then
+		QEMU_ARCH="x86_64"
+	fi
+
+	case "${EDITION}" in
+		jwm) DIR="JWM" ;;
+		lxqt) DIR="LXQt" ;;
+		niri|niri-noctalia|dms) DIR="niri" ;;
+		hyprland|dank|noctalia) DIR="hyprland" ;;
+		mango|mango-dms|mango-noctalia) DIR="mango" ;;
+		*) DIR="${EDITION}" ;;
+	esac
+
+	URL="https://sourceforge.net/projects/d77void/files/d77void-${DIR}"
+	ISO=$(web_pipe "https://sourceforge.net/projects/d77void/rss?path=/d77void-${DIR}" \
+		| grep -oE "d77void-live-${QEMU_ARCH}-[0-9]+-${EDITION}\.iso" \
+		| sort -u | sort -r | head -1)
+
+	DATE=$(echo "$ISO" | grep -oP '[0-9]{8}')
+	# herbsluftwm don't have sha file'
+	if [ "${EDITION}" = herbsluftwm ]; then
+		HASH=""
+	else
+		HASH=$(web_pipe "${URL}/SHA1-MD5.txt" 2>/dev/null | grep "${ISO}" | awk '{print $1}')
+	fi
+
+	echo "${URL}/${ISO} ${HASH}"
+}
+
+function config_() {
+	echo "boot=\"legacy\"" >> "${CONF_FILE}"
+}

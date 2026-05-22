@@ -1,31 +1,36 @@
 # Template file for 'trisquel'
 OSNAME="trisquel"
 PRETTY="Trisquel"
+LOGO=" "
 ICON="trisquel.png"
-CATEGORY="beginner"
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/trisquel.png"
+CATEGORY="Beginner"
 BASEDOF="Ubuntu"
 HOMEPAGE="https://trisquel.info"
 DESCRIPTION="Fully free operating system for home users, small enterprises and educational centers"
 CREDENTIALS="-"
+GPG=""
+RSS=""
+DW=""
 
 function releases_() {
-    echo 11.0 10.0.1
+	echo 11.0 10.0.1
 }
 
 function editions_() {
-    echo mate lxde kde sugar
+	echo mate lxde kde sugar
 }
 
 function get_() {
-    local HASH=""
-    local ISO=""
-    local URL="https://mirrors.ocf.berkeley.edu/trisquel-images"
-    case ${EDITION} in
-        mate) ISO="trisquel_${RELEASE}_amd64.iso";;
-        lxde) ISO="trisquel-mini_${RELEASE}_amd64.iso";;
-        kde) ISO="triskel_${RELEASE}_amd64.iso";;
-        sugar) ISO="trisquel-sugar_${RELEASE}_amd64.iso";;
-    esac
-    HASH=$(web_pipe "${URL}/${ISO}.sha1" | grep "${ISO}" | cut -d' ' -f1)
-    echo "${URL}/${ISO} ${HASH}"
+	local HASH=""
+	local ISO=""
+	local URL="https://mirrors.ocf.berkeley.edu/trisquel-images"
+	case ${EDITION} in
+		mate) ISO="trisquel_${RELEASE}_amd64.iso";;
+		lxde) ISO="trisquel-mini_${RELEASE}_amd64.iso";;
+		kde) ISO="triskel_${RELEASE}_amd64.iso";;
+		sugar) ISO="trisquel-sugar_${RELEASE}_amd64.iso";;
+	esac
+	HASH=$(web_pipe "${URL}/${ISO}.sha1" | grep "${ISO}" | cut -d' ' -f1)
+	echo "${URL}/${ISO} ${HASH}"
 }

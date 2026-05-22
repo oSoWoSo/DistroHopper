@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Rosette — DistroHopper</title>
+<link rel="stylesheet" href="style.css" />
+<script src="https://cdn.jsdelivr.net/npm/js-yaml@4/dist/js-yaml.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+
+<style>
+  :root {
+    --bg:        #000;
+    --bg-light:  #111;
+    --bg-card:   #1a1a1a;
+    --text:      #ccc;
+    --bright:    #fff;
+    --accent:    #87ff87;
+    --accent2:   #2d5a3d;
+    --border:    #333;
+    --font:      "Courier New", monospace;
+    --panel-w:   360px;
+    --overlay-w: 530px;
+  }
+  [data-theme="light"] {
+    --bg:        #fff;
+    --bg-light:  #f5f5f5;
+    --bg-card:   #eee;
+    --text:      #222;
+    --bright:    #000;
+    --accent:    #2d5a3d;
+    --accent2:   #87ff87;
+    --border:    #ccc;
+  }
+
+  #rosette-wrap {
+    position: relative;
+    height: calc(100vh - 60px);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+  }
+
+  #main-area {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #mindmap-container {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #mindmap { width: 100%; height: 100%; }
+
+  #left-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    z-index: 150;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    pointer-events: none;
+  }
+
+  #overlay-row {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    flex-shrink: 0;
+  }
+
+  #overlay-inner {
+    pointer-events: auto;
+    width: var(--overlay-w);
+    overflow: visible;
+    transition: width 0.22s ease;
+    flex-shrink: 0;
+  }
+  #left-overlay.collapsed #overlay-inner { width: 0; overflow: hidden; }
+  #left-overlay.collapsed #panel { display: none; }
+
+  #overlay-tab {
+    pointer-events: auto;
+    background: var(--bg-light);
+    border: 1px solid var(--border);
+    border-left: none;
+    border-radius: 0 4px 4px 0;
+    color: var(--text);
+    cursor: pointer;
+    padding: 6px 4px;
+    font-size: 10px;
+    line-height: 1;
+    flex-shrink: 0;
+    align-self: flex-start;
+    margin-top: 10px;
+  }
+  #overlay-tab:hover { color: var(--accent); border-color: var(--accent); }
+
+  #header-card {
+    background: var(--bg-light);
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    border-radius: 0 0 6px 0;
+    padding: 7px 12px 9px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    flex-shrink: 0;
+    width: 100%;
+  }
+
+  #header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    white-space: nowrap;
+  }
+  #r-title { color: var(--accent); font-size: 14px; font-weight: bold; }
+  #header-controls { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+
+  .theme-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text);
+    cursor: pointer;
+    padding: 3px 8px;
+    font-size: 13px;
+    font-family: var(--font);
+  }
+  .theme-btn:hover { border-color: var(--accent); }
+
+  #distro-icons { 
+    display: flex; 
+    gap: 5px; 
+    flex-wrap: nowrap;
+  }
+
+  .distro-btn {
+    background: var(--bg-card);
+    border: 2px solid var(--border);
+    cursor: pointer;
+    padding: 4px 5px 3px;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    transition: border-color 0.15s;
+    min-width: 52px;
+    flex-shrink: 0;
+  }
+  .distro-btn:hover  { border-color: var(--accent2); }
+  .distro-btn.active { border-color: var(--accent); box-shadow: 0 0 5px var(--accent2); }
+  .distro-btn img { 
+    width: 26px; 
+    height: 26px; 
+    object-fit: contain; 
+    display: block; 
+  }
+  .distro-btn-fallback {
+    width: 26px; 
+    height: 26px;
+    background: var(--accent2); color: var(--accent);
+    display: none; align-items: center; justify-content: center;
+    font-weight: bold; 
+    font-size: 13px; 
+    border-radius: 50%;
+  }
+  .distro-btn-label {
+    font-size: 8px; 
+    color: var(--text);
+    white-space: nowrap; overflow: hidden;
+    text-overflow: ellipsis; 
+    max-width: 50px; 
+    text-align: center;
+  }
+
+  #cat-buttons { display: flex; gap: 5px; flex-wrap: wrap; }
+  .cat-btn {
+    background: none;
+    border: 1px solid var(--cat-color, #555);
+    color: var(--cat-color, #aaa);
+    cursor: pointer;
+    padding: 2px 9px;
+    font-size: 11px;
+    font-family: var(--font);
+    border-radius: 2px;
+    transition: background 0.12s;
+  }
+  .cat-btn:hover { background: color-mix(in srgb, var(--cat-color) 18%, transparent); }
+  .cat-btn.active { background: var(--cat-color); color: #000; font-weight: bold; }
+
+  #search-row { display: flex; gap: 0; }
+  #r-clear-btn {
+    background: none;
+    border: 1px solid var(--border);
+    border-right: none;
+    color: var(--text);
+    cursor: pointer;
+    padding: 4px 9px;
+    font-size: 13px;
+    font-family: var(--font);
+    flex-shrink: 0;
+  }
+  #r-clear-btn:hover { border-color: var(--accent); color: var(--accent); }
+  #r-search {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 5px 10px;
+    font-family: var(--font);
+    font-size: 13px;
+  }
+  #r-search:focus { outline: none; border-color: var(--accent); }
+
+  #panel {
+    pointer-events: auto;
+    background: var(--bg-light);
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    border-radius: 0 0 6px 0;
+    display: flex;
+    flex-direction: column;
+    min-width: 220px;
+    max-width: 360px;
+    max-height: calc(100% - 10px);
+    min-height: 0;
+    margin-top: 4px;
+    overflow: hidden;
+  }
+  #panel.hidden { display: none; }
+
+  #panel-header {
+    padding: 8px 14px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    flex-shrink: 0;
+  }
+  #panel-title { color: var(--accent); font-size: 13px; font-weight: bold; }
+  #panel-close {
+    background: none; border: none;
+    color: var(--text); cursor: pointer; font-size: 15px;
+  }
+  #panel-rows { flex: 1; overflow-y: auto; }
+
+  .panel-row {
+    padding: 7px 12px;
+    border-bottom: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+    gap: 2px;
+    cursor: pointer;
+  }
+  .panel-row:hover, .panel-row.focused { background: var(--bg-card); }
+  .panel-distro {
+    grid-column: 1; grid-row: 1;
+    display: flex; align-items: center; gap: 7px;
+  }
+  .panel-distro img {
+    width: 16px; height: 16px; object-fit: contain; display: block;
+  }
+  .panel-distro-fallback {
+    width: 16px; height: 16px;
+    background: var(--accent2); color: var(--accent);
+    display: none; align-items: center; justify-content: center;
+    font-size: 8px; font-weight: bold; border-radius: 50%;
+  }
+  .panel-distro-name  { font-size: 11px; color: var(--bright); font-weight: bold; }
+  .panel-group-label  { font-size: 11px; color: var(--bright); font-weight: bold; }
+  .panel-group-icon   { font-size: 15px; line-height: 1; }
+  .copy-btn {
+    grid-column: 2; grid-row: 1 / 3; align-self: center;
+    background: none; border: 1px solid var(--border);
+    color: var(--text); cursor: pointer;
+    padding: 2px 7px; font-size: 12px;
+  }
+  .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .panel-cmd {
+    grid-column: 1; grid-row: 2;
+    font-size: 10px; color: var(--accent); word-break: break-all;
+  }
+
+  #r-footer {
+    padding: 3px 14px; font-size: 11px;
+    opacity: 0.45; border-top: 1px solid var(--border);
+    background: var(--bg-light);
+    flex-shrink: 0;
+  }
+
+  #toast {
+    position: fixed; bottom: 28px; left: 50%;
+    transform: translateX(-50%);
+    background: var(--accent); color: #000;
+    padding: 5px 14px; font-size: 12px;
+    pointer-events: none; opacity: 0; transition: opacity 0.25s;
+    z-index: 100;
+  }
+  #toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div id="particles-js" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none"></div>
+<script src="particles.min.js"></script>
+
+<script>
+  (function(){
+    const saved=localStorage.getItem("theme")||"dark";
+    document.documentElement.setAttribute("data-theme",saved)
+  })();
+</script>
+
+<!--NAV-->
+
+<div id="rosette-wrap">
+
+  <div id="main-area">
+
+    <div id="mindmap-container">
+      <svg id="mindmap"></svg>
+    </div>
+
+    <div id="left-overlay">
+
+      <div id="overlay-row">
+        <div id="overlay-inner">
+          <div id="header-card">
+            <div id="header-top">
+              <span id="r-title">Rosette Stone</span>
+              <div id="header-controls">
+                <button class="theme-btn" onclick="toggleTheme()">🌓</button>
+              </div>
+            </div>
+            <div id="distro-icons"></div>
+            <div id="cat-buttons"></div>
+            <div id="search-row">
+              <button id="r-clear-btn" onclick="clearFilters()" title="Clear all filters">✕</button>
+              <input id="r-search" type="text"
+                     placeholder="fzf search (install, start, ports...)"
+                     autocomplete="off" />
+            </div>
+          </div>
+        </div>
+        <button id="overlay-tab" onclick="toggleOverlay()" title="Toggle menu">◀</button>
+      </div>
+
+      <aside id="panel" class="hidden">
+        <div id="panel-header">
+          <span id="panel-title"></span>
+          <button id="panel-close" onclick="closePanel()">✕</button>
+        </div>
+        <div id="panel-rows"></div>
+      </aside>
+
+    </div>
+
+  </div>
+
+  <div id="r-footer">
+    Tab: next distro &nbsp;·&nbsp; ↑↓: panel &nbsp;·&nbsp;
+    Enter: copy &nbsp;·&nbsp; Esc: close &nbsp;·&nbsp;
+    $ = user &nbsp;·&nbsp; # = root (copied without prefix)
+  </div>
+
+</div>
+
+<div id="toast"></div>
+
+<script src="particles-config.html"></script>
+
+<script>
+const S = {
+  distros: [],
+  treeData: null,
+  filteredTree: null,
+  activeDistro: 0,
+  selectedCmd: null,
+  panelIdx: 0,
+  manualRotation: 0,
+  selectedCategory: null,
+};
+
+function toggleTheme() {
+  const h = document.documentElement;
+  const next = (h.getAttribute('data-theme') || 'dark') === 'dark' ? 'light' : 'dark';
+  h.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+  renderMindmap();
+}
+
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 1300);
+}
+
+function copyCmd(cmd) {
+  if (!cmd || cmd === '—') return;
+  const clean = cmd.replace(/^[#$]\s+/, '');
+  navigator.clipboard.writeText(clean).then(() => toast('⎘ ' + clean));
+}
+
+function escHtml(s) {
+  return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function fuzzy(str, q) {
+  if (!q) return true;
+  let i = 0;
+  str = (str || '').toLowerCase();
+  q = q.toLowerCase();
+  for (const c of str) if (c === q[i]) i++;
+  return i === q.length;
+}
+
+function filterTree(tree, q) {
+  if (!q) return tree;
+  return {
+    ...tree,
+    children: tree.children
+      .map(cat => ({
+        ...cat,
+        children: cat.children.filter(
+          leaf => fuzzy(leaf.name, q) || fuzzy(cat.name, q)
+        )
+      }))
+      .filter(cat => cat.children.length > 0)
+  };
+}
+
+async function loadData() {
+  const idx = await fetch('./data/rosette/index.json').then(r => r.json());
+  return Promise.all(
+    idx.map(e =>
+      fetch('./data/rosette/' + e.file)
+        .then(r => r.text())
+        .then(t => jsyaml.load(t))
+    )
+  );
+}
+
+function buildTree(distros) {
+  const cats = Object.keys(distros[0].commands);
+  return {
+    name: 'Linux',
+    children: cats.map(cat => ({
+      name: cat,
+      category: cat,
+      children: Object.keys(distros[0].commands[cat]).map(action => ({
+        name: action,
+        category: cat,
+        leaf: true,
+      }))
+    }))
+  };
+}
+
+function setActiveDistro(i) { S.activeDistro = i; renderDistroIcons(); renderMindmap(); }
+function closePanel() { S.selectedCmd = null; document.getElementById('panel').classList.add('hidden'); }
+
+function applyFilters() {
+  const q = document.getElementById('r-search').value.trim();
+  let tree = S.treeData;
+  if (S.selectedCategory) {
+    tree = { ...tree, children: tree.children.filter(c => c.name === S.selectedCategory) };
+  }
+  S.filteredTree = q ? filterTree(tree, q) : tree;
+  renderMindmap();
+}
+
+function toggleCategory(cat) {
+  S.selectedCategory = S.selectedCategory === cat ? null : cat;
+  renderCategoryButtons();
+  applyFilters();
+}
+
+function clearFilters() {
+  S.selectedCategory = null;
+  document.getElementById('r-search').value = '';
+  renderCategoryButtons();
+  applyFilters();
+}
+
+function toggleOverlay() {
+  const overlay = document.getElementById('left-overlay');
+  const tab     = document.getElementById('overlay-tab');
+  const collapsed = overlay.classList.toggle('collapsed');
+  tab.textContent = collapsed ? '▶' : '◀';
+}
+
+const CAT_COLORS = {
+  package:   '#1793d1',
+  service:   '#f5a623',
+  network:   '#7ed321',
+  files:     '#9b59b6',
+  users:     '#e74c3c',
+  processes: '#1abc9c',
+};
+
+function adjustOverlayWidth() {
+  const count = S.distros.length;
+  // Each button: 52px min-width + 4px border (2px each side) = 56px total
+  const btnWidth = 52;
+  const btnBorder = 4; // 2px border on each side
+  const gap = 5;
+  const headerPadding = 24; // 12px left + 12px right from #header-card
+  const extraSpace = 20; // Extra space to prevent overflow
+  const minWidth = 360; // Minimum width for search and other elements
+  
+  // Calculate: (buttons * (width + border)) + (gaps between buttons) + padding + extra
+  const neededWidth = (count * (btnWidth + btnBorder)) + ((count - 1) * gap) + headerPadding + extraSpace;
+  const overlayWidth = Math.max(minWidth, neededWidth);
+  
+  document.documentElement.style.setProperty('--overlay-w', overlayWidth + 'px');
+}
+
+function renderDistroIcons() {
+  adjustOverlayWidth();
+  document.getElementById('distro-icons').innerHTML =
+    S.distros.map((d, i) => `
+      <button class="distro-btn ${i === S.activeDistro ? 'active' : ''}"
+              title="${d.name}" onclick="setActiveDistro(${i})">
+        <img src="icons/${d.icon}" alt="${d.name}"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <span class="distro-btn-fallback">${d.name[0]}</span>
+        <span class="distro-btn-label">${d.name.split('/')[0].trim()}</span>
+      </button>
+    `).join('');
+}
+
+function renderCategoryButtons() {
+  if (!S.treeData) return;
+  document.getElementById('cat-buttons').innerHTML =
+    S.treeData.children.map(c => `
+      <button class="cat-btn ${S.selectedCategory === c.name ? 'active' : ''}"
+              style="--cat-color:${CAT_COLORS[c.name] || '#666'}"
+              onclick="toggleCategory('${c.name}')">
+        ${c.name}
+      </button>
+    `).join('');
+}
+
+function renderMindmap() {
+  const tree = S.filteredTree;
+  if (!tree) return;
+
+  const cont = document.getElementById('mindmap-container');
+  const W = cont.clientWidth  || 700;
+  const H = cont.clientHeight || 560;
+  const R = Math.min(W, H) / 2 - 150;
+
+  const svg = d3.select('#mindmap');
+  svg.selectAll('*').remove();
+  svg.attr('viewBox', `${-W / 2} ${-H / 2} ${W} ${H}`);
+
+  const g = svg.append('g');
+
+  if (tree.children.length === 1) {
+    const cat      = tree.children[0];
+    const leaves   = cat.children;
+    const catColor = CAT_COLORS[cat.name] || '#666';
+    const distro   = S.distros[S.activeDistro];
+    const iconSz   = 36;
+
+    const panelEl  = document.getElementById('panel');
+    const panelPx  = panelEl.classList.contains('hidden') ? 0 : (panelEl.offsetWidth || 0);
+    const minLeftPx = panelPx + 50;
+    const naturalRootPx = W * 0.12;
+    const rootPx   = Math.max(naturalRootPx, minLeftPx);
+    const rootX    = rootPx - W / 2;
+    const catX     = rootX + W * 0.28;
+    const leafX    = catX + Math.max(W * 0.17, 90);
+    const spacing = Math.min(22, (H * 0.8) / Math.max(leaves.length, 1));
+    const totalH  = (leaves.length - 1) * spacing;
+    const startY  = -totalH / 2;
+
+    const rootG = g.append('g').attr('transform', `translate(${rootX},0)`);
+    rootG.append('image')
+      .attr('href', `icons/${distro.icon}`)
+      .attr('width', iconSz).attr('height', iconSz)
+      .attr('x', -iconSz / 2).attr('y', -iconSz / 2)
+      .attr('preserveAspectRatio', 'xMidYMid meet')
+      .on('error', function () {
+        const p = d3.select(this.parentNode);
+        d3.select(this).remove();
+        p.append('circle').attr('r', 16).attr('fill', distro.color || '#555');
+        p.append('text').attr('text-anchor', 'middle').attr('dy', '0.35em')
+          .style('font-size', '14px').style('font-weight', 'bold')
+          .style('fill', '#fff').style('font-family', 'var(--font)')
+          .text(distro.name[0]);
+      });
+
+    g.append('line')
+      .attr('x1', rootX + iconSz / 2).attr('y1', 0)
+      .attr('x2', catX).attr('y2', 0)
+      .attr('stroke', catColor).attr('stroke-opacity', 0.55).attr('stroke-width', 1.5);
+
+    const catG = g.append('g').attr('transform', `translate(${catX},0)`);
+    catG.append('circle').attr('r', 5.5).attr('fill', catColor);
+    catG.append('text')
+      .attr('x', -10).attr('text-anchor', 'end').attr('dy', '0.31em')
+      .style('font-size', '12px').style('font-weight', 'bold')
+      .style('font-family', 'var(--font)').style('fill', catColor)
+      .text(cat.name.toUpperCase());
+
+    leaves.forEach((leaf, i) => {
+      const y = startY + i * spacing;
+      g.append('line')
+        .attr('x1', catX).attr('y1', 0)
+        .attr('x2', leafX).attr('y2', y)
+        .attr('stroke', catColor).attr('stroke-opacity', 0.35).attr('stroke-width', 1);
+    });
+
+    leaves.forEach((leaf, i) => {
+      const y = startY + i * spacing;
+      const leafG = g.append('g').attr('transform', `translate(${leafX},${y})`);
+      leafG.append('circle').attr('r', 3.5)
+        .attr('fill', catColor).attr('fill-opacity', 0.75)
+        .style('cursor', 'pointer')
+        .on('click', () => showPanel(cat.name, leaf.name));
+      const cmd = S.distros[S.activeDistro]?.commands?.[cat.name]?.[leaf.name]?.cmd || '—';
+      leafG.append('text')
+        .attr('x', 7).attr('dy', '0.31em').attr('text-anchor', 'start')
+        .style('font-size', '10px').style('font-family', 'var(--font)')
+        .style('fill', catColor).style('cursor', 'pointer')
+        .text(`${leaf.name}: ${cmd}`)
+        .on('click', () => showPanel(cat.name, leaf.name));
+    });
+
+    return;
+  }
+
+  const totalLeaves = S.treeData
+    ? S.treeData.children.reduce((s, c) => s + c.children.length, 0) : 0;
+  const filteredLeaves = tree.children.reduce((s, c) => s + c.children.length, 0);
+  const isFiltered = totalLeaves > 0 && filteredLeaves < totalLeaves;
+
+  let angularSpan, baseOffset;
+  if (isFiltered) {
+    angularSpan = Math.min(
+      Math.max((filteredLeaves / totalLeaves) * 2 * Math.PI * 1.6, Math.PI / 3),
+      1.8 * Math.PI
+    );
+    baseOffset = Math.PI / 2 - angularSpan / 2;
+  } else {
+    angularSpan = 2 * Math.PI;
+    baseOffset = 0;
+  }
+  const rotOffset = baseOffset + (S.manualRotation || 0);
+
+  const root = d3.hierarchy(tree);
+  d3.tree()
+    .size([angularSpan, R])
+    .separation((a, b) => (a.parent === b.parent ? 1 : 2) / a.depth)(root);
+
+  function rp(d) {
+    const a = d.x + rotOffset;
+    return [d.y * Math.sin(a), -d.y * Math.cos(a)];
+  }
+
+  g.append('g')
+    .attr('fill', 'none')
+    .attr('stroke-width', 1.2)
+    .selectAll('line')
+    .data(root.links())
+    .join('line')
+    .attr('stroke', d => CAT_COLORS[d.target.data.category] || '#444')
+    .attr('stroke-opacity', 0.45)
+    .attr('x1', d => rp(d.source)[0])
+    .attr('y1', d => rp(d.source)[1])
+    .attr('x2', d => rp(d.target)[0])
+    .attr('y2', d => rp(d.target)[1]);
+
+  const node = g.append('g')
+    .selectAll('g')
+    .data(root.descendants())
+    .join('g')
+    .attr('transform', d => {
+      if (d.depth === 0) return 'translate(0,0)';
+      const deg = (d.x + rotOffset) * 180 / Math.PI - 90;
+      return `rotate(${deg}) translate(${d.y},0)`;
+    });
+
+  node.filter(d => d.depth > 0)
+    .append('circle')
+    .attr('r', d => d.data.leaf ? 3.5 : 5.5)
+    .attr('fill', d => CAT_COLORS[d.data.category] || '#666')
+    .attr('fill-opacity', d => d.data.leaf ? 0.75 : 1)
+    .style('cursor', d => d.data.leaf ? 'pointer' : 'default')
+    .on('click', (_, d) => { if (d.data.leaf) showPanel(d.data.category, d.data.name); });
+
+  const distro = S.distros[S.activeDistro];
+  const iconSz = 36;
+  const rootG = node.filter(d => d.depth === 0);
+  rootG.append('image')
+    .attr('href', `icons/${distro.icon}`)
+    .attr('width', iconSz).attr('height', iconSz)
+    .attr('x', -iconSz / 2).attr('y', -iconSz / 2)
+    .attr('preserveAspectRatio', 'xMidYMid meet')
+    .on('error', function () {
+      const p = d3.select(this.parentNode);
+      d3.select(this).remove();
+      p.append('circle').attr('r', 16).attr('fill', distro.color || '#555');
+      p.append('text').attr('text-anchor', 'middle').attr('dy', '0.35em')
+        .style('font-size', '14px').style('font-weight', 'bold')
+        .style('fill', '#fff').style('font-family', 'var(--font)')
+        .text(distro.name[0]);
+    });
+
+  node.filter(d => d.depth === 1)
+    .append('text')
+    .attr('dy', '0.31em')
+    .attr('x', d => rp(d)[0] >= 0 ? 10 : -10)
+    .attr('text-anchor', d => rp(d)[0] >= 0 ? 'start' : 'end')
+    .attr('transform', d => rp(d)[0] < 0 ? 'rotate(180)' : null)
+    .style('font-size', '12px')
+    .style('font-weight', 'bold')
+    .style('font-family', 'var(--font)')
+    .style('fill', d => CAT_COLORS[d.data.category])
+    .text(d => d.data.name.toUpperCase());
+
+  node.filter(d => d.data.leaf)
+    .append('text')
+    .attr('dy', '0.31em')
+    .attr('x', d => rp(d)[0] >= 0 ? 7 : -7)
+    .attr('text-anchor', d => rp(d)[0] >= 0 ? 'start' : 'end')
+    .attr('transform', d => rp(d)[0] < 0 ? 'rotate(180)' : null)
+    .style('font-size', '10px')
+    .style('font-family', 'var(--font)')
+    .style('fill', d => CAT_COLORS[d.data.category])
+    .style('cursor', 'pointer')
+    .text(d => {
+      const cmd = S.distros[S.activeDistro]
+        ?.commands?.[d.data.category]?.[d.data.name]?.cmd || '—';
+      return `${d.data.name}: ${cmd}`;
+    })
+    .on('click', (_, d) => showPanel(d.data.category, d.data.name));
+}
+
+function groupPanelRows(cat, action) {
+  const rows = S.distros.map(d => ({
+    distro: d,
+    cmd: d.commands?.[cat]?.[action]?.cmd || '—',
+  }));
+
+  const cmds = rows.map(r => r.cmd);
+  if (cmds.every(c => c === cmds[0])) {
+    return [{ type: 'all', cmd: cmds[0] }];
+  }
+
+  const linuxRows = rows.filter(r => r.distro.id !== 'macos');
+  const macosRow  = rows.find(r => r.distro.id === 'macos');
+  const linuxCmds = linuxRows.map(r => r.cmd);
+  if (macosRow && linuxCmds.every(c => c === linuxCmds[0])) {
+    return [
+      { type: 'linux-group', cmd: linuxCmds[0] },
+      { type: 'distro', distro: macosRow.distro, cmd: macosRow.cmd },
+    ];
+  }
+
+  return rows.map(r => ({ type: 'distro', distro: r.distro, cmd: r.cmd }));
+}
+
+function showPanel(cat, action) {
+  S.selectedCmd = { cat, action };
+  S.panelIdx = 0;
+  document.getElementById('panel-title').textContent = action;
+  document.getElementById('panel').classList.remove('hidden');
+  renderPanelRows();
+}
+
+function renderPanelRows() {
+  const { cat, action } = S.selectedCmd;
+  const groups = groupPanelRows(cat, action);
+
+  document.getElementById('panel-rows').innerHTML = groups.map((g, i) => {
+    const esc     = g.cmd.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    const focused = i === S.panelIdx ? 'focused' : '';
+
+    if (g.type === 'all') {
+      return `
+        <div class="panel-row ${focused}" onclick="copyCmd('${esc}')">
+          <div class="panel-distro">
+            <span class="panel-group-icon">🐧</span>
+            <span class="panel-group-label">All platforms</span>
+          </div>
+          <button class="copy-btn" onclick="event.stopPropagation();copyCmd('${esc}')">⎘</button>
+          <div class="panel-cmd">${escHtml(g.cmd)}</div>
+        </div>`;
+    }
+    if (g.type === 'linux-group') {
+      return `
+        <div class="panel-row ${focused}" onclick="copyCmd('${esc}')">
+          <div class="panel-distro">
+            <span class="panel-group-icon">🐧</span>
+            <span class="panel-group-label">Linux</span>
+          </div>
+          <button class="copy-btn" onclick="event.stopPropagation();copyCmd('${esc}')">⎘</button>
+          <div class="panel-cmd">${escHtml(g.cmd)}</div>
+        </div>`;
+    }
+    const d = g.distro;
+    return `
+      <div class="panel-row ${focused}" onclick="copyCmd('${esc}')">
+        <div class="panel-distro">
+          <img src="icons/${d.icon}" alt="${d.name}"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <span class="panel-distro-fallback">${d.name[0]}</span>
+          <span class="panel-distro-name">${d.name}</span>
+        </div>
+        <button class="copy-btn" onclick="event.stopPropagation();copyCmd('${esc}')">⎘</button>
+        <div class="panel-cmd">${escHtml(g.cmd)}</div>
+      </div>`;
+  }).join('');
+}
+
+function updatePanelFocus() {
+  renderPanelRows();
+  const rows = document.querySelectorAll('.panel-row');
+  S.panelIdx = Math.min(S.panelIdx, rows.length - 1);
+  rows[S.panelIdx]?.scrollIntoView({ block: 'nearest' });
+}
+
+document.getElementById('r-search').addEventListener('input', () => applyFilters());
+
+document.addEventListener('keydown', e => {
+  const inSearch = document.activeElement === document.getElementById('r-search');
+
+  if (inSearch) {
+    if (e.key === 'Escape') {
+      clearFilters();
+      document.getElementById('r-search').blur();
+    }
+    return;
+  }
+
+  if (e.key === '/') {
+    e.preventDefault();
+    document.getElementById('r-search').focus();
+    return;
+  }
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    setActiveDistro((S.activeDistro + 1) % S.distros.length);
+    return;
+  }
+  if (e.key === 'Escape') { closePanel(); return; }
+
+  if (S.selectedCmd) {
+    const maxIdx = document.querySelectorAll('.panel-row').length - 1;
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      S.panelIdx = Math.min(S.panelIdx + 1, maxIdx);
+      updatePanelFocus();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      S.panelIdx = Math.max(S.panelIdx - 1, 0);
+      updatePanelFocus();
+    } else if (e.key === 'Enter') {
+      const groups = groupPanelRows(S.selectedCmd.cat, S.selectedCmd.action);
+      copyCmd(groups[S.panelIdx]?.cmd);
+    }
+  }
+});
+
+document.getElementById('mindmap-container').addEventListener('wheel', e => {
+  if (e.ctrlKey) return;
+  e.preventDefault();
+  S.manualRotation += e.deltaY * 0.004;
+  renderMindmap();
+}, { passive: false });
+
+window.addEventListener('resize', renderMindmap);
+
+async function init() {
+  try {
+    S.distros = await loadData();
+    S.treeData = buildTree(S.distros);
+    S.filteredTree = S.treeData;
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const osParam = urlParams.get('os');
+    if (osParam) {
+      const idx = S.distros.findIndex(d => d.id === osParam);
+      if (idx >= 0) S.activeDistro = idx;
+    }
+
+    renderDistroIcons();
+    renderCategoryButtons();
+    renderMindmap();
+  } catch (e) {
+    document.getElementById('mindmap-container').innerHTML =
+      '<div style="color:#f55;padding:20px">Error: ' + e.message + '</div>';
+    console.error(e);
+  }
+}
+init();
+</script>
+
+</body>
+</html>

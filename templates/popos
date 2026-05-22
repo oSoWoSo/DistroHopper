@@ -1,30 +1,35 @@
 # Template file for 'popos'
 OSNAME="popos"
 PRETTY="Pop!_OS"
+LOGO=" "
 ICON="popos.svg"
-CATEGORY="beginner"
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/popos.png"
+CATEGORY="Beginner"
 BASEDOF="Ubuntu"
 HOMEPAGE="https://pop.system76.com"
 DESCRIPTION="Operating system for STEM and creative professionals who use their computer as a tool to discover and create"
 CREDENTIALS="-"
+GPG=""
+RSS=""
+DW=""
 
 function releases_() {
-    echo 24.04 22.04 20.04
+	echo 24.04 22.04 20.04
 }
 
 function editions_() {
-    echo intel nvidia
+	echo intel nvidia
 }
 
 function get_() {
-    local HASH=""
-    local ISO=""
-    local URL=""
-    URL=$(web_pipe "https://api.pop-os.org/builds/${RELEASE}/${EDITION}" | jq -r .url)
-    HASH=$(web_pipe "https://api.pop-os.org/builds/${RELEASE}/${EDITION}" | jq -r .sha_sum)
-    echo "${URL} ${HASH}"
+	local HASH=""
+	local ISO=""
+	local URL=""
+	URL=$(web_pipe "https://api.pop-os.org/builds/${RELEASE}/${EDITION}" | jq -r .url)
+	HASH=$(web_pipe "https://api.pop-os.org/builds/${RELEASE}/${EDITION}" | jq -r .sha_sum)
+	echo "${URL} ${HASH}"
 }
 
-function specific_tweaks() {
+function config_() {
   echo "disk_size=\"32G\"" >> "${CONF_FILE}"
 }

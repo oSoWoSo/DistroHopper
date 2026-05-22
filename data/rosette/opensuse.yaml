@@ -1,0 +1,48 @@
+id: opensuse
+name: openSUSE
+package_manager: zypper
+init: systemd
+icon: opensuse.svg
+color: "#73ba25"
+
+commands:
+  package:
+    install:  { cmd: "# zypper install $pkg",      desc: "Install package" }
+    remove:   { cmd: "# zypper remove $pkg",        desc: "Remove package" }
+    purge:    { cmd: "# zypper remove -u $pkg",     desc: "Remove package and unused deps" }
+    search:   { cmd: "$ zypper search $pkg",        desc: "Search packages" }
+    update:   { cmd: "# zypper update",              desc: "Upgrade all packages" }
+    list:     { cmd: "$ zypper search -i",           desc: "List installed packages" }
+    files:    { cmd: "$ rpm -ql $pkg",              desc: "List package files" }
+    cache:    { cmd: "# zypper refresh",             desc: "Refresh repositories" }
+  service:
+    start:    { cmd: "# systemctl start $svc",              desc: "Start service" }
+    stop:     { cmd: "# systemctl stop $svc",               desc: "Stop service" }
+    enable:   { cmd: "# systemctl enable $svc",             desc: "Enable at boot" }
+    disable:  { cmd: "# systemctl disable $svc",            desc: "Disable at boot" }
+    status:   { cmd: "$ systemctl status $svc",             desc: "Show service status" }
+    list:     { cmd: "$ systemctl list-units --type=service", desc: "List services" }
+  network:
+    show_ip:  { cmd: "$ ip addr",            desc: "Show IP addresses" }
+    ping:     { cmd: "$ ping $host",        desc: "Ping host" }
+    ports:    { cmd: "$ ss -tulpn",          desc: "Show open ports" }
+    routes:   { cmd: "$ ip route",           desc: "Show routing table" }
+    dns:      { cmd: "$ resolvectl status",  desc: "Show DNS config" }
+  files:
+    list:     { cmd: "$ ls -la",             desc: "List files with details" }
+    find:     { cmd: "$ find . -name $f",   desc: "Find file by name" }
+    disk:     { cmd: "$ df -h",              desc: "Show disk usage" }
+    du:       { cmd: "$ du -sh $dir",       desc: "Show directory size" }
+    copy:     { cmd: "$ cp -r $src $dst",  desc: "Copy files/dirs" }
+  users:
+    add:      { cmd: "# useradd $user",     desc: "Add user" }
+    passwd:   { cmd: "# passwd $user",      desc: "Set password" }
+    groups:   { cmd: "$ groups $user",      desc: "Show user groups" }
+    whoami:   { cmd: "$ whoami",             desc: "Show current user" }
+    sudo:     { cmd: "$ sudo $cmd",         desc: "Run as root" }
+  processes:
+    list:     { cmd: "$ ps aux",             desc: "List all processes" }
+    kill:     { cmd: "$ kill $pid",         desc: "Kill by PID" }
+    top:      { cmd: "$ htop",               desc: "Interactive process monitor" }
+    pgrep:    { cmd: "$ pgrep $name",       desc: "Find PID by name" }
+    jobs:     { cmd: "$ jobs",               desc: "List background jobs" }

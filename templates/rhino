@@ -1,21 +1,26 @@
 # Template file for 'rhino'
 OSNAME="rhino"
 PRETTY="Rhino Linux"
+RSS="https://sourceforge.net/projects/rhino-linux-builder/rss?path=/"
+DW=""
+LOGO=""
 ICON="rhino.svg"
-CATEGORY="beginner"
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/rhino.png"
+CATEGORY="Beginner"
 BASEDOF="Ubuntu"
 DESCRIPTION="Re-invents the Ubuntu experience as a rolling-release distribution built on a stable desktop environment. With Pacstall & XFCE"
 HOMEPAGE="https://rhinolinux.org/"
 CREDENTIALS="-"
+GPG=""
 
 function releases_() {
-    echo 2025.1
+	echo 2025.4 2025.3 2025.2 2025.1 2024.2 2024.1 2023.4 2023.3 2023.2 2023.1
 }
 
 function get_() {
-    local HASH=""
-    local ISO="Rhino-Linux-${RELEASE}-amd64.iso"
-    local URL="https://sourceforge.net/projects/rhino-linux-builder/files/${RELEASE}"
-    HASH="$(web_pipe "${URL}/${ISO}.sha256/download" | grep "(${ISO}" | cut -d' ' -f1)"
-    echo "${URL}/${ISO} ${HASH}"
+	local HASH=""
+	local ISO="Rhino-Linux-${RELEASE}-amd64.iso"
+	local URL="https://sourceforge.net/projects/rhino-linux-builder/files/${RELEASE}"
+	HASH="$(web_pipe "${URL}/${ISO}.sha256" | grep "(${ISO}" | cut -d' ' -f1)"
+	echo "${URL}/${ISO} ${HASH}"
 }

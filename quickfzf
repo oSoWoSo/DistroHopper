@@ -4,6 +4,10 @@
 # Description: Uses fzf to provide a simple TUI for quickemu and quickget
 # License MIT
 
+# Use lib.sh for operations (qget with quickget fallback)
+SCRIPT_DIR="$(dirname "$(realpath "$0")")"
+source "${SCRIPT_DIR}/lib.sh"
+
 tui_define_variables() {
 	progname="${progname:="${0##*/}"}"
 	version='0.4'

@@ -9,34 +9,28 @@
 #set -x
 
 ## NEEDED
+CHARACTERS="                         "
+c2="                        "
+c3="               "
+OLD=" "
+WMS="      "
+SHOP=" "
+SOFT="  "
+DISPLAY="  "
+GIT="  "
 
 CHARACTERS="                                                                                                               "
 
-define_variables() {
-	color=$(( RANDOM % 255 + 1 ))
-	progname="${progname:="${0##*/}"}"
-	configdir="$HOME/.config/$progname"
-	SCRIPT_DIR="$(dirname "$(realpath "$0")")"
-	tmpdir="/tmp"
-	version='0.70'
-	vms=(*.conf)
-	if ! command -v gum >/dev/null 2>&1; then
-		echo 'You are missing gum! Exiting...' && exit 1
-	fi
-	if ! command -v quickemu >/dev/null 2>&1; then
-		if ! command -v ./quickemu >/dev/null 2>&1; then
-		  gum style --foreground 1 'You are missing quickemu!'
-		else
-		  echo 'Using quickemu in current directory'
-		fi
-	fi
-	#export BORDER="rounded"
-	color2=$(( RANDOM % 255 + 1 ))
-	export BORDERS_FOREGROUND="$color"
-	export GUM_CHOOSE_CURSOR_FOREGROUND="$color"
-	export GUM_CHOOSE_SELECTED_FOREGROUND="$color"
+_Q_DIR="$(dirname "$(realpath "$0")")"
+# shellcheck source=lib.sh
+[ -f "${_Q_DIR}/lib.sh" ] && source "${_Q_DIR}/lib.sh"
+
+_apply_gum_colors() {
+	export BORDERS_FOREGROUND
+	export GUM_CHOOSE_CURSOR_FOREGROUND="$BORDERS_FOREGROUND"
+	export GUM_CHOOSE_SELECTED_FOREGROUND="$BORDERS_FOREGROUND"
 	export GUM_CONFIRM_PROMPT_FOREGROUND=""
-	export GUM_CONFIRM_SELECTED_FOREGROUND="$color"
+	export GUM_CONFIRM_SELECTED_FOREGROUND="$BORDERS_FOREGROUND"
 	export GUM_CONFIRM_UNSELECTED_FOREGROUND=0
 	export GUM_FILTER_CURSOR_TEXT_FOREGROUND=""
 	export GUM_FILTER_HEADER_FOREGROUND=""
@@ -45,45 +39,75 @@ define_variables() {
 	export GUM_FILTER_PROMPT_FOREGROUND="$color2"
 	export GUM_FILTER_SELECTED_PREFIX_FOREGROUND="$color2"
 	export GUM_FILTER_SELECTED_PREFIX_BORDER_FOREGROUND="$color2"
+}
 
-	# Set traps to catch the signals and exit gracefully
+_migrate_old_config() {
+	local cfg="${configdir}/config" changed=0
+	local -A old=( [BORDER]=border [BORDERS_FOREGROUND]=color [spinner]=spinner [QUICKGET]=quickget_cmd )
+	for key in "${!old[@]}"; do
+		local f="${configdir}/${old[$key]}"
+		if [ -f "$f" ] && ! grep -q "^${key}=" "$cfg" 2>/dev/null; then
+			config_set "$key" "$(cat "$f")" "$cfg"; rm -f "$f"; changed=1
+		fi
+	done
+	if [ -f "${configdir}/icons" ] && ! grep -q '^icons=' "$cfg" 2>/dev/null; then
+		config_set icons yes "$cfg"; rm -f "${configdir}/icons"; changed=1
+	fi
+	[ "$changed" = 1 ] && source "$cfg"
+}
+
+define_variables() {
+	progname="${progname:="${0##*/}"}"
+	configdir="$HOME/.config/$progname"
+	SCRIPT_DIR="$(dirname "$(realpath "$0")")"
+	tmpdir="/tmp"
+	version='0.70'
+
+	# Defaults (overridden by config file below)
+	BORDER=double
+	BORDERS_FOREGROUND=$(( RANDOM % 255 + 1 ))
+	color2=$(( RANDOM % 255 + 1 ))
+	spinner=globe
+	icons=no
+	headers=full
+	QUICKGET=""
+
+	# Load saved config, then migrate any old per-file settings
+	[ -f "${configdir}/config" ] && source "${configdir}/config"
+	_migrate_old_config
+
+	# color is an alias kept for header/VM-list uses
+	color="$BORDERS_FOREGROUND"
+
+	# Auto-detect QUICKGET if not saved
+	if [ -z "$QUICKGET" ]; then
+		if command -v qget >/dev/null 2>&1; then QUICKGET=qget
+		elif [ -x "${SCRIPT_DIR}/qget" ]; then QUICKGET="${SCRIPT_DIR}/qget"
+		elif command -v quickget >/dev/null 2>&1; then QUICKGET=quickget
+		elif [ -x "${SCRIPT_DIR}/quickget" ]; then QUICKGET="${SCRIPT_DIR}/quickget"
+		else QUICKGET="${SCRIPT_DIR}/qget"
+		fi
+	fi
+
+	_apply_gum_colors
+	load_vm_confs
+
+	if ! command -v gum >/dev/null 2>&1; then
+		echo 'You are missing gum! Exiting...' && exit 1
+	fi
+	if ! command -v quickemu >/dev/null 2>&1 && ! command -v ./quickemu >/dev/null 2>&1; then
+		gum style --foreground 1 'You are missing quickemu!'
+	fi
+
+	mainMenuHeight=13
+	advancedMenuHeight=12
+	settingsMenuHeight=14
+
 	trap 'exit' INT
 	trap 'exit' EXIT
-	# just for development in termux
-	if command -v termux-info >/dev/null 2>&1; then
-		echo "Running in termux!"
-		TERMUX=1
-		tmpdir="$(pwd)/tmp"
-	fi
 
-  if [ -f "${configdir}/quickget_cmd" ]; then
-    QUICKGET="$(cat "${configdir}/quickget_cmd")"
-  elif command -v qget >/dev/null 2>&1; then
-    QUICKGET=qget
-  elif [ -x "${SCRIPT_DIR}/qget" ]; then
-    QUICKGET="${SCRIPT_DIR}/qget"
-  elif command -v quickget >/dev/null 2>&1; then
-    QUICKGET=quickget
-  elif [ -x "${SCRIPT_DIR}/quickget" ]; then
-    QUICKGET="${SCRIPT_DIR}/quickget"
-  else
-    QUICKGET="${SCRIPT_DIR}/qget"
-  fi
-	# use configdir
-	if [ -f "${configdir}/border" ]; then
-		BORDER="$(cat "${configdir}"/border)"
-	else
-		BORDER="double"
-	fi
-	if [ -f "${configdir}/color" ]; then
-		BORDERS_FOREGROUND="$(cat "${configdir}"/color)"
-	else
-		BORDERS_FOREGROUND="$(( RANDOM % 255 + 1 ))"
-	fi
-	if [ -f "${configdir}/spinner" ]; then
-		spinner="$(cat "${configdir}"/spinner)"
-	else
-		spinner="globe"
+	if command -v termux-info >/dev/null 2>&1; then
+		TERMUX=1; tmpdir="$(pwd)/tmp"
 	fi
 }
 ARCH="x86_64"
@@ -92,10 +116,10 @@ generate_supported() {
 	echo "Extracting OS Editions and Releases..."
 	rm -rf "$tmpdir/distros"
 	mkdir -p "$tmpdir/distros"
-	"$QUICKGET" --list-os 2>/dev/null > "$tmpdir/supported"
+	qget --list-os 2>/dev/null > "$tmpdir/supported"
 	while read -r get_name; do
 		echo "$get_name"
-		"$QUICKGET" --show "$get_name" 2>/dev/null > "$tmpdir/distros/${get_name}"
+		qget --show "$get_name" 2>/dev/null > "$tmpdir/distros/${get_name}"
 	done < "$tmpdir/supported"
 }
 
@@ -135,7 +159,14 @@ gum_choose_os() {
 	title="Choose OS"
 	show_header
 	os=$(gum choose --prompt='Choose OS' < "$tmpdir"/supported)
-	choices=$("$QUICKGET" "$os" | sed 1d | sed '/^$/q')
+	if [ -z "$os" ]; then
+		return 1
+	fi
+	choices=$("$QUICKGET" "$os" 2>/dev/null | sed 1d | sed '/^$/q')
+	if [ -z "$choices" ]; then
+		gum style --foreground 1 "Failed to get OS info for: $os"
+		return 1
+	fi
 }
 
 gum_choose_release() {
@@ -202,19 +233,23 @@ gum_filter_arch() {
 }
 
 gum_choose_VM() {
-	if find . -maxdepth 1 -name '*.conf' >/dev/null 2>&1 ; then
-		chosen=$(find . -maxdepth 1 -name '*.conf' | cut -d'/' -f2 | rev | cut -d'.' -f2-9 | rev | gum filter --select-if-one)
+	local names
+	names=$(list_vm_conf_names)
+	if [ -n "$names" ]; then
+		chosen=$(echo "$names" | gum filter --select-if-one)
 	else
 		gum style --foreground 1 "Can't!"
 	fi
 }
 
 gum_choose_VM2() {
-	if ls | grep ".conf" ; then
-		height=$(ls -1 | grep ".conf" | wc -l)
+	local names height
+	names=$(list_vm_conf_names)
+	if [ -n "$names" ]; then
+		height=$(echo "$names" | wc -l)
 		title="Choose VM"
 		show_header
-		chosen=$(ls -1 | grep ".conf" | rev | cut -d'.' -f2- | rev | gum filter --height "$height")
+		chosen=$(echo "$names" | gum filter --height "$height")
 	else
 		echo "No VMs to run."
 	fi
@@ -227,12 +262,12 @@ create_VM() {
 	elif ! echo "$choices" | grep -q "Editions:"; then
 		gum_filter_release
 		gum_filter_arch
-		"$QUICKGET" --arch "$ARCH" "$os" "$release"
+		qget --arch "$ARCH" "$os" "$release"
 	else
 		gum_filter_release
 		gum_filter_edition
 		gum_filter_arch
-		"$QUICKGET" --arch "$ARCH" "$os" "$release" "$edition"
+		qget --arch "$ARCH" "$os" "$release" "$edition"
 	fi
 	show_headers
 }
@@ -244,7 +279,7 @@ create_VM2() {
 		clear
 		gum_choose_release
 		gum_choose_arch
-		"$QUICKGET" --arch "$ARCH" "$os" "$release"
+		qget --arch "$ARCH" "$os" "$release"
 		if [ -f "${configdir}/default_vm_config" ]; then
 			echo 'Adding default values to config...'
 			cat "${configdir}/default_vm_config" >> "$os-$release.conf"
@@ -254,7 +289,7 @@ create_VM2() {
 		gum_choose_release
 		gum_choose_edition
 		gum_choose_arch
-		gum spin --spinner $spinner --show-output --title="Downloading $os $release $edition" -- "$QUICKGET" --arch "$ARCH" "$os" "$release" "$edition"
+		gum spin --spinner $spinner --show-output --title="Downloading $os $release $edition" -- qget --arch "$ARCH" "$os" "$release" "$edition"
 		if [ -f "${configdir}/default_vm_config" ]; then
 			echo 'Adding default values to config...'
 			cat "${configdir}/default_vm_config" >> "$os-$release-$edition.conf"
@@ -278,8 +313,10 @@ edit_VM_config() {
 	if [ -z "$EDITOR" ]; then
 		echo "Editor not set! Can't continue!"
 	else
-		height=$(ls -1 | grep ".conf" | wc -l)
-		${EDITOR} "$(ls | grep ".conf" | gum filter --height "$height")"
+		mapfile -t _vm_list < <(list_vm_conf_names)
+		height=${#_vm_list[@]}
+		chosen_name=$(printf '%s\n' "${_vm_list[@]}" | gum filter --height "$height")
+		${EDITOR} "${chosen_name}.conf"
 	fi
 
 }
@@ -344,11 +381,12 @@ gum_choose_runnings() {
 }
 
 gum_choose_VM_to_delete() {
-	height=$(ls -1 | grep ".conf" | wc -l)
+	mapfile -t _vm_list < <(list_vm_conf_names)
 	GUM_FILTER_HEADER="Choose VM to delete"
 	GUM_FILTER_HEADER_FOREGROUND=""
-	if ls | grep ".conf" ; then
-		chosen=$(echo ${vms[@]%.*} | tr " " "\n" | gum filter --height "$height" --no-limit)
+	if [ ${#_vm_list[@]} -gt 0 ]; then
+		height=${#_vm_list[@]}
+		chosen=$(printf '%s\n' "${_vm_list[@]}" | gum filter --height "$height" --no-limit)
 		echo 'Removing config(s)...'
 		rm -r "$chosen" ; rm "$chosen".conf
 	else
@@ -357,8 +395,9 @@ gum_choose_VM_to_delete() {
 }
 
 gum_choose_VM_to_delete2() {
-	if [ -n "$(echo *.conf)" ]; then
-		chosen=$(echo "${vms[@]%.*}" | tr " " "\n" | gum choose --select-if-one)
+	mapfile -t _vm_list < <(list_vm_conf_names)
+	if [ ${#_vm_list[@]} -gt 0 ]; then
+		chosen=$(printf '%s\n' "${_vm_list[@]}" | gum choose --select-if-one)
 		gum confirm "Really delete $chosen" && rm -r "$chosen" && rm "$chosen".conf
 		show_headers
 	else
@@ -367,10 +406,11 @@ gum_choose_VM_to_delete2() {
 }
 
 gum_choose_VM_to_delete3() {
-	if ls | grep ".conf" ; then
+	mapfile -t _vm_list < <(list_vm_conf_names)
+	if [ ${#_vm_list[@]} -gt 0 ]; then
 		GUM_FILTER_HEADER="Choose VM to delete"
-		height=$(ls -1 | grep ".conf" | wc -l)
-		chosen=$(ls -1 | grep ".conf" | gum filter --height "$height" --no-limit)
+		height=${#_vm_list[@]}
+		chosen=$(printf '%s\n' "${_vm_list[@]}" | gum filter --height "$height" --no-limit)
 		delete_VM
 	else
 		echo "No VMs to delete"
@@ -393,6 +433,8 @@ delete_VM() {
 		fi
 	done
 }
+
+## DISK MANAGEMENT
 
 ## ADVANCED
 
@@ -479,26 +521,26 @@ test_ISOs_download() {
 	rm "$tmpdir/test" 2>/dev/null
 	cd "$tmpdir" || exit
 	touch "$tmpdir/test"
-	#"$QUICKGET" | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' > supported
+	#qget | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' > supported
 	os=$(gum filter < "$tmpdir"/supported)
-	choices=$("$QUICKGET" "$os" | sed 1d)
+	choices=$(qget "$os" | sed 1d)
 		while read -r get_name; do
 		echo "Trying $get_name..."
 		mkdir -p "$tmpdir/_distros/$get_name" && cd "$tmpdir/_distros/$get_name" || exit
-		releases=$("$QUICKGET" "$get_name" | grep 'Releases:' | cut -f2 | sed 's/^ //' | sed 's/ *$//')
+		releases=$(qget "$get_name" | grep 'Releases:' | cut -f2 | sed 's/^ //' | sed 's/ *$//')
 		echo "$releases" > releases
-		editions=$("$QUICKGET" "$get_name" | grep 'Editions:' | cut -f2 | sed 's/^ //' | sed 's/ *$//')
+		editions=$(qget "$get_name" | grep 'Editions:' | cut -f2 | sed 's/^ //' | sed 's/ *$//')
 		echo "$editions" > editions
 		if [ -z "$editions" ]; then
 			for release in $releases; do
 				echo "$get_name" >> "$tmpdir/test"
-				timeout 10 "$QUICKGET" -t "$get_name" "${release}" >> "$tmpdir/test"
+				timeout 10 qget -t "$get_name" "${release}" >> "$tmpdir/test"
 			done
 		else
 			while read -r release; do
 				for edition in $editions; do
 					echo "$get_name" >> "$tmpdir/test"
-					timeout 10 "$QUICKGET" -t "$get_name" "${release}" "${edition}" >> "$tmpdir/test"
+					timeout 10 qget -t "$get_name" "${release}" "${edition}" >> "$tmpdir/test"
 				done
 			done < releases
 		fi
@@ -511,24 +553,24 @@ show_ISOs_urls(){
 	rm -r "$tmpdir/test" 2>/dev/null
 	cd "$tmpdir" || exit
 	touch "$tmpdir/test"
-	"$QUICKGET" | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' > supported
+	qget | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' > supported
 	while read -r get_name; do
 		echo "Trying $get_name..."
 		mkdir -p "$tmpdir/_distros/$get_name" && cd "$tmpdir/_distros/$get_name" || exit
-		releases=$("$QUICKGET" "$get_name" | grep 'Releases' | cut -d':' -f2 | sed 's/^ //' | sed 's/ *$//')
+		releases=$(qget "$get_name" | grep 'Releases' | cut -d':' -f2 | sed 's/^ //' | sed 's/ *$//')
 		echo "$releases" > releases
-		editions=$("$QUICKGET" "$get_name" | grep 'Editions' | cut -d':' -f2 | sed 's/^ //' | sed 's/ *$//')
+		editions=$(qget "$get_name" | grep 'Editions' | cut -d':' -f2 | sed 's/^ //' | sed 's/ *$//')
 		echo "$editions" > editions
 		if [ -z "$editions" ]; then
 			for release in $releases; do
 				echo "$get_name" >> "$tmpdir/test"
-				timeout 5 "$QUICKGET" -s "$get_name" "${release}" >> "$tmpdir/test" #&& $(killall zsync >> /dev/null)
+				timeout 5 qget -s "$get_name" "${release}" >> "$tmpdir/test" #&& $(killall zsync >> /dev/null)
 			done
 		else
 			while read -r release; do
 				for edition in $editions; do
 					echo "$get_name" >> "$tmpdir/test"
-					timeout 5 "$QUICKGET" -s "$get_name" "${release}" "${edition}" >> "$tmpdir/test" #&& $(killall zsync >> /dev/null)
+					timeout 5 qget -s "$get_name" "${release}" "${edition}" >> "$tmpdir/test" #&& $(killall zsync >> /dev/null)
 				done
 			done < releases
 		fi
@@ -553,7 +595,7 @@ ssh_into() {
 
 open_distro_homepage(){
 	gum_filter_os
-	"$QUICKGET" -o "${os}" >/dev/null 2>&1 &
+	qget -o "${os}" >/dev/null 2>&1 &
 }
 
 kill_vm() {
@@ -578,95 +620,76 @@ kill_vms() {
 }
 
 headers_small_or() {
-	printf '\n\nsmall:\n'
-	show_headers_small
-	printf '\n\nfull:\n'
-	show_headers_full
-	printf '\n\ncurrent:\n'
-	show_headers
-	use_headers=$(gum choose --header "   Use small headers or full?" "small" "full" "current")
-	echo "will use $use_headers"
+	printf '\n\nmini:\n';    show_headers_mini
+	printf '\n\nsmaller:\n'; show_headers_smaller
+	printf '\n\nsmall:\n';   show_headers_small
+	printf '\n\nfull:\n';    show_headers_full
+	printf '\n\ncurrent:\n'; show_headers
+	local choice
+	choice=$(printf 'mini\nsmaller\nsmall\nfull\ncurrent' | gum filter --height 9 --header "Your choice?")
+	[ -z "$choice" ] || [ "$choice" = "current" ] && return
+	headers="$choice"
+	config_set headers "$headers" "${configdir}/config"
 	show_headers
 }
 
 change_borders() {
 	title="Change borders style"
 	show_header
-	BORDER=$(echo "none
-hidden
-normal
-rounded
-thick
-double" | gum filter --height $height)
-	mkdir -p ${configdir}
-	touch "${configdir}"/border
-	echo $BORDER > "${configdir}"/border
+	local val
+	val=$(printf 'none\nhidden\nnormal\nrounded\nthick\ndouble' | gum filter --height 9)
+	[ -z "$val" ] && return
+	BORDER="$val"
+	config_set BORDER "$BORDER" "${configdir}/config"
 }
 
 change_color() {
-	title="Define color number or choose random"
+	title="Accent color (1-255 or 'random')"
 	show_header
-	BORDER_FOREGROUND=$(echo 'random' | gum filter --height 4 --prompt="Enter custom" --no-strict)
-	mkdir -p ${configdir}
-	touch "${configdir}"/color
-	echo $BORDER_FOREGROUND > "${configdir}"/color
-}
-
-change_borders_color() {
-	title="Define color number or choose random"
-	show_header
-	BORDER_FOREGROUND=$(echo 'random' | gum filter --height 4 --prompt="Enter custom" --no-strict)
-	mkdir -p ${configdir}
-	touch "${configdir}"/color
-	echo $BORDER_FOREGROUND > "${configdir}"/color
-}
-
-use_color() {
-	if [ -f "${configdir}/color" ]; then
-		BORDER_FOREGROUND=$(cat ${configdir}/color)
+	local val
+	val=$(printf 'random\n' | gum filter --height 4 --prompt="Enter number (1-255): " --no-strict)
+	[ -z "$val" ] && return
+	if [ "$val" = "random" ]; then
+		BORDERS_FOREGROUND=$(( RANDOM % 255 + 1 ))
+	else
+		BORDERS_FOREGROUND="$val"
 	fi
+	color="$BORDERS_FOREGROUND"
+	config_set BORDERS_FOREGROUND "$BORDERS_FOREGROUND" "${configdir}/config"
+	_apply_gum_colors
 }
 
 change_quickget_cmd() {
 	title="Choose download command"
 	show_header
+	local cmd
 	cmd=$(printf 'qget\nquickget\n./qget\n./quickget' | gum filter --height 4 --prompt="Choose or type: " --no-strict)
 	[ -z "$cmd" ] && return
-	mkdir -p "${configdir}"
-	echo "$cmd" > "${configdir}/quickget_cmd"
 	QUICKGET="$cmd"
+	config_set QUICKGET "$QUICKGET" "${configdir}/config"
 }
 
 change_spinner() {
-	spinner=$(echo "line
-dot
-minidot
-jump
-pulse
-points
-globe
-moon
-monkey
-meter
-hamburger" | gum filter --height 11)
-	mkdir -p ${configdir}
-	touch "${configdir}"/spinner
-	echo "$spinner" > "${configdir}"/spinner
+	local val
+	val=$(printf 'line\ndot\nminidot\njump\npulse\npoints\nglobe\nmoon\nmonkey\nmeter\nhamburger' | gum filter --height 14)
+	[ -z "$val" ] && return
+	spinner="$val"
+	config_set spinner "$spinner" "${configdir}/config"
 }
 
-# shellcheck disable=SC2015
 icons_or() {
-	gum confirm "   Use icons?
-need Nerd Fonts" && echo "yes" > "$configdir/icons" || rm "$configdir/icons"
+	if gum confirm "Use icons? (requires Nerd Fonts)"; then
+		icons=yes
+	else
+		icons=no
+	fi
+	config_set icons "$icons" "${configdir}/config"
+	use_icons
 	show_headers
 }
 
 use_icons() {
-	if [ -f "$configdir/icons" ]; then
-		icons=yes
-	else
-		icons=""
-	fi
+	[ "${icons:-no}" = "yes" ] && icons=yes || icons=""
 }
 
 ## HEADERS
@@ -712,23 +735,16 @@ show_custom_small() {
 
 show_custom() {
 	show_custom_small
-	if [ -f "${configdir}/color" ]; then
-		gum style --bold --foreground "$color2" "color:"
-		gum style "$(cat "${configdir}/color")"
-	fi
-	if [ -f "${configdir}/border" ]; then
-		gum style --bold --foreground "$color2" "borders:"
-		gum style "$(cat "${configdir}/border")"
-	fi
-	if [ -f "${configdir}/spinner" ]; then
-		gum style --bold --foreground "$color2" "spinner:"
-		gum style "$(cat "${configdir}/spinner")"
-	fi
+	gum style --bold --foreground "$color2" "color:";   gum style "$BORDERS_FOREGROUND"
+	gum style --bold --foreground "$color2" "borders:"; gum style "$BORDER"
+	gum style --bold --foreground "$color2" "spinner:"; gum style "$spinner"
+	gum style --bold --foreground "$color2" "icons:";   gum style "${icons:-no}"
+	gum style --bold --foreground "$color2" "headers:"; gum style "${headers:-full}"
 }
 
 show_header_vms() {
 	pid_files=(*/*.pid)
-	vms=(*.conf)
+	load_vm_confs
 	vms_running=()
 	vms_not=()
 	vms_vm=$(gum style --bold --foreground "$color2" "ready:")
@@ -755,48 +771,66 @@ show_header_vms() {
 	else
 		vms_header=$(gum join --vertical --align center "$vms_vm" "$vms_not_next")
 	fi
-	vms_border=$(gum style --padding "0 1" --border="$BORDER" --border-foreground $color "$vms_header")
+	vms_border=$(gum style --padding "0 1" --border="$BORDER" --border-foreground "$color" "$vms_header")
 	header_vms=$(gum join --vertical --align left "$vms_border" "$tip_border")
 }
 
 show_header_tip() {
+	# Random OS
 	tip3=$(shuf -n 1 "$tmpdir/supported" 2>/dev/null)
 	if [ -z "$tip3" ]; then
-		header_tip=$(gum style --padding "0 1" --border="$BORDER" --border-foreground $color "No OS data — run regenerate supported")
+		header_tip=$(gum style --padding "0 1" --border="$BORDER" --border-foreground "$color" "No OS data — run regenerate supported")
 		return
 	fi
+	# Show colored Tip:
 	tip1=$(gum style --bold --foreground "$color2" "Tip: ")
+	# Show try
 	tip2=$(gum style "try ")
+	# Colorize random OS name
 	tip4=$(gum style --bold --foreground="$color" "$tip3")
+	# Join together 1
 	tip5=$(gum join "$tip1" "$tip2" "$tip4")
-	tip6=$("$QUICKGET" --show "$tip3" 2>/dev/null | awk 'NR==2,NR==6')
+	# Show info of random OS
+	tip6=$(qget --show "$tip3" 2>/dev/null | awk '
+/Website:/ ||
+/Description:/ ||
+/Releases:/ ||
+/Editions:/ ||
+/Architectures:/
+')
+	# Set tip lenght (wrap)
 	tip7=$(gum style --width=77 "$tip6")
+	# Join again
 	tip8=$(gum join --vertical --align top "$tip5" "$tip7")
-	header_tip=$(gum style --padding "0 1" --border="$BORDER" --border-foreground $color "$tip8")
+	# Show final tip
+	header_tip=$(gum style --padding "0 1" --border="$BORDER" --border-foreground "$color" "$tip8")
 }
 
-show_headers_small() {
-	logo1=$(gum style --foreground "$color2" " ▄▄▄▄
- █  █
- █  █
- █▄▀▄")
-	logo2=$(gum style "v$version")
-	logo3=$(gum style --foreground "$color2" "▀")
-	logo4=$(gum join "$logo2" "$logo3")
-	logo5=$(gum join --vertical "$logo1" "$logo4")
-	header_logo=$(gum style --padding "0 1" --border=rounded --border-foreground $color "$logo5" )
-
-	show_header_vms
-	show_header_tip
-
-	custom1=$(gum style --bold --foreground "$color2" "workdir:")
-	custom2=$(gum style "$(pwd)")
-	custom3=$(gum join --vertical --align center "$custom1" "$custom2" "$(show_custom_small)")
-	header_custom=$(gum style --padding "0 1"  --border="$BORDER" --border-foreground="$color" "$custom3")
-
-	header12=$(gum join --vertical "$header_tip" "$header_custom")
-	header34=$(gum join "$header_logo" "$header12")
-	gum join --align top --vertical "$header34" "$header_vms"
+show_header_tip_without() {
+	# Random OS
+	tip3=$(shuf -n 1 "$tmpdir/supported" 2>/dev/null)
+	if [ -z "$tip3" ]; then
+		header_tip=$(gum style --padding "0 1" --border="$BORDER" --border-foreground "$color" "No OS data — run regenerate supported")
+		return
+	fi
+	# Show colored Tip:
+	tip1=$(gum style --bold --foreground "$color2" "Tip: ")
+	# Show try
+	tip2=$(gum style "try ")
+	# Colorize random OS name
+	tip4=$(gum style --bold --foreground="$color" "$tip3")
+	# Join together 1
+	tip5=$(gum join "$tip1" "$tip2" "$tip4")
+	# Show info of random OS
+	tip6=$(qget --show "$tip3" 2>/dev/null | awk '/Website:/ ||
+/Releases:/ ||
+/Editions:/ ||
+/Architectures:/
+')
+	# Join again
+	tip8=$(gum join --vertical --align top "$tip5" "$tip6")
+	# Show final tip
+	header_tip=$(gum style --padding "0 1" --border="$BORDER" --border-foreground "$color" "$tip8")
 }
 
 show_headers_full() {
@@ -812,9 +846,9 @@ show_headers_full() {
 	logo6=$(gum join --align center --vertical "$logo0" "$logo1")
 	logo7=$(gum join "$logo2" "$logo3" "$logo4" "$logo5")
 	logo8=$(gum join --vertical "$logo6" "$logo7")
-	header_logo=$(gum style --align left --padding "0 1" --border=rounded --border-foreground $color "$logo8" )
+	header_logo=$(gum style --align left --padding "0 1" --border=rounded --border-foreground "$color" "$logo8" )
 
-	header_dep=$(gum style --padding "0 1" --border="$BORDER" --border-foreground $color "    qemu $(show_version_qemu)
+	header_dep=$(gum style --padding "0 1" --border="$BORDER" --border-foreground "$color" "    qemu $(show_version_qemu)
 quickemu $(show_version_quickemu)
 $(show_editor)")
 
@@ -831,12 +865,75 @@ $(show_editor)")
 	gum join --align top "$header1" "$header2"
 }
 
+show_headers_small() {
+	logo1=$(gum style --foreground "$color2" " ▄▄▄▄
+ █  █
+ █  █
+ █▄▀▄")
+	logo2=$(gum style "v$version")
+	logo3=$(gum style --foreground "$color2" "▀")
+	logo4=$(gum join "$logo2" "$logo3")
+	logo5=$(gum join --vertical "$logo1" "$logo4")
+	header_logo=$(gum style --padding "0 1" --border=rounded --border-foreground "$color" "$logo5" )
+
+	show_header_vms
+	show_header_tip
+
+	custom1=$(gum style --bold --foreground "$color2" "workdir:")
+	custom2=$(gum style "$(pwd)")
+	custom3=$(gum join --vertical --align center "$custom1" "$custom2" "$(show_custom_small)")
+	header_custom=$(gum style --padding "0 1"  --border="$BORDER" --border-foreground="$color" "$custom3")
+
+	header12=$(gum join --vertical "$header_tip" "$header_custom")
+	header34=$(gum join "$header_logo" "$header12")
+	gum join --align top --vertical "$header34" "$header_vms"
+}
+
+show_headers_smaller() {
+	logo1=$(gum style --foreground "$color2" " ▄▄▄▄
+ █  █
+ █  █
+ █▄▀▄")
+	logo2=$(gum style "v$version")
+	logo3=$(gum style --foreground "$color2" "▀")
+	logo4=$(gum join "$logo2" "$logo3")
+	logo5=$(gum join --vertical "$logo1" "$logo4")
+	header_logo=$(gum style --padding "0 1" --border=rounded --border-foreground "$color" "$logo5" )
+
+	show_header_vms
+	show_header_tip_without
+
+	custom1=$(gum style --bold --foreground "$color2" "workdir:")
+	custom2=$(gum style "$(pwd)")
+	custom3=$(gum join --vertical --align center "$custom1" "$custom2" "$(show_custom_small)")
+	header_custom=$(gum style --padding "0 1"  --border="$BORDER" --border-foreground="$color" "$custom3")
+
+	header12=$(gum join --vertical "$header_tip" "$header_custom")
+	header34=$(gum join "$header_logo" "$header12")
+	gum join --align top --vertical "$header34" "$header_vms"
+}
+
+show_headers_mini() {
+	show_header_vms
+	show_header_tip_without
+
+	custom1=$(gum style --bold --foreground "$color2" "workdir:")
+	custom2=$(gum style "$(pwd)")
+	custom3=$(gum join --vertical --align center "$custom1" "$custom2" "$(show_custom_small)")
+	header_custom=$(gum style --padding "0 1"  --border="$BORDER" --border-foreground="$color" "$custom3")
+
+	header12=$(gum join --vertical "$header_tip" "$header_custom")
+	header34=$(gum join "$header_logo" "$header12")
+	gum join --align top --vertical "$header34" "$header_vms"
+}
+
 show_headers() {
-	if [ "$use_headers" == full ]; then
-		show_headers_full
-	else
-		show_headers_small
-	fi
+	case "${headers:-full}" in
+		mini)    show_headers_mini ;;
+		smaller) show_headers_smaller ;;
+		small)   show_headers_small ;;
+		*)       show_headers_full ;;
+	esac
 }
 
 ## MENU
@@ -852,7 +949,6 @@ show_menus() {
 show_menu_main() {
 	while true
 	do
-		height=13
 		start=$(echo "create
 run
 OS homepage
@@ -862,7 +958,7 @@ delete
 advanced
 settings
 help
-exit $progname" | gum filter --height "$height")
+exit $progname" | gum filter --height "$mainMenuHeight")
 # from choose:  --selected '󰜎 run'
 		case $start in
 			'create' ) create_VM;;
@@ -882,7 +978,6 @@ exit $progname" | gum filter --height "$height")
 show_menu_main_icons() {
 	while true
 	do
-	height=13
 	start=$(echo " create
 󰜎 run
 󰖟 OS homepage
@@ -892,7 +987,7 @@ show_menu_main_icons() {
  advanced
  settings
 󰘥 help
-󰩈 exit $progname" | gum filter --height "$height")
+󰩈 exit $progname" | gum filter --height "$mainMenuHeight")
 # from choose:  --selected '󰜎 run'
 	case $start in
 		' create' ) create_VM;;
@@ -914,19 +1009,20 @@ show_menu_advanced() {
 	do
 	title="advanced"
 	show_header
-	height=11
 	start=$(echo "test ISOs download
 show ISOs URLs
 set default config for VMs
 edit VM config
+disk management
 custom quickemu command
 add new distro
 create desktop entry
 back to main menu
-exit $progname" | gum filter --height "$height")
+exit $progname" | gum filter --height "$advancedMenuHeight")
 	case $start in
 		'set default config for VMs' ) edit_default_VMs_config;;
 		'edit VM config' ) edit_VM_config;;
+		'disk management' ) show_menu_disk;;
 		'custom quickemu command' ) custom_quickemu_command;;
 		'add new distro' ) add_new_distro;;
 		'create desktop entry' ) create_desktop_entry;;
@@ -943,18 +1039,19 @@ show_menu_advanced_icons() {
 	do
 	title="advanced"
 	show_header
-	height=11
 	start=$(echo "󰙨 test ISOs download
  show ISOs URLs
  set default config for VMs
 󱋆 edit VM config
+󰋊 disk management
  custom quickemu command
 󰎔 add distro
  back to main menu
-󰩈 exit $progname" | gum filter --height "$height")
+󰩈 exit $progname" | gum filter --height "$advancedMenuHeight")
 	case $start in
 		' set default config for VMs' ) edit_default_VMs_config;;
 		'󱋆 edit VM config' ) edit_VM_config;;
+		'󰋊 disk management' ) show_menu_disk;;
 		' custom quickemu command' ) custom_quickemu_command;;
 		'󰎔 add distro' ) add_new_distro;;
 		'󰙨 test ISOs download' ) test_ISOs_download;;
@@ -970,25 +1067,22 @@ show_menu_settings() {
 	do
 	title="settings"
 	show_header
-	height=13
 	start=$(echo "update $progname
 regenerate supported
 download command
 icons
 accent color
-borders color
 borders style
 spinner
 headers
 back to main menu
-exit $progname" | gum filter --height "$height")
+exit $progname" | gum filter --height "$settingsMenuHeight")
 	case $start in
 		"update $progname" ) update_quicktui;;
 		'regenerate supported' ) generate_supported;;
 		'download command' ) change_quickget_cmd;;
 		'icons' ) icons_or;;
 		'accent color' ) change_color;;
-		'borders color' ) change_borders_color;;
 		'borders style' ) change_borders;;
 		'spinner' ) change_spinner;;
 		'headers' ) headers_small_or;;
@@ -1003,25 +1097,22 @@ show_menu_settings_icons() {
 	do
 	title="settings"
 	show_header
-	height=13
 	start=$(echo " update $progname
  regenerate supported
- download command
+󱑤 download command
 󱌝 icons
  accent color
- borders color
 󰴱 borders style
  spinner
 󰛼 headers
  back to main menu
-󰩈 exit $progname" | gum filter --height "$height")
+󰩈 exit $progname" | gum filter --height "$settingsMenuHeight")
 	case $start in
 		" update $progname" ) update_quicktui;;
 		' regenerate supported' ) generate_supported;;
-		' download command' ) change_quickget_cmd;;
+		'󱑤 download command' ) change_quickget_cmd;;
 		'󱌝 icons' ) icons_or;;
 		' accent color' ) change_color;;
-		' borders color' ) change_borders_color;;
 		'󰴱 borders style' ) change_borders;;
 		' spinner' ) change_spinner;;
 		'󰛼 headers' ) headers_small_or;;
@@ -1031,11 +1122,11 @@ show_menu_settings_icons() {
 	done
 }
 
+
 ## RUN
-#clear
 define_variables
+multi_instance_check
 if_needed
-use_color
 use_icons
 show_headers
 show_menus

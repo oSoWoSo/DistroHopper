@@ -4,127 +4,166 @@ case "${OS}" in
 		# Template file for 'edubuntu'
 		OSNAME="edubuntu"
 		PRETTY="Edubuntu"
+		LOGO=""
 		ICON="edubuntu.svg"
-		CATEGORY="beginner"
+		CATEGORY="Beginner, Education"
 		BASEDOF="Ubuntu"
 		HOMEPAGE="https://www.edubuntu.org"
 		DESCRIPTION="Stable, secure and privacy concious option for schools"
 		CREDENTIALS="-"
+		GPG=""
+		RSS=""
+		DW=""
 		;;
 	kubuntu)
 		# Template file for 'kubuntu'
 		OSNAME="kubuntu"
 		PRETTY="Kubuntu"
+		LOGO=""
 		ICON="kubuntu.svg"
-		CATEGORY="beginner"
+		CATEGORY="Beginner, Desktop"
 		BASEDOF="Ubuntu"
 		HOMEPAGE="https://kubuntu.org"
 		DESCRIPTION="Free, complete, and open-source alternative to Microsoft Windows and Mac OS X which contains everything you need to work, play, or share"
 		CREDENTIALS="-"
+		GPG=""
+		RSS=""
+		DW=""
 		;;
 	lubuntu)
 		# Template file for 'lubuntu'
 		OSNAME="lubuntu"
 		PRETTY="Lubuntu"
+		LOGO=" "
 		ICON="lubuntu.svg"
-		CATEGORY="beginner"
+		CATEGORY="Beginner, Desktop"
 		BASEDOF="Ubuntu"
 		HOMEPAGE="https://lubuntu.me"
 		DESCRIPTION="Complete Operating System that ships the essential apps and services for daily use: office applications, PDF reader,  image editor, music and video players, etc. Using lightwave lxde/lxqt"
 		CREDENTIALS="-"
+		GPG=""
+		RSS=""
+		DW=""
 		;;
 	xubuntu)
 		# Template file for 'xubuntu'
 		OSNAME="xubuntu"
 		PRETTY="Xubuntu"
+		LOGO=""
 		ICON="xubuntu.svg"
-		CATEGORY="beginner"
+		CATEGORY="Beginner, Desktop"
 		BASEDOF="Ubuntu"
 		HOMEPAGE="https://xubuntu.org"
 		DESCRIPTION="Elegant and easy to use operating system. Xubuntu comes with Xfce, which is a stable, light and configurable desktop environment"
 		CREDENTIALS="-"
+		GPG=""
+		RSS=""
+		DW=""
 		;;
 	ubuntu-budgie)
-		# Template file for 'ubuntu-budgie'
+		# Template file for ‘ubuntu-budgie’
 		OSNAME="ubuntu-budgie"
 		PRETTY="Ubuntu Budgie"
-		DW_CATEGORY="Desktop, Live Medium"
+		LOGO=""
 		ICON="ubuntu-budgie.svg"
-		CATEGORY="beginner"
+		CATEGORY="Desktop"
 		BASEDOF="Ubuntu"
 		HOMEPAGE="https://ubuntubudgie.org"
 		DESCRIPTION="Community developed distribution, integrating the Budgie Desktop Environment with Ubuntu at its core"
 		CREDENTIALS="-"
+		GPG=""
+		RSS=""
+		DW="ubuntubudgie"
 		;;
 	ubuntu-cinnamon)
-		# Template file for 'ubuntu-cinnamon'
+		# Template file for ‘ubuntu-cinnamon’
 		OSNAME="ubuntu-cinnamon"
 		PRETTY="Ubuntu Cinnamon"
-		DW_CATEGORY="Desktop, Live Medium"
+		LOGO=""
 		ICON="ubuntu-cinnamon.svg"
-		CATEGORY="beginner"
+		CATEGORY="Beginner, Desktop"
 		BASEDOF="Ubuntu"
 		HOMEPAGE="https://ubuntucinnamon.org"
 		DESCRIPTION="Community-driven, featuring Linux Mint’s Cinnamon Desktop with Ubuntu at the core, packed fast and full of features, here is the most traditionally modern desktop you will ever love"
 		CREDENTIALS="-"
+		GPG=""
+		RSS=""
+		DW="ubuntucinnamon"
 		;;
 	ubuntu-kylin)
-		# Template file for 'ubuntu-kylin'
+		# Template file for ‘ubuntu-kylin’
 		OSNAME="ubuntu-kylin"
 		PRETTY="Ubuntu Kylin"
-		DW_CATEGORY="Desktop, Live Medium"
+		LOGO=""
 		ICON="ubuntu-kylin.svg"
-		CATEGORY="beginner"
+		CATEGORY="Beginner, Desktop"
 		BASEDOF="Ubuntu"
 		HOMEPAGE="https://ubuntukylin.com"
 		DESCRIPTION="Universal desktop operating system for personal computers, laptops, and embedded devices. It is dedicated to bringing a smarter user experience to users all over the world"
 		CREDENTIALS="-"
+		GPG=""
+		RSS=""
+		DW="ubuntukylin"
 		;;
 	ubuntu-mate)
-		# Template file for 'ubuntu-mate'
+		# Template file for ‘ubuntu-mate’
 		OSNAME="ubuntu-mate"
 		PRETTY="Ubuntu MATE"
-		DW_CATEGORY="Beginners, Desktop, Live Medium"
+		LOGO=""
 		ICON="ubuntu-mate.svg"
-		CATEGORY="beginner"
+		CATEGORY="Beginner, Desktop"
 		BASEDOF="Ubuntu"
 		HOMEPAGE="https://ubuntu-mate.org"
 		DESCRIPTION="Stable, easy-to-use operating system with a configurable desktop environment. It is ideal for those who want the most out of their computers and prefer a traditional desktop metaphor. Using Mate desktop"
 		CREDENTIALS="-"
+		GPG=""
+		RSS=""
+		DW="ubuntumate"
 		;;
 	ubuntu-unity)
-		# Template file for 'ubuntu-unity'
+		# Template file for ‘ubuntu-unity’
 		OSNAME="ubuntu-unity"
 		PRETTY="Ubuntu Unity"
-		DW_CATEGORY="Desktop, Live Medium"
+		LOGO=""
 		ICON="ubuntu-unity.svg"
-		CATEGORY="beginner"
+		CATEGORY="Beginner, Desktop"
 		BASEDOF="Ubuntu"
 		HOMEPAGE="https://ubuntuunity.org"
 		DESCRIPTION="Flavor of Ubuntu featuring the Unity7 desktop environment (the default desktop environment used by Ubuntu from 2010-2017)"
 		CREDENTIALS="-"
+		GPG=""
+		RSS=""
+		DW="ubuntuunity"
 		;;
 	ubuntustudio)
 		# Template file for 'ubuntustudio'
 		OSNAME="ubuntustudio"
 		PRETTY="UbuntuStudio"
+		LOGO=""
 		ICON="ubuntustudio.svg"
-		CATEGORY="beginner"
+		CATEGORY="Beginner, Multimedia"
 		BASEDOF="Ubuntu"
 		HOMEPAGE="https://ubuntustudio.org"
 		DESCRIPTION="Comes preinstalled with a selection of the most common free multimedia applications available, and is configured for best performance for various purposes: Audio, Graphics, Video, Photography and Publishing"
 		CREDENTIALS="-"
+		GPG=""
+		RSS=""
+		DW=""
 		;;
 	ubuntu)
 		# Template file for 'ubuntu'
 		OSNAME="ubuntu"
 		PRETTY="Ubuntu"
+		LOGO=" "
 		ICON="ubuntu.svg"
-		CATEGORY="beginner"
+		CATEGORY="Beginner, Desktop"
 		BASEDOF="Debian"
 		HOMEPAGE="https://ubuntu.com"
 		DESCRIPTION="Complete desktop Linux operating system, freely available with both community and professional support"
 		CREDENTIALS="-"
+		GPG=""
+		RSS=""
+		DW=""
 		;;
 	esac
 
@@ -143,7 +182,6 @@ case "${OS}" in
 #     #     GUEST="linux_old"
 #     # fi
 # fi
-
 
 function releases_() {
 	local VERSION_DATA=""
@@ -167,7 +205,23 @@ function releases_() {
 }
 
 function arch_() {
-	echo "amd64"
+	if [ -z "${RELEASE}" ]; then
+		echo "amd64 arm64"
+		return
+	fi
+	if [[ ! "${RELEASE}" =~ ^[0-9]+\.[0-9]+$ ]]; then
+		echo "amd64"
+		return
+	fi
+	local MAJOR="${RELEASE%%.*}"
+	local MINOR="${RELEASE##*.}"
+	local NUM_MINOR
+	NUM_MINOR=$((10#${MINOR}))
+	if [ "${MAJOR}" -gt 25 ] || { [ "${MAJOR}" -eq 25 ] && [ "${NUM_MINOR}" -ge 10 ]; }; then
+		echo "amd64 arm64"
+	else
+		echo "amd64"
+	fi
 }
 
 function get_() {
@@ -175,7 +229,7 @@ function get_() {
 	local HASH=""
 	local URL=""
 	local DATA=""
-	local ARCH_KW="${ARCH:-amd64}"
+	local QEMU_ARCH="${ARCH:-amd64}"
 	local CDIMAGE_OS="${OS}"
 	case "${OS}" in
 		ubuntu-cinnamon) CDIMAGE_OS="ubuntucinnamon";;
@@ -202,16 +256,16 @@ function get_() {
 		URL="https://cdimage.ubuntu.com/${CDIMAGE_OS}/releases/${RELEASE}/release"
 	fi
 	if web_check "${URL}/SHA256SUMS"; then
-		DATA=$(web_pipe "${URL}/SHA256SUMS" | grep 'desktop\|dvd\|install' | grep "${ARCH_KW}" | grep iso | grep -v "+mac")
+		DATA=$(web_pipe "${URL}/SHA256SUMS" | grep 'desktop\|dvd\|install' | grep "${QEMU_ARCH}" | grep iso | grep -v "+mac")
 		ISO=$(cut -d'*' -f2 <<<"${DATA}" | sed '1q;d')
 		HASH=$(cut -d' ' -f1 <<<"${DATA}" | sed '1q;d')
 	else
-		DATA=$(web_pipe "${URL}/MD5SUMS" | grep 'desktop\|dvd\|install' | grep "${ARCH_KW}" | grep iso | grep -v "+mac")
+		DATA=$(web_pipe "${URL}/MD5SUMS" | grep 'desktop\|dvd\|install' | grep "${QEMU_ARCH}" | grep iso | grep -v "+mac")
 		ISO=$(cut -d'*' -f2 <<<"${DATA}")
 		HASH=$(cut -d' ' -f1 <<<"${DATA}")
 	fi
 	if [ -z "${ISO}" ] || [ -z "${HASH}" ]; then
-		echo "${PRETTY} ${RELEASE} is currently unavailable. Please select other OS/Release combination"
+		echo "${PRETTY} ${RELEASE} is currently unavailable. Please select other OS/Release combination" >&2
 		exit 1
 	fi
 	if [[ "${RELEASE}" == "daily"* ]] || [ "${RELEASE}" == "dvd" ]; then
@@ -225,4 +279,31 @@ function get_() {
 		check_hash "${ISO}" "${HASH}"
 		make_vm_config "${ISO}"
 	fi
+}
+
+function get_entries_() {
+	local OS="$1" ARCH="$2" RELEASE="$3" OPERATION="$4" PUBLIC_DIR="$5" TEMPLATES_DIR="$6"
+	# ubuntu get_() writes its URL line via web_get's "show" path or a test-result
+	# line via _record_test_result.  Extract the URL with grep so both formats work.
+	local _out _url
+	_out=$( (get_) 2>/dev/null )
+	_url=$(grep -oP 'https?://\S+' <<<"${_out}" | head -1)
+	[ -z "${_url}" ] && return
+	if [ "${OPERATION}" == "test" ]; then
+		# In test mode (get_) already tee'd the human-readable result to tmp_${OS}
+		# and ran web_check.  Just write the structured .dat entry to avoid a second
+		# network round-trip and a duplicate line in the text file.
+		local _status
+		_status=$(grep -oP '\bPASS\b|\bFAIL\b' <<<"${_out}" | tail -1)
+		table_add_row "$OS" "$ARCH" "$RELEASE" "" "${_url}" "${_status:-FAIL}"
+		printf '%s\t%s\t%s\t%s\t%s\n' \
+			"${ARCH}" "${RELEASE}" "-" "${_url}" "${_status:-FAIL}" \
+			>> "${PUBLIC_DIR}/tmp_${OS}.dat"
+	else
+		_emit_entry "${OS}" "${ARCH}" "${RELEASE}" "" "${_url}" "${OPERATION}" "${PUBLIC_DIR}"
+	fi
+}
+
+function config_() {
+	[[ "${RELEASE}" == *"daily"* ]] && echo "disk_size=\"32G\"" >> "${CONF_FILE}"
 }

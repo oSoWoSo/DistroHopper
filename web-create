@@ -86,7 +86,7 @@ _detect_repo() {
 	fi
 
 	local base_url slug
-	base_url=$(echo "$https_url" | grep -oP 'https?://[^/]+')
+	base_url=$(echo "$https_url" | sed 's|\(https\?://[^/]*\).*|\1|')
 	slug="${https_url#"${base_url}"/}"
 
 	if [[ "$https_url" =~ github\.com ]]; then
@@ -146,7 +146,7 @@ _check_release() {
 	[ -z "$REPO_URL" ] && return
 
 	local base_url slug http_code body
-	base_url=$(echo "$REPO_URL" | grep -oP 'https?://[^/]+')
+	base_url=$(echo "$REPO_URL" | sed 's|\(https\?://[^/]*\).*|\1|')
 	slug="${REPO_URL#"${base_url}"/}"
 
 	case "$REPO_PLATFORM" in
@@ -204,7 +204,9 @@ _build_nav() {
 	local nav_file="$2"
 
 	echo '<nav><ul>' > "$nav_file"
-	echo '  <li><a href="https://osowoso.org">oSoWoSo</a></li>' >> "$nav_file"
+	if [ -n "${NAV_EXTRA_LINK_URL:-}" ]; then
+		echo "  <li><a href=\"${NAV_EXTRA_LINK_URL}\">${NAV_EXTRA_LINK_TEXT:-${NAV_EXTRA_LINK_URL}}</a></li>" >> "$nav_file"
+	fi
 	echo "  <li>⏮️</li>" >> "$nav_file"
 
 	local home_active=""
@@ -227,6 +229,7 @@ _build_nav() {
 	for md in *.md; do
 		[ -f "$md" ] || continue
 		[ "$md" = "README.md" ] && continue
+		[ "$md" = "test.md" ] && continue
 		local slug label active
 		slug="${md%.md}"
 		label="${slug//_/ }"
@@ -235,11 +238,13 @@ _build_nav() {
 		echo "  <li><a href=\"${slug}.html\"${active}>${label}</a></li>" >> "$nav_file"
 	done
 
-	# Add static links to Distros and All pages
-	local distros_active all_active
+	# Add static links to Distros, Rosette, and All pages
+	local distros_active rosette_active all_active
 	[ "$current" = "distros" ] && distros_active=' class="active"'
+	[ "$current" = "rosette" ] && rosette_active=' class="active"'
 	[ "$current" = "all" ] && all_active=' class="active"'
 	echo "  <li><a href=\"distros.html\"${distros_active}>Distros</a></li>" >> "$nav_file"
+	echo "  <li><a href=\"rosette.html\"${rosette_active}>Rosette</a></li>" >> "$nav_file"
 	echo "  <li><a href=\"all.html\"${all_active}>All</a></li>" >> "$nav_file"
 
 	echo '</ul></nav>' >> "$nav_file"
@@ -368,14 +373,14 @@ _icon_color() {
 }
 
 _icon_html() {
-	local osname="$1" pretty="$2" icon_hint="$3"
+	local osname="$1" pretty="$2" icon_hint="$3" icon_online="${4:-}"
 	local color initial src
 	color=$(_icon_color "$pretty")
 	initial="${pretty:0:1}"
 	initial="${initial^^}"
 	src=""
 	local icon_base="${icon_hint%.*}"
-	# Priority: icon_hint (from ${PUBLIC_DIR}/, strip ext first) → osname → fallback
+	# Priority: local icon_hint → local osname → ICON_ONLINE → colored placeholder
 	if [ -n "$icon_base" ] && [ -f "icons/${icon_base}.svg" ]; then src="icons/${icon_base}.svg"
 	elif [ -n "$icon_base" ] && [ -f "icons/${icon_base}.png" ]; then src="icons/${icon_base}.png"
 	elif [ -f "icons/${osname}.svg" ]; then src="icons/${osname}.svg"
@@ -384,6 +389,9 @@ _icon_html() {
 	if [ -n "$src" ]; then
 		printf '<img src="%s" alt="%s" class="distro-icon-large" width="128" height="128" loading="lazy" onerror="this.style.display='"'"'none'"'"';this.nextElementSibling.style.display='"'"'flex'"'"'"><div class="distro-icon-fallback-large" style="width:128px;height:128px;background:%s;display:none">%s</div>' \
 			"$src" "$pretty" "$color" "$initial"
+	elif [ -n "$icon_online" ]; then
+		printf '<img src="%s" alt="%s" class="distro-icon-large" width="128" height="128" loading="lazy" onerror="this.style.display='"'"'none'"'"';this.nextElementSibling.style.display='"'"'flex'"'"'"><div class="distro-icon-fallback-large" style="width:128px;height:128px;background:%s;display:none">%s</div>' \
+			"$icon_online" "$pretty" "$color" "$initial"
 	else
 		printf '<div class="distro-icon-fallback-large" style="width:128px;height:128px;background:%s">%s</div>' \
 			"$color" "$initial"
@@ -392,7 +400,7 @@ _icon_html() {
 
 _card_html() {
 	local osname="$1" pretty="$2" basedof="$3" description="$4"
-	local homepage="$5" categories="$6" supported="$7" icon_hint="${8}"
+	local homepage="$5" categories="$6" supported="$7" icon_hint="${8}" icon_online="${9:-}"
 	local meta_html=""
 	local osname_safe
 	osname_safe="${osname//\'/\\\'}"
@@ -437,12 +445,14 @@ _card_html() {
 		inline_icon="<img src=\"icons/${osname}.svg\" alt=\"\" class=\"card-title-icon\" aria-hidden=\"true\" loading=\"lazy\">"
 	elif [ -f "icons/${osname}.png" ]; then
 		inline_icon="<img src=\"icons/${osname}.png\" alt=\"\" class=\"card-title-icon\" aria-hidden=\"true\" loading=\"lazy\">"
+	elif [ -n "$icon_online" ]; then
+		inline_icon="<img src=\"${icon_online}\" alt=\"\" class=\"card-title-icon\" aria-hidden=\"true\" loading=\"lazy\" onerror=\"this.style.display='none'\">"
 	fi
 
 	cat <<EOF
-<div class="distro-card" data-categories="${categories}" data-supported="${supported}" data-osname="${osname}" data-basedof="${basedof}" data-pretty="${pretty,,}">
+<div class="distro-card" style="cursor:pointer" onclick="if(event.target.closest('a'))return;showDownloads('${osname_safe}')" data-categories="${categories}" data-supported="${supported}" data-osname="${osname}" data-basedof="${basedof}" data-pretty="${pretty,,}">
   <div class="distro-card-icon-area">
-    $(_icon_html "$osname" "$pretty" "$icon_hint")
+    $(_icon_html "$osname" "$pretty" "$icon_hint" "$icon_online")
   </div>
   <div class="distro-card-body">
     <h3>${inline_icon}<a href="${homepage}" target="_blank" rel="noopener">${pretty}</a>${basedof_html}</h3>
@@ -450,11 +460,28 @@ _card_html() {
     ${meta_row}
     <p class="distro-description">${description}</p>
     <div class="distro-actions">
-      <button class="download-btn" onclick="showDownloads('${osname_safe}')"><img src="icons/floppy.svg" alt="Download"> Direct Download</button>
+      <button class="download-btn"><img src="icons/floppy.svg" alt="Download"> Direct Download</button>
     </div>
   </div>
 </div>
 EOF
+}
+
+_read_pub_vars() {
+	local file="$1"
+	local _line _key _val
+	while IFS= read -r _line; do
+		_key="${_line%%=*}"
+		_val="${_line#*=}"
+		_val="${_val#\"}"; _val="${_val%\"}"
+		case "$_key" in
+			OSNAME|PRETTY|ICON|ICON_ONLINE|CATEGORY|BASEDOF|DESCRIPTION|HOMEPAGE|\
+			RELEASES|EDITIONS|QEMU_ARCH|MAGNET|CHAT|RSS|DW|\
+			DW_ARCHITECTURE|DW_DESKTOP|DW_CATEGORY|DW_URL)
+				printf -v "$_key" '%s' "$_val"
+				;;
+		esac
+	done < <(grep -E '^(OSNAME|PRETTY|ICON|ICON_ONLINE|CATEGORY|BASEDOF|DESCRIPTION|HOMEPAGE|RELEASES|EDITIONS|QEMU_ARCH|MAGNET|CHAT|RSS|DW|DW_ARCHITECTURE|DW_DESKTOP|DW_CATEGORY|DW_URL)=' "$file")
 }
 
 _generate_distro_cards() {
@@ -463,26 +490,12 @@ _generate_distro_cards() {
 	for pub_file in ${PUBLIC_DIR}/*; do
 		[ -f "$pub_file" ] || continue
 
-		local OSNAME="" PRETTY="" ICON="" CATEGORY="" BASEDOF="" DESCRIPTION="" HOMEPAGE=""
-		# shellcheck disable=SC1090
-		eval "$(grep -E '^(OSNAME|PRETTY|ICON|CATEGORY|BASEDOF|DESCRIPTION|HOMEPAGE)=' "$pub_file" | head -7)"
+		local OSNAME="" PRETTY="" ICON="" ICON_ONLINE="" CATEGORY="" BASEDOF="" DESCRIPTION="" HOMEPAGE=""
+		_read_pub_vars "$pub_file"
 
 		[ -z "$OSNAME" ] && continue
 
-		# Prefer DW_CATEGORY from TODO/distrowatch/ for consistent categories
-		local categories="$CATEGORY"
-		local DW_CATEGORY=""
-		if [ -f "TODO/distrowatch/${OSNAME}" ]; then
-			eval "$(grep '^DW_CATEGORY=' "TODO/distrowatch/${OSNAME}")"
-		fi
-		if [ -z "$DW_CATEGORY" ] && [ -n "$PRETTY" ]; then
-			local _dw_match
-			_dw_match=$(grep -rl "^PRETTY=\"${PRETTY}\"" TODO/distrowatch/ 2>/dev/null | head -1)
-			[ -n "$_dw_match" ] && eval "$(grep '^DW_CATEGORY=' "$_dw_match")"
-		fi
-		[ -n "$DW_CATEGORY" ] && categories="$DW_CATEGORY"
-
-		_card_html "$OSNAME" "$PRETTY" "$BASEDOF" "$DESCRIPTION" "$HOMEPAGE" "$categories" "$supported" "$ICON"
+		_card_html "$OSNAME" "$PRETTY" "$BASEDOF" "$DESCRIPTION" "$HOMEPAGE" "$CATEGORY" "$supported" "$ICON" "$ICON_ONLINE"
 	done
 }
 
@@ -491,38 +504,60 @@ _generate_distro_data_js() {
 	local first=1
 	for pub_file in ${PUBLIC_DIR}/*; do
 		[ -f "$pub_file" ] || continue
-		local OSNAME="" PRETTY="" ICON="" CATEGORY="" BASEDOF="" HOMEPAGE="" RELEASES="" EDITIONS="" ARCHITECTURES=""
-		eval "$(grep -E '^(OSNAME|PRETTY|ICON|CATEGORY|BASEDOF|HOMEPAGE|RELEASES|EDITIONS|ARCHITECTURES)=' "$pub_file" | head -11)"
+		local OSNAME="" PRETTY="" ICON="" ICON_ONLINE="" CATEGORY="" BASEDOF="" DESCRIPTION="" HOMEPAGE="" RELEASES="" EDITIONS="" QEMU_ARCH="" MAGNET="" CHAT="" RSS="" DW="" DW_DESKTOP=""
+		_read_pub_vars "$pub_file"
 		[ -z "$OSNAME" ] && continue
-		local hp_esc releases_esc basedof_esc editions_esc archs_esc
+		local hp_esc releases_esc basedof_esc editions_esc archs_esc icon_online_esc magnet_esc chat_esc rss_esc dw_esc desc_esc cat_esc dw_desktop_esc
 		hp_esc="${HOMEPAGE//\"/\\\"}"
 		releases_esc="${RELEASES//\"/\\\"}"
 		basedof_esc="${BASEDOF//\"/\\\"}"
 		editions_esc="${EDITIONS//\"/\\\"}"
-		archs_esc="${ARCHITECTURES//\"/\\\"}"
+		archs_esc="${QEMU_ARCH//\"/\\\"}"
+		icon_online_esc="${ICON_ONLINE//\"/\\\"}"
+		magnet_esc="${MAGNET//\"/\\\"}"
+		chat_esc="${CHAT//\"/\\\"}"
+		rss_esc="${RSS//\"/\\\"}"
+		dw_esc="${DW//\"/\\\"}"
+		desc_esc="${DESCRIPTION//\"/\\\"}"
+		cat_esc="${CATEGORY//\"/\\\"}"
+		dw_desktop_esc="${DW_DESKTOP//\"/\\\"}"
 
-		# Build URLs map from TODO/all (populated by ./action --all)
+		# Build URLs map from public/tmp_${OSNAME}.dat (Arch TAB Release TAB Edition TAB URL TAB Status)
 		local tmp_entries=""
+		declare -A _url_seen=()
+		local _dat_file="${PUBLIC_DIR}/tmp_${OSNAME}.dat"
 
-		while IFS= read -r line; do
-			if [[ "$line" =~ ^"${OSNAME} "([^:]+):[[:space:]]+(https?://[^[:space:]]+) ]]; then
-				local key url
-				key="${BASH_REMATCH[1]%% }"
-				url="${BASH_REMATCH[2]}"
-				key="${key//\"/\\\"}"
-				url="${url//\"/\\\"}"
-				[ -n "$tmp_entries" ] && tmp_entries+=","
-				tmp_entries+="\"${key}\":\"${url}\""
-			fi
-		done < <(grep "^${OSNAME} " TODO/all 2>/dev/null)
+		while IFS=$'\t' read -r _arch _rel _ed _url _st; do
+			[[ "$_st" == "OK" || "$_st" == "PASS" ]] || continue
+			[[ "$_url" =~ ^https?:// ]] || continue
+			[ "$_ed" = "-" ] && _ed=""
+			local key="$_arch"
+			[ -n "$_rel" ] && key+=" $_rel"
+			[ -n "$_ed" ] && key+=" $_ed"
+			[[ "${_url_seen[$key]+_}" ]] && continue
+			_url_seen[$key]=1
+			key="${key//\"/\\\"}"
+			_url="${_url//\"/\\\"}"
+			[ -n "$tmp_entries" ] && tmp_entries+=","
+			tmp_entries+="\"${key}\":\"${_url}\""
+		done < <(cat "${_dat_file}" 2>/dev/null)
+		unset _url_seen
 
 		local urls_js=""
 		[ -n "$tmp_entries" ] && urls_js=",\"urls\":{${tmp_entries}}"
 
 		[ "$first" = "0" ] && echo ','
 		first=0
-		printf '  "%s": {"homepage":"%s","releases":"%s","editions":"%s","basedof":"%s","architectures":"%s"%s}' \
-			"$OSNAME" "$hp_esc" "$releases_esc" "${editions_esc:-}" "$basedof_esc" "$archs_esc" "$urls_js"
+		local extra_fields=""
+		[ -n "$desc_esc" ]       && extra_fields+=",\"description\":\"${desc_esc}\""
+		[ -n "$cat_esc" ]        && extra_fields+=",\"category\":\"${cat_esc}\""
+		[ -n "$dw_desktop_esc" ] && extra_fields+=",\"dw_desktop\":\"${dw_desktop_esc}\""
+		[ -n "$magnet_esc" ]     && extra_fields+=",\"magnet\":\"${magnet_esc}\""
+		[ -n "$chat_esc" ]       && extra_fields+=",\"chat\":\"${chat_esc}\""
+		[ -n "$rss_esc" ]        && extra_fields+=",\"rss\":\"${rss_esc}\""
+		[ -n "$dw_esc" ]         && extra_fields+=",\"dw\":\"${dw_esc}\""
+		printf '  "%s": {"homepage":"%s","releases":"%s","editions":"%s","basedof":"%s","architectures":"%s","icon_online":"%s"%s%s}' \
+			"$OSNAME" "$hp_esc" "$releases_esc" "${editions_esc:-}" "$basedof_esc" "$archs_esc" "$icon_online_esc" "$extra_fields" "$urls_js"
 	done
 	echo ''
 	echo '};'
@@ -534,7 +569,7 @@ _generate_distro_data_js() {
 		[ -f "$dw_file" ] || continue
 		local OSNAME="" PRETTY="" BASEDOF="" HOMEPAGE="" DESCRIPTION=""
 		local DW_ARCHITECTURE="" DW_DESKTOP="" DW_CATEGORY="" DW_URL=""
-		eval "$(grep -E '^(OSNAME|PRETTY|BASEDOF|HOMEPAGE|DESCRIPTION|DW_ARCHITECTURE|DW_DESKTOP|DW_CATEGORY|DW_URL)=' "$dw_file")"
+		_read_pub_vars "$dw_file"
 		[ -z "$OSNAME" ] && continue
 		local hp_esc basedof_esc desc_esc arch_esc desktop_esc cat_esc url_esc
 		hp_esc="${HOMEPAGE//\"/\\\"}"
@@ -565,8 +600,7 @@ _generate_distros_data_js_file() {
 		[ -f "$dw_file" ] || continue
 		local OSNAME="" PRETTY="" BASEDOF="" HOMEPAGE="" DESCRIPTION=""
 		local DW_ARCHITECTURE="" DW_DESKTOP="" DW_CATEGORY="" DW_URL=""
-		# shellcheck disable=SC1090
-		eval "$(grep -E '^(OSNAME|PRETTY|BASEDOF|HOMEPAGE|DESCRIPTION|DW_ARCHITECTURE|DW_DESKTOP|DW_CATEGORY|DW_URL)=' "$dw_file")"
+		_read_pub_vars "$dw_file"
 		[ -z "$OSNAME" ] && continue
 		[ -f "${PUBLIC_DIR}/${OSNAME}" ] && continue  # skip supported
 
@@ -599,31 +633,31 @@ _generate_icons_list_js() {
 	echo 'window.iconsAvailable = {' > "$out"
 	local first=1
 
-	# Collect all icon files from icons/ directory
+	# Collect all icon files from icons/ directory; deduplicate by basename.
+	declare -A _icon_seen=()
 	for icon_file in icons/*; do
 		[ -f "$icon_file" ] || continue
 		local basename
 		basename="${icon_file##*/}"
 		local name="${basename%.*}"
-		local ext="${basename##*.}"
-		
+
+		[ "${_icon_seen[$name]+x}" ] && continue
+		_icon_seen[$name]=1
+
+		local has_svg=0 has_png=0
+		[ -f "icons/${name}.svg" ] && has_svg=1
+		[ -f "icons/${name}.png" ] && has_png=1
+
 		[ "$first" = "0" ] && echo ',' >> "$out"
 		first=0
-		
-		# Store as: "name": {"svg": true, "png": true}
-		case "$ext" in
-			svg)
-				# Check if PNG also exists
-				if [ -f "icons/${name}.png" ]; then
-					printf '  "%s": {"svg":true,"png":true}' "$name" >> "$out"
-				else
-					printf '  "%s": {"svg":true}' "$name" >> "$out"
-				fi
-				;;
-			png)
-				printf '  "%s": {"png":true}' "$name" >> "$out"
-				;;
-		esac
+
+		if [ "$has_svg" = 1 ] && [ "$has_png" = 1 ]; then
+			printf '  "%s": {"svg":true,"png":true}' "$name" >> "$out"
+		elif [ "$has_svg" = 1 ]; then
+			printf '  "%s": {"svg":true}' "$name" >> "$out"
+		else
+			printf '  "%s": {"png":true}' "$name" >> "$out"
+		fi
 	done
 
 	echo '};' >> "$out"
@@ -632,6 +666,10 @@ _generate_icons_list_js() {
 
 _generate_distros_page() {
 	local type="$1"
+	local giscus_repo="$2"
+	local giscus_repo_id="$3"
+	local giscus_category="$4"
+	local giscus_category_id="$5"
 	local title h1 desc support_filter_html
 	if [ "$type" = "distros" ]; then
 		title="Distros — DistroHopper"
@@ -673,7 +711,6 @@ _generate_distros_page() {
   if (!window.distrosData) return;
   var grid = document.getElementById("distroGrid");
   var colors = ["#E95420","#3C3B37","#A80030","#41B549","#87CF3E","#2F2F2F","#178CDA","#1d6fa4"];
-  var dwBase = "https://distrowatch.com/images/yvzhuwbpy/";
 
   window.distrosData.forEach(function(d) {
     if (window._distroData && window._distroData[d.id||d.name]) return;
@@ -692,13 +729,15 @@ _generate_distros_page() {
     card.dataset.supported = "false";
     card.dataset.osname = oid;
     card.dataset.basedof = d.basedof || "";
-    var iconSrc = dwBase + oid + ".png";
+    var iconSrc = d.icon_online || "";
     var largeIconHtml =
         "<img src=\""+iconSrc+"\" alt=\""+nm+"\" class=\"distro-icon-large\" width=\"128\" height=\"128\" loading=\"lazy\" onerror=\"this.style.display=\x27none\x27;this.nextElementSibling.style.display=\x27flex\x27\">"
       + "<div class=\"distro-icon-fallback-large\" style=\"width:128px;height:128px;background:"+bg+";display:none\">"+nm.charAt(0).toUpperCase()+"</div>";
 
     var titleIconHtml = "<img src=\""+iconSrc+"\" alt=\"\" class=\"card-title-icon\" aria-hidden=\"true\" loading=\"lazy\" onerror=\"this.style.display=\x27none\x27\">";
 
+    card.style.cursor = "pointer";
+    card.onclick = function(e) { if (e.target.closest('a')) return; showDownloads(oid); };
     card.innerHTML =
       "<div class=\"distro-card-icon-area\">" + largeIconHtml + "</div>"
       + "<div class=\"distro-card-body\">"
@@ -707,7 +746,7 @@ _generate_distros_page() {
       + "<div class=\"distro-meta\">"+catBadges+"</div>"
       + "<p class=\"distro-description\">"+(d.description||"")+"</p>"
       + "<div class=\"distro-actions\">"
-      + "<button class=\"download-btn\" onclick=\"showDownloads(\x27"+oid+"\x27)\">&#x2139; Info</button>"
+      + "<button class=\"download-btn\">&#x2139; Info</button>"
       + "</div>"
       + "</div>";
     grid.appendChild(card);
@@ -726,6 +765,20 @@ _generate_distros_page() {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${title}</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/js-yaml@4/dist/js-yaml.min.js"></script>
+  <style>
+    .rosette-section { margin: 1rem 0; border: 1px solid var(--border-color); border-radius: 4px; overflow: hidden; }
+    .rosette-header { display: flex; justify-content: space-between; align-items: center; padding: 6px 12px; background: var(--bg-light); border-bottom: 1px solid var(--border-color); font-size: 0.85rem; font-weight: bold; }
+    .rosette-link { font-size: 0.8rem; font-weight: normal; color: var(--link-color); text-decoration: none; }
+    .rosette-link:hover { text-decoration: underline; }
+    .rosette-table { width: 100%; border-collapse: collapse; font-family: "Courier New", monospace; font-size: 0.78rem; }
+    .rosette-table tr { border-bottom: 1px solid var(--border-color); }
+    .rosette-table tr:last-child { border-bottom: none; }
+    .rosette-table td { padding: 4px 10px; vertical-align: top; }
+    .r-action { color: var(--accent-color); white-space: nowrap; width: 70px; }
+    .r-cmd { color: var(--text-color); }
+    .r-desc { color: var(--text-color); opacity: 0.55; font-size: 0.72rem; }
+  </style>
 </head>
 <body>
 <div id="particles-js" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none"></div>
@@ -764,8 +817,12 @@ ${cards}
 <script src="icons-available.js"></script>
 <script>
 ${data_js}
+var _giscusRepo = '${giscus_repo}';
+var _giscusRepoId = '${giscus_repo_id}';
+var _giscusCategory = '${giscus_category}';
+var _giscusCategoryId = '${giscus_category_id}';
 
-function _dwInfoHtml(dw) {
+function _dwInfoHtml(dw, showSource) {
   if (!dw) return '';
   var rows = '';
   if (dw.dw_desktop)  rows += '<tr><th>Desktop</th><td>'+dw.dw_desktop+'</td></tr>';
@@ -775,8 +832,70 @@ function _dwInfoHtml(dw) {
   var html = '';
   if (rows) html += '<table class="dw-meta-table">'+rows+'</table>';
   if (dw.description) html += '<p class="distro-description">'+dw.description+'</p>';
-  if (dw.dw_url) html += '<p class="modal-note">Source: <a href="'+dw.dw_url+'" target="_blank" rel="noopener">DistroWatch.com</a></p>';
+  if (showSource && dw.dw_url) html += '<p class="modal-note">Source: <a href="'+dw.dw_url+'" target="_blank" rel="noopener">DistroWatch.com</a></p>';
   return html;
+}
+
+function _distroInfoHtml(d) {
+  if (!d) return '';
+  var rows = '';
+  if (d.dw_desktop)    rows += '<tr><th>Desktop</th><td>'+d.dw_desktop+'</td></tr>';
+  if (d.architectures) rows += '<tr><th>Architecture</th><td>'+d.architectures+'</td></tr>';
+  if (d.category)      rows += '<tr><th>Category</th><td>'+d.category+'</td></tr>';
+  if (d.basedof && d.basedof !== '-') rows += '<tr><th>Based on</th><td>'+d.basedof+'</td></tr>';
+  var html = '';
+  if (rows) html += '<table class="dw-meta-table">'+rows+'</table>';
+  if (d.description)   html += '<p class="distro-description">'+d.description+'</p>';
+  return html;
+}
+
+var _rosetteCache = {};
+var _rosetteKnown = ['alpine','arch','debian','fedora','opensuse','void','nix','macos','gentoo','slackware'];
+var _rosetteMap   = {'ubuntu':'debian','nixos':'nix','suse':'opensuse'};
+
+function _getRosetteId(osname, basedof) {
+  if (_rosetteKnown.indexOf(osname) !== -1) return osname;
+  if (_rosetteMap[osname]) return _rosetteMap[osname];
+  if (basedof) {
+    var parts = basedof.toLowerCase().split(/[\s,]+/);
+    for (var i = 0; i < parts.length; i++) {
+      var p = parts[i].trim();
+      if (_rosetteKnown.indexOf(p) !== -1) return p;
+      if (_rosetteMap[p]) return _rosetteMap[p];
+    }
+  }
+  return null;
+}
+
+async function _fetchRosette(rosetteId) {
+  if (_rosetteCache[rosetteId] !== undefined) return _rosetteCache[rosetteId];
+  try {
+    var txt = await fetch('./data/rosette/' + rosetteId + '.yaml').then(function(r){ return r.text(); });
+    _rosetteCache[rosetteId] = jsyaml.load(txt);
+  } catch(e) {
+    _rosetteCache[rosetteId] = null;
+  }
+  return _rosetteCache[rosetteId];
+}
+
+function _rosetteEsc(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function _rosettePreviewHtml(data, rosetteId) {
+  var pkg = data && data.commands && data.commands.package;
+  if (!pkg) return '';
+  var keyActions = ['install','remove','search','update','list'];
+  var rows = '';
+  keyActions.forEach(function(a) {
+    if (pkg[a]) rows += '<tr><td class="r-action">'+a+'</td><td class="r-cmd">'+_rosetteEsc(pkg[a].cmd)+'</td><td class="r-desc">'+_rosetteEsc(pkg[a].desc)+'</td></tr>';
+  });
+  if (!rows) return '';
+  return '<div class="rosette-section">'
+    + '<div class="rosette-header"><span>\u{1F4E6} Package Manager (' + _rosetteEsc(data.name||rosetteId) + ')</span>'
+    + '<a href="rosette.html?os='+rosetteId+'" class="rosette-link">full rosette →</a></div>'
+    + '<table class="rosette-table">' + rows + '</table>'
+    + '</div>';
 }
 
 function showDownloads(osname) {
@@ -816,7 +935,8 @@ function showDownloads(osname) {
     + '</div></div>';
 
   if (d) {
-    html += _dwInfoHtml(dw);
+    html += _distroInfoHtml(d);
+    html += '<div id="modal-rosette-placeholder"></div>';
     var rels  = d.releases      ? d.releases.trim().split(/\s+/).filter(Boolean)      : [];
     var eds   = d.editions      ? d.editions.trim().split(/\s+/).filter(Boolean)      : [];
     var archs = d.architectures ? d.architectures.trim().split(/\s+/).filter(Boolean) : [];
@@ -882,12 +1002,21 @@ function showDownloads(osname) {
 
     html += '<p class="modal-note">Or <a href="https://github.com/oSoWoSo/DistroHopper" target="_blank" rel="noopener">install DistroHopper</a> and quickly try any supported OS</p>';
   } else {
-    html += _dwInfoHtml(dw);
+    html += _dwInfoHtml(dw, true);
+    html += '<div id="modal-rosette-placeholder"></div>';
     if (!dw) html += '<p style="opacity:0.6;font-size:0.9rem">No data available.</p>';
   }
 
   document.getElementById('modalBody').innerHTML = html;
   document.getElementById('modalOverlay').classList.add('active');
+
+  var _rosetteId = _getRosetteId(osname, basedof);
+  if (_rosetteId) {
+    _fetchRosette(_rosetteId).then(function(data) {
+      var ph = document.getElementById('modal-rosette-placeholder');
+      if (ph) ph.outerHTML = _rosettePreviewHtml(data, _rosetteId);
+    });
+  }
   document.querySelectorAll('#modalBody .release-table').forEach(function(tbl) {
     tbl.addEventListener('mouseover', function(e) {
       var cell = e.target.closest('td,th');
@@ -903,6 +1032,41 @@ function showDownloads(osname) {
       tbl.querySelectorAll('.col-hover').forEach(function(c){ c.classList.remove('col-hover'); });
     });
   });
+
+  // Add giscus comments to modal
+  if (_giscusRepo && _giscusCategoryId) {
+    _loadGiscus(osname);
+  }
+}
+
+function _loadGiscus(osname) {
+  // Remove existing giscus if present
+  var existing = document.getElementById('giscus-root');
+  if (existing) existing.remove();
+
+  var container = document.createElement('div');
+  container.id = 'giscus-root';
+  container.className = 'giscus-container';
+  container.style.marginTop = '2rem';
+  document.getElementById('modalBody').appendChild(container);
+
+  var script = document.createElement('script');
+  script.src = 'https://giscus.app/client.js';
+  script.setAttribute('data-repo', _giscusRepo);
+  script.setAttribute('data-repo-id', _giscusRepoId);
+  script.setAttribute('data-category', _giscusCategory);
+  script.setAttribute('data-category-id', _giscusCategoryId);
+  script.setAttribute('data-mapping', 'pathname');
+  script.setAttribute('data-term', osname);
+  script.setAttribute('data-strict', '0');
+  script.setAttribute('data-reactions-enabled', '1');
+  script.setAttribute('data-emit-metadata', '0');
+  script.setAttribute('data-input-position', 'bottom');
+  script.setAttribute('data-theme', 'preferred_color_scheme');
+  script.setAttribute('data-lang', 'cs');
+  script.crossorigin = 'anonymous';
+  script.async = true;
+  container.appendChild(script);
 }
 
 function _switchArch(btn) {
@@ -1046,6 +1210,23 @@ target_build() { ## Builds the website
 	cp -r ${SRC_DIR}/* ${OUT_DIR}/
 	rm -f ${OUT_DIR}/toggle.html ${OUT_DIR}/toc.html ${OUT_DIR}/svg-color.html
 
+	# Inject dynamic nav into rosette.html
+	if [ -f "${OUT_DIR}/rosette.html" ]; then
+		local rosette_nav="${OUT_DIR}/_nav_rosette.html"
+		_build_nav "rosette" "$rosette_nav"
+		python3 -c "
+import sys
+with open('${OUT_DIR}/rosette.html') as f:
+    content = f.read()
+with open('$rosette_nav') as f:
+    nav = f.read()
+content = content.replace('<!--NAV-->', nav)
+with open('${OUT_DIR}/rosette.html', 'w') as f:
+    f.write(content)
+"
+		rm -f "$rosette_nav"
+	fi
+
 	cname=$(cat ${OUT_DIR}/CNAME 2>/dev/null)
 	[ -n "$cname" ] && printf "%-12s ${GREEN}%s${NC}\n" "CNAME:" "$cname"
 
@@ -1084,11 +1265,12 @@ target_build() { ## Builds the website
 		done
 
 	elif [ "$count" -gt 1 ]; then
-		for file in *.md; do
-			[ -f "$file" ] || continue
+	for file in *.md; do
+		[ -f "$file" ] || continue
+		[ "$file" = "test.md" ] && continue
 
-			local output meta_title current
-			if [ "$file" = "README.md" ]; then
+		local output meta_title current
+		if [ "$file" = "README.md" ]; then
 				output="${OUT_DIR}/index.html"
 				meta_title="$title"
 				current="index"
@@ -1135,6 +1317,13 @@ target_build() { ## Builds the website
 	# Copy icons
 	cp -r icons ${OUT_DIR}/
 
+	# Copy rosette data
+	if [ -d "data/rosette" ]; then
+		mkdir -p ${OUT_DIR}/data/rosette
+		cp -r data/rosette/* ${OUT_DIR}/data/rosette/
+		_g "Copied rosette data"
+	fi
+
 	# Generate icons-available.js (list of icons present at build time)
 	_generate_icons_list_js
 
@@ -1142,8 +1331,8 @@ target_build() { ## Builds the website
 	_generate_distros_data_js_file
 
 	# Generate distros pages
-	_generate_distros_page distros
-	_generate_distros_page all
+	_generate_distros_page distros "$giscus_repo" "$giscus_repo_id" "$giscus_category" "$giscus_category_id"
+	_generate_distros_page all "$giscus_repo" "$giscus_repo_id" "$giscus_category" "$giscus_category_id"
 
 	rm -f ${OUT_DIR}/_goatcounter.html ${OUT_DIR}/_giscus.html
 }

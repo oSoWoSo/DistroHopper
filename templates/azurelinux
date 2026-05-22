@@ -1,0 +1,35 @@
+# Template file for 'azurelinux'
+OSNAME="azurelinux"
+PRETTY="Azure Linux"
+LOGO=""
+ICON=""
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/azure.png"
+CATEGORY="Desktop, Server"
+BASEDOF="-"
+HOMEPAGE="https://github.com/microsoft/azurelinux"
+DESCRIPTION="Microsoft's internal Linux distribution for cloud infrastructure and edge"
+CREDENTIALS="-"
+GPG=""
+RSS=""
+DW=""
+
+function arch_() {
+	echo amd64 arm64
+}
+
+function releases_() {
+	echo 3.0
+}
+
+function get_() {
+	local UPSTREAM_ARCH="x86_64"
+	[ "${ARCH}" == "arm64" ] && UPSTREAM_ARCH="aarch64"
+	local URL="https://aka.ms/azurelinux-${RELEASE}-${UPSTREAM_ARCH}.iso"
+	local ISO
+	ISO="$(web_redirect "${URL}")"
+	echo "${ISO}"
+}
+
+function config_() {
+	echo "disk_size=\"32G\"" >> "${CONF_FILE}"
+}

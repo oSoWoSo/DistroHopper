@@ -1,0 +1,48 @@
+id: debian
+name: Debian / Ubuntu
+package_manager: apt
+init: systemd
+icon: debian.svg
+color: "#d70751"
+
+commands:
+  package:
+    install:  { cmd: "# apt install $pkg",             desc: "Install package" }
+    remove:   { cmd: "# apt remove $pkg",              desc: "Remove package" }
+    purge:    { cmd: "# apt purge $pkg",               desc: "Remove package and configs" }
+    search:   { cmd: "$ apt search $pkg",              desc: "Search packages" }
+    update:   { cmd: "# apt upgrade",                  desc: "Upgrade all packages" }
+    list:     { cmd: "$ apt list --installed 2>/dev/null", desc: "List installed packages" }
+    files:    { cmd: "$ dpkg -L $pkg",                 desc: "List package files" }
+    cache:    { cmd: "# apt update",                   desc: "Update package cache" }
+  service:
+    start:    { cmd: "# systemctl start $svc",   desc: "Start service" }
+    stop:     { cmd: "# systemctl stop $svc",    desc: "Stop service" }
+    enable:   { cmd: "# systemctl enable $svc",  desc: "Enable at boot" }
+    disable:  { cmd: "# systemctl disable $svc", desc: "Disable at boot" }
+    status:   { cmd: "$ systemctl status $svc",  desc: "Show service status" }
+    list:     { cmd: "$ systemctl list-units --type=service", desc: "List services" }
+  network:
+    show_ip:  { cmd: "$ ip addr",            desc: "Show IP addresses" }
+    ping:     { cmd: "$ ping $host",        desc: "Ping host" }
+    ports:    { cmd: "$ ss -tulpn",          desc: "Show open ports" }
+    routes:   { cmd: "$ ip route",           desc: "Show routing table" }
+    dns:      { cmd: "$ resolvectl status",  desc: "Show DNS config" }
+  files:
+    list:     { cmd: "$ ls -la",             desc: "List files with details" }
+    find:     { cmd: "$ find . -name $f",   desc: "Find file by name" }
+    disk:     { cmd: "$ df -h",              desc: "Show disk usage" }
+    du:       { cmd: "$ du -sh $dir",       desc: "Show directory size" }
+    copy:     { cmd: "$ cp -r $src $dst",  desc: "Copy files/dirs" }
+  users:
+    add:      { cmd: "# useradd $user",     desc: "Add user" }
+    passwd:   { cmd: "# passwd $user",      desc: "Set password" }
+    groups:   { cmd: "$ groups $user",      desc: "Show user groups" }
+    whoami:   { cmd: "$ whoami",             desc: "Show current user" }
+    sudo:     { cmd: "$ sudo $cmd",         desc: "Run as root" }
+  processes:
+    list:     { cmd: "$ ps aux",             desc: "List all processes" }
+    kill:     { cmd: "$ kill $pid",         desc: "Kill by PID" }
+    top:      { cmd: "$ htop",               desc: "Interactive process monitor" }
+    pgrep:    { cmd: "$ pgrep $name",       desc: "Find PID by name" }
+    jobs:     { cmd: "$ jobs",               desc: "List background jobs" }

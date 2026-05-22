@@ -1,16 +1,26 @@
 # Template file for 'manjaro'
 OSNAME="manjaro"
 PRETTY="Manjaro"
+LOGO=" "
 ICON="manjaro.svg"
-CATEGORY="beginner"
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/manjaro.png"
+CATEGORY="Beginner"
 BASEDOF="Arch"
 HOMEPAGE="https://manjaro.org"
 DESCRIPTION="Versatile, free, and open-source Linux operating system designed with a strong focus on safeguarding user privacy and offering extensive control over hardware"
 CREDENTIALS="-"
+GPG=""
+RSS=""
+DW=""
 
 function releases_() {
-    echo xfce gnome plasma cinnamon i3 sway
+	echo xfce gnome plasma cinnamon i3 sway
 }
+
+function editions_() {
+	echo full minimal
+}
+
 
 function get_() {
     local HASH=""
@@ -27,12 +37,43 @@ function get_() {
         cinnamon|i3) TYPE="community";;
     esac
 
+    if [ "${EDITION}" == "minimal" ] && [ "${TYPE}" != "sway" ]; then
+        EDITION=".minimal"
+    else
+        EDITION=""
+    fi
+
     if [ "${RELEASE}" == "sway" ]; then
-        #https://manjaro-sway.download/download?file=manjaro-sway-26.0.0-260215-linux612.iso
         URL=$(echo "${MANIFEST}" | jq -r '.[] | select(.name|test("^manjaro-sway-.*[.]iso$")) | .url')
     else
         URL="$(echo "${MANIFEST}" | jq -r ."${TYPE}.${RELEASE}${EDITION}".image)"
     fi
     HASH=$(web_pipe "${URL}.sha512" | cut -d' ' -f1)
     echo "${URL} ${HASH}"
+}
+
+function get_() {
+	local HASH=""
+	local MANIFEST=""
+	local URL=""
+	local TYPE="official"
+	MANIFEST="$(web_pipe https://gitlab.manjaro.org/web/iso-info/-/raw/master/file-info.json)"
+	case "${RELEASE}" in
+		sway)
+			MANIFEST="$(web_pipe https://mirror.manjaro-sway.download/manjaro-sway/release.json)"
+			TYPE="sway"
+			;;
+		cinnamon|i3) TYPE="community";;
+	esac
+
+	local ED=""
+	[ "${EDITION}" == "minimal" ] && [ "${TYPE}" != "sway" ] && ED=".minimal"
+
+	if [ "${RELEASE}" == "sway" ]; then
+		URL=$(echo "${MANIFEST}" | jq -r '.[] | select(.name|test("^manjaro-sway-.*[.]iso$")) | .url')
+	else
+		URL="$(echo "${MANIFEST}" | jq -r ".${TYPE}.${RELEASE}${ED}.image")"
+	fi
+	HASH=$(web_pipe "${URL}.sha512" | cut -d' ' -f1)
+	echo "${URL} ${HASH}"
 }

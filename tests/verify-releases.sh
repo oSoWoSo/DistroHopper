@@ -8,7 +8,7 @@
 
 set -euo pipefail
 
-cd /home/z/8T/git/dh
+cd /home/z/Projekty/dh
 
 # Colors for output
 RED='\033[0;31m'

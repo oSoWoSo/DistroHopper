@@ -1,0 +1,38 @@
+# Template file for 'noid'
+OSNAME=noid
+PRETTY="Noid Linux"
+LOGO=""
+ICON=""
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/noid.png"
+CATEGORY="Desktop, Live Medium"
+BASEDOF="Void"
+DESCRIPTION="Minimal, opinionated Void Linux spin. Fast, clean, and ready to use — with a sane amount of bloat"
+HOMEPAGE="https://noid-linux.github.io"
+CREDENTIALS="anon:voidlinux,root:voidlinux"
+GPG=""
+RSS="https://sourceforge.net/projects/noid-linux/rss?path=/"
+DW=""
+
+function releases_() {
+	echo latest
+}
+
+function editions_() {
+	echo kde gnome xfce
+}
+
+function get_() {
+	local DATE
+	DATE=$(web_pipe "https://sourceforge.net/projects/noid-linux/rss?path=/" \
+		| grep 'title><!\[CDATA' | cut -d'[' -f3 | cut -d']' -f1 \
+		| grep "noid-${EDITION}-weekly\.iso" \
+		| grep -oE '20[0-9]{6}' | sort -r | head -1)
+	local DIR="noid-linux-weekly-${DATE}"
+	local ISO="noid-${EDITION}-weekly.iso"
+	local URL="https://sourceforge.net/projects/noid-linux/files/${DIR}"
+	echo "${URL}/${ISO}"
+}
+
+#https://sourceforge.net/projects/noid-linux/files/noid-linux-weekly-20260417/noid-kde-weekly.iso/download
+#https://sourceforge.net/projects/noid-linux/files/noid-linux-weekly-20260417/noid-gnome-weekly.iso/download
+#https://sourceforge.net/projects/noid-linux/files/noid-linux-weekly-20260417/noid-xfce-weekly.iso/download

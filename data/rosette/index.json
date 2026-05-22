@@ -1,0 +1,12 @@
+[
+  { "id": "alpine",   "file": "alpine.yaml" },
+  { "id": "arch",     "file": "arch.yaml" },
+  { "id": "debian",   "file": "debian.yaml" },
+  { "id": "fedora",   "file": "fedora.yaml" },
+  { "id": "opensuse", "file": "opensuse.yaml" },
+  { "id": "void",     "file": "void.yaml" },
+  { "id": "nix",       "file": "nix.yaml" },
+  { "id": "gentoo",   "file": "gentoo.yaml" },
+  { "id": "slackware","file": "slackware.yaml" },
+  { "id": "macos",    "file": "macos.yaml" }
+]

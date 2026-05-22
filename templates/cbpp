@@ -1,0 +1,30 @@
+# Template file for 'cbpp'
+OSNAME="cbpp"
+PRETTY="Crunchbang++"
+LOGO=""
+ICON="crunchbang.svg"
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/cbpp.png"
+CATEGORY="Desktop, Live Medium"
+BASEDOF="Debian"
+HOMEPAGE="https://www.crunchbangplusplus.org"
+DESCRIPTION="The classic minimal crunchbang feel, now with debian 12 bookworm"
+CREDENTIALS="-"
+GPG=""
+RSS=""
+DW=""
+
+function releases_() {
+	#shellcheck disable=SC2046,SC2005
+	web_pipe "https://api.github.com/repos/CBPP/cbpp/releases" | grep 'download_url' | cut -d'-' -f2 | grep '^[0-9]' | sort -gru
+}
+
+function get_() {
+	local HASH=""
+	local ISO=""
+	ISO=$(web_pipe "https://api.github.com/repos/CBPP/cbpp/releases" | grep 'download_url' | grep amd64 | grep "${RELEASE}" | cut -d'"' -f4)
+	echo "${ISO} ${HASH}"
+}
+
+function config_() {
+	echo "disk_size=\"64G\"" >> "${CONF_FILE}"
+}

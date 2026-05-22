@@ -1260,6 +1260,10 @@ function arch_ubuntu() {
     fi
 }
 
+function arch_void() {
+    echo "amd64 arm64"
+}
+
 # Check if a given architecture is supported for an OS
 function is_arch_supported() {
     local OS="${1}"
@@ -2952,12 +2956,14 @@ function get_void() {
     local DATE=""
     local HASH=""
     local ISO=""
+    local QEMU_ARCH="x86_64"
+    [ "${ARCH}" == "arm64" ] && QEMU_ARCH="aarch64"
     local URL="https://repo-default.voidlinux.org/live"
     case ${EDITION} in
-        glibc) ISO="void-live-x86_64-${RELEASE}-base.iso";;
-        musl) ISO="void-live-x86_64-musl-${RELEASE}-base.iso";;
-        xfce-glibc) ISO="void-live-x86_64-${RELEASE}-xfce.iso";;
-        xfce-musl) ISO="void-live-x86_64-musl-${RELEASE}-xfce.iso";;
+        glibc) ISO="void-live-${QEMU_ARCH}-${RELEASE}-base.iso";;
+        musl) ISO="void-live-${QEMU_ARCH}-musl-${RELEASE}-base.iso";;
+        xfce-glibc) ISO="void-live-${QEMU_ARCH}-${RELEASE}-xfce.iso";;
+        xfce-musl) ISO="void-live-${QEMU_ARCH}-musl-${RELEASE}-xfce.iso";;
     esac
     HASH="$(web_pipe "${URL}/sha256sum.txt" | grep "${ISO}" | cut -d' ' -f4)"
     echo "${URL}/${RELEASE}/${ISO} ${HASH}"

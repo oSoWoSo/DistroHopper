@@ -737,8 +737,15 @@ ul, ol {
     min-width: min(680px, 90vw);
     width: fit-content;
     max-width: 80vw;
+    max-height: 85vh;
+    overflow-y: auto;
     box-shadow: 0 8px 40px rgba(0,0,0,0.6);
-    overflow-x: auto;
+}
+
+.giscus-container {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
 }
 
 .modal-distro-header {

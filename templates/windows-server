@@ -1,12 +1,17 @@
 # Template file for 'windows-server'
 OSNAME="windows-server"
 PRETTY="Windows Server"
+LOGO=""
 ICON="windows.svg"
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/windows-server.png"
 CATEGORY="advanced"
 BASEDOF="-"
 HOMEPAGE="https://www.microsoft.com/en-us/windows-server"
 DESCRIPTION="Platform for building an infrastructure of connected applications, networks, and web services"
 CREDENTIALS="-"
+GPG=""
+RSS=""
+DW=""
 RELEASES="2022 2019 2016"
 GUEST="windows-server"
 
@@ -620,4 +625,26 @@ function get_() {
     else
         make_vm_config "windows-${RELEASE}.iso" "virtio-win.iso"
     fi
+}
+
+function get_entries_() {
+    local OS="$1" ARCH="$2" RELEASE="$3" OPERATION="$4" PUBLIC_DIR="$5" TEMPLATES_DIR="$6"
+    languages_
+    for I18N in "${I18NS[@]}"; do
+        if [ "${OPERATION}" == "show" ]; then
+            printf "%-13s %-13s %-13s %-16s %-30s\n" "${OS}" "${ARCH}" "${RELEASE}" "${I18N}" "" | tee -a "${PUBLIC_DIR}/tmp_${OS}"
+        elif [ "${OPERATION}" == "test" ]; then
+            printf "%-5s %-13s %-13s %-13s %-16s %-10s\n" "SKIP" "${OS}" "${ARCH}" "${RELEASE}" "${I18N}" "" | tee -a "${PUBLIC_DIR}/tmp_${OS}"
+        else
+            printf "%-13s %-13s %-13s %-16s %-30s\n" "${OS}" "${ARCH}" "${RELEASE}" "${I18N}" "" | tee -a "${PUBLIC_DIR}/tmp_${OS}"
+        fi
+    done
+}
+
+function config_() {
+	echo "disk_size=\"64G\"" >> "${CONF_FILE}"
+	if [[ "${RELEASE}" == "2022" ]]; then
+		echo "tpm=\"on\"" >> "${CONF_FILE}"
+		echo "secureboot=\"off\"" >> "${CONF_FILE}"
+	fi
 }

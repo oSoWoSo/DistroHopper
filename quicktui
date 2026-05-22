@@ -3,6 +3,10 @@
 # Description: Uses gum to provide a simple TUI for quickemu and quickget
 # License MIT
 
+# Use lib.sh for operations (qget with quickget fallback)
+SCRIPT_DIR="$(dirname "$(realpath "$0")")"
+source "${SCRIPT_DIR}/lib.sh"
+
 define_variables() {
     progname="${progname:="${0##*/}"}"
     version='0.34'
@@ -14,7 +18,6 @@ define_variables() {
     if ! command -v quickemu >/dev/null 2>&1; then
         echo 'You are missing quickemu...!'
     fi
-    QUICKGET=$(command -v quickget)
     if ! command -v gum >/dev/null 2>&1; then
         echo 'You are missing gum...!'
     fi
@@ -142,7 +145,7 @@ gum_choose_os() {
     title="Choose OS"
     show_header
     os=$(gum filter < "$configdir"/supported)
-    choices=$("$QUICKGET" "$os" | sed 1d)
+    choices=$(qget "$os" | sed 1d)
 }
 
 gum_choose_release() {
@@ -218,8 +221,8 @@ create_VM() {
     elif [ "$(echo "$choices" | wc -l)" = 1 ]; then
         clear
         gum_choose_release
-        #gum spin --spinner $spinner --show-output --title="Downloading $os $/release" -- "$QUICKGET" "$os" "$release"
-        "$QUICKGET" "$os" "$release"
+        #gum spin --spinner $spinner --show-output --title="Downloading $os $/release" -- qget "$os" "$release"
+        qget "$os" "$release"
         if [ -f "${configdir}/default_vm_config" ]; then
             echo 'Adding default values to config...'
             cat "${configdir}/default_vm_config" >> "$os-$release.conf"
@@ -228,7 +231,7 @@ create_VM() {
         clear
         gum_choose_release
         gum_choose_edition
-        gum spin --spinner $spinner --show-output --title="Downloading $os $release $edition" -- "$QUICKGET" "$os" "$release" "$edition"
+        gum spin --spinner $spinner --show-output --title="Downloading $os $release $edition" -- qget "$os" "$release" "$edition"
         if [ -f "${configdir}/default_vm_config" ]; then
             echo 'Adding default values to config...'
             cat "${configdir}/default_vm_config" >> "$os-$release-$edition.conf"
@@ -356,26 +359,26 @@ test_ISOs_download() {
     rm -r "$configdir"
     mkdir -p "$configdir" && cd "$configdir" || exit
     touch "$configdir/test"
-    #"$QUICKGET" | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' > supported
+    #qget | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' > supported
     os=$(gum filter < "$configdir"/supported)
-    choices=$("$QUICKGET" "$os" | sed 1d)
+    choices=$(qget "$os" | sed 1d)
         while read -r get_name; do
         echo "Trying $get_name..."
         mkdir -p "$configdir/_distros/$get_name" && cd "$configdir/_distros/$get_name" || exit
-        releases=$("$QUICKGET" "$get_name" | grep 'Releases:' | cut -d':' -f2 | sed 's/^ //' | sed 's/ *$//')
+        releases=$(qget "$get_name" | grep 'Releases:' | cut -d':' -f2 | sed 's/^ //' | sed 's/ *$//')
         echo "$releases" > releases
-        editions=$("$QUICKGET" "$get_name" | grep 'Editions:' | cut -d':' -f2 | sed 's/^ //' | sed 's/ *$//')
+        editions=$(qget "$get_name" | grep 'Editions:' | cut -d':' -f2 | sed 's/^ //' | sed 's/ *$//')
         echo "$editions" > editions
         if [ -z "$editions" ]; then
             for release in $releases; do
                 echo "$get_name" >> "$configdir/test"
-                timeout 10 "$QUICKGET" -t "$get_name" "${release}" >> "$configdir/test"
+                timeout 10 qget -t "$get_name" "${release}" >> "$configdir/test"
             done
         else
             while read -r release; do
                 for edition in $editions; do
                     echo "$get_name" >> "$configdir/test"
-                    timeout 10 "$QUICKGET" -t "$get_name" "${release}" "${edition}" >> "$configdir/test"
+                    timeout 10 qget -t "$get_name" "${release}" "${edition}" >> "$configdir/test"
                 done
             done < releases
         fi
@@ -388,24 +391,24 @@ show_ISOs_urls(){
     rm -r "$configdir"
     mkdir -p "$configdir" && cd "$configdir" || exit
     touch "$configdir/test"
-    "$QUICKGET" | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' > supported
+    qget | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' > supported
     while read -r get_name; do
         echo "Trying $get_name..."
         mkdir -p "$configdir/_distros/$get_name" && cd "$configdir/_distros/$get_name" || exit
-        releases=$("$QUICKGET" "$get_name" | grep 'Releases' | cut -d':' -f2 | sed 's/^ //' | sed 's/ *$//')
+        releases=$(qget "$get_name" | grep 'Releases' | cut -d':' -f2 | sed 's/^ //' | sed 's/ *$//')
         echo "$releases" > releases
-        editions=$("$QUICKGET" "$get_name" | grep 'Editions' | cut -d':' -f2 | sed 's/^ //' | sed 's/ *$//')
+        editions=$(qget "$get_name" | grep 'Editions' | cut -d':' -f2 | sed 's/^ //' | sed 's/ *$//')
         echo "$editions" > editions
         if [ -z "$editions" ]; then
             for release in $releases; do
                 echo "$get_name" >> "$configdir/test"
-                timeout 5 "$QUICKGET" -s "$get_name" "${release}" >> "$configdir/test" #&& $(killall zsync >> /dev/null)
+                timeout 5 qget -s "$get_name" "${release}" >> "$configdir/test" #&& $(killall zsync >> /dev/null)
             done
         else
             while read -r release; do
                 for edition in $editions; do
                     echo "$get_name" >> "$configdir/test"
-                    timeout 5 "$QUICKGET" -s "$get_name" "${release}" "${edition}" >> "$configdir/test" #&& $(killall zsync >> /dev/null)
+                    timeout 5 qget -s "$get_name" "${release}" "${edition}" >> "$configdir/test" #&& $(killall zsync >> /dev/null)
                 done
             done < releases
         fi
@@ -424,16 +427,16 @@ generate_supported(){
     echo "Extracting OS Editions and Releases..."
     rm -r "$configdir/distro"
     mkdir -p "$configdir/distro"
-    "$QUICKGET" | awk 'NR==2,/zorin/' | cut -d':' -f2 | grep -o '[^ ]*' > "$configdir/supported"
+    qget | awk 'NR==2,/zorin/' | cut -d':' -f2 | grep -o '[^ ]*' > "$configdir/supported"
     while read -r get_name; do
-        supported=$(gum spin --spinner $spinner --title="$get_name" -- "$QUICKGET" "$get_name" | sed 1d)
+        supported=$(gum spin --spinner $spinner --title="$get_name" -- qget "$get_name" | sed 1d)
         echo "$supported" > "$configdir/distro/${get_name}"
     done < "$configdir/supported"
 }
 
 open_distro_homepage(){
     gum_choose_os
-    "$QUICKGET" -o "${os}"
+    qget -o "${os}"
 }
 
 change_borders() {

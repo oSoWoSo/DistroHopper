@@ -1,33 +1,36 @@
 # Template file for 'siduction'
 OSNAME="siduction"
 PRETTY="siduction"
+LOGO=""
 ICON="siduction.svg"
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/siduction.png"
 CATEGORY="advanced"
 BASEDOF="Debian"
 HOMEPAGE="https://siduction.org"
 DESCRIPTION="Operating system based on the Linux kernel and the GNU project. In addition, there are applications and libraries from Debian"
 CREDENTIALS="-"
+GPG=""
+RSS=""
+DW=""
 
 function releases_() {
-    echo latest
-    #web_pipe "https://mirror.math.princeton.edu/pub/siduction/iso/" | grep folder | cut -d'"' -f8 | tr -d '/'
+	echo $(web_pipe "https://mirror.math.princeton.edu/pub/siduction/iso/" | grep folder | cut -d'"' -f8 | tr -d '/')
 }
 
 function editions_() {
-    echo kde lxqt nox xfce xorg
-    #web_pipe "https://mirror.math.princeton.edu/pub/siduction/iso/${NAME}/" | grep folder | cut -d'"' -f8 | tr -d '/' | sort -u
+	echo kde lxqt nox xfce xorg
 }
 
 function get_() {
-    local RELEASE="Shine_on"
-    local HASH=""
-    local DATE=""
-    local ISO=""
-    local URL=""
-    URL="https://mirror.math.princeton.edu/pub/siduction/iso/${RELEASE}/${EDITION}"
-    DATE=$(web_pipe "${URL}"| grep .iso.md5 | cut -d'-' -f6 | cut -d'.' -f1)
-    HASH=$(web_pipe "${URL}/${ISO}.md5" | cut -d' ' -f1)
-    VERSION=$(web_pipe "${URL}"| grep .iso.md5 | cut -d'-' -f2)
-    ISO="siduction-${VERSION}-${RELEASE}-${EDITION}-amd64-${DATE}.iso"
-    echo "${URL}/${ISO} ${HASH}"
+	local RELEASE="Shine_on"
+	local HASH=""
+	local DATE=""
+	local ISO=""
+	local URL=""
+	URL="https://mirror.math.princeton.edu/pub/siduction/iso/${RELEASE}/${EDITION}"
+	DATE=$(web_pipe "${URL}"| grep .iso.md5 | cut -d'-' -f6 | cut -d'.' -f1)
+	HASH=$(web_pipe "${URL}/${ISO}.md5" | cut -d' ' -f1)
+	VERSION=$(web_pipe "${URL}"| grep .iso.md5 | cut -d'-' -f2)
+	ISO="siduction-${VERSION}-${RELEASE}-${EDITION}-amd64-${DATE}.iso"
+	echo "${URL}/${ISO} ${HASH}"
 }

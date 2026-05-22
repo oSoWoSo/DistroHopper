@@ -4,6 +4,9 @@
 # Temporary allow track results
 !/results
 
+# Plans and docs
+!/docs
+
 !/.editorconfig
 !/.gitignore
 
@@ -38,7 +41,7 @@
 !/templates
 
 # public by generate script
-#!/public   # Remove from push
+!/public   # Remove from push
 
 # OS icons
 !/icons
@@ -63,9 +66,18 @@
 !/TODO/all
 
 
+# rosette data
+!/data
+/data/*
+!/data/rosette
+/data/rosette/*
+!/data/rosette/*.yaml
+!/data/rosette/index.json
+
 # website generator
 !/web-create
 !/web-deploy
 
 # Tests
 !/tests
+*.upstream

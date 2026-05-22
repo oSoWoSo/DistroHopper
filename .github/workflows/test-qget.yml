@@ -1,0 +1,194 @@
+name: "Test qget and actions"
+
+on:
+  push:
+    paths:
+      - 'templates/**'
+      - 'qget'
+      - 'generate'
+      - 'tests/**'
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  detect-distros:
+    name: "Detect distros 🔍"
+    runs-on: ubuntu-latest
+    outputs:
+      distros: ${{ steps.get-distros.outputs.distros }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: "Install dependencies 📦️"
+        run: |
+          apt-get -y update
+          apt-get -y install curl jq
+
+      - name: "Extract unique distros 📋"
+        id: get-distros
+        run: |
+          # Get unique distros, excluding windows variants
+          DISTROS=$(./qget --list | tail -n +2 | cut -d' ' -f1 | sort -u | grep -v '^windows$' | grep -v '^windows-server$')
+          # Convert to JSON array
+          JSON=$(echo "$DISTROS" | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          echo "distros=${JSON}" >> "$GITHUB_OUTPUT"
+          echo "Found $(echo "$DISTROS" | wc -l | tr -d ' ') distros to test"
+
+  test-distro:
+    name: "Test ${{ matrix.distro }} 🧪"
+    needs: detect-distros
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        distro: ${{ fromJson(needs.detect-distros.outputs.distros) }}
+    steps:
+      - uses: actions/checkout@v6
+      - name: "Install dependencies 📦️"
+        run: |
+          apt-get -y update
+          apt-get -y install curl jq qemu-utils
+      - name: "Check ${{ matrix.distro }} downloads 💿️"
+        id: check
+        run: |
+          mkdir -p results
+          ./qget --download "${{ matrix.distro }}" | tee results/check.txt
+
+          # Count results (use wc -l to avoid grep exit code issues)
+          PASSED=$(grep '^PASS' results/check.txt | wc -l | tr -d ' ')
+          FAILED=$(grep '^FAIL' results/check.txt | wc -l | tr -d ' ')
+          SKIPPED=$(grep '^SKIP' results/check.txt | wc -l | tr -d ' ')
+
+          echo "passed=${PASSED}" >> "$GITHUB_OUTPUT"
+          echo "failed=${FAILED}" >> "$GITHUB_OUTPUT"
+          echo "skipped=${SKIPPED}" >> "$GITHUB_OUTPUT"
+
+          # Extract failed URLs for reporting
+          grep '^FAIL' results/check.txt > results/failed.txt || true
+
+          echo "Results for ${{ matrix.distro }}: PASS=${PASSED} FAIL=${FAILED} SKIP=${SKIPPED}"
+      - name: "Create result JSON 📝"
+        run: |
+          mkdir -p result
+          jq -n \
+            --arg distro "${{ matrix.distro }}" \
+            --argjson passed "${{ steps.check.outputs.passed }}" \
+            --argjson failed "${{ steps.check.outputs.failed }}" \
+            --argjson skipped "${{ steps.check.outputs.skipped }}" \
+            '{distro: $distro, passed: $passed, failed: $failed, skipped: $skipped}' \
+            > result/result.json
+
+          # Include failed URLs if any
+          if [ -s results/failed.txt ]; then
+            cp results/failed.txt result/failed.txt
+          fi
+
+          cat result/result.json
+      - name: "Upload result artifact 📤"
+        uses: actions/upload-artifact@v4
+        with:
+          name: result-${{ matrix.distro }}
+          path: result/
+          retention-days: 1
+      - name: "Fail if any failures ❌"
+        if: steps.check.outputs.failed != '0'
+        run: |
+          echo "::error::${{ matrix.distro }} has ${{ steps.check.outputs.failed }} failed downloads"
+          exit 1
+
+  report-results:
+    name: "Report results 📊"
+    needs: test-distro
+    runs-on: ubuntu-22.04
+    if: always()
+    steps:
+      - name: "Download all result artifacts 📥"
+        uses: actions/download-artifact@v4
+        with:
+          pattern: result-*
+          path: results
+      - name: "Generate summary report 📈"
+        run: |
+          # Aggregate all results
+          TOTAL_PASSED=0
+          TOTAL_FAILED=0
+          TOTAL_SKIPPED=0
+          HAS_FAILURES=false
+
+          # Temp file for collecting per-distro table rows
+          TEMP_ROWS=$(mktemp)
+
+          for json_file in results/result-*/result.json; do
+            [ -f "$json_file" ] || continue
+
+            DISTRO=$(jq -r '.distro' "$json_file")
+            PASSED=$(jq -r '.passed' "$json_file")
+            FAILED=$(jq -r '.failed' "$json_file")
+            SKIPPED=$(jq -r '.skipped' "$json_file")
+
+            TOTAL_PASSED=$((TOTAL_PASSED + PASSED))
+            TOTAL_FAILED=$((TOTAL_FAILED + FAILED))
+            TOTAL_SKIPPED=$((TOTAL_SKIPPED + SKIPPED))
+
+            if [ "$FAILED" -gt 0 ]; then
+              HAS_FAILURES=true
+              if [ "$PASSED" -eq 0 ]; then
+                STATUS="❌"
+              else
+                STATUS="⚠️"
+              fi
+            else
+              STATUS="✅"
+            fi
+
+            echo "| ${DISTRO} | ${PASSED} | ${FAILED} | ${SKIPPED} | ${STATUS} |" >> "$TEMP_ROWS"
+          done
+
+          # Write summary header
+          echo "## Test Results 📊" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Metric | Count |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|--------|-------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| ✅ Passed | ${TOTAL_PASSED} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| ❌ Failed | ${TOTAL_FAILED} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| ⏭️ Skipped | ${TOTAL_SKIPPED} |" >> "$GITHUB_STEP_SUMMARY"
+
+          # Write per-distro breakdown
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Per-distro breakdown" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Distro | Passed | Failed | Skipped | Status |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|--------|--------|--------|---------|--------|" >> "$GITHUB_STEP_SUMMARY"
+          sort "$TEMP_ROWS" >> "$GITHUB_STEP_SUMMARY"
+
+          # Collect and display failed URLs if any
+          if [ "$HAS_FAILURES" = true ]; then
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "### ❌ Failed URLs" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+            for failed_file in results/result-*/failed.txt; do
+              [ -f "$failed_file" ] && cat "$failed_file" >> "$GITHUB_STEP_SUMMARY"
+            done
+
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+          # Print summary to log as well
+          echo "===== SUMMARY ====="
+          echo "Total Passed:  ${TOTAL_PASSED}"
+          echo "Total Failed:  ${TOTAL_FAILED}"
+          echo "Total Skipped: ${TOTAL_SKIPPED}"
+          echo "=================="
+
+          # Clean up temp file
+          rm -f "$TEMP_ROWS"
+
+          # Exit with failure if any distro had failures
+          if [ "$HAS_FAILURES" = true ]; then
+            echo "::error::Some distros have failed downloads. Check the summary for details."
+            exit 1
+          fi

@@ -1,35 +1,52 @@
 # Template file for 'pureos'
 OSNAME="pureos"
 PRETTY="PureOS"
+LOGO=""
 ICON="pureos.svg"
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/pureos.png"
 CATEGORY="advanced"
 BASEDOF="Debian"
 HOMEPAGE="https://www.pureos.net"
 DESCRIPTION="Fully free/libre and open source GNU/Linux operating system, endorsed by the Free Software Foundation"
 CREDENTIALS="-"
+GPG=""
+RSS=""
+DW=""
 
 function releases_() {
-    web_pipe "https://www.pureos.net/download/" | grep -m 1 "downloads.puri" | cut -d '"' -f 2 | cut -d '-' -f 4
+	echo $(web_pipe "https://www.pureos.net/download/" | grep -m 1 "downloads.puri" | cut -d '"' -f 2 | cut -d '-' -f 4)
 }
 
 function editions_() {
-    echo gnome plasma
+	local PURE_NAME=""
+	PURE_NAME="$(web_pipe "https://www.pureos.net/download/" | grep -m 1 "downloads.puri" | cut -d '/' -f 4)"
+	if [ -z "${PURE_NAME}" ]; then
+		echo "gnome plasma"
+		return
+	fi
+	local EDITION_CHECK=""
+	EDITION_CHECK=$(web_pipe "https://downloads.puri.sm/${PURE_NAME}/" 2>/dev/null | grep -oE 'gnome|plasma' | sort -u)
+	if [ -z "${EDITION_CHECK}" ]; then
+		echo "gnome plasma"
+	else
+		echo "${EDITION_CHECK}"
+	fi
 }
 
 function get_() {
-    local HASH=""
-    local ISO=""
-    local URL=""
-    local PureName=
-    PureName="$(web_pipe "https://www.pureos.net/download/" | grep -m 1 "downloads.puri" | cut -d '/' -f 4)"
-    local PureDate=
-    PureDate="$(web_pipe "https://www.pureos.net/download/" | grep -m 1 "downloads.puri" | cut -d '/' -f 6)"
-    local PureDateSquashed="${PureDate//'-'/}"
-    edition="${EDITION,,}"
-    URL="https://downloads.puri.sm/${PureName}/${edition}/${PureDate}"
-    ISO="pureos-${RELEASE}-${edition}-live-${PureDateSquashed}_amd64.iso"
-    local IsoTrimmed=
-    IsoTrimmed="${ISO%.*}"
-    HASH="$(web_pipe "${URL}/${IsoTrimmed}.checksums_sha256.txt" | grep -m 1 '.iso' | cut -d '.' -f 1)"
-    echo "${URL}/${ISO} ${HASH}"
+	local HASH=""
+	local ISO=""
+	local URL=""
+	local PureName=
+	PureName="$(web_pipe "https://www.pureos.net/download/" | grep -m 1 "downloads.puri" | cut -d '/' -f 4)"
+	local PureDate=
+	PureDate="$(web_pipe "https://www.pureos.net/download/" | grep -m 1 "downloads.puri" | cut -d '/' -f 6)"
+	local PureDateSquashed="${PureDate//'-'/}"
+	edition="${EDITION,,}"
+	URL="https://downloads.puri.sm/${PureName}/${edition}/${PureDate}"
+	ISO="pureos-${RELEASE}-${edition}-live-${PureDateSquashed}_amd64.iso"
+	local IsoTrimmed=
+	IsoTrimmed="${ISO%.*}"
+	HASH="$(web_pipe "${URL}/${IsoTrimmed}.checksums_sha256.txt" | grep -m 1 '.iso' | cut -d '.' -f 1)"
+	echo "${URL}/${ISO} ${HASH}"
 }

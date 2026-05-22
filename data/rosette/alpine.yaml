@@ -1,0 +1,48 @@
+id: alpine
+name: Alpine Linux
+package_manager: apk
+init: openrc
+icon: alpine.svg
+color: "#0d597f"
+
+commands:
+  package:
+    install:  { cmd: "# apk add $pkg",                       desc: "Install package" }
+    remove:   { cmd: "# apk del $pkg",                       desc: "Remove package" }
+    purge:    { cmd: "# apk del $pkg && apk cache clean",    desc: "Remove package and clean cache" }
+    search:   { cmd: "$ apk search $pkg",                    desc: "Search packages" }
+    update:   { cmd: "# apk upgrade",                         desc: "Upgrade all packages" }
+    list:     { cmd: "$ apk info",                            desc: "List installed packages" }
+    files:    { cmd: "$ apk info -L $pkg",                   desc: "List package files" }
+    cache:    { cmd: "# apk update",                          desc: "Update package index" }
+  service:
+    start:    { cmd: "# rc-service $svc start",          desc: "Start service" }
+    stop:     { cmd: "# rc-service $svc stop",           desc: "Stop service" }
+    enable:   { cmd: "# rc-update add $svc default",     desc: "Enable at boot" }
+    disable:  { cmd: "# rc-update del $svc default",     desc: "Disable at boot" }
+    status:   { cmd: "$ rc-service $svc status",         desc: "Show service status" }
+    list:     { cmd: "$ rc-status",                       desc: "List active services" }
+  network:
+    show_ip:  { cmd: "$ ip addr",              desc: "Show IP addresses" }
+    ping:     { cmd: "$ ping $host",          desc: "Ping host" }
+    ports:    { cmd: "$ ss -tulpn",            desc: "Show open ports" }
+    routes:   { cmd: "$ ip route",             desc: "Show routing table" }
+    dns:      { cmd: "$ cat /etc/resolv.conf", desc: "Show DNS config" }
+  files:
+    list:     { cmd: "$ ls -la",             desc: "List files with details" }
+    find:     { cmd: "$ find . -name $f",   desc: "Find file by name" }
+    disk:     { cmd: "$ df -h",              desc: "Show disk usage" }
+    du:       { cmd: "$ du -sh $dir",       desc: "Show directory size" }
+    copy:     { cmd: "$ cp -r $src $dst",  desc: "Copy files/dirs" }
+  users:
+    add:      { cmd: "# adduser $user",     desc: "Add user" }
+    passwd:   { cmd: "# passwd $user",      desc: "Set password" }
+    groups:   { cmd: "$ groups $user",      desc: "Show user groups" }
+    whoami:   { cmd: "$ whoami",             desc: "Show current user" }
+    sudo:     { cmd: "$ sudo $cmd",         desc: "Run as root" }
+  processes:
+    list:     { cmd: "$ ps aux",             desc: "List all processes" }
+    kill:     { cmd: "$ kill $pid",         desc: "Kill by PID" }
+    top:      { cmd: "$ top",                desc: "Interactive process monitor" }
+    pgrep:    { cmd: "$ pgrep $name",       desc: "Find PID by name" }
+    jobs:     { cmd: "$ jobs",               desc: "List background jobs" }

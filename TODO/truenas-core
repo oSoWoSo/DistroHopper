@@ -1,12 +1,16 @@
 # Template file for 'truenas-core'
 OSNAME="truenas-core"
 PRETTY="TrueNAS Core"
+LOGO=""
 ICON="truenas-core.svg"
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/truenas.png"
 CATEGORY="advanced"
 BASEDOF="FreeBSD"
 HOMEPAGE="https://www.truenas.com/truenas-core"
 DESCRIPTION="World’s most popular storage OS because it gives you the power to build your own professional-grade storage system to use in a variety of data-intensive applications without any software costs"
 CREDENTIALS="-"
+GPG=""
+RSS=""
 GUEST="truenas"
 
 function releases_() {

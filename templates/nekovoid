@@ -1,0 +1,30 @@
+# Template file for 'nekovoid'
+OSNAME=nekovoid
+PRETTY="Neko-Void"
+LOGO=""
+ICON=""
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/nekovoid.png"
+CATEGORY="Desktop, Live Medium"
+BASEDOF="Void"
+DESCRIPTION="Designed for users who want Void Linux's stability and minimalism with modern desktop functionality"
+HOMEPAGE="https://neko-void.sourceforge.io"
+CREDENTIALS=""
+GPG=""
+RSS="https://sourceforge.net/projects/neko-void/rss?path=/"
+DW=""
+
+function releases_() {
+	echo 6.3 5 4 3
+}
+
+function editions_() {
+	echo xlibre xorg
+}
+
+function get_() {
+	#local REL=$(echo "${EDITION}" | tr '[:lower:]' '[:upper:]')
+	local ISOS=$(web_pipe "https://sourceforge.net/projects/neko-void/rss?path=/" | grep 'title><!\[CDATA' | cut -d'[' -f3 | cut -d']' -f1 | grep '.iso')
+	local URL="https://sourceforge.net/projects/neko-void/files/isos"
+	local ISO="nekovoid-beta-${RELEASE}-${EDITION}.iso"
+	echo "${URL}/${ISO}"
+}

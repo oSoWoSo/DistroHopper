@@ -1,32 +1,51 @@
 # Template file for 'zorin'
 OSNAME=zorin
 PRETTY="Zorin OS"
+LOGO=" "
 ICON="zorin.svg"
-CATEGORY="beginner"
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/zorin.png"
+CATEGORY="Beginner"
 BASEDOF="Ubuntu"
 DESCRIPTION="Alternative to Windows and macOS designed to make your computer faster, more powerful, secure, and privacy-respecting"
 HOMEPAGE="https://zorin.com/os"
 CREDENTIALS="-"
+GPG=""
+RSS=""
+DW=""
 
 function releases_() {
-    echo 17 16
+	echo 18 17 16
 }
 
 function editions_() {
-    echo core64 lite64 education64
+	if [ -z "${RELEASE}" ] || [ "${RELEASE}" != "18" ]; then
+		echo core64 lite64 education64
+	else
+		echo core64 education64
+	fi
 }
 
 function get_() {
-    local HASH=""
-    local ISO=""
-    local URL=""
-    # Process the URL redirections; required for Zorin
-    URL=$(web_redirect "https://zrn.co/${RELEASE}${EDITION}")
-    echo "${URL} ${HASH}"
+	local HASH=""
+	local ISO=""
+	local URL="https://plug-mirror.rcac.purdue.edu/zorin-iso/${RELEASE}"
+	local EDITION_NAME=""
+	case ${EDITION} in
+		core64)      EDITION_NAME="Core-64-bit";;
+		lite64)      EDITION_NAME="Lite-64-bit";;
+		education64) EDITION_NAME="Education-64-bit";;
+	esac
+	ISO=$(web_pipe "${URL}/" | grep -o "Zorin-OS-[0-9.]*-${EDITION_NAME}[^\"]*\.iso" | grep -v Beta | sort -Vr | head -n 1)
+	if [ -z "${ISO}" ]; then
+		echo ""
+		return
+	fi
+	HASH=$(web_pipe "${URL}/SHA256SUMS.txt" | grep "${ISO}" | cut -d' ' -f1)
+	echo "${URL}/${ISO} ${HASH}"
 }
 
-function specific_tweaks() {
-    case ${EDITION} in
-        education64|edulite64) echo "disk_size=\"32G\"" >> "${CONF_FILE}"
-    esac
+function config_() {
+	case ${EDITION} in
+		education64|lite64) echo "disk_size=\"32G\"" >> "${CONF_FILE}"
+	esac
 }

@@ -1,51 +1,60 @@
 # Template file for 'antix'
 OSNAME="antix"
 PRETTY="Antix"
+LOGO=""
 ICON="antix.svg"
-CATEGORY="lightweight"
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/antix.png"
+CATEGORY="Lightweight"
 BASEDOF="Debian"
 DESCRIPTION="Fast, lightweight and easy to install systemd-free linux live CD distribution based on Debian Stable for Intel-AMD x86 compatible systems"
 HOMEPAGE="https://antixlinux.com"
 CREDENTIALS="-"
+GPG=""
+RSS=""
+DW=""
 
 function releases_() {
-    echo 26 25 23.2 23.1 23 22 21
+	echo 26 25 23.2 23.1 23 22 21
 }
 
 function editions_() {
-    echo net-sysv core-sysv base-sysv full-sysv net-runit core-runit base-runit full-runit
+	echo base-runit base-sysv core-runit core-sysv full-runit full-sysv net-runit net-sysv
 }
 
 function arch_() {
-    echo "x86_64 386"
+	echo amd64 i386
 }
 
 function get_() {
-    local HASH=""
-    local ISO="antiX-${RELEASE}"
-    local ARCH_KW="${ARCH:-x86_64}"
-    local README="README"
-    local URL="https://sourceforge.net/projects/antix-linux/files/Final/antiX-${RELEASE}"
+	local HASH=""
+	local ISO="antiX-${RELEASE}"
+	local QEMU_ARCH="x64"
+	local README="README"
+	local URL="https://sourceforge.net/projects/antix-linux/files/Final/antiX-${RELEASE}"
 
-    case "${ARCH}" in
-        386) ARCH_KW="386";;
-        *) ARCH_KW="x64";;
-    esac
+	case "${ARCH}" in
+		i386) QEMU_ARCH="386";;
+		amd64|*) QEMU_ARCH="x64";;
+	esac
 
-    if [[ "${EDITION}" == *"runit"* ]];then
-        ISO+="-runit"
-        README="README2"
-        case ${RELEASE} in
-            21) URL+="/runit-bullseye";;
-            *)  URL+="/runit-antiX-${RELEASE}";;
-        esac
-    fi
-    case ${EDITION} in
-        base-*) ISO+="_${ARCH_KW}-base.iso";;
-        core-*) ISO+="_${ARCH_KW}-core.iso";;
-        full-*) ISO+="_${ARCH_KW}-full.iso";;
-        net-*)  ISO+="-net_${ARCH_KW}-net.iso";;
-    esac
-    HASH=$(web_pipe "${URL}/${README}.txt" | grep "${ISO}" | cut -d' ' -f1 | head -n 1)
-    echo "${URL}/${ISO} ${HASH}"
+	if [[ "${EDITION}" == *"runit"* ]];then
+		ISO+="-runit"
+		README="README2"
+		case ${RELEASE} in
+			21) URL+="/runit-bullseye";;
+			*)  URL+="/runit-antiX-${RELEASE}";;
+		esac
+	fi
+	case ${EDITION} in
+		base-*) ISO+="_${QEMU_ARCH}-base.iso";;
+		core-*) ISO+="_${QEMU_ARCH}-core.iso";;
+		full-*) ISO+="_${QEMU_ARCH}-full.iso";;
+		net-*)  ISO+="-net_${QEMU_ARCH}-net.iso";;
+	esac
+	HASH=$(web_pipe "${URL}/${README}.txt" | grep "${ISO}" | cut -d' ' -f1 | head -n 1)
+	echo "${URL}/${ISO} ${HASH}"
+}
+
+function config_() {
+	echo "disk_size=\"32G\"" >> "${CONF_FILE}"
 }

@@ -1,20 +1,25 @@
 # Template file for 'guix'
 OSNAME="guix"
 PRETTY="Guix"
+LOGO=" "
 ICON="guix.svg"
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/guix.png"
 CATEGORY="advanced"
 BASEDOF="-"
 HOMEPAGE="https://guix.gnu.org"
 DESCRIPTION="Distribution of the GNU operating system developed by the GNU Project—which respects the freedom of computer users"
 CREDENTIALS="-"
+GPG=""
+RSS=""
+DW=""
 
 function releases_() {
-    echo 1.5.0 1.4.0 1.3.0
+	echo 1.5.0 1.4.0 1.3.0
 }
 
 function get_() {
-    local HASH=""
-    local ISO="guix-system-install-${RELEASE}.x86_64-linux.iso"
-    local URL="https://ftpmirror.gnu.org/gnu/guix/"
-    echo "${URL}/${ISO} ${HASH}"
+	local HASH=""
+	local ISO="guix-system-install-${RELEASE}.x86_64-linux.iso"
+	local URL="https://ftpmirror.gnu.org/gnu/guix/"
+	echo "${URL}/${ISO} ${HASH}"
 }

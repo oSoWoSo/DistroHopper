@@ -1,26 +1,30 @@
 # Template file for 'linuxmint'
 OSNAME="linuxmint"
 PRETTY="Linux Mint"
+LOGO=" "
 ICON="linuxmint.svg"
-CATEGORY="beginner"
-DW_CATEGORY="Beginners, Desktop, Live Medium"
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/mint.png"
+CATEGORY="Beginner, Desktop, Live Medium"
 BASEDOF="Ubuntu"
 HOMEPAGE="https://linuxmint.com"
 DESCRIPTION="Designed to work out of the box and comes fully equipped with the apps most people need"
 CREDENTIALS="-"
+GPG=""
+RSS=""
+DW=""
 
 function releases_() {
-    echo $(web_pipe "https://community.linuxmint.com/iso" | grep -oP 'mint-[0-9]+\.[0-9]+' | sed 's/mint-//' | sort -Vu | head -n 10)
+	web_pipe "https://community.linuxmint.com/iso" | grep -oP 'mint-[0-9]+\.[0-9]+' | sed 's/mint-//' | sort -Vu | head -n 10
 }
 
 function editions_() {
-    echo cinnamon mate xfce
+	echo cinnamon mate xfce
 }
 
 function get_() {
-    local HASH=""
-    local ISO="linuxmint-${RELEASE}-${EDITION}-64bit.iso"
-    local URL="https://pub.linuxmint.io/stable/${RELEASE}"
-    HASH=$(web_pipe "${URL}/sha256sum.txt" | grep "${ISO}" | cut -d' ' -f1)
-    echo "${URL}/${ISO} ${HASH}"
+	local HASH=""
+	local ISO="linuxmint-${RELEASE}-${EDITION}-64bit.iso"
+	local URL="https://pub.linuxmint.io/stable/${RELEASE}"
+	HASH=$(web_pipe "${URL}/sha256sum.txt" | grep "${ISO}" | cut -d' ' -f1)
+	echo "${URL}/${ISO} ${HASH}"
 }

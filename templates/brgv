@@ -1,0 +1,41 @@
+# Template file for 'brgv'
+OSNAME=brgv
+PRETTY="PRGV-OS"
+LOGO=""
+ICON=""
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/brgv.png"
+CATEGORY="Lightweight"
+BASEDOF="Void"
+DESCRIPTION="Rolling-release distribution featuring customised GNOME desktop with variety of unique themes, offers out-of-the-box support for English and Romanian languages"
+HOMEPAGE="https://github.com/florintanasa/brgvos-void/"
+CREDENTIALS="anon:voidlinux,root:voidlinux"
+GPG=""
+RSS="https://sourceforge.net/projects/brgv-os/rss?path=/"
+DW=""
+
+function releases_() {
+	echo latest
+}
+
+function editions_() {
+	echo en_US ro_RO
+}
+
+function get_() {
+	local URL="https://sourceforge.net/projects/brgv-os/files/brgv-os/${EDITION}"
+	local ISOname
+	ISOname=$(web_pipe "https://sourceforge.net/projects/brgv-os/rss?path=/${EDITION}" \
+		| grep 'title><!\[CDATA' | cut -d'[' -f3 | cut -d']' -f1 \
+		| grep "/${EDITION}/" | grep '\.iso' \
+		| cut -d'/' -f3 | sed 's/\.iso$//' | head -1)
+	local ISO="${ISOname}.iso"
+	local HASH
+	HASH=$(web_pipe "${URL}/${ISOname}.sha256")
+	echo "${URL}/${ISO} ${HASH}"
+}
+
+#https://sourceforge.net/projects/brgv-os/files/brgv-os/en_US/BRGV-OS_gnome_en_US.UTF-8_x86_64_08042026_110503.iso/download
+#https://sourceforge.net/projects/brgv-os/files/brgv-os/en_US/BRGV-OS_gnome_en_US.UTF-8_x86_64_08042026_110503.sha256/download
+
+#https://sourceforge.net/projects/brgv-os/files/brgv-os/ro_RO/BRGV-OS_gnome_ro_RO.UTF-8_x86_64_08042026_104718.iso/download
+#https://sourceforge.net/projects/brgv-os/files/brgv-os/ro_RO/BRGV-OS_gnome_ro_RO.UTF-8_x86_64_08042026_104718.sha256/download

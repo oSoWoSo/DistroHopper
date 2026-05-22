@@ -1,0 +1,71 @@
+# Exclude everything except needed
+/*
+
+# Temporary allow track results
+!/results
+
+!/.editorconfig
+!/.gitignore
+
+!/.github
+
+# programs
+!/dh
+!/q
+!/qget
+!/qrun
+!/quickfzf
+!/quicktui
+
+# other files
+#TODO: check and ...
+!/dh.desktop
+!/dh.conf
+!/ISOs.list
+!/LICENSE
+!/README.md
+!/stars.md
+!/web.md
+
+# Upstream quickemu
+!/quickemu
+!/quickget
+!/chunkcheck
+!/quickreport
+
+# generate skript + OS templates
+!/generate
+!/templates
+
+# public by generate script
+#!/public   # Remove from push
+
+# OS icons
+!/icons
+
+# Translations
+#TODO: simplify
+!/auto-translate
+!/lang
+!/locale
+
+# scripts
+!/scripts
+
+# sources for website
+!/website-source
+
+# TODO OS templates + not supported source for website
+!/TODO
+/TODO/*
+!/TODO/distrowatch
+!/TODO/distros-data.js
+!/TODO/all
+
+
+# website generator
+!/web-create
+!/web-deploy
+
+# Tests
+!/tests

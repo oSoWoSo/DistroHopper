@@ -1,25 +1,35 @@
 # Template file for 'mageia'
 OSNAME="mageia"
 PRETTY="Mageia"
+LOGO=" "
 ICON="mageia.svg"
-CATEGORY="beginner"
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/mageia.png"
+CATEGORY="Beginner"
 BASEDOF="-"
 HOMEPAGE="https://www.mageia.org"
 DESCRIPTION="Stable, secure operating system for desktop & server"
 CREDENTIALS="-"
+GPG=""
+RSS=""
+DW=""
 
 function releases_() {
-    echo 9 8
+	echo 9 8
 }
 
 function editions_() {
-    echo Plasma GNOME Xfce
+	echo plasma gnome xfce
 }
 
 function get_() {
-    local HASH=""
-    local ISO=""
-    ISO=$(web_pipe https://www.mageia.org/en/downloads/get/?q="Mageia-${RELEASE}-Live-${EDITION}-x86_64.iso" | grep 'click here'| grep -o 'href=.*\.iso'|cut -d\" -f2)
-    HASH=$(web_pipe "${ISO}.sha512" | cut -d' ' -f1)
-    echo "${ISO} ${HASH}"
+	local HASH=""
+	local ISO=""
+	case "$EDITION" in
+		plasma) EDITION="Plasma" ;;
+		gnome) EDITION="GNOME" ;;
+		xfce) EDITION="Xfce" ;;
+	esac
+	ISO=$(web_pipe https://www.mageia.org/en/downloads/get/?q="Mageia-${RELEASE}-Live-${EDITION}-x86_64.iso" | grep 'click here'| grep -o 'href=.*\.iso'|cut -d\" -f2)
+	HASH=$(web_pipe "${ISO}.sha512" | cut -d' ' -f1)
+	echo "${ISO} ${HASH}"
 }

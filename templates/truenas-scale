@@ -1,32 +1,35 @@
 # Template file for 'truenas-scale'
 OSNAME="truenas-scale"
 PRETTY="TrueNAS Scale"
+LOGO=""
 ICON="truenas-scale.svg"
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/truenas.png"
 CATEGORY="advanced"
 BASEDOF="Debian"
 HOMEPAGE="https://www.truenas.com/truenas-scale"
 DESCRIPTION="Open Source Hyperconverged Infrastructure (HCI) solution. In addition to powerful scale-out storage capabilities, SCALE adds Linux Containers and VMs (KVM) so apps run closer to data"
 CREDENTIALS="-"
+GPG=""
+RSS=""
+DW=""
 GUEST="truenas"
 
 function releases_() {
-    echo 24
+	echo ElectricEel Dragonfish
 }
 
 function get_() {
-    local HASH=""
-    local ISO=""
-    local URL=""
-    local DLINFO="https://www.truenas.com/download-truenas-scale/"
-    URL=$(web_pipe "${DLINFO}" | grep -o "\"https://.*${RELEASE}.*\.iso\"" | cut -d'"' -f 2)
-    HASH=$(web_pipe "${URL}.sha256" | cut -d' ' -f1)
-    echo "${URL} ${HASH}"
+	local HASH=""
+	local URL=""
+	local BASE="https://download.sys.truenas.net/TrueNAS-SCALE-${RELEASE}"
+	local VERSION
+	VERSION=$(web_pipe "${BASE}/" | grep -oE '"[0-9]+\.[0-9]+\.[0-9.]+/"' | sort -Vr | head -1 | tr -d '"/')
+	[ -z "${VERSION}" ] && return
+	URL="${BASE}/${VERSION}/TrueNAS-SCALE-${VERSION}.iso"
+	HASH=$(web_pipe "${URL}.sha256" | awk '{print $1}')
+	echo "${URL} ${HASH}"
 }
 
-function specific_tweaks() {
-    echo "boot=\"legacy\"" >> "${CONF_FILE}"
-    # the rest is non-functional
-    # echo "bootdrive_size=\"5G\"" >> "${CONF_FILE}" # boot drive
-    # echo "1stdrive_size=\"20G\"" >> "${CONF_FILE}" # for testing
-    # echo "2nddrive_size=\"20G\"" >> "${CONF_FILE}" # again, for testing
+function config_() {
+	echo "boot=\"legacy\"" >> "${CONF_FILE}"
 }

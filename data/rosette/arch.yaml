@@ -1,0 +1,48 @@
+id: arch
+name: Arch Linux
+package_manager: pacman
+init: systemd
+icon: arch.svg
+color: "#1793d1"
+
+commands:
+  package:
+    install:  { cmd: "# pacman -S $pkg",    desc: "Install package" }
+    remove:   { cmd: "# pacman -Rs $pkg",   desc: "Remove package and deps" }
+    purge:    { cmd: "# pacman -Rns $pkg",  desc: "Remove package, deps, configs" }
+    search:   { cmd: "$ pacman -Ss $pkg",   desc: "Search packages" }
+    update:   { cmd: "# pacman -Su",         desc: "Upgrade all packages" }
+    list:     { cmd: "$ pacman -Qqe",        desc: "List explicitly installed" }
+    files:    { cmd: "$ pacman -Ql $pkg",   desc: "List package files" }
+    cache:    { cmd: "# pacman -Sy",         desc: "Sync package cache" }
+  service:
+    start:    { cmd: "# systemctl start $svc",   desc: "Start service" }
+    stop:     { cmd: "# systemctl stop $svc",    desc: "Stop service" }
+    enable:   { cmd: "# systemctl enable $svc",  desc: "Enable at boot" }
+    disable:  { cmd: "# systemctl disable $svc", desc: "Disable at boot" }
+    status:   { cmd: "$ systemctl status $svc",  desc: "Show service status" }
+    list:     { cmd: "$ systemctl list-units --type=service", desc: "List services" }
+  network:
+    show_ip:  { cmd: "$ ip addr",            desc: "Show IP addresses" }
+    ping:     { cmd: "$ ping $host",        desc: "Ping host" }
+    ports:    { cmd: "$ ss -tulpn",          desc: "Show open ports" }
+    routes:   { cmd: "$ ip route",           desc: "Show routing table" }
+    dns:      { cmd: "$ resolvectl status",  desc: "Show DNS config" }
+  files:
+    list:     { cmd: "$ ls -la",             desc: "List files with details" }
+    find:     { cmd: "$ find . -name $f",   desc: "Find file by name" }
+    disk:     { cmd: "$ df -h",              desc: "Show disk usage" }
+    du:       { cmd: "$ du -sh $dir",       desc: "Show directory size" }
+    copy:     { cmd: "$ cp -r $src $dst",  desc: "Copy files/dirs" }
+  users:
+    add:      { cmd: "# useradd $user",     desc: "Add user" }
+    passwd:   { cmd: "# passwd $user",      desc: "Set password" }
+    groups:   { cmd: "$ groups $user",      desc: "Show user groups" }
+    whoami:   { cmd: "$ whoami",             desc: "Show current user" }
+    sudo:     { cmd: "$ sudo $cmd",         desc: "Run as root" }
+  processes:
+    list:     { cmd: "$ ps aux",             desc: "List all processes" }
+    kill:     { cmd: "$ kill $pid",         desc: "Kill by PID" }
+    top:      { cmd: "$ htop",               desc: "Interactive process monitor" }
+    pgrep:    { cmd: "$ pgrep $name",       desc: "Find PID by name" }
+    jobs:     { cmd: "$ jobs",               desc: "List background jobs" }

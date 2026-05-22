@@ -1,22 +1,27 @@
 # Template file for 'tuxedo-os'
 OSNAME="tuxedo-os"
 PRETTY="Tuxedo OS"
+LOGO=""
 ICON="tuxedoos.svg"
-CATEGORY="beginner"
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/tuxedo-os.png"
+CATEGORY="Beginner"
 BASEDOF="Ubuntu"
 HOMEPAGE="https://www.tuxedocomputers.com"
 DESCRIPTION="KDE Ubuntu LTS designed to go with their Linux hardware"
 CREDENTIALS="-"
+GPG=""
+RSS=""
+DW=""
 
 function releases_() {
-    echo current
+	echo current
 }
 
 function get_() {
-    local HASH=""
-    local ISO=""
-    local URL="https://os.tuxedocomputers.com"
-    ISO="$(web_pipe "https://os.tuxedocomputers.com/" | grep -m 1 current.iso | cut -d '=' -f 4 | cut -d '"' -f 2)"
-    HASH="$(web_pipe "https://os.tuxedocomputers.com/checksums/${ISO}.sha256" | cut -d ' ' -f 1)"
-    echo "${URL}/${ISO} ${HASH}"
+	local HASH=""
+	local ISO=""
+	local URL="https://os.tuxedocomputers.com"
+	ISO="$(web_pipe "https://os.tuxedocomputers.com/" | grep -m 1 current.iso | cut -d '=' -f 4 | cut -d '"' -f 2)"
+	HASH="$(web_pipe "https://os.tuxedocomputers.com/checksums/${ISO}.sha256" | cut -d ' ' -f 1)"
+	echo "${URL}/${ISO} ${HASH}"
 }

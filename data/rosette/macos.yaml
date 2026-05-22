@@ -1,0 +1,48 @@
+id: macos
+name: macOS
+package_manager: brew
+init: launchd
+icon: macos.svg
+color: "#999999"
+
+commands:
+  package:
+    install:  { cmd: "$ brew install $pkg",         desc: "Install package" }
+    remove:   { cmd: "$ brew uninstall $pkg",        desc: "Remove package" }
+    purge:    { cmd: "$ brew uninstall --zap $pkg",  desc: "Remove package and all files" }
+    search:   { cmd: "$ brew search $pkg",           desc: "Search packages" }
+    update:   { cmd: "$ brew upgrade",               desc: "Upgrade all packages" }
+    list:     { cmd: "$ brew list",                  desc: "List installed packages" }
+    files:    { cmd: "$ brew list $pkg",             desc: "List package files" }
+    cache:    { cmd: "$ brew update",                desc: "Update Homebrew" }
+  service:
+    start:    { cmd: "$ brew services start $svc",  desc: "Start service" }
+    stop:     { cmd: "$ brew services stop $svc",   desc: "Stop service" }
+    enable:   { cmd: "$ brew services start $svc",  desc: "Enable and start service" }
+    disable:  { cmd: "$ brew services stop $svc",   desc: "Stop and disable service" }
+    status:   { cmd: "$ brew services info $svc",   desc: "Show service status" }
+    list:     { cmd: "$ brew services list",         desc: "List managed services" }
+  network:
+    show_ip:  { cmd: "$ ifconfig | grep 'inet '",    desc: "Show IP addresses" }
+    ping:     { cmd: "$ ping $host",                desc: "Ping host" }
+    ports:    { cmd: "$ lsof -nP -iTCP -sTCP:LISTEN", desc: "Show open ports" }
+    routes:   { cmd: "$ netstat -rn",                desc: "Show routing table" }
+    dns:      { cmd: "$ scutil --dns",               desc: "Show DNS config" }
+  files:
+    list:     { cmd: "$ ls -la",             desc: "List files with details" }
+    find:     { cmd: "$ find . -name $f",   desc: "Find file by name" }
+    disk:     { cmd: "$ df -h",              desc: "Show disk usage" }
+    du:       { cmd: "$ du -sh $dir",       desc: "Show directory size" }
+    copy:     { cmd: "$ cp -r $src $dst",  desc: "Copy files/dirs" }
+  users:
+    add:      { cmd: "# sysadminctl -addUser $user", desc: "Add user" }
+    passwd:   { cmd: "# passwd $user",               desc: "Set password" }
+    groups:   { cmd: "$ groups $user",               desc: "Show user groups" }
+    whoami:   { cmd: "$ whoami",                      desc: "Show current user" }
+    sudo:     { cmd: "$ sudo $cmd",                  desc: "Run as root" }
+  processes:
+    list:     { cmd: "$ ps aux",             desc: "List all processes" }
+    kill:     { cmd: "$ kill $pid",         desc: "Kill by PID" }
+    top:      { cmd: "$ htop",               desc: "Interactive process monitor" }
+    pgrep:    { cmd: "$ pgrep $name",       desc: "Find PID by name" }
+    jobs:     { cmd: "$ jobs",               desc: "List background jobs" }

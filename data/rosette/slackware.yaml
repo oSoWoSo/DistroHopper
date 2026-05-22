@@ -1,0 +1,48 @@
+id: slackware
+name: Slackware
+package_manager: slackpkg
+init: sysvinit
+icon: slackware.svg
+color: "#54487A"
+
+commands:
+  package:
+    install:  { cmd: "# slackpkg install $pkg",                    desc: "Install package" }
+    remove:   { cmd: "# slackpkg remove $pkg",                     desc: "Remove package" }
+    purge:    { cmd: "# slackpkg remove $pkg",                     desc: "Remove package" }
+    search:   { cmd: "$ slackpkg search $pkg",                     desc: "Search packages" }
+    update:   { cmd: "# slackpkg update && slackpkg upgrade-all",  desc: "Update and upgrade system" }
+    list:     { cmd: "$ ls /var/log/packages/",                    desc: "List installed packages" }
+    files:    { cmd: "$ cat /var/log/packages/$pkg",               desc: "List package files" }
+    cache:    { cmd: "# slackpkg update",                          desc: "Update package lists" }
+  service:
+    start:    { cmd: "# /etc/rc.d/rc.$svc start",                desc: "Start service" }
+    stop:     { cmd: "# /etc/rc.d/rc.$svc stop",                 desc: "Stop service" }
+    enable:   { cmd: "# chmod +x /etc/rc.d/rc.$svc",             desc: "Enable service" }
+    disable:  { cmd: "# chmod -x /etc/rc.d/rc.$svc",             desc: "Disable service" }
+    status:   { cmd: "$ /etc/rc.d/rc.$svc status",               desc: "Show service status" }
+    list:     { cmd: "$ ls -l /etc/rc.d/rc.* | grep '^-..x'",    desc: "List enabled services" }
+  network:
+    show_ip:  { cmd: "$ ip addr",              desc: "Show IP addresses" }
+    ping:     { cmd: "$ ping $host",          desc: "Ping host" }
+    ports:    { cmd: "$ ss -tulpn",            desc: "Show open ports" }
+    routes:   { cmd: "$ ip route",             desc: "Show routing table" }
+    dns:      { cmd: "$ cat /etc/resolv.conf", desc: "Show DNS config" }
+  files:
+    list:     { cmd: "$ ls -la",             desc: "List files with details" }
+    find:     { cmd: "$ find . -name $f",   desc: "Find file by name" }
+    disk:     { cmd: "$ df -h",              desc: "Show disk usage" }
+    du:       { cmd: "$ du -sh $dir",       desc: "Show directory size" }
+    copy:     { cmd: "$ cp -r $src $dst",  desc: "Copy files/dirs" }
+  users:
+    add:      { cmd: "# useradd $user",     desc: "Add user" }
+    passwd:   { cmd: "# passwd $user",      desc: "Set password" }
+    groups:   { cmd: "$ groups $user",      desc: "Show user groups" }
+    whoami:   { cmd: "$ whoami",             desc: "Show current user" }
+    sudo:     { cmd: "$ sudo $cmd",         desc: "Run as root" }
+  processes:
+    list:     { cmd: "$ ps aux",             desc: "List all processes" }
+    kill:     { cmd: "$ kill $pid",         desc: "Kill by PID" }
+    top:      { cmd: "$ htop",               desc: "Interactive process monitor" }
+    pgrep:    { cmd: "$ pgrep $name",       desc: "Find PID by name" }
+    jobs:     { cmd: "$ jobs",               desc: "List background jobs" }

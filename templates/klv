@@ -1,0 +1,27 @@
+# Template file for 'klv'
+OSNAME="klv"
+PRETTY="KLV-Airedale"
+LOGO=""
+ICON=""
+#ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/arch.png"
+CATEGORY="Desktop, Server"
+BASEDOF="void"
+HOMEPAGE="https://klv-airedale.rockedge.org"
+DESCRIPTION="Void Linux based distro using an overlayfs layered filesystem"
+CREDENTIALS="-"
+GPG=""
+RSS=""
+DW=""
+
+function releases_() {
+	echo 18 17 16 15
+}
+
+function get_() {
+	local HASH=""
+	local ISO=""
+	local URL="https://sourceforge.net/projects/klv-airedale/files/sr${RELEASE}"
+	ISO="KLV-Airedale-sr${RELEASE}.iso"
+	HASH=$(web_pipe "${URL}/SHA1-MD5.txt" | head -6 | tail -1 | cut -d' ' -f1)
+	echo "${URL}${ISO} ${HASH}"
+}

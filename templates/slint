@@ -1,27 +1,32 @@
 # Template file for 'slint'
 OSNAME="slint"
 PRETTY="Slint"
+LOGO=""
 ICON=""
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/slint.png"
 CATEGORY="advanced"
 BASEDOF="Slackware"
 HOMEPAGE="https://slint.fr"
 DESCRIPTION="Easy-to-use, versatile, blind-friendly Linux distribution for 64-bit computers. Slint is based on Slackware and borrows tools from Salix"
 CREDENTIALS="-"
+GPG=""
+RSS=""
+DW=""
 
 function releases_() {
-    echo "15.0-5"
+	echo 15.0-10
 }
 
 function get_() {
-    local HASH=""
-    local MAJ_VER=""
-    local ISO="slint64-${RELEASE}.iso"
-    MAJ_VER="$(echo "${RELEASE}" | cut -d'-' -f 1)"
-    local URL="https://slackware.uk/slint/x86_64/slint-${MAJ_VER}/iso"
-    HASH=$(web_pipe "${URL}/${ISO}.sha256" | cut -d' ' -f4)
-    echo "${URL}/${ISO}" "${HASH}"
+	local HASH=""
+	local MAJ_VER=""
+	local ISO="slint64-${RELEASE}.iso"
+	MAJ_VER="$(echo "${RELEASE}" | cut -d'-' -f 1)"
+	local URL="https://slackware.uk/slint/x86_64/slint-${MAJ_VER}/iso"
+	HASH=$(web_pipe "${URL}/${ISO}.sha256" | cut -d' ' -f4)
+	echo "${URL}/${ISO}" "${HASH}"
 }
 
-function specific_tweaks() {
-    echo "disk_size=\"50G\"" >> "${CONF_FILE}"
+function config_() {
+	echo "disk_size=\"50G\"" >> "${CONF_FILE}"
 }

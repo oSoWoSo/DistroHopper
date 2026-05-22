@@ -1,25 +1,30 @@
 # Template file for 'agarimos'
 OSNAME=agarimos
 PRETTY="AgarimOS"
+LOGO=""
 ICON="agarimos.svg"
-CATEGORY="lightweight"
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/agarimos.png"
+CATEGORY="Lightweight"
 BASEDOF="Void"
 DESCRIPTION="Includes a minimum set of applications so you can build your system on your own."
 HOMEPAGE="https://sourceforge.net/projects/agarimos"
 CREDENTIALS="anon:voidlinux,root:voidlinux"
+GPG=""
+RSS=""
+DW=""
 
 function releases_() {
-    echo latest
+	echo latest
 }
 
 function editions_() {
-    echo plasma xfce4 cinnamon lxqt-kwin gnome
+	echo cinnamon gnome lxqt-kwin plasma xfce4
 }
 
 function get_() {
-    local REL=$(echo "${EDITION}" | tr '[:lower:]' '[:upper:]')
-    local ISOS=$(web_pipe "https://sourceforge.net/projects/agarimos/rss?path=/" | grep 'title><!\[CDATA' | cut -d'[' -f3 | cut -d']' -f1 | grep '.iso')
-    local URL="https://sourceforge.net/projects/agarimos/files/${REL}"
-    local ISO=$(echo "${ISOS}" | grep "${REL}" | cut -d'/' -f3)
-    echo "${URL}/${ISO}"
+	local REL=$(echo "${EDITION}" | tr '[:lower:]' '[:upper:]')
+	local ISOS=$(web_pipe "https://sourceforge.net/projects/agarimos/rss?path=/" | grep 'title><!\[CDATA' | cut -d'[' -f3 | cut -d']' -f1 | grep '.iso')
+	local URL="https://sourceforge.net/projects/agarimos/files/${REL}"
+	local ISO=$(echo "${ISOS}" | grep "${REL}" | cut -d'/' -f3)
+	echo "${URL}/${ISO}"
 }
