@@ -1,32 +1,45 @@
 # Template file for 'openindiana'
 OSNAME="openindiana"
 PRETTY="OpenIndiana"
+LOGO=""
 ICON="openindiana.svg"
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/openindiana.png"
 CATEGORY="advanced"
 BASEDOF="Solaris OPenSolaris"
 DESCRIPTION="Community supported illumos-based operating system"
 HOMEPAGE="https://www.openindiana.org"
 CREDENTIALS="-"
-solaris
+GPG=""
+RSS=""
+DW=""
+MAGNET=""
+CHAT=""
+GUEST="solaris"
 
-RELEASES="20251026 20250606 20250402 20241026 20240426"
-EDITIONS="text minimal gui"
-ARCHITECTURES="amd64"
+RELEASES="20260430 20251026 20250606 20250402 20241026"
+EDITIONS="gui minimal text"
+QEMU_ARCH="amd64"
 
-
-
-function get_() {
-    local HASH=""
-    local ISO=""
-    local URL=""
-    URL="https://dlc.openindiana.org/isos/hipster/${RELEASE}"
-    ISO="OI-hipster-${EDITION}-${RELEASE}.iso"
-    HASH=$(web_pipe "${URL}/${ISO}.sha256" |cut -d' ' -f1)
-    echo "${URL}/${ISO} ${HASH}"
+releases_() {
+	#shellcheck disable=SC2046,SC2005
+	echo $(web_pipe "https://dlc.openindiana.org/isos/hipster/" | grep 'href="./2' | cut -d'/' -f 2 | sort -r |  head -n 5)
 }
 
-function specific_tweaks() {
-    echo "boot=\"legacy\"" >> "${CONF_FILE}"
-    echo "disk_size=\"32G\"" >> "${CONF_FILE}"
+editions_() {
+	echo gui text minimal
 }
 
+get_() {
+	local HASH=""
+	local ISO=""
+	local URL=""
+	URL="https://dlc.openindiana.org/isos/hipster/${RELEASE}"
+	ISO="OI-hipster-${EDITION}-${RELEASE}.iso"
+	HASH=$(web_pipe "${URL}/${ISO}.sha256" |cut -d' ' -f1)
+	echo "${URL}/${ISO} ${HASH}"
+}
+
+config_() {
+	echo "boot=\"legacy\"" >> "${CONF_FILE}"
+	echo "disk_size=\"32G\"" >> "${CONF_FILE}"
+}

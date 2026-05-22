@@ -1,25 +1,38 @@
 # Template file for 'solus'
 OSNAME="solus"
 PRETTY="Solus"
+LOGO=" "
 ICON="solus.svg"
-CATEGORY="beginner"
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/solus.png"
+CATEGORY="Beginner"
 BASEDOF="-"
 DESCRIPTION="Designed for home computing. Every tweak enables us to deliver a cohesive computing experience"
 HOMEPAGE="https://getsol.us"
 CREDENTIALS="-"
-
+GPG=""
+RSS=""
+DW=""
+MAGNET=""
+CHAT=""
 
 RELEASES="2026-04-18 2025-11-29 2025-01-26 2024-10-14"
-EDITIONS="Xfce Plasma GNOME Budgie"
-ARCHITECTURES="amd64"
+EDITIONS="Budgie GNOME Plasma Xfce"
+QEMU_ARCH="amd64"
 
-
-
-function get_() {
-    local HASH=""
-    local ISO="Solus-${EDITION}-Release-${RELEASE}.iso"
-    local URL="https://downloads.getsol.us/isos/${RELEASE}"
-    HASH=$(web_pipe "${URL}/${ISO}.sha256sum" | cut -d' ' -f1)
-    echo "${URL}/${ISO} ${HASH}"
+releases_() {
+	#shellcheck disable=SC2046,SC2005
+	web_pipe_json "https://downloads.getsol.us/isos/" | jq -r '.[].name[:-1]' | grep -E "^[0-9-]+$" | sort -u
 }
 
+editions_() {
+	#shellcheck disable=SC2046,SC2005
+	web_pipe_json "https://downloads.getsol.us/isos/$(IFS=' '; releases_ | tail -n1)/" | jq -r '.[].name | select(endswith("iso")) | sub("Solus-(?<e>.*)-Release-.*"; "\(.e)")' | sort -u
+}
+
+get_() {
+	local HASH=""
+	local ISO="Solus-${EDITION}-Release-${RELEASE}.iso"
+	local URL="https://downloads.getsol.us/isos/${RELEASE}"
+	HASH=$(web_pipe "${URL}/${ISO}.sha256sum" | cut -d' ' -f1)
+	echo "${URL}/${ISO} ${HASH}"
+}

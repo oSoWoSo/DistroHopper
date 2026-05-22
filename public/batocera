@@ -1,36 +1,44 @@
 # Template file for 'batocera'
 OSNAME="batocera"
 PRETTY="Batocera"
+LOGO=""
 ICON="batocera.svg"
-CATEGORY="beginner"
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/batocera.png"
+CATEGORY="Gaming"
 BASEDOF="-"
 DESCRIPTION="Retro-gaming distribution with the aim of turning any computer/nano computer into a gaming console during a game or permanently"
 HOMEPAGE="https://batocera.org"
 CREDENTIALS="-"
+GPG=""
+RSS=""
+DW=""
+MAGNET=""
+CHAT=""
 GUEST="batocera"
 IMAGE_TYPE="img"
-RELEASES="41 40 39 38 37"
 
-ARCHITECTURES="amd64"
+RELEASES="42 41 40 39 38"
+QEMU_ARCH="amd64"
 
-
-
-function get_() {
-    local HASH=""
-    local ISO=""
-    local URL="https://mirrors.o2switch.fr/batocera/x86_64/stable/${RELEASE}"
-    ISO="$(web_pipe "${URL}/" | grep -e 'batocera.*img.gz'| cut -d'"' -f2)"
-    echo "${URL}/${ISO} ${HASH}"
+releases_() {
+	echo $(web_pipe "https://mirrors.o2switch.fr/batocera/x86_64/stable/" | grep ^\<a | cut -d'"' -f2 | cut -d '/' -f1 | grep -v '\.' | sort -ru | tail -n +2 | head -n 5)
 }
 
-function distro_specific() {
-    if [[ ${ISO} = *".gz"* ]]; then
-        gzip -d "${VM_PATH}/${ISO}"
-        ISO="${ISO/.gz/}"
-    fi
+get_() {
+	local HASH=""
+	local ISO=""
+	local URL="https://mirrors.o2switch.fr/batocera/x86_64/stable/${RELEASE}"
+	ISO="$(web_pipe "${URL}/" | grep -e 'batocera.*img.gz'| cut -d'"' -f2)"
+	echo "${URL}/${ISO} ${HASH}"
 }
 
-function specific_tweaks() {
-    echo "disk_size=\"8G\"" >> "${CONF_FILE}"
+extract_() {
+	if [[ ${ISO} = *".gz"* ]]; then
+		gzip -d "${VM_PATH}/${ISO}"
+		ISO="${ISO/.gz/}"
+	fi
 }
 
+config_() {
+	echo "disk_size=\"8G\"" >> "${CONF_FILE}"
+}

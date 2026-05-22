@@ -1,30 +1,70 @@
 # Template file for 'edubuntu'
 OSNAME="edubuntu"
 PRETTY="Edubuntu"
+LOGO=""
 ICON="edubuntu.svg"
-CATEGORY="beginner"
+ICON_ONLINE=""
+CATEGORY="Beginner, Education"
 BASEDOF="Ubuntu"
 DESCRIPTION="Stable, secure and privacy concious option for schools"
 HOMEPAGE="https://www.edubuntu.org"
 CREDENTIALS="-"
-GUEST="linux_old
-linux_old"
+GPG=""
+RSS=""
+DW=""
+MAGNET=""
+CHAT=""
 
-RELEASES="25.10 24.04 daily-live"
+RELEASES="26.04 25.10 24.04 daily-live"
+QEMU_ARCH="amd64"
 
-ARCHITECTURES="amd64"
-
-
-function arch_() {
-    echo "amd64"
+releases_() {
+	local VERSION_DATA=""
+	local SUPPORTED_VERSIONS=()
+	VERSION_DATA="$(IFS=$'\n' web_pipe https://api.launchpad.net/devel/ubuntu/series | jq -r '.entries[]')"
+	# shellcheck disable=SC2207
+	SUPPORTED_VERSIONS=($(IFS=$'\n' jq -r 'select(.status=="Supported" or .status=="Current Stable Release") | .version' <<<"${VERSION_DATA}" | sort))
+	case "${OS}" in
+		ubuntu)
+			echo "${SUPPORTED_VERSIONS[@]}" daily-live;;
+		kubuntu|lubuntu|ubuntu-kylin|ubuntu-mate|ubuntustudio|xubuntu)
+			# after 16.04
+			echo "${SUPPORTED_VERSIONS[@]:1}" daily-live;;
+		ubuntu-budgie)
+			# after 18.04
+			echo "${SUPPORTED_VERSIONS[@]:2}" daily-live;;
+		edubuntu|ubuntu-unity|ubuntu-cinnamon)
+			# after 23.10
+			echo "${SUPPORTED_VERSIONS[@]:5}" daily-live;;
+	esac
 }
 
-function get_() {
+arch_() {
+	if [ -z "${RELEASE}" ]; then
+		echo "amd64 arm64"
+		return
+	fi
+	if [[ ! "${RELEASE}" =~ ^[0-9]+\.[0-9]+$ ]]; then
+		echo "amd64"
+		return
+	fi
+	local MAJOR="${RELEASE%%.*}"
+	local MINOR="${RELEASE##*.}"
+	local NUM_MINOR
+	NUM_MINOR=$((10#${MINOR}))
+	if [ "${MAJOR}" -gt 25 ] || { [ "${MAJOR}" -eq 25 ] && [ "${NUM_MINOR}" -ge 10 ]; }; then
+		echo "amd64 arm64"
+	else
+		echo "amd64"
+	fi
+}
+
+get_() {
 	local ISO=""
 	local HASH=""
 	local URL=""
 	local DATA=""
-	local ARCH_KW="${ARCH:-amd64}"
+	local QEMU_ARCH="${ARCH:-amd64}"
 	local CDIMAGE_OS="${OS}"
 	case "${OS}" in
 		ubuntu-cinnamon) CDIMAGE_OS="ubuntucinnamon";;
@@ -51,16 +91,16 @@ function get_() {
 		URL="https://cdimage.ubuntu.com/${CDIMAGE_OS}/releases/${RELEASE}/release"
 	fi
 	if web_check "${URL}/SHA256SUMS"; then
-		DATA=$(web_pipe "${URL}/SHA256SUMS" | grep 'desktop\|dvd\|install' | grep "${ARCH_KW}" | grep iso | grep -v "+mac")
+		DATA=$(web_pipe "${URL}/SHA256SUMS" | grep 'desktop\|dvd\|install' | grep "${QEMU_ARCH}" | grep iso | grep -v "+mac")
 		ISO=$(cut -d'*' -f2 <<<"${DATA}" | sed '1q;d')
 		HASH=$(cut -d' ' -f1 <<<"${DATA}" | sed '1q;d')
 	else
-		DATA=$(web_pipe "${URL}/MD5SUMS" | grep 'desktop\|dvd\|install' | grep "${ARCH_KW}" | grep iso | grep -v "+mac")
+		DATA=$(web_pipe "${URL}/MD5SUMS" | grep 'desktop\|dvd\|install' | grep "${QEMU_ARCH}" | grep iso | grep -v "+mac")
 		ISO=$(cut -d'*' -f2 <<<"${DATA}")
 		HASH=$(cut -d' ' -f1 <<<"${DATA}")
 	fi
 	if [ -z "${ISO}" ] || [ -z "${HASH}" ]; then
-		echo "${PRETTY} ${RELEASE} is currently unavailable. Please select other OS/Release combination"
+		echo "${PRETTY} ${RELEASE} is currently unavailable. Please select other OS/Release combination" >&2
 		exit 1
 	fi
 	if [[ "${RELEASE}" == "daily"* ]] || [ "${RELEASE}" == "dvd" ]; then
@@ -76,3 +116,6 @@ function get_() {
 	fi
 }
 
+config_() {
+	[[ "${RELEASE}" == *"daily"* ]] && echo "disk_size=\"32G\"" >> "${CONF_FILE}"
+}

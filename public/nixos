@@ -1,39 +1,52 @@
 # Template file for 'nixos'
 OSNAME="nixos"
 PRETTY="NixOS"
+LOGO=" "
 ICON="nixos.svg"
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/nixos.png"
 CATEGORY="advanced"
 BASEDOF="-"
 DESCRIPTION="Linux distribution based on Nix package manager, tool that takes a unique approach to package management and system configuration"
 HOMEPAGE="https://nixos.org"
 CREDENTIALS="-"
-
+GPG=""
+RSS=""
+DW=""
+MAGNET=""
+CHAT=""
 
 RELEASES="25.05 24.05 unstable"
-EDITIONS="plasma minimal gnome"
-ARCHITECTURES="amd64"
+EDITIONS="gnome minimal plasma"
+QEMU_ARCH="amd64"
 
-
-
-function get_() {
-    local HASH=""
-    # Adapt the plasma edition according to the NixOS release
-    case "${EDITION}" in
-        plasma)
-            if [ "${RELEASE}" == "23.11" ]; then
-                EDITION+="5"
-            else
-                EDITION+="6"
-            fi
-            ;;
-    esac
-    local ISO="latest-nixos-${EDITION}-x86_64-linux.iso"
-    local URL="https://channels.nixos.org/nixos-${RELEASE}"
-    HASH=$(web_pipe "${URL}/${ISO}.sha256" | cut -d' ' -f1)
-    echo "${URL}/${ISO} ${HASH}"
+releases_() {
+	# Lists unstable plus the two most recent releases
+	#shellcheck disable=SC2046
+	echo unstable $(web_pipe "https://nix-channels.s3.amazonaws.com/?delimiter=/" | grep -o -E 'nixos-[[:digit:]]+\.[[:digit:]]+' | cut -d- -f2 | sort -nru | head -n +2)
 }
 
-function specific_tweaks() {
-  echo "disk_size=\"32G\"" >> "${CONF_FILE}"
+editions_() {
+	echo minimal plasma gnome
 }
 
+get_() {
+	local HASH=""
+	# Adapt the plasma edition according to the NixOS release
+	case "${EDITION}" in
+		plasma)
+			if [ "${RELEASE}" == "23.11" ]; then
+				EDITION+="5"
+			else
+				EDITION+="6"
+			fi
+			;;
+	esac
+	local ISO="latest-nixos-${EDITION}-x86_64-linux.iso"
+	local URL="https://channels.nixos.org/nixos-${RELEASE}"
+	HASH=$(web_pipe "${URL}/${ISO}.sha256" | cut -d' ' -f1)
+	echo "${URL}/${ISO} ${HASH}"
+}
+
+config_() {
+	echo "disk_size=\"32G\"" >> "${CONF_FILE}"
+}

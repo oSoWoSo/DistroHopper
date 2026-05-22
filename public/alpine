@@ -1,44 +1,51 @@
 # Template file for 'alpine'
 OSNAME="alpine"
 PRETTY="Alpine Linux"
+LOGO=" "
 ICON="alpine.svg"
-CATEGORY="lightweight"
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/alpine.png"
+CATEGORY="Lightweight"
 BASEDOF="-"
 DESCRIPTION="Security-oriented, lightweight Linux distribution based on musl libc and busybox"
 HOMEPAGE="https://alpinelinux.org/"
 CREDENTIALS="root:(no password)"
+GPG=""
+RSS=""
+DW=""
+MAGNET=""
+CHAT=""
 
+RELEASES="v3.24 v3.23 v3.22 v3.21 v3.20 v3.19 v3.18 v3.17 v3.16 v3.15"
+QEMU_ARCH="amd64 armhf armv7 arm64 loongarch64 ppc64el riscv64 s390x x86"
 
-RELEASES="v3.23 v3.22 v3.21 v3.20 v3.19 v3.18 v3.17 v3.16 v3.15 v3.14"
-
-ARCHITECTURES="x86_64 x86 aarch64 armhf armv7 ppc64le loongarch64 riscv64 s390x"
-
-
-function arch_() {
-    echo "x86_64 x86 aarch64 armhf armv7 ppc64le loongarch64 riscv64 s390x"
+releases_() {
+	local REL=""
+	local RELS=""
+	RELS=$(web_pipe "https://dl-cdn.alpinelinux.org/alpine/" | grep '"v' | cut -d'"' -f2 | tr -d / | sort -Vr | head -n 10)
+	for REL in ${RELS}; do
+		if web_check "https://dl-cdn.alpinelinux.org/alpine/${REL}/releases/x86_64/"; then
+			echo -n "${REL} "
+		fi
+	done
 }
 
-function get_() {
-    local HASH=""
-    local ISO=""
-    local ARCH_KW="${ARCH:-x86_64}"
-
-    case "${ARCH}" in
-        x86) ARCH_KW="x86";;
-        aarch64) ARCH_KW="aarch64";;
-        armhf|armv7) ARCH_KW="armv7";;
-        ppc64le) ARCH_KW="ppc64le";;
-        loongarch64) ARCH_KW="loongarch64";;
-        riscv64) ARCH_KW="riscv64";;
-        s390x) ARCH_KW="s390x";;
-        *) ARCH_KW="x86_64";;
-    esac
-
-    local URL="https://dl-cdn.alpinelinux.org/alpine/${RELEASE}/releases/${ARCH_KW}"
-    local VERSION=""
-    VERSION=$(web_pipe "${URL}/latest-releases.yaml" | awk '/"Xen"/{found=0} {if(found) print} /"Virtual"/{found=1}' | grep 'version:' | awk '{print $2}')
-    ISO="alpine-virt-${VERSION}-${ARCH_KW}.iso"
-    HASH=$(web_pipe "${URL}/latest-releases.yaml" | awk '/"Xen"/{found=0} {if(found) print} /"Virtual"/{found=1}' | grep 'sha256:' | awk '{print $2}')
-    echo "${URL}/${ISO} ${HASH}"
+arch_() {
+	echo arm64 armhf armv7 loongarch64 ppc64el riscv64 s390x x86 amd64
 }
 
+get_() {
+	local HASH=""
+	local ISO=""
+	local QEMU_ARCH
+	QEMU_ARCH=$(_qarch_to_upstream "${ARCH:-amd64}")
+	local URL="https://dl-cdn.alpinelinux.org/alpine/${RELEASE}/releases/${QEMU_ARCH}"
+	local VERSION=""
+	VERSION=$(web_pipe "${URL}/latest-releases.yaml" | awk '/"Xen"/{found=0} {if(found) print} /"Virtual"/{found=1}' | grep 'version:' | head -1 | awk '{print $2}')
+	ISO="alpine-virt-${VERSION}-${QEMU_ARCH}.iso"
+	HASH=$(web_pipe "${URL}/latest-releases.yaml" | awk '/"Xen"/{found=0} {if(found) print} /"Virtual"/{found=1}' | grep 'sha256:' | head -1 | awk '{print $2}')
+	echo "${URL}/${ISO} ${HASH}"
+}
+
+config_() {
+	echo "disk_size=\"32G\"" >> "${CONF_FILE}"
+}

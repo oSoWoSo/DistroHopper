@@ -1,28 +1,40 @@
 # Template file for 'haiku'
 OSNAME="haiku"
 PRETTY="Haiku"
+LOGO=""
 ICON="haiku.svg"
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/haiku.png"
 CATEGORY="advanced"
 BASEDOF="-"
 DESCRIPTION="Specifically targets personal computing. Inspired by the BeOS, Haiku is fast, simple to use, easy to learn and yet very powerful"
 HOMEPAGE="https://www.haiku-os.org"
 CREDENTIALS="-"
-haiku
+GPG=""
+RSS=""
+DW=""
+MAGNET=""
+CHAT=""
+GUEST="haiku"
 
 RELEASES="r1beta5 r1beta4 r1beta3"
-EDITIONS="x86_64 x86_gcc2h"
-ARCHITECTURES="amd64"
+EDITIONS="x86_gcc2h x86_64"
+QEMU_ARCH="amd64"
 
-
-
-function get_() {
-    local ISO="haiku-${RELEASE}-${EDITION}-anyboot.iso"
-    local URL="http://mirror.rit.edu/haiku/${RELEASE}"
-    HASH=$(web_pipe "${URL}/${ISO}.sha256" | grep "${ISO}" | cut -d' ' -f4)
-    echo "${URL}/${ISO} ${HASH}"
+releases_() {
+	echo r1beta5 r1beta4 r1beta3
 }
 
-function specific_tweaks() {
-    echo "boot=\"legacy\"" >> "${CONF_FILE}"
+editions_() {
+	echo x86_64 x86_gcc2h
 }
 
+get_() {
+	local ISO="haiku-${RELEASE}-${EDITION}-anyboot.iso"
+	local URL="http://mirror.rit.edu/haiku/${RELEASE}"
+	HASH=$(web_pipe "${URL}/${ISO}.sha256" | grep "${ISO}" | cut -d' ' -f4)
+	echo "${URL}/${ISO} ${HASH}"
+}
+
+config_() {
+	echo "boot=\"legacy\"" >> "${CONF_FILE}"
+}

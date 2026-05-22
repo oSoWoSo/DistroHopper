@@ -1,33 +1,70 @@
 # Template file for 'bazzite'
 OSNAME="bazzite"
 PRETTY="bazzite"
+LOGO=""
 ICON="bazzite.svg"
-CATEGORY="beginner"
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/bazzite.png"
+CATEGORY="Gaming"
 BASEDOF="Fedora SteamOS"
 DESCRIPTION="Container native gaming and a ready-to-game SteamOS like"
 HOMEPAGE="https://bazzite.gg"
 CREDENTIALS="-"
-
+GPG=""
+RSS=""
+DW=""
+MAGNET=""
+CHAT=""
 
 RELEASES="latest"
-EDITIONS="kde gnome"
-ARCHITECTURES="amd64"
+EDITIONS="gnome kde"
+QEMU_ARCH="amd64"
 
+releases_() {
+	echo latest
+}
 
+editions_() {
+	echo gnome kde
+}
 
+get_() {
+	local HASH=""
+	local ISO=""
+	local URL="https://download.bazzite.gg"
+	case ${EDITION} in
+		gnome) ISO="bazzite-gnome-stable-amd64.iso";;
+		kde)  ISO="bazzite-stable-amd64.iso";;
+	esac
+	HASH=$(web_pipe "${URL}/${ISO}-CHECKSUM" | cut -d' ' -f1)
+	echo "${URL}/${ISO} ${HASH}"
+}
 function get_() {
-    local HASH=""
-    local ISO=""
-    local URL="https://download.bazzite.gg"
-    case ${EDITION} in
-        gnome) ISO="bazzite-gnome-stable-amd64.iso";;
-        kde)  ISO="bazzite-stable-amd64.iso";;
-    esac
-    HASH=$(web_pipe "${URL}/${ISO}-CHECKSUM" | cut -d' ' -f1)
-    echo "${URL}/${ISO} ${HASH}"
+	local HASH=""
+	local ISO=""
+	local URL="https://mirrors.o2switch.fr/batocera/x86_64/stable/${RELEASE}"
+	ISO="$(web_pipe "${URL}/" | grep -e 'batocera.*img.gz'| cut -d'"' -f2)"
+	echo "${URL}/${ISO} ${HASH}"
 }
 
-function specific_tweaks() {
-    echo "disk_size=\"64G\"" >> "${CONF_FILE}"
+get_() {
+	local HASH=""
+	local ISO=""
+	local URL="https://download.bazzite.gg"
+	case ${EDITION} in
+		gnome) ISO="bazzite-gnome-stable-amd64.iso";;
+		kde)  ISO="bazzite-stable-amd64.iso";;
+	esac
+	HASH=$(web_pipe "${URL}/${ISO}-CHECKSUM" | cut -d' ' -f1)
+	echo "${URL}/${ISO} ${HASH}"
+}
+function get_() {
+	local HASH=""
+	local ISO=""
+	local URL="https://mirrors.o2switch.fr/batocera/x86_64/stable/${RELEASE}"
+	ISO="$(web_pipe "${URL}/" | grep -e 'batocera.*img.gz'| cut -d'"' -f2)"
+	echo "${URL}/${ISO} ${HASH}"
 }
 
+config_() {
+	echo "disk_size=\"64G\"" >> "${CONF_FILE}"
+}

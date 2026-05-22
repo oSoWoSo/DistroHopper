@@ -1,35 +1,46 @@
 # Template file for 'tinycore'
 OSNAME="tinycore"
 PRETTY="Tiny Core Linux"
+LOGO=""
 ICON="tinycore.svg"
-CATEGORY="lightweight"
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/tinycore.png"
+CATEGORY="Lightweight"
 BASEDOF="-"
 DESCRIPTION="Highly modular based system with community build extensions"
 HOMEPAGE="http://www.tinycorelinux.net"
 CREDENTIALS="-"
-
+GPG=""
+RSS=""
+DW=""
+MAGNET=""
+CHAT=""
 
 RELEASES="15 14"
-EDITIONS="TinyCorePure64 TinyCore CorePure64 CorePlus Core"
-ARCHITECTURES="amd64"
+EDITIONS="Core CorePlus CorePure64 TinyCore TinyCorePure64"
+QEMU_ARCH="amd64"
 
-
-
-function get_() {
-    local ARCH="x86"
-    local HASH=""
-    local ISO="${EDITION}-${RELEASE}.0.iso"
-    case "${EDITION}" in
-        *Pure*) ARCH+="_64";;
-    esac
-    # tinycorelinux.net not stable enough
-    #local URL="http://www.tinycorelinux.net/${RELEASE}.x/${ARCH}/release"
-    local URL="https://distro.ibiblio.org/tinycorelinux/${RELEASE}.x/${ARCH}/release"
-    HASH=$(web_pipe "${URL}/${ISO}.md5.txt" | cut -d' ' -f1)
-    echo "${URL}/${ISO} ${HASH}"
+releases_() {
+	echo 15 14
 }
 
-function specific_tweaks() {
-    echo "boot=\"legacy\"" >> "${CONF_FILE}"
+editions_() {
+	echo Core TinyCore CorePlus CorePure64 TinyCorePure64
 }
 
+get_() {
+	local ARCH="x86"
+	local HASH=""
+	local ISO="${EDITION}-${RELEASE}.0.iso"
+	case "${EDITION}" in
+		*Pure*) ARCH+="_64";;
+	esac
+	# tinycorelinux.net not stable enough
+	#local URL="http://www.tinycorelinux.net/${RELEASE}.x/${ARCH}/release"
+	local URL="https://distro.ibiblio.org/tinycorelinux/${RELEASE}.x/${ARCH}/release"
+	HASH=$(web_pipe "${URL}/${ISO}.md5.txt" | cut -d' ' -f1)
+	echo "${URL}/${ISO} ${HASH}"
+}
+
+config_() {
+	echo "boot=\"legacy\"" >> "${CONF_FILE}"
+}

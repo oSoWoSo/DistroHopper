@@ -1,29 +1,35 @@
 # Template file for 'elementary'
 OSNAME="elementary"
 PRETTY="elementary OS"
+LOGO=" "
 ICON="elementary.svg"
-CATEGORY="beginner"
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/elementary.png"
+CATEGORY="Beginner"
 BASEDOF="Debian Ubuntu"
 DESCRIPTION="Thoughtful, capable, and ethical replacement for Windows and macOS"
 HOMEPAGE="https://elementary.io"
 CREDENTIALS="-"
-
+GPG=""
+RSS=""
+DW=""
+MAGNET=""
+CHAT=""
 
 RELEASES="8.1.1 8.1.0 8.0.2 8.0.1 8.0.0 7.1.1 7.1.0 7.0.0 6.1.0 6.0.4"
+QEMU_ARCH="amd64"
 
-ARCHITECTURES="amd64"
-
-
-
-function get_() {
-    local HASH=""
-    case ${RELEASE} in
-        7.0) STAMP="20230129rc";;
-        7.1) STAMP="20230926rc";;
-        8.0) STAMP="20241122rc";;
-    esac
-    local ISO="elementaryos-${RELEASE}-stable.${STAMP}.iso"
-    local URL="https://ams3.dl.elementary.io/download"
-    echo "${URL}/$(date +%s | base64)/${ISO} ${HASH}"
+releases_() {
+	echo $(web_pipe "https://api.github.com/repos/elementary/os/releases?per_page=20" | grep -oP '"tag_name":\s*"\K[0-9.]+' | grep -v rc | head -n 10)
 }
 
+get_() {
+	local HASH=""
+	case ${RELEASE} in
+		7.0) STAMP="20230129rc";;
+		7.1) STAMP="20230926rc";;
+		8.0) STAMP="20241122rc";;
+	esac
+	local ISO="elementaryos-${RELEASE}-stable.${STAMP}.iso"
+	local URL="https://ams3.dl.elementary.io/download"
+	echo "${URL}/$(date +%s | base64)/${ISO} ${HASH}"
+}

@@ -1,25 +1,35 @@
 # Template file for 'bunsenlabs'
 OSNAME="bunsenlabs"
 PRETTY="Bunsenlabs"
+LOGO=""
 ICON="bunsenlabs.svg"
-CATEGORY="lightweight"
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/bunsenlabs.png"
+CATEGORY="Lightweight"
 BASEDOF="Debian"
 DESCRIPTION="Light-weight and easily customizable Openbox desktop. The project is a community continuation of CrunchBang Linux"
 HOMEPAGE="https://www.bunsenlabs.org"
 CREDENTIALS="-"
-
+GPG=""
+RSS=""
+DW=""
+MAGNET=""
+CHAT=""
 
 RELEASES="boron"
+QEMU_ARCH="amd64"
 
-ARCHITECTURES="amd64"
-
-
-
-function get_() {
-    local HASH=""
-    local ISO="boron-1-240123-amd64.hybrid.iso"
-    local URL="https://ddl.bunsenlabs.org/ddl"
-    HASH=$(web_pipe "${URL}/release.sha256.txt" | head -n 1 | cut -d' ' -f1)
-    echo "${URL}/${ISO} ${HASH}"
+releases_() {
+	echo boron
 }
 
+get_() {
+	local HASH=""
+	local ISO="boron-1-240123-amd64.hybrid.iso"
+	local URL="https://ddl.bunsenlabs.org/ddl"
+	HASH=$(web_pipe "${URL}/release.sha256.txt" | head -n 1 | cut -d' ' -f1)
+	echo "${URL}/${ISO} ${HASH}"
+}
+
+config_() {
+	echo "disk_size=\"64G\"" >> "${CONF_FILE}"
+}

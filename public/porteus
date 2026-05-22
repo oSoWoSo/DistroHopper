@@ -1,28 +1,39 @@
 # Template file for 'porteus'
 OSNAME="porteus"
 PRETTY="Porteus"
+LOGO=""
 ICON="porteus.svg"
-CATEGORY="lightweight"
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/porteus.png"
+CATEGORY="Lightweight"
 BASEDOF="Slackware"
 DESCRIPTION="Complete linux operating system that is optimized to run from CD, USB flash drive, hard drive, or other bootable storage media"
 HOMEPAGE="http://www.porteus.org"
 CREDENTIALS="-"
-
+GPG=""
+RSS=""
+DW=""
+MAGNET=""
+CHAT=""
 
 RELEASES="5.1 5.01 5.0 4.0 3.2.2 3.2"
-EDITIONS="xfce openbox mate lxqt lxde kde cinnamon"
-ARCHITECTURES="amd64"
+EDITIONS="cinnamon kde lxde lxqt mate openbox xfce"
+QEMU_ARCH="amd64"
 
-
-
-function get_() {
-    local HASH=""
-    local ISO=""
-    local URL=""
-    edition="${EDITION~~}"
-    ISO="Porteus-${edition}-v${RELEASE}-x86_64.iso"
-    URL="https://ftp.nluug.nl/os/Linux/distr/porteus/x86_64/Porteus-v${RELEASE}"
-    HASH=$(web_pipe "${URL}/sha256sums.txt" | grep "${ISO}" | cut -d' ' -f1)
-    echo "${URL}/${ISO} ${HASH}"
+releases_() {
+	echo 5.1 5.01 5.0 4.0 3.2.2 3.2
 }
 
+editions_() {
+	echo cinnamon kde lxde lxqt mate openbox xfce
+}
+
+get_() {
+	local HASH=""
+	local ISO=""
+	local URL=""
+	edition="${EDITION~~}"
+	ISO="Porteus-${edition}-v${RELEASE}-x86_64.iso"
+	URL="https://ftp.nluug.nl/os/Linux/distr/porteus/x86_64/Porteus-v${RELEASE}"
+	HASH=$(web_pipe "${URL}/sha256sums.txt" | grep "${ISO}" | cut -d' ' -f1)
+	echo "${URL}/${ISO} ${HASH}"
+}

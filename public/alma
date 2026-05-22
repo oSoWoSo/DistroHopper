@@ -1,41 +1,50 @@
 # Template file for 'alma'
 OSNAME="alma"
 PRETTY="AlmaLinux"
+LOGO=" "
 ICON="alma.svg"
-CATEGORY="beginner"
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/alma.png"
+CATEGORY="Beginner"
 BASEDOF="Fedora RHEL"
 DESCRIPTION="Community distribution, focused on long-term stability, providing a robust production-grade platform. Binary compatible with RHEL®"
 HOMEPAGE="https://almalinux.org/"
 CREDENTIALS="-"
+GPG=""
+RSS=""
+DW=""
+MAGNET=""
+CHAT=""
 
+RELEASES="9 8 10.1 10"
+EDITIONS="boot dvd minimal"
+QEMU_ARCH="amd64 arm64 ppc64el s390x"
 
-RELEASES="9 8 10"
-EDITIONS="minimal dvd boot"
-ARCHITECTURES="amd64 aarch64 ppc64le s390x"
-
-
-function arch_() {
-    echo "amd64 aarch64 ppc64le s390x"
+releases_() {
+	echo 10.1 10 9 8
 }
 
-function get_() {
-    local HASH=""
-    local ARCH_KW="${ARCH:-amd64}"
-    
-    case "${ARCH}" in
-        aarch64) ARCH_KW="aarch64";;
-        ppc64le) ARCH_KW="ppc64le";;
-        s390x) ARCH_KW="s390x";;
-        *) ARCH_KW="x86_64";;
-    esac
-    
-    local ISO="AlmaLinux-${RELEASE}-latest-${ARCH_KW}-${EDITION}.iso"
-    local URL="https://repo.almalinux.org/almalinux/${RELEASE}/isos/${ARCH_KW}"
-    HASH="$(web_pipe "${URL}/CHECKSUM" | grep "(${ISO}" | cut -d' ' -f4)"
-    echo "${URL}/${ISO} ${HASH}"
+editions_() {
+	echo boot minimal dvd
 }
 
-function specific_tweaks() {
-    echo "disk_size=\"32G\"" >> "${CONF_FILE}"
+arch_() {
+	echo arm64 amd64 ppc64el s390x
 }
 
+get_() {
+	local HASH
+	local QEMU_ARCH
+	QEMU_ARCH=$(_qarch_to_upstream "${ARCH:-amd64}")
+	if [ "$RELEASE" = 10.1 ]; then
+		local ISO="AlmaLinux-${RELEASE}-${QEMU_ARCH}-${EDITION}.iso"
+	else
+		local ISO="AlmaLinux-${RELEASE}-latest-${QEMU_ARCH}-${EDITION}.iso"
+	fi
+	local URL="https://repo.almalinux.org/almalinux/${RELEASE}/isos/${QEMU_ARCH}"
+	HASH="$(web_pipe "${URL}/CHECKSUM" | grep "(${ISO}" | cut -d' ' -f4)"
+	echo "${URL}/${ISO} ${HASH}"
+}
+
+config_() {
+	echo "disk_size=\"32G\"" >> "${CONF_FILE}"
+}

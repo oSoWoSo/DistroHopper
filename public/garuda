@@ -1,30 +1,41 @@
 # Template file for 'garuda'
 OSNAME="garuda"
 PRETTY="Garuda Linux"
+LOGO=" "
 ICON="garuda.svg"
-CATEGORY="beginner"
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/garuda.png"
+CATEGORY="Beginner"
 BASEDOF="Arch"
 DESCRIPTION="Feature rich and easy to use Linux distribution"
 HOMEPAGE="https://garudalinux.org"
 CREDENTIALS="-"
-
+GPG=""
+RSS=""
+DW=""
+MAGNET=""
+CHAT=""
 
 RELEASES="latest"
-EDITIONS="xfce sway mokka kde-lite i3 hyprland gnome dr460nized-gaming dr460nized cinnamon"
-ARCHITECTURES="amd64"
+EDITIONS="cinnamon dr460nized dr460nized-gaming gnome hyprland i3 kde-lite mokka sway xfce"
+QEMU_ARCH="amd64"
 
-
-
-function get_() {
-    local HASH=""
-    local ISO=""
-    local URL="https://iso.builds.garudalinux.org/iso/latest/garuda"
-    ISO=${EDITION}/latest.iso
-    HASH="$(web_pipe "${URL}/${ISO}.sha256" | cut -d' ' -f1)"
-    echo "${URL}/${ISO} ${HASH}"
+releases_() {
+	echo latest
 }
 
-function specific_tweaks() {
-  echo "disk_size=\"32G\"" >> "${CONF_FILE}"
+editions_() {
+	echo $(web_pipe "https://iso.builds.garudalinux.org/iso/latest/garuda/" | grep -oP '(?<=href=")[^"]*' | tail --lines +2 | cut -d'/' -f1)
 }
 
+get_() {
+	local HASH=""
+	local ISO=""
+	local URL="https://iso.builds.garudalinux.org/iso/latest/garuda"
+	ISO=${EDITION}/latest.iso
+	HASH="$(web_pipe "${URL}/${ISO}.sha256" | cut -d' ' -f1)"
+	echo "${URL}/${ISO} ${HASH}"
+}
+
+config_() {
+	echo "disk_size=\"32G\"" >> "${CONF_FILE}"
+}

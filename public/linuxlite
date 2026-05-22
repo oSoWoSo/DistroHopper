@@ -1,25 +1,31 @@
 # Template file for 'linuxlite'
 OSNAME="linuxlite"
 PRETTY="Linux Lite"
+LOGO=""
 ICON="lite.svg"
-CATEGORY="beginner"
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/lite.png"
+CATEGORY="Beginner, Desktop, Live Medium"
 BASEDOF="Debian Ubuntu"
 DESCRIPTION="Your first simple, fast and free stop in the world of Linux"
 HOMEPAGE="https://www.linuxliteos.com"
 CREDENTIALS="-"
-
+GPG=""
+RSS=""
+DW=""
+MAGNET=""
+CHAT=""
 
 RELEASES="6.6 6.4 6.2 6.0"
+QEMU_ARCH="amd64"
 
-ARCHITECTURES="amd64"
-
-
-
-function get_() {
-    local HASH=""
-    local ISO="linux-lite-${RELEASE}-64bit.iso"
-    local URL="https://sourceforge.net/projects/linux-lite/files/${RELEASE}"
-    HASH=$(web_pipe "${URL}/${ISO}.sha256" | cut -d' ' -f1)
-    echo "${URL}/${ISO} ${HASH}"
+releases_() {
+	echo 6.6 6.4 6.2 6.0
 }
 
+get_() {
+	local HASH=""
+	local ISO="linux-lite-${RELEASE}-64bit.iso"
+	local URL="https://sourceforge.net/projects/linux-lite/files/${RELEASE}"
+	HASH=$(web_pipe "${URL}/${ISO}.sha256" | cut -d' ' -f1)
+	echo "${URL}/${ISO} ${HASH}"
+}

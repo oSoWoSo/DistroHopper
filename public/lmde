@@ -1,25 +1,36 @@
 # Template file for 'lmde'
 OSNAME="lmde"
 PRETTY="Linux Mint Debian Edition"
+LOGO=""
 ICON="lmde.svg"
-CATEGORY="beginner"
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/lmde.png"
+CATEGORY="Beginner"
 BASEDOF="Debian"
 DESCRIPTION="Aims to be as similar as possible to Linux Mint, but without using Ubuntu. The package base is provided by Debian instead"
 HOMEPAGE="https://www.linuxmint.com/download_lmde.php"
 CREDENTIALS="-"
-
+GPG=""
+RSS=""
+DW=""
+MAGNET=""
+CHAT=""
 
 RELEASES="7 6 5 4 3 2"
 EDITIONS="cinnamon"
-ARCHITECTURES="amd64"
+QEMU_ARCH="amd64"
 
-
-
-function get_() {
-    local HASH=""
-    local ISO="lmde-${RELEASE}-${EDITION}-64bit.iso"
-    local URL="https://pub.linuxmint.io/debian"
-    HASH=$(web_pipe "${URL}/sha256sum.txt" | grep "${ISO}" | cut -d' ' -f1)
-    echo "${URL}/${ISO} ${HASH}"
+releases_() {
+	web_pipe "https://community.linuxmint.com/iso" | grep -oP 'lmde-[0-9]+' | sed 's/lmde-//' | sort -Vu
 }
 
+editions_() {
+	echo cinnamon
+}
+
+get_() {
+	local HASH=""
+	local ISO="lmde-${RELEASE}-${EDITION}-64bit.iso"
+	local URL="https://pub.linuxmint.io/debian"
+	HASH=$(web_pipe "${URL}/sha256sum.txt" | grep "${ISO}" | cut -d' ' -f1)
+	echo "${URL}/${ISO} ${HASH}"
+}

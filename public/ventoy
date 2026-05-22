@@ -1,25 +1,31 @@
 # Template file for 'ventoy'
 OSNAME="ventoy"
 PRETTY="Ventoy"
+LOGO=""
 ICON="ventoy.svg"
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/ventoy.png"
 CATEGORY="advanced"
 BASEDOF="Void"
 DESCRIPTION="Tool to create bootable USB drive for ISO/WIM/IMG/VHD(x)/EFI files. "
 HOMEPAGE="https://www.ventoy.net"
 CREDENTIALS="-"
+GPG=""
+RSS=""
+DW=""
+MAGNET=""
+CHAT=""
 
+RELEASES="1.1.12 1.1.11 1.1.10 1.1.09 1.1.08 1.1.07 1.1.06 1.1.05 1.1.04 1.1.02 1.1.01 1.1.00 1.0.99 1.0.98 1.0.97 1.0.96 1.0.95 1.0.94 1.0.93 1.0.91"
+QEMU_ARCH="amd64"
 
-RELEASES="1.1.11 1.1.10 1.1.09 1.1.08 1.1.07 1.1.06 1.1.05 1.1.04 1.1.02 1.1.01 1.1.00 1.0.99 1.0.98 1.0.97 1.0.96 1.0.95 1.0.94 1.0.93 1.0.91 1.0.90"
-
-ARCHITECTURES="amd64"
-
-
-
-function get_() {
-    local HASH=""
-    local ISO="ventoy-${RELEASE}-livecd.iso"
-    local URL="https://github.com/ventoy/Ventoy/releases/download/v${RELEASE}"
-    HASH="$(wget -q -O- "${URL}/sha256.txt" | grep "${ISO}" | cut -d' ' -f4)"
-    echo "${URL}/${ISO} ${HASH}"
+releases_() {
+	echo $(web_pipe "https://sourceforge.net/projects/ventoy/rss?path=/" | grep 'title><!\[CDATA' | cut -d'[' -f3 | cut -d']' -f1 | grep '.iso' | cut -d'-' -f2)
 }
 
+get_() {
+	local HASH=""
+	local ISO="ventoy-${RELEASE}-livecd.iso"
+	local URL="https://github.com/ventoy/Ventoy/releases/download/v${RELEASE}"
+	HASH="$(wget -q -O- "${URL}/sha256.txt" | grep "${ISO}" | cut -d' ' -f4)"
+	echo "${URL}/${ISO} ${HASH}"
+}

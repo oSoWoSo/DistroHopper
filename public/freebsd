@@ -1,25 +1,38 @@
 # Template file for 'freebsd'
 OSNAME="freebsd"
 PRETTY="FreeBSD"
+LOGO=""
 ICON="freebsd.svg"
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/freebsd.png"
 CATEGORY="advanced"
 BASEDOF="-"
 DESCRIPTION="Operating system used to power modern servers, desktops, and embedded platforms"
 HOMEPAGE="https://www.freebsd.org"
 CREDENTIALS="-"
-freebsd
+GPG=""
+RSS=""
+DW=""
+MAGNET=""
+CHAT=""
+GUEST="freebsd"
 
 RELEASES="15.0 14.4 14.3 13.5"
-EDITIONS="dvd1 disc1"
-ARCHITECTURES="amd64"
+EDITIONS="disc1 dvd1"
+QEMU_ARCH="amd64"
 
-
-
-function get_() {
-    local HASH=""
-    local ISO="FreeBSD-${RELEASE}-RELEASE-amd64-${EDITION}.iso"
-    local URL="https://download.freebsd.org/ftp/releases/amd64/amd64/ISO-IMAGES/${RELEASE}"
-    HASH=$(web_pipe "${URL}/CHECKSUM.SHA256-FreeBSD-${RELEASE}-RELEASE-amd64" | grep "${ISO}" | grep -v ".xz" | cut -d' ' -f4)
-    echo "${URL}/${ISO} ${HASH}"
+releases_() {
+	#shellcheck disable=SC2046,SC2005
+	web_pipe "https://download.freebsd.org/ftp/releases/amd64/amd64/" | grep -Eo "href=\"[0-9\.]+-RELEASE" | grep -oE '[0-9\.]+' | sort -r
 }
 
+editions_() {
+	echo disc1 dvd1
+}
+
+get_() {
+	local HASH=""
+	local ISO="FreeBSD-${RELEASE}-RELEASE-amd64-${EDITION}.iso"
+	local URL="https://download.freebsd.org/ftp/releases/amd64/amd64/ISO-IMAGES/${RELEASE}"
+	HASH=$(web_pipe "${URL}/CHECKSUM.SHA256-FreeBSD-${RELEASE}-RELEASE-amd64" | grep "${ISO}" | grep -v ".xz" | cut -d' ' -f4)
+	echo "${URL}/${ISO} ${HASH}"
+}

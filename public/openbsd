@@ -1,29 +1,37 @@
 # Template file for 'openbsd'
 OSNAME="openbsd"
 PRETTY="OpenBSD"
+LOGO=" "
 ICON="openbsd.svg"
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/openbsd.png"
 CATEGORY="advanced"
 BASEDOF="-"
 DESCRIPTION="Free, multi-platform 4.4BSD-based UNIX-like operating system. Our efforts emphasize portability, standardization, correctness, proactive security and integrated cryptography"
 HOMEPAGE="https://www.openbsd.org"
 CREDENTIALS="-"
+GPG=""
+RSS=""
+DW=""
+MAGNET=""
+CHAT=""
 GUEST="openbsd"
 
-RELEASES="7.8 7.7 7.6 7.5 7.4 7.3 7.2 7.1 7.0 6.9 6.8"
+RELEASES="7.9 7.8 7.7 7.6 7.5 7.4 7.3 7.2 7.1 7.0 6.9 6.8"
+QEMU_ARCH="amd64"
 
-ARCHITECTURES="amd64"
-
-
-
-function get_() {
-    local HASH=""
-    local ISO="install${RELEASE//\./}.iso"
-    local URL="https://mirror.leaseweb.com/pub/OpenBSD/${RELEASE}/amd64"
-    HASH=$(web_pipe "${URL}/SHA256" | grep "${ISO}" | cut -d' ' -f4)
-    echo "${URL}/${ISO} ${HASH}"
+releases_() {
+	#shellcheck disable=SC2046,SC2005
+	echo $(web_pipe "https://mirror.leaseweb.com/pub/OpenBSD/" | grep -e '6\.[8-9]/' -e '[7-9]\.' | cut -d\" -f4 | tr -d '/' | sort -r)
 }
 
-function specific_tweaks() {
-    echo "boot=\"legacy\"" >> "${CONF_FILE}"
+get_() {
+	local HASH=""
+	local ISO="install${RELEASE//\./}.iso"
+	local URL="https://mirror.leaseweb.com/pub/OpenBSD/${RELEASE}/amd64"
+	HASH=$(web_pipe "${URL}/SHA256" | grep "${ISO}" | cut -d' ' -f4)
+	echo "${URL}/${ISO} ${HASH}"
 }
 
+config_() {
+	echo "boot=\"legacy\"" >> "${CONF_FILE}"
+}

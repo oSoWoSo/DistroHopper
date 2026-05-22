@@ -1,30 +1,42 @@
 # Template file for 'mxlinux'
 OSNAME="mxlinux"
 PRETTY="MX Linux"
+LOGO=" "
 ICON="mxlinux.svg"
-CATEGORY="beginner"
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/mx.png"
+CATEGORY="Desktop, From RAM, Live Medium, Old Computers, Raspberry Pi"
 BASEDOF="Debian Antix"
 DESCRIPTION="Designed to combine elegant and efficient desktops with high stability and solid performance"
 HOMEPAGE="https://mxlinux.org"
 CREDENTIALS="-"
-
+GPG=""
+RSS=""
+DW=""
+MAGNET=""
+CHAT=""
 
 RELEASES="25.1"
-EDITIONS="Xfce KDE Fluxbox"
-ARCHITECTURES="amd64"
+EDITIONS="Fluxbox KDE Xfce"
+QEMU_ARCH="amd64"
 
-
-
-function get_() {
-    local HASH=""
-    local ISO=""
-    local URL="https://sourceforge.net/projects/mx-linux/files/Final/${EDITION}"
-    case ${EDITION} in
-        Xfce) ISO="MX-${RELEASE}_x64.iso";;
-        KDE) ISO="MX-${RELEASE}_KDE_x64.iso";;
-        Fluxbox) ISO="MX-${RELEASE}_fluxbox_x64.iso";;
-    esac
-    HASH=$(web_pipe "${URL}/${ISO}.sha256" | cut -d' ' -f1)
-    echo "${URL}/${ISO} ${HASH}"
+releases_() {
+	# needs header, so not web_pipe:
+	curl --disable -Ils "https://sourceforge.net/projects/mx-linux/files/latest/download" | grep -i 'location:' | cut -d? -f1 | cut -d_ -f1 | cut -d- -f3
 }
 
+editions_() {
+	echo Xfce KDE Fluxbox
+}
+
+get_() {
+	local HASH=""
+	local ISO=""
+	local URL="https://sourceforge.net/projects/mx-linux/files/Final/${EDITION}"
+	case ${EDITION} in
+		Xfce) ISO="MX-${RELEASE}_x64.iso";;
+		KDE) ISO="MX-${RELEASE}_KDE_x64.iso";;
+		Fluxbox) ISO="MX-${RELEASE}_fluxbox_x64.iso";;
+	esac
+	HASH=$(web_pipe "${URL}/${ISO}.sha256" | cut -d' ' -f1)
+	echo "${URL}/${ISO} ${HASH}"
+}

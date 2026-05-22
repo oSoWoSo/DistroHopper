@@ -1,31 +1,38 @@
 # Template file for 'slitaz'
 OSNAME="slitaz"
 PRETTY="SliTaz"
+LOGO=""
 ICON="slitaz.svg"
-CATEGORY="lightweight"
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/slitaz.png"
+CATEGORY="Lightweight"
 BASEDOF="-"
 DESCRIPTION="Simple, fast and low resource Linux OS for servers & desktops"
 HOMEPAGE="https://www.slitaz.org"
 CREDENTIALS="-"
-
+GPG=""
+RSS=""
+DW=""
+MAGNET=""
+CHAT=""
 
 RELEASES="preinit loram core64 core-5in1 core"
+QEMU_ARCH="amd64"
 
-ARCHITECTURES="amd64"
-
-
-
-function get_() {
-    local HASH=""
-    local ISO="slitaz-rolling-${RELEASE}"
-    local URL="http://mirror.slitaz.org/iso/rolling"
-    HASH=$(web_pipe "${URL}/${ISO}.md5" | cut -d' ' -f1)
-    echo "${URL}/${ISO}.iso ${HASH}"
+releases_() {
+	#shellcheck disable=SC2046,SC2005
+	echo $(web_pipe "https://mirror.slitaz.org/iso/rolling/" | grep "class='iso'" | cut -d"'" -f4 | cut -d'-' -f3- | grep iso | cut -d'.' -f1 | sort -u)
 }
 
-function specific_tweaks() {
-    echo "boot=\"legacy\"" >> "${CONF_FILE}"
-    echo "disk_size=\"4G\"" >> "${CONF_FILE}"
-    echo "ram=\"512M\"" >> "${CONF_FILE}"
+get_() {
+	local HASH=""
+	local ISO="slitaz-rolling-${RELEASE}"
+	local URL="http://mirror.slitaz.org/iso/rolling"
+	HASH=$(web_pipe "${URL}/${ISO}.md5" | cut -d' ' -f1)
+	echo "${URL}/${ISO}.iso ${HASH}"
 }
 
+config_() {
+	echo "boot=\"legacy\"" >> "${CONF_FILE}"
+	echo "disk_size=\"4G\"" >> "${CONF_FILE}"
+	echo "ram=\"512M\"" >> "${CONF_FILE}"
+}

@@ -1,31 +1,37 @@
 # Template file for 'tails'
 OSNAME="tails"
 PRETTY="Tails"
+LOGO=""
 ICON="tails.svg"
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/tails.png"
 CATEGORY="advanced"
 BASEDOF="Debian"
 DESCRIPTION="Portable operating system that protects against surveillance and censorship"
 HOMEPAGE="https://tails.net"
 CREDENTIALS="-"
-
+GPG=""
+RSS=""
+DW=""
+MAGNET=""
+CHAT=""
 
 RELEASES="stable"
+QEMU_ARCH="amd64"
 
-ARCHITECTURES="amd64"
-
-
-
-function get_() {
-    local JSON=""
-    local HASH=""
-    local URL=""
-    JSON="$(web_pipe "https://tails.boum.org/install/v2/Tails/amd64/${RELEASE}/latest.json")"
-    URL=$(echo "${JSON}" | jq -r '.installations[0]."installation-paths"[]|select(.type=="iso")|."target-files"[0].url')
-    HASH=$(echo "${JSON}" | jq -r '.installations[0]."installation-paths"[]|select(.type=="iso")|."target-files"[0].sha256')
-    echo "${URL} ${HASH}"
+releases_() {
+	echo stable
 }
 
-function specific_tweaks() {
-    echo "boot=\"legacy\"" >> "${CONF_FILE}"
+get_() {
+	local JSON=""
+	local HASH=""
+	local URL=""
+	JSON="$(web_pipe "https://tails.boum.org/install/v2/Tails/amd64/${RELEASE}/latest.json")"
+	URL=$(echo "${JSON}" | jq -r '.installations[0]."installation-paths"[]|select(.type=="iso")|."target-files"[0].url')
+	HASH=$(echo "${JSON}" | jq -r '.installations[0]."installation-paths"[]|select(.type=="iso")|."target-files"[0].sha256')
+	echo "${URL} ${HASH}"
 }
 
+config_() {
+	echo "boot=\"legacy\"" >> "${CONF_FILE}"
+}

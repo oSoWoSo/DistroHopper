@@ -1,28 +1,36 @@
 # Template file for 'vxlinux'
 OSNAME="vxlinux"
 PRETTY="VX Linux"
+LOGO=""
 ICON="vxlinux.svg"
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/vxlinux.png"
 CATEGORY="advanced"
 BASEDOF="Void"
 DESCRIPTION="Pre-configured, secure systemd-free Plasma desktop with focus on convenience, performance and simplicity. Based on the excellent Void Linux"
 HOMEPAGE="https://vxlinux.org"
 CREDENTIALS="-"
-
+GPG=""
+RSS=""
+DW=""
+MAGNET=""
+CHAT=""
 
 RELEASES="4.2"
+QEMU_ARCH="amd64"
 
-ARCHITECTURES="amd64"
-
-
-
-function get_() {
-    local HASH=""
-    local ISO="vx-${RELEASE}.iso"
-    # Newer ISOs are only on mega.nz
-    # TODO Needs to be checked manually? without mega client?
-    local URL="https://mega.nz/folder/SxwFTCTZ#s_qwDWrSWr7ZSTBVJC9Q_g/file"
-    #local URL="https://github.com/VX-Linux/main/releases/download/${RELEASE}"
-    HASH=$(web_pipe "${URL}/vx-${RELEASE}.md5" | cut -d' ' -f1)
-    echo "${URL}/${ISO} ${HASH}"
+releases_() {
+	#shellcheck disable=SC2046,SC2005
+	#web_pipe "https://github.com/VX-Linux/main/releases/latest" | grep -o -e 'releases/tag/[[:digit:]]\+\.[[:digit:]]\+\.[[:digit:]]' | sort -u | cut -d'/' -f 3
+	echo 4.2
 }
 
+get_() {
+	local HASH=""
+	local ISO="vx-${RELEASE}.iso"
+	# Newer ISOs are only on mega.nz
+	# TODO Needs to be checked manually? without mega client?
+	local URL="https://mega.nz/folder/SxwFTCTZ#s_qwDWrSWr7ZSTBVJC9Q_g/file"
+	#local URL="https://github.com/VX-Linux/main/releases/download/${RELEASE}"
+	HASH=$(web_pipe "${URL}/vx-${RELEASE}.md5" | cut -d' ' -f1)
+	echo "${URL}/${ISO} ${HASH}"
+}

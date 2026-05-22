@@ -1,30 +1,41 @@
 # Template file for 'popos'
 OSNAME="popos"
 PRETTY="Pop!_OS"
+LOGO=" "
 ICON="popos.svg"
-CATEGORY="beginner"
+ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/popos.png"
+CATEGORY="Beginner"
 BASEDOF="Ubuntu"
 DESCRIPTION="Operating system for STEM and creative professionals who use their computer as a tool to discover and create"
 HOMEPAGE="https://pop.system76.com"
 CREDENTIALS="-"
-
+GPG=""
+RSS=""
+DW=""
+MAGNET=""
+CHAT=""
 
 RELEASES="24.04 22.04 20.04"
-EDITIONS="nvidia intel"
-ARCHITECTURES="amd64"
+EDITIONS="intel nvidia"
+QEMU_ARCH="amd64"
 
-
-
-function get_() {
-    local HASH=""
-    local ISO=""
-    local URL=""
-    URL=$(web_pipe "https://api.pop-os.org/builds/${RELEASE}/${EDITION}" | jq -r .url)
-    HASH=$(web_pipe "https://api.pop-os.org/builds/${RELEASE}/${EDITION}" | jq -r .sha_sum)
-    echo "${URL} ${HASH}"
+releases_() {
+	echo 24.04 22.04 20.04
 }
 
-function specific_tweaks() {
+editions_() {
+	echo intel nvidia
+}
+
+get_() {
+	local HASH=""
+	local ISO=""
+	local URL=""
+	URL=$(web_pipe "https://api.pop-os.org/builds/${RELEASE}/${EDITION}" | jq -r .url)
+	HASH=$(web_pipe "https://api.pop-os.org/builds/${RELEASE}/${EDITION}" | jq -r .sha_sum)
+	echo "${URL} ${HASH}"
+}
+
+config_() {
   echo "disk_size=\"32G\"" >> "${CONF_FILE}"
 }
-
