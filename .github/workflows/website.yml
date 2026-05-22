@@ -52,7 +52,7 @@ jobs:
       - name: Deploy to website branch
         run: |
           git config --global user.name "oSoWoSo-bot"
-          git config --global user.email "osowoso@disroot.org"
+          git config --global user.email "mail@osowoso.org"
 
           TMPDIR=$(mktemp -d)
           cp -r website/. "$TMPDIR/"
