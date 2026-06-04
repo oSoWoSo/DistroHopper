@@ -3,7 +3,6 @@ OSNAME="siduction"
 PRETTY="siduction"
 LOGO=""
 ICON="siduction.svg"
-ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/siduction.png"
 CATEGORY="advanced"
 BASEDOF="Debian"
 HOMEPAGE="https://siduction.org"
@@ -14,23 +13,43 @@ RSS=""
 DW=""
 
 function releases_() {
-	echo $(web_pipe "https://mirror.math.princeton.edu/pub/siduction/iso/" | grep folder | cut -d'"' -f8 | tr -d '/')
+	web_pipe "https://mirror.math.princeton.edu/pub/siduction/iso/" \
+		| grep -oE 'href="[^"]+/"' \
+		| cut -d'"' -f2 \
+		| sed 's#/$##' \
+		| grep -E '^[[:alnum:]_.-]+$' \
+		| sort -Vr
 }
 
 function editions_() {
-	echo kde lxqt nox xfce xorg
+	local SELECTED_RELEASE="${RELEASE:-$(releases_ | head -n 1)}"
+	local URL="https://mirror.math.princeton.edu/pub/siduction/iso/${SELECTED_RELEASE}"
+	for EDITION_NAME in $(web_pipe "${URL}/" \
+		| grep -oE 'href="[^"]+/"' \
+		| cut -d'"' -f2 \
+		| sed 's#/$##' \
+		| grep -E '^[[:alnum:]_.-]+$' \
+		| sort -u); do
+		if web_pipe "${URL}/${EDITION_NAME}/" \
+			| grep -oE 'siduction-[^"/ ]+\.iso' \
+			| grep -Fq -- "-${SELECTED_RELEASE}-${EDITION_NAME}-amd64-"; then
+			echo "${EDITION_NAME}"
+		fi
+	done
 }
 
+
 function get_() {
-	local RELEASE="Shine_on"
 	local HASH=""
-	local DATE=""
 	local ISO=""
-	local URL=""
-	URL="https://mirror.math.princeton.edu/pub/siduction/iso/${RELEASE}/${EDITION}"
-	DATE=$(web_pipe "${URL}"| grep .iso.md5 | cut -d'-' -f6 | cut -d'.' -f1)
-	HASH=$(web_pipe "${URL}/${ISO}.md5" | cut -d' ' -f1)
-	VERSION=$(web_pipe "${URL}"| grep .iso.md5 | cut -d'-' -f2)
-	ISO="siduction-${VERSION}-${RELEASE}-${EDITION}-amd64-${DATE}.iso"
+	local URL="https://mirror.math.princeton.edu/pub/siduction/iso/${RELEASE}/${EDITION}"
+	ISO=$(web_pipe "${URL}/" \
+		| grep -oE 'siduction-[^"/ ]+\.iso' \
+		| grep -F -- "-${RELEASE}-${EDITION}-amd64-" \
+		| sort -Vr \
+		| head -n 1)
+	[ -n "${ISO}" ] || return 1
+	HASH=$(web_pipe "${URL}/${ISO}.sha256" \
+		| awk -v iso="${ISO}" '$2 == iso && length($1) == 64 {print $1; exit}')
 	echo "${URL}/${ISO} ${HASH}"
 }

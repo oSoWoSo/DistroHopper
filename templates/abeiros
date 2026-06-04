@@ -1,9 +1,8 @@
 # Template file for 'abeiros'
-OSNAME=abeiros
+OSNAME="abeiros"
 PRETTY="AbeirOS"
 LOGO=""
-ICON=""
-ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/abeiros.png"
+ICON="abeiros.svg"
 CATEGORY="Desktop, Live Medium"
 BASEDOF="Void"
 DESCRIPTION="Like AgarimOS and AfagOS, AbeirOS is based on Void Linux, and it is created using void-mklive"
@@ -20,7 +19,6 @@ function releases_() {
 function get_() {
 	local ISO
 	ISO=$(web_pipe "https://sourceforge.net/projects/abeiros/rss?path=/" \
-		| grep 'title><!\[CDATA' | cut -d'[' -f3 | cut -d']' -f1 | grep '\.iso' | head -1 | cut -d'/' -f3)
-	local URL="https://sourceforge.net/projects/abeiros/files/PLASMA"
-	echo "${URL}/${ISO}"
+		| grep 'title><!\[CDATA' | cut -d'[' -f3 | cut -d']' -f1 | grep '\.iso' | head -1)
+	echo "https://sourceforge.net/projects/abeiros/files${ISO}"
 }

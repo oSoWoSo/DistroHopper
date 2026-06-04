@@ -2,8 +2,7 @@
 OSNAME="macos"
 PRETTY="MacOS"
 LOGO=" "
-ICON="mac.svg"
-ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/macos.png"
+ICON="macos.svg"
 CATEGORY="Beginner"
 BASEDOF="-"
 HOMEPAGE="https://www.apple.com/macos"
@@ -116,15 +115,15 @@ function get_() {
     elif [ "${OPERATION}" == "download" ]; then
         echo "Downloading macOS (${RELEASE^}) RecoveryImage"
         echo " - URL: ${downloadLink}"
-        web_get "${downloadLink}" "${VM_PATH}" RecoveryImage.dmg --header "Host: oscdn.apple.com" --header "Connection: close" --header "User-Agent: InternetRecovery/1.0" --header "Cookie: AssetToken=${downloadSession}"
-        web_get "${chunkListLink}" "${VM_PATH}" RecoveryImage.chunklist --header "Host: oscdn.apple.com" --header "Connection: close" --header "User-Agent: InternetRecovery/1.0" --header "Cookie: AssetToken=${chunkListSession}"
+        web_get "${downloadLink}" "${VM_PATH}" RecoveryImage.dmg --header "Host: oscdn.apple.com" --header "Connection: close" --header "User-Agent: InternetRecovery/1.0" --header "Cookie: AssetToken=${downloadSession}" || return $?
+        web_get "${chunkListLink}" "${VM_PATH}" RecoveryImage.chunklist --header "Host: oscdn.apple.com" --header "Connection: close" --header "User-Agent: InternetRecovery/1.0" --header "Cookie: AssetToken=${chunkListSession}" || return $?
         VM_PATH="$(pwd)"
     else
         if [ ! -e "${VM_PATH}/RecoveryImage.chunklist" ]; then
             echo "Downloading macOS (${RELEASE^}) RecoveryImage"
             echo " - URL: ${downloadLink}"
-            web_get "${downloadLink}" "${VM_PATH}" RecoveryImage.dmg --header "Host: oscdn.apple.com" --header "Connection: close" --header "User-Agent: InternetRecovery/1.0" --header "Cookie: AssetToken=${downloadSession}"
-            web_get "${chunkListLink}" "${VM_PATH}" RecoveryImage.chunklist --header "Host: oscdn.apple.com" --header "Connection: close" --header "User-Agent: InternetRecovery/1.0" --header "Cookie: AssetToken=${chunkListSession}"
+            web_get "${downloadLink}" "${VM_PATH}" RecoveryImage.dmg --header "Host: oscdn.apple.com" --header "Connection: close" --header "User-Agent: InternetRecovery/1.0" --header "Cookie: AssetToken=${downloadSession}" || return $?
+            web_get "${chunkListLink}" "${VM_PATH}" RecoveryImage.chunklist --header "Host: oscdn.apple.com" --header "Connection: close" --header "User-Agent: InternetRecovery/1.0" --header "Cookie: AssetToken=${chunkListSession}" || return $?
             if ! "${CHUNKCHECK}" "${VM_PATH}" 2> /dev/null; then
                 echo " - WARNING! Verification failed, continuing anyway"
             else
@@ -139,10 +138,10 @@ function get_() {
             echo " - RecoveryImage.img is ready."
         fi
         echo "Downloading OpenCore & UEFI firmware"
-        web_get "https://github.com/kholia/OSX-KVM/raw/master/OpenCore/OpenCore.qcow2" "${VM_PATH}"
-        web_get "https://github.com/kholia/OSX-KVM/raw/master/OVMF_CODE.fd" "${VM_PATH}"
+        web_get "https://github.com/kholia/OSX-KVM/raw/master/OpenCore/OpenCore.qcow2" "${VM_PATH}" || return $?
+        web_get "https://github.com/kholia/OSX-KVM/raw/master/OVMF_CODE.fd" "${VM_PATH}" || return $?
         if [ ! -e "${VM_PATH}/OVMF_VARS-1920x1080.fd" ]; then
-            web_get "https://github.com/kholia/OSX-KVM/raw/master/OVMF_VARS-1920x1080.fd" "${VM_PATH}"
+            web_get "https://github.com/kholia/OSX-KVM/raw/master/OVMF_VARS-1920x1080.fd" "${VM_PATH}" || return $?
         fi
     fi
     make_vm_config RecoveryImage.img

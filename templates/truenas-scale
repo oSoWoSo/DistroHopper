@@ -3,7 +3,6 @@ OSNAME="truenas-scale"
 PRETTY="TrueNAS Scale"
 LOGO=""
 ICON="truenas-scale.svg"
-ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/truenas.png"
 CATEGORY="advanced"
 BASEDOF="Debian"
 HOMEPAGE="https://www.truenas.com/truenas-scale"
@@ -23,10 +22,10 @@ function get_() {
 	local URL=""
 	local BASE="https://download.sys.truenas.net/TrueNAS-SCALE-${RELEASE}"
 	local VERSION
-	VERSION=$(web_pipe "${BASE}/" | grep -oE '"[0-9]+\.[0-9]+\.[0-9.]+/"' | sort -Vr | head -1 | tr -d '"/')
-	[ -z "${VERSION}" ] && return
+	VERSION=$(web_pipe "${BASE}/" | grep -oE '[0-9]+\.[0-9]+\.[0-9.]+/' | tr -d '/' | sort -Vr | head -1)
+	[ -n "${VERSION}" ] || return 0
 	URL="${BASE}/${VERSION}/TrueNAS-SCALE-${VERSION}.iso"
-	HASH=$(web_pipe "${URL}.sha256" | awk '{print $1}')
+	HASH=$(web_pipe "${URL}.sha256" | grep -oE '[[:xdigit:]]{64}' | head -1)
 	echo "${URL} ${HASH}"
 }
 

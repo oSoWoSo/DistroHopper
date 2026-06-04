@@ -2,7 +2,7 @@
 OSNAME="d77void"
 PRETTY="d77void"
 LOGO=""
-ICON="tux.svg"
+ICON="d77void.svg"
 #ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/arch.png"
 CATEGORY="Desktop, Server"
 BASEDOF="void"

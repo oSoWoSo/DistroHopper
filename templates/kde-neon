@@ -1,0 +1,40 @@
+# Template file for 'kde-neon'
+OSNAME="kde-neon"
+PRETTY="KDE Neon"
+LOGO=""
+ICON="kde-neon.svg"
+CATEGORY="Beginner"
+BASEDOF="Debian Ubuntu"
+HOMEPAGE="https://neon.kde.org"
+DESCRIPTION="Latest and greatest of KDE community software packaged on a rock-solid base"
+CREDENTIALS="-"
+GPG=""
+RSS=""
+DW=""
+
+function releases_() {
+	echo user testing unstable
+}
+
+function editions_() {
+	case "${RELEASE}" in
+		user|testing) echo bigscreen desktop ko mobile;;
+		unstable) echo bigscreen desktop dev ko mobile;;
+	esac
+}
+
+function get_() {
+	local HASH=""
+	local ISO=""
+	local URL="https://files.kde.org/neon/images/${EDITION}/${RELEASE}/current"
+	local CHECKSUM_LINE=""
+	CHECKSUM_LINE=$(web_pipe "${URL}/neon-${RELEASE}-${EDITION}-current.sha256sum")
+	read -r HASH ISO <<< "${CHECKSUM_LINE}"
+	if [[ ! "${HASH}" =~ ^[[:xdigit:]]{64}$ ]] || [ -z "${ISO}" ]; then
+		if [[ "${OPERATION:-}" != show && "${OPERATION:-}" != test ]]; then
+			echo "ERROR: No valid KDE Neon checksum for ${RELEASE}/${EDITION}." >&2
+		fi
+		return 1
+	fi
+	echo "${URL}/${ISO} ${HASH}"
+}

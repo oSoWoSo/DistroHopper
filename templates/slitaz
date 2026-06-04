@@ -3,7 +3,6 @@ OSNAME="slitaz"
 PRETTY="SliTaz"
 LOGO=""
 ICON="slitaz.svg"
-ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/slitaz.png"
 CATEGORY="Lightweight"
 BASEDOF="-"
 HOMEPAGE="https://www.slitaz.org"
@@ -14,14 +13,24 @@ RSS=""
 DW=""
 
 function releases_() {
+	# The mirror serves a plain directory index. The rolling images are named
+	# slitaz-rolling-<variant>.iso; the default one has no variant suffix and
+	# is called "rolling".
 	#shellcheck disable=SC2046,SC2005
-	echo $(web_pipe "https://mirror.slitaz.org/iso/rolling/" | grep "class='iso'" | cut -d"'" -f4 | cut -d'-' -f3- | grep iso | cut -d'.' -f1 | sort -u)
+	echo $(web_pipe "https://mirror.slitaz.org/iso/rolling/" \
+		| grep -oE 'slitaz-rolling(-[a-z0-9-]+)?\.iso' \
+		| sed 's|\.iso$||; s|^slitaz-rolling||' \
+		| sed 's|^$|rolling|; s|^-|rolling-|' \
+		| sort -u)
 }
 
 function get_() {
 	local HASH=""
-	local ISO="slitaz-rolling-${RELEASE}"
-	local URL="http://mirror.slitaz.org/iso/rolling"
+	local VARIANT="${RELEASE#rolling}"
+	local VARIANT="${VARIANT#-}"
+	local ISO="slitaz-rolling"
+	[ -n "${VARIANT}" ] && ISO="${ISO}-${VARIANT}"
+	local URL="https://mirror.slitaz.org/iso/rolling"
 	HASH=$(web_pipe "${URL}/${ISO}.md5" | cut -d' ' -f1)
 	echo "${URL}/${ISO}.iso ${HASH}"
 }

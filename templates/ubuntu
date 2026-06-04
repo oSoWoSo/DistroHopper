@@ -80,7 +80,7 @@ case "${OS}" in
 		OSNAME="ubuntu-cinnamon"
 		PRETTY="Ubuntu Cinnamon"
 		LOGO=""
-		ICON="ubuntu-cinnamon.svg"
+		ICON="ubuntucinnamon.svg"
 		CATEGORY="Beginner, Desktop"
 		BASEDOF="Ubuntu"
 		HOMEPAGE="https://ubuntucinnamon.org"
@@ -95,7 +95,7 @@ case "${OS}" in
 		OSNAME="ubuntu-kylin"
 		PRETTY="Ubuntu Kylin"
 		LOGO=""
-		ICON="ubuntu-kylin.svg"
+		ICON="ubuntu.svg"
 		CATEGORY="Beginner, Desktop"
 		BASEDOF="Ubuntu"
 		HOMEPAGE="https://ubuntukylin.com"
@@ -135,12 +135,12 @@ case "${OS}" in
 		RSS=""
 		DW="ubuntuunity"
 		;;
-	ubuntustudio)
-		# Template file for 'ubuntustudio'
-		OSNAME="ubuntustudio"
+	ubuntu-studio)
+		# Template file for 'ubuntu-studio'
+		OSNAME="ubuntu-studio"
 		PRETTY="UbuntuStudio"
 		LOGO=""
-		ICON="ubuntustudio.svg"
+		ICON="ubuntu.svg"
 		CATEGORY="Beginner, Multimedia"
 		BASEDOF="Ubuntu"
 		HOMEPAGE="https://ubuntustudio.org"
@@ -166,6 +166,7 @@ case "${OS}" in
 		DW=""
 		;;
 	esac
+RSS="https://raw.githubusercontent.com/oSoWoSo/distro-feeds/public/releases.xml"
 
 # # If there is a point in the release, check if it is less than 16.04
 # if [[ "${RELEASE}" != *"daily"* ]]; then
@@ -186,22 +187,27 @@ case "${OS}" in
 function releases_() {
 	local VERSION_DATA=""
 	local SUPPORTED_VERSIONS=()
+	local FEED_RELEASES=""
+	local RELEASE_LIST=""
 	VERSION_DATA="$(IFS=$'\n' web_pipe https://api.launchpad.net/devel/ubuntu/series | jq -r '.entries[]')"
 	# shellcheck disable=SC2207
 	SUPPORTED_VERSIONS=($(IFS=$'\n' jq -r 'select(.status=="Supported" or .status=="Current Stable Release") | .version' <<<"${VERSION_DATA}" | sort))
+	FEED_RELEASES=$(atom_feed_iso_entries "${RSS}" "${OS//-/}" | cut -f1)
 	case "${OS}" in
 		ubuntu)
-			echo "${SUPPORTED_VERSIONS[@]}" daily-live;;
-		kubuntu|lubuntu|ubuntu-kylin|ubuntu-mate|ubuntustudio|xubuntu)
+			RELEASE_LIST="${SUPPORTED_VERSIONS[*]}";;
+		kubuntu|lubuntu|ubuntu-kylin|ubuntu-mate|ubuntu-studio|xubuntu)
 			# after 16.04
-			echo "${SUPPORTED_VERSIONS[@]:1}" daily-live;;
+			RELEASE_LIST="${SUPPORTED_VERSIONS[*]:1}";;
 		ubuntu-budgie)
 			# after 18.04
-			echo "${SUPPORTED_VERSIONS[@]:2}" daily-live;;
+			RELEASE_LIST="${SUPPORTED_VERSIONS[*]:2}";;
 		edubuntu|ubuntu-unity|ubuntu-cinnamon)
 			# after 23.10
-			echo "${SUPPORTED_VERSIONS[@]:5}" daily-live;;
+			RELEASE_LIST="${SUPPORTED_VERSIONS[*]:5}";;
 	esac
+	RELEASE_LIST="${RELEASE_LIST} ${FEED_RELEASES} daily-live"
+	printf '%s\n' "${RELEASE_LIST// /$'\n'}" | awk 'NF && !seen[$0]++' | paste -sd ' '
 }
 
 function arch_() {
@@ -234,22 +240,23 @@ function get_() {
 	case "${OS}" in
 		ubuntu-cinnamon) CDIMAGE_OS="ubuntucinnamon";;
 		ubuntu-kylin)    CDIMAGE_OS="ubuntukylin";;
+		ubuntu-studio)   CDIMAGE_OS="ubuntustudio";;
 	esac
 
-	if [[ "${RELEASE}" == "daily"* ]] && [ "${OS}" == "ubuntustudio" ]; then
+	if [[ "${RELEASE}" == "daily"* ]] && [ "${OS}" == "ubuntu-studio" ]; then
 		# Ubuntu Studio daily-live images are in the dvd directory
 		RELEASE="dvd"
 	fi
 	if [[ "${RELEASE}" == "jammy-daily" ]]; then
-		if [[ "${OS}" == "ubuntustudio" ]]; then
+		if [[ "${OS}" == "ubuntu-studio" ]]; then
 			URL="https://cdimage.ubuntu.com/${CDIMAGE_OS}/jammy/dvd/current"
 		else
 			URL="https://cdimage.ubuntu.com/${CDIMAGE_OS}/jammy/daily-live/current"
 		fi
-		VM_PATH="${OS}-jammy-live"
+		VM_PATH="${OS}-jammy-live$(arch_suffix)"
 	elif [[ "${RELEASE}" == "daily"* ]] || [ "${RELEASE}" == "dvd" ]; then
 		URL="https://cdimage.ubuntu.com/${CDIMAGE_OS}/${RELEASE}/current"
-		VM_PATH="${OS}-${RELEASE}"
+		VM_PATH="${OS}-${RELEASE}$(arch_suffix)"
 	elif [ "${OS}" == "ubuntu" ]; then
 		URL="https://releases.ubuntu.com/${RELEASE}"
 	else
@@ -269,13 +276,13 @@ function get_() {
 		exit 1
 	fi
 	if [[ "${RELEASE}" == "daily"* ]] || [ "${RELEASE}" == "dvd" ]; then
-		zsync_get "${URL}/${ISO}" "${VM_PATH}" "${OS}-devel.iso"
+		zsync_get "${URL}/${ISO}" "${VM_PATH}" "${OS}-devel.iso" || return $?
 		make_vm_config "${OS}-devel.iso"
 	elif [[ "${RELEASE}" == "jammy-daily" ]]; then
-		zsync_get "${URL}/${ISO}" "${VM_PATH}" "${OS}-jammy-live.iso"
+		zsync_get "${URL}/${ISO}" "${VM_PATH}" "${OS}-jammy-live.iso" || return $?
 		make_vm_config "${OS}-jammy-live.iso"
 	else
-		web_get "${URL}/${ISO}" "${VM_PATH}"
+		web_get "${URL}/${ISO}" "${VM_PATH}" || return $?
 		check_hash "${ISO}" "${HASH}"
 		make_vm_config "${ISO}"
 	fi

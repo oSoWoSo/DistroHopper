@@ -1,9 +1,8 @@
 # Template file for 'agarimos'
-OSNAME=agarimos
+OSNAME="agarimos"
 PRETTY="AgarimOS"
 LOGO=""
 ICON="agarimos.svg"
-ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/agarimos.png"
 CATEGORY="Lightweight"
 BASEDOF="Void"
 DESCRIPTION="Includes a minimum set of applications so you can build your system on your own."

@@ -1,0 +1,28 @@
+# Template file for 'split-linux'
+OSNAME="split-linux"
+PRETTY="Split Linux"
+LOGO=""
+ICON="split-linux.svg"
+CATEGORY="advanced"
+BASEDOF="Void Linux"
+HOMEPAGE="https://splitlinux.org/"
+DESCRIPTION="General operating system optimized for safely navigating hostile environments like the Internet and physical checkpoints"
+CREDENTIALS="-"
+GPG=""
+RSS=""
+DW=""
+
+function releases_() {
+	echo latest
+}
+
+function get_() {
+	local HASH=""
+	local PART=""
+	PART=$(curl -sL https://kevcrumb.gitlab.io/split-mklive/ | grep -oP "href='\K[^']+\.iso" | head -1)
+	HASH=$(curl -sL https://kevcrumb.gitlab.io/split-mklive/ | grep -oP '(?<=<pre>)[a-f0-9]+(?=\s)' | head -1)
+	echo "${PART} ${HASH}"
+}
+
+#2d941cf8b4ca66d5ce3f3307d5979222525ccaae4fe9aedf22cecdbde7efc25b  split-live-x86_64-musl-20260916.iso (1461977088b)
+#635d42057b30e17631099bbbe38c1dfba1ebf435599fb9f7b2e3a58559a804d3  split-live-x86_64-musl-20260916.iso.zsync (2855693b)

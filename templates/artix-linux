@@ -1,0 +1,67 @@
+# Template file for 'artix-linux'
+OSNAME="artix-linux"
+PRETTY="Artix Linux"
+LOGO=" "
+ICON="artix-linux.svg"
+CATEGORY="Desktop, Server"
+BASEDOF="Arch"
+HOMEPAGE="https://artixlinux.org"
+DESCRIPTION="The Art of Linux Simple Fast Systemd-free"
+CREDENTIALS="-"
+GPG=""
+RSS=""
+DW=""
+
+function releases_() {
+	# The mirror lists the images as artix-<edition>-<date>-x86_64.iso; the
+	# release is the date part. The editions are built on different days,
+	# so all of the dates are offered.
+	echo $(web_pipe "https://mirror1.artixlinux.org/iso/" \
+		| grep -oE 'artix-[a-z0-9-]+-[0-9]{8}-x86_64\.iso' \
+		| sed -E 's/^artix-[a-z0-9-]+-([0-9]{8})-x86_64\.iso$/\1/' \
+		| sort -ru \
+		| uniq)
+}
+
+function editions_() {
+	# Extract edition-init combinations (e.g., base-dinit, plasma-openrc, community-gtk-openrc)
+	echo $(web_pipe "https://mirror1.artixlinux.org/iso/" \
+		| grep -oE 'artix-[a-z0-9-]+-[0-9]{8}-x86_64\.iso' \
+		| sed -E 's/^artix-(.*)-[0-9]{8}-x86_64\.iso$/\1/' \
+		| sort -u)
+}
+
+
+function arch_() {
+	echo amd64
+}
+
+function get_() {
+	local HASH=""
+	local ISO=""
+	local URL="https://iso.artixlinux.org/iso"
+	# The editions are built on different days, so the image of an edition is
+	# not always the one of the newest release. The checksum file lists the
+	# exact images, so the one matching the edition and the release is used.
+	ISO=$(web_pipe "${URL}/sha256sums" \
+		| grep -E "artix-${EDITION}-${RELEASE}-x86_64\.iso\$" \
+		| awk '{print $2}' \
+		| head -n 1)
+	if [ -z "${ISO}" ]; then
+		# Fall back to the newest image of this edition.
+		ISO=$(web_pipe "https://mirror1.artixlinux.org/iso/" \
+			| grep -oE "artix-${EDITION}-[0-9]{8}-x86_64\.iso" \
+			| sort -ru \
+			| head -n 1)
+	fi
+	if [ -z "${ISO}" ]; then
+		echo "ERROR! No Artix image found for ${EDITION} ${RELEASE}." >&2
+		return 1
+	fi
+	HASH=$(web_pipe "${URL}/sha256sums" | grep -E " ${ISO}\$" | awk '{print $1}' | head -n 1)
+	echo "${URL}/${ISO} ${HASH}"
+}
+
+function config_() {
+	echo "disk_size=\"32G\"" >> "${CONF_FILE}"
+}

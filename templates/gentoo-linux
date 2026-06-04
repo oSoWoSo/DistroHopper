@@ -1,0 +1,46 @@
+# Template file for 'gentoo-linux'
+OSNAME="gentoo-linux"
+PRETTY="Gentoo Linux"
+LOGO=""
+ICON=""
+CATEGORY="Advanced"
+BASEDOF="Independent"
+HOMEPAGE="https://www.gentoo.org/"
+DESCRIPTION="A flexible, source-based Linux distribution"
+CREDENTIALS="root:"
+GPG=""
+RSS=""
+DW=""
+
+function releases_() {
+	echo latest
+}
+
+function editions_() {
+	local MANIFEST=""
+	MANIFEST=$(web_pipe "https://distfiles.gentoo.org/releases/amd64/autobuilds/latest-iso.txt")
+	{
+		printf '%s\n' "${MANIFEST}" | grep -q '/install-amd64-minimal-' && echo minimal
+		printf '%s\n' "${MANIFEST}" | grep -q '/livegui-amd64-' && echo livegui
+	}
+}
+
+function arch_() {
+	echo amd64
+}
+
+function get_() {
+	local URL="https://distfiles.gentoo.org/releases/amd64/autobuilds"
+	local ISO_PATH=""
+	ISO_PATH=$(web_pipe "${URL}/latest-iso.txt" \
+		| awk -v edition="${EDITION}" '
+			$1 !~ /^#/ && edition == "minimal" && $1 ~ /\/install-amd64-minimal-/ {print $1; exit}
+			$1 !~ /^#/ && edition == "livegui" && $1 ~ /\/livegui-amd64-/ {print $1; exit}
+		')
+	[ -n "${ISO_PATH}" ] || return 1
+	local ISO="${ISO_PATH##*/}"
+	local HASH=""
+	HASH=$(web_pipe "${URL}/${ISO_PATH}.DIGESTS" \
+		| awk -v iso="${ISO}" '$0 == "# SHA512 HASH" {sha=1; next} /^#/ {sha=0} sha && $2 == iso {print $1; exit}')
+	echo "${URL}/${ISO_PATH} ${HASH}"
+}

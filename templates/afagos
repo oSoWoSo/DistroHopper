@@ -1,9 +1,8 @@
 # Template file for 'afagos'
-OSNAME=afagos
+OSNAME="afagos"
 PRETTY="AfagOS"
 LOGO=""
-ICON="afagos.png"
-ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/afagos.png"
+ICON="afagos.svg"
 CATEGORY="Desktop, Live Medium"
 BASEDOF="Void"
 DESCRIPTION="Sister project of AgarimOS featuring a vanilla KDE Plasma desktop"
@@ -20,7 +19,6 @@ function releases_() {
 function get_() {
 	local ISO
 	ISO=$(web_pipe "https://sourceforge.net/projects/afagos/rss?path=/" \
-		| grep 'title><!\[CDATA' | cut -d'[' -f3 | cut -d']' -f1 | grep '\.iso' | head -1 | cut -d'/' -f3)
-	local URL="https://sourceforge.net/projects/afagos/files/PLASMA"
-	echo "${URL}/${ISO}"
+		| grep 'title><!\[CDATA' | cut -d'[' -f3 | cut -d']' -f1 | grep '\.iso' | head -1)
+	echo "https://sourceforge.net/projects/afagos/files${ISO}"
 }

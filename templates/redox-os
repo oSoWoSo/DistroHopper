@@ -2,8 +2,7 @@
 OSNAME="redox-os"
 PRETTY="Redox OS"
 LOGO=""
-ICON="redox.png"
-ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/redox.png"
+ICON="redox-os.svg"
 CATEGORY="Desktop, Live Medium, Server"
 BASEDOF="-"
 HOMEPAGE="https://www.redox-os.org"
@@ -22,7 +21,7 @@ function editions_() {
 }
 
 function arch_() {
-	echo amd64 arm64 i586 i686 riscv64
+	echo amd64 arm64 i586 riscv64
 }
 
 function get_() {

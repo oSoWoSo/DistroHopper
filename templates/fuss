@@ -1,0 +1,39 @@
+# Template file for 'fuss'
+OSNAME="fuss"
+PRETTY="FUSS Linux"
+LOGO=""
+ICON="fuss.svg"
+CATEGORY="Education"
+BASEDOF="Debian"
+HOMEPAGE="https://fuss.bz.it"
+DESCRIPTION="Debian-based GNU/Linux distribution for schools in South Tyrol, with live and educational editions"
+CREDENTIALS="user:live"
+GPG=""
+RSS=""
+DW=""
+
+function releases_() {
+	echo 13
+}
+
+function editions_() {
+	echo base education
+}
+
+function arch_() {
+	echo amd64
+}
+
+function get_() {
+	local URL="https://iso.fuss.bz.it/fuss${RELEASE}/client"
+	local ISO=""
+	local HASH=""
+	ISO=$(web_pipe "${URL}/" | grep -oE "fuss-${RELEASE}\\.[0-9]+(\\.[0-9]+)*-amd64-live-${EDITION}\\.iso" | sort -V | tail -n 1)
+	[ -n "${ISO}" ] || return 0
+	HASH=$(web_pipe "${URL}/sha256sums.txt" | awk -v iso="${ISO}" '$2 == iso {print $1; exit}')
+	echo "${URL}/${ISO} ${HASH}"
+}
+
+function config_() {
+	echo 'disk_size="32G"' >> "${CONF_FILE}"
+}

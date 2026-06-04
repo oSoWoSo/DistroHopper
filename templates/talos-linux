@@ -1,0 +1,59 @@
+# Template file for 'talos-linux'
+OSNAME="talos-linux"
+PRETTY="Talos Linux"
+LOGO=""
+ICON="talos-linux.svg"
+CATEGORY="Server, Advanced"
+BASEDOF="-"
+HOMEPAGE="https://www.talos.dev/"
+DESCRIPTION="Minimal, immutable Kubernetes OS. The ISO boots into maintenance mode; installation requires applying a machine configuration with talosctl"
+CREDENTIALS=""
+GPG=""
+RSS="https://raw.githubusercontent.com/oSoWoSo/distro-feeds/public/releases.xml"
+DW="https://distrowatch.com/talos"
+GUEST="linux"
+
+function arch_() {
+	echo amd64 arm64
+}
+
+function releases_() {
+	atom_feed_iso_entries "${RSS}" "${DW##*/}" \
+		| awk -F '\t' '
+			{
+				release = $1
+				if (release ~ /-alpha[0-9]+$/) sub(/-alpha/, "-alpha.", release)
+				print release
+			}
+		' \
+		| sort -Vr
+}
+
+function get_() {
+	local TALOS_ARCH="${ARCH:-amd64}"
+	local TALOS_RELEASE="${RELEASE}"
+	local ISO_URL=""
+	local HASH=""
+	if [[ "${TALOS_RELEASE}" =~ ^(.+-alpha)([0-9]+)$ ]]; then
+		TALOS_RELEASE="${BASH_REMATCH[1]}.${BASH_REMATCH[2]}"
+	fi
+	case "${TALOS_ARCH}" in
+		amd64)
+			ISO_URL=$(atom_feed_iso_entries "${RSS}" "${DW##*/}" \
+				| awk -F '\t' -v release="${TALOS_RELEASE}" '
+					{
+						upstream_release = $1
+						if (upstream_release ~ /-alpha[0-9]+$/) sub(/-alpha/, "-alpha.", upstream_release)
+						if (upstream_release == release) { print $2; exit }
+					}
+				')
+			;;
+		arm64) ;;
+		*) return 1 ;;
+	esac
+	[ -n "${ISO_URL}" ] || ISO_URL="https://github.com/siderolabs/talos/releases/download/v${TALOS_RELEASE}/metal-${TALOS_ARCH}.iso"
+	HASH=$(web_pipe_json "https://api.github.com/repos/siderolabs/talos/releases/tags/v${TALOS_RELEASE}" \
+		| jq -r --arg asset "metal-${TALOS_ARCH}.iso" \
+			'.assets[]? | select(.name == $asset) | (.digest // "") | select(startswith("sha256:")) | sub("^sha256:"; "")')
+	echo "${ISO_URL} ${HASH}"
+}

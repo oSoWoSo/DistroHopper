@@ -3,7 +3,6 @@ OSNAME="tails"
 PRETTY="Tails"
 LOGO=""
 ICON="tails.svg"
-ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/tails.png"
 CATEGORY="advanced"
 BASEDOF="Debian"
 HOMEPAGE="https://tails.net"
@@ -21,9 +20,12 @@ function get_() {
 	local JSON=""
 	local HASH=""
 	local URL=""
-	JSON="$(web_pipe "https://tails.boum.org/install/v2/Tails/amd64/${RELEASE}/latest.json")"
-	URL=$(echo "${JSON}" | jq -r '.installations[0]."installation-paths"[]|select(.type=="iso")|."target-files"[0].url')
-	HASH=$(echo "${JSON}" | jq -r '.installations[0]."installation-paths"[]|select(.type=="iso")|."target-files"[0].sha256')
+	JSON="$(web_pipe "https://tails.net/install/v2/Tails/amd64/${RELEASE}/latest.json")"
+	printf '%s' "${JSON}" | jq -e 'type == "object"' >/dev/null 2>&1 || return 0
+	URL=$(printf '%s' "${JSON}" | jq -r '.installations[0]."installation-paths"[]|select(.type=="iso")|."target-files"[0].url' 2>/dev/null)
+	HASH=$(printf '%s' "${JSON}" | jq -r '.installations[0]."installation-paths"[]|select(.type=="iso")|."target-files"[0].sha256' 2>/dev/null)
+	[[ "${URL}" == null ]] && URL=""
+	[ -n "${URL}" ] || return 0
 	echo "${URL} ${HASH}"
 }
 

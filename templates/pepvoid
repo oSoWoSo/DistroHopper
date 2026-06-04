@@ -1,0 +1,60 @@
+# Template file for 'pepvoid'
+OSNAME="pepvoid"
+PRETTY="PepVoid"
+LOGO=""
+ICON="pepvoid.svg"
+CATEGORY="Desktop, Live Medium"
+BASEDOF="Void"
+DESCRIPTION="Void Linux-based edition of Peppermint OS, providing a lightweight rolling-release desktop"
+HOMEPAGE="https://peppermintos.org/PepVoid/"
+CREDENTIALS=""
+GPG=""
+RSS=""
+DW=""
+
+PEPVOID_URL="https://peppermintos.org/PepVoid"
+
+function releases_() {
+	echo current
+}
+
+function arch_() {
+	web_pipe "${PEPVOID_URL}/" | grep -oE 'pepvoid-[A-Za-z0-9_]+-linux' | sed 's/^pepvoid-//;s/-linux$//' | sort -u | while read -r _a; do
+		case "${_a}" in
+			x86_64) echo amd64 ;;
+			aarch64) echo arm64 ;;
+			*) echo "${_a}" ;;
+		esac
+	done | sort -u
+}
+
+function editions_() {
+	web_pipe "${PEPVOID_URL}/" | grep -oE 'pepvoid-[^"]+\.iso' | sed 's/^pepvoid-//;s/\.iso$//' | while read -r _n; do
+		_libc=""
+		case "${_n}" in
+			*-musl-*) _libc="musl-" ;;
+		esac
+		_display="loaded"
+		case "${_n}" in
+			*-xlibre-*) _display="xlibre" ;;
+		esac
+		echo "${_libc}${_display}"
+	done | sort -u
+}
+
+function get_() {
+	local URL="${PEPVOID_URL}"
+	local ARCH_UP
+	ARCH_UP=$(_qarch_to_upstream "${ARCH:-amd64}")
+	local ISO=""
+	local _needle=""
+	case "${EDITION}" in
+		loaded) _needle="linux-xfce-loaded.iso" ;;
+		xlibre) _needle="xfce-xlibre-loaded.iso" ;;
+		musl) _needle="musl-linux-xfce-loaded.iso" ;;
+		musl-xlibre) _needle="musl-linux-xfce-xlibre-loaded.iso" ;;
+		*) _needle="${EDITION}" ;;
+	esac
+	ISO=$(web_pipe "${URL}/" | grep -oE "pepvoid-${ARCH_UP}-[^\"']*\.iso" | grep -F "${_needle}" | head -n 1)
+	echo "${URL}/${ISO}"
+}

@@ -1,0 +1,74 @@
+# Template file for 'devuan-gnu-linux'
+OSNAME="devuan-gnu-linux"
+PRETTY="Devuan GNU+Linux"
+LOGO=""
+ICON=""
+CATEGORY="Beginner"
+BASEDOF="Debian"
+HOMEPAGE="https://www.devuan.org/"
+DESCRIPTION="A Debian-based GNU/Linux distribution without systemd"
+CREDENTIALS=""
+GPG=""
+RSS=""
+DW=""
+
+function releases_() {
+	local INDEX=""
+	local STABLE=""
+	local RELEASES=""
+	INDEX=$(web_pipe "https://files.devuan.org/")
+	STABLE=$(printf '%s\n' "${INDEX}" \
+		| grep -oE 'LATEST_STABLE_IS_[A-Z]+' \
+		| sed 's/^LATEST_STABLE_IS_//' \
+		| tr '[:upper:]' '[:lower:]')
+	RELEASES=$(printf '%s\n' "${INDEX}" \
+		| grep -oE 'devuan_[a-z]+/' \
+		| sed -E 's#^devuan_([^/]+)/$#\1#')
+	{
+		printf '%s\n' "${STABLE}"
+		printf '%s\n' "${RELEASES}"
+	} | awk 'NF && !seen[$0]++'
+}
+
+function editions_() {
+	local ARCH="${ARCH:-amd64}"
+	local SELECTED_RELEASE="${RELEASE:-$(releases_ | awk 'NR == 1 {print; exit}')}"
+	local BASE_URL="https://files.devuan.org/devuan_${SELECTED_RELEASE}"
+	{
+		web_pipe "${BASE_URL}/installer-iso/" \
+			| grep -oE "devuan_${SELECTED_RELEASE}_[0-9]+\.[0-9]+\.[0-9]+_${ARCH}_(desktop|netinstall|server)\.iso" \
+			| sed -E "s/^.*_${ARCH}_([^.]*)\.iso$/\1/"
+		web_pipe "${BASE_URL}/desktop-live/" \
+			| grep -oE "devuan_${SELECTED_RELEASE}_[0-9]+\.[0-9]+\.[0-9]+_${ARCH}_desktop-live\.iso" \
+			| sed -E "s/^.*_${ARCH}_([^.]*)\.iso$/\1/"
+	} | sort -u
+}
+
+function arch_() {
+	echo amd64
+}
+
+function get_() {
+	local ARCH="${ARCH:-amd64}"
+	local BASE_URL="https://files.devuan.org/devuan_${RELEASE}"
+	local ISO_DIR="installer-iso"
+	case "${EDITION}" in
+		desktop-live) ISO_DIR="desktop-live";;
+		desktop|netinstall|server) ISO_DIR="installer-iso";;
+		*) return 1;;
+	esac
+	local ISO=""
+	ISO=$(web_pipe "${BASE_URL}/${ISO_DIR}/" \
+		| grep -oE "devuan_${RELEASE}_[0-9]+\.[0-9]+\.[0-9]+_${ARCH}_${EDITION}\.iso" \
+		| sort -V \
+		| tail -n 1)
+	[ -n "${ISO}" ] || return 1
+	local HASH=""
+	if [ "${ISO_DIR}" == "desktop-live" ]; then
+		HASH=$(web_pipe "${BASE_URL}/${ISO_DIR}/${ISO}.sha256" | grep -oE '^[[:xdigit:]]{64}' | head -n 1)
+	else
+		HASH=$(web_pipe "${BASE_URL}/installer-iso/SHA256SUMS.txt" \
+			| awk -v iso="${ISO}" '$2 == iso {print $1; exit}')
+	fi
+	echo "${BASE_URL}/${ISO_DIR}/${ISO} ${HASH}"
+}

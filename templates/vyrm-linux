@@ -1,0 +1,30 @@
+# Template file for 'vyrm-linux'
+OSNAME="vyrm-linux"
+PRETTY="Vyrm Linux"
+LOGO=""
+ICON=""
+CATEGORY="Desktop, Live Medium"
+BASEDOF="Void"
+DESCRIPTION="Lightweight, modern Linux distribution based on Void Linux, featuring the SonicDE desktop environment and the XLibre display server."
+HOMEPAGE="https://sourceforge.net/projects/vyrm-linux"
+CREDENTIALS="anon:voidlinux,root:voidlinux"
+GPG=""
+RSS="https://sourceforge.net/projects/vyrm-linux/rss?path=/"
+DW=""
+
+function releases_() {
+	echo latest
+}
+
+function arch_() {
+	echo amd64
+}
+
+function get_() {
+	local FILE
+	FILE=$(web_pipe "${RSS}" \
+		| grep -oE '/vyrm-linux-[^<"]+\.iso' \
+		| head -1)
+	[ -n "${FILE}" ] || return 1
+	echo "https://sourceforge.net/projects/vyrm-linux/files${FILE}"
+}

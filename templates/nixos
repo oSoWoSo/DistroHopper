@@ -3,7 +3,6 @@ OSNAME="nixos"
 PRETTY="NixOS"
 LOGO=" "
 ICON="nixos.svg"
-ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/nixos.png"
 CATEGORY="advanced"
 BASEDOF="-"
 HOMEPAGE="https://nixos.org"
@@ -20,7 +19,23 @@ function releases_() {
 }
 
 function editions_() {
-	echo minimal plasma gnome
+	local SELECTED_RELEASE="${RELEASE:-}"
+	if [ -z "${SELECTED_RELEASE}" ]; then
+		echo minimal plasma gnome
+		return
+	fi
+	local URL="https://channels.nixos.org/nixos-${SELECTED_RELEASE}"
+	local EDITION_NAME=""
+	local ISO=""
+	for EDITION_NAME in minimal plasma gnome; do
+		ISO="latest-nixos-${EDITION_NAME}-x86_64-linux.iso"
+		if [ "${EDITION_NAME}" == "plasma" ] && [ "${SELECTED_RELEASE}" != "23.11" ]; then
+			ISO="latest-nixos-plasma6-x86_64-linux.iso"
+		elif [ "${EDITION_NAME}" == "plasma" ]; then
+			ISO="latest-nixos-plasma5-x86_64-linux.iso"
+		fi
+		web_check "${URL}/${ISO}" && echo "${EDITION_NAME}"
+	done
 }
 
 function get_() {
@@ -37,7 +52,7 @@ function get_() {
 	esac
 	local ISO="latest-nixos-${EDITION}-x86_64-linux.iso"
 	local URL="https://channels.nixos.org/nixos-${RELEASE}"
-	HASH=$(web_pipe "${URL}/${ISO}.sha256" | cut -d' ' -f1)
+	HASH=$(web_pipe "${URL}/${ISO}.sha256" | grep -oE '^[[:xdigit:]]{64}' | head -n 1)
 	echo "${URL}/${ISO} ${HASH}"
 }
 

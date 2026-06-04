@@ -1,0 +1,34 @@
+# Template file for 'arch-linux'
+OSNAME="arch-linux"
+PRETTY="Arch Linux"
+LOGO=" "
+ICON="arch-linux.svg"
+CATEGORY="Desktop, Server"
+BASEDOF="-"
+HOMEPAGE="https://archlinux.org"
+DESCRIPTION="Lightweight and flexible Linux® distribution that tries to Keep It Simple"
+CREDENTIALS="-"
+GPG=""
+RSS=""
+DW=""
+
+function releases_() {
+	echo latest
+}
+
+function arch_() {
+	echo amd64
+}
+
+function get_() {
+	local HASH=""
+	local ISO=""
+	local URL="https://mirror.rackspace.com/archlinux"
+	ISO=$(web_pipe "https://archlinux.org/releng/releases/json/" | jq -r '.releases[0].iso_url')
+	HASH=$(web_pipe "https://archlinux.org/releng/releases/json/" | jq -r '.releases[0].sha256_sum')
+	echo "${URL}${ISO} ${HASH}"
+}
+
+function config_() {
+	echo "disk_size=\"32G\"" >> "${CONF_FILE}"
+}

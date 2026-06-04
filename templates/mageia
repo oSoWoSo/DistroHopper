@@ -3,7 +3,6 @@ OSNAME="mageia"
 PRETTY="Mageia"
 LOGO=" "
 ICON="mageia.svg"
-ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/mageia.png"
 CATEGORY="Beginner"
 BASEDOF="-"
 HOMEPAGE="https://www.mageia.org"
@@ -14,7 +13,7 @@ RSS=""
 DW=""
 
 function releases_() {
-	echo 9 8
+	echo 10
 }
 
 function editions_() {

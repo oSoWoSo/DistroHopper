@@ -3,7 +3,6 @@ OSNAME="manjaro"
 PRETTY="Manjaro"
 LOGO=" "
 ICON="manjaro.svg"
-ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/manjaro.png"
 CATEGORY="Beginner"
 BASEDOF="Arch"
 HOMEPAGE="https://manjaro.org"
@@ -18,62 +17,68 @@ function releases_() {
 }
 
 function editions_() {
-	echo full minimal
-}
-
-
-function get_() {
-    local HASH=""
-    local ISO=""
-    local MANIFEST=""
-    local URL=""
-    local TYPE="official"
-    MANIFEST="$(web_pipe https://gitlab.manjaro.org/web/iso-info/-/raw/master/file-info.json)"
-    case "${RELEASE}" in
-        sway)
-            MANIFEST="$(web_pipe https://mirror.manjaro-sway.download/manjaro-sway/release.json)"
-            TYPE="sway"
-            ;;
-        cinnamon|i3) TYPE="community";;
-    esac
-
-    if [ "${EDITION}" == "minimal" ] && [ "${TYPE}" != "sway" ]; then
-        EDITION=".minimal"
-    else
-        EDITION=""
-    fi
-
-    if [ "${RELEASE}" == "sway" ]; then
-        URL=$(echo "${MANIFEST}" | jq -r '.[] | select(.name|test("^manjaro-sway-.*[.]iso$")) | .url')
-    else
-        URL="$(echo "${MANIFEST}" | jq -r ."${TYPE}.${RELEASE}${EDITION}".image)"
-    fi
-    HASH=$(web_pipe "${URL}.sha512" | cut -d' ' -f1)
-    echo "${URL} ${HASH}"
+	if [[ "${RELEASE}" == sway ]]; then
+		echo full
+	else
+		echo full minimal
+	fi
 }
 
 function get_() {
 	local HASH=""
-	local MANIFEST=""
 	local URL=""
+	local MANIFEST=""
 	local TYPE="official"
-	MANIFEST="$(web_pipe https://gitlab.manjaro.org/web/iso-info/-/raw/master/file-info.json)"
+
 	case "${RELEASE}" in
 		sway)
-			MANIFEST="$(web_pipe https://mirror.manjaro-sway.download/manjaro-sway/release.json)"
-			TYPE="sway"
+			MANIFEST="$(web_pipe https://manjaro-sway.download/iso/)"
+			local VERSION
+			VERSION=$(printf '%s' "${MANIFEST}" | grep -oE '/iso/[0-9]{12}/' | head -n 1 | awk -F/ '{print $3}')
+			[ -n "${VERSION}" ] || return 0
+			URL="https://manjaro-sway.download/iso/latest/manjaro-sway.iso"
+			HASH=$(web_pipe "https://manjaro-sway.download/iso/${VERSION}/SHA256SUMS" |
+				awk '$2 ~ /manjaro-sway-.*[.]iso$/ { print $1; exit }')
+			echo "${URL} ${HASH}"
+			return 0
 			;;
-		cinnamon|i3) TYPE="community";;
+		cinnamon|i3)
+			TYPE="community"
+			MANIFEST="$(web_pipe https://gitlab.manjaro.org/web/iso-info/-/raw/master/file-info.json)"
+			printf '%s' "${MANIFEST}" | jq -e 'type == "object"' >/dev/null 2>&1 || return 0
+			local ED=""
+			[ "${EDITION}" == "minimal" ] && ED=".minimal"
+			URL=$(printf '%s' "${MANIFEST}" |
+				jq -r ".${TYPE}.${RELEASE}${ED}.image" 2>/dev/null)
+			[[ "${URL}" == null ]] && URL=""
+			[ -n "${URL}" ] || return 0
+			HASH=$(web_pipe "${URL}.sha512" | cut -d' ' -f1)
+			echo "${URL} ${HASH}"
+			return 0
+			;;
 	esac
 
-	local ED=""
-	[ "${EDITION}" == "minimal" ] && [ "${TYPE}" != "sway" ] && ED=".minimal"
+	local PROJECT="manjarolinux"
+	local DESKTOP="${RELEASE}"
+	[ "${DESKTOP}" == plasma ] && DESKTOP=kde
+	local ROOT="https://sourceforge.net/projects/${PROJECT}/files/${DESKTOP}"
+	local PAGE
+	local VERSION
+	local ISO_LIST
+	VERSION=$(web_pipe "${ROOT}/" |
+		grep -oE "/projects/${PROJECT}/files/${DESKTOP}/[0-9]+([.][0-9]+)+/" |
+		awk -F/ '{print $6}' | sort -Vr | head -n 1)
+	[ -n "${VERSION}" ] || return 0
 
-	if [ "${RELEASE}" == "sway" ]; then
-		URL=$(echo "${MANIFEST}" | jq -r '.[] | select(.name|test("^manjaro-sway-.*[.]iso$")) | .url')
+	PAGE=$(web_pipe "${ROOT}/${VERSION}/")
+	ISO_LIST=$(printf '%s' "${PAGE}" |
+		grep -oE "https://sourceforge.net/projects/${PROJECT}/files/${DESKTOP}/${VERSION}/[^\"[:space:]]+[.]iso/download")
+	if [ "${EDITION}" == minimal ]; then
+		URL=$(printf '%s\n' "${ISO_LIST}" | grep -F -- '-minimal-' | head -n 1)
 	else
-		URL="$(echo "${MANIFEST}" | jq -r ".${TYPE}.${RELEASE}${ED}.image")"
+		URL=$(printf '%s\n' "${ISO_LIST}" | grep -vF -- '-minimal-' | head -n 1)
 	fi
-	HASH=$(web_pipe "${URL}.sha512" | cut -d' ' -f1)
+	[ -n "${URL}" ] || return 0
+	HASH=$(web_pipe "${URL%/download}.sha512/download" | cut -d' ' -f1)
 	echo "${URL} ${HASH}"
 }

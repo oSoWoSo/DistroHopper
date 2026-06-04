@@ -1,0 +1,47 @@
+# Template file for 'rhino-linux'
+OSNAME="rhino-linux"
+PRETTY="Rhino Linux"
+RSS="https://sourceforge.net/projects/rhino-linux-builder/rss?path=/"
+DW=""
+LOGO=""
+ICON="rhino-linux.svg"
+CATEGORY="Beginner"
+BASEDOF="Ubuntu"
+DESCRIPTION="Re-invents the Ubuntu experience as a rolling-release distribution built on a stable desktop environment. With Pacstall & XFCE"
+HOMEPAGE="https://rhinolinux.org/"
+CREDENTIALS="-"
+GPG=""
+
+function releases_() {
+	echo 2026.1 2025.4 2025.3 2025.2 2025.1 2024.2 2024.1 2023.4 2023.3 2023.2 2023.1
+}
+
+function editions_() {
+	case "${RELEASE:-}" in
+		2026.1|"") echo unicorn lomiri;;
+		*) echo unicorn;;
+	esac
+}
+
+function archs_() {
+	echo amd64 arm64
+}
+
+function get_() {
+	local HASH=""
+	local ISO=""
+	local URL=""
+	if [ "${EDITION}" = lomiri ]; then
+		[ "${RELEASE}" = 2026.1 ] || return 1
+		ISO="Rhino-Linux-${RELEASE}-${ARCH}-lomiri.iso"
+	else
+		ISO="Rhino-Linux-${RELEASE}-${ARCH}.iso"
+	fi
+	URL="https://sourceforge.net/projects/rhino-linux-builder/files/${RELEASE}"
+	HASH="$(web_pipe "${URL}/${ISO}.sha256" | grep "${ISO}" | cut -d' ' -f1)"
+	echo "${URL}/${ISO} ${HASH}"
+}
+
+function config_() {
+	echo "disk_size=\"32G\"" >> "${CONF_FILE}"
+}

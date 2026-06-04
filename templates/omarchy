@@ -1,0 +1,31 @@
+# Template file for 'omarchy'
+OSNAME="omarchy"
+PRETTY="Omarchy Linux"
+LOGO=""
+ICON="omarchy.svg"
+CATEGORY="Desktop, Live Medium, Source-based"
+BASEDOF="Arch"
+HOMEPAGE="https://omarchy.org"
+DESCRIPTION="Beautiful, modern & opinionated Arch-based Linux distribution featuring the Hyprland tiling window manager"
+CREDENTIALS="-"
+GPG=""
+RSS=""
+DW=""
+
+function releases_() {
+	echo 4.0.0
+}
+
+function get_() {
+	local HASH=""
+	local ISO=""
+	local URL=""
+	HASH="9224fab3720560f771969a99a499e5f7e0f8e2d6a0681d872d52f05fb5003da4"
+	ISO="omarchy-${RELEASE}.iso"
+	URL="https://iso.omarchy.org"
+	echo "${URL}/${ISO} ${HASH}"
+}
+
+function config_() {
+	echo "disk_size=\"32G\"" >> "${CONF_FILE}"
+}

@@ -1,0 +1,38 @@
+# Template file for 'zimaos'
+OSNAME="zimaos"
+PRETTY="ZimaOS"
+LOGO=""
+ICON="zimaos.svg"
+CATEGORY="Server, NAS"
+BASEDOF="Independent"
+HOMEPAGE="https://github.com/IceWhaleTech/ZimaOS"
+DESCRIPTION="A lightweight Linux-based operating system for personal servers and NAS devices, with remote access, RAID management, OTA updates, and a browser-based interface."
+CREDENTIALS="-"
+GPG=""
+RSS=""
+DW=""
+
+function releases_() {
+	web_pipe "https://api.github.com/repos/IceWhaleTech/ZimaOS/releases/latest" \
+		| jq -r '.tag_name // empty'
+}
+
+function editions_() {
+	echo installer
+}
+
+function arch_() {
+	echo amd64
+}
+
+function get_() {
+	local RELEASE_JSON URL HASH
+	RELEASE_JSON=$(web_pipe "https://api.github.com/repos/IceWhaleTech/ZimaOS/releases/tags/${RELEASE}")
+	URL=$(jq -r --arg asset "zimaos-x86_64-${RELEASE}_installer.iso" \
+		'.assets[] | select(.name == $asset) | .browser_download_url' <<<"${RELEASE_JSON}")
+	HASH=$(jq -r --arg asset "zimaos-x86_64-${RELEASE}_installer.iso" \
+		'.assets[] | select(.name == $asset) | (.digest // "") | sub("^sha256:"; "")' \
+		<<<"${RELEASE_JSON}")
+	[ -n "${URL}" ] || return 1
+	echo "${URL} ${HASH}"
+}

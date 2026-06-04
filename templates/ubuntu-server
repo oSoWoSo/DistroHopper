@@ -2,7 +2,6 @@
 OSNAME="ubuntu-server"
 PRETTY="Ubuntu Server"
 ICON="ubuntu-server.svg"
-ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/ubuntu-server.png"
 CATEGORY="advanced"
 BASEDOF="Debian"
 HOMEPAGE="https://ubuntu.com/server"
@@ -45,10 +44,10 @@ function get_() {
 		HASH=$(cut -d' ' -f1 <<<"${DATA}")
 	fi
 	if [[ "${RELEASE}" == "daily"* ]] || [ "${RELEASE}" == "dvd" ]; then
-		zsync_get "${URL}/${ISO}" "${VM_PATH}" "${OS}-devel.iso"
+		zsync_get "${URL}/${ISO}" "${VM_PATH}" "${OS}-devel.iso" || return $?
 		make_vm_config "${OS}-devel.iso"
 	else
-		web_get "${URL}/${ISO}" "${VM_PATH}"
+		web_get "${URL}/${ISO}" "${VM_PATH}" || return $?
 		check_hash "${ISO}" "${HASH}"
 		make_vm_config "${ISO}"
 	fi

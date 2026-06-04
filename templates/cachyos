@@ -2,8 +2,7 @@
 OSNAME="cachyos"
 PRETTY="CachyOS"
 LOGO=""
-ICON="cachy.svg"
-ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/cachyos.png"
+ICON="cachyos.svg"
 CATEGORY="advanced"
 BASEDOF="Arch"
 HOMEPAGE="https://cachyos.org"
@@ -26,7 +25,7 @@ function editions_() {
 function get_() {
 	local HASH=""
 	local URL=""
-	URL="$(web_pipe "https://cachyos.org/download/" | tr '&' '\n' | grep "ISO/${EDITION}" | grep -v 'iso.sha' | grep -v 'iso.sig' | cut -d';' -f2)"
+	URL="$(web_pipe "https://cachyos.org/download/" | grep -o "https://iso.cachyos.org/${EDITION}/[^&]*\.iso" | head -1)"
 	HASH=$(web_pipe "${URL}.sha256" | cut -d' ' -f1)
 	echo "${URL} ${HASH}"
 }

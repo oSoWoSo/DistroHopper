@@ -1,0 +1,43 @@
+# Template file for 'alpine-linux'
+OSNAME="alpine-linux"
+PRETTY="Alpine Linux"
+LOGO=""
+ICON=""
+CATEGORY="Lightweight"
+BASEDOF="Independent"
+HOMEPAGE="https://alpinelinux.org/"
+DESCRIPTION="A small, simple, and secure Linux distribution"
+CREDENTIALS="root:"
+GPG=""
+RSS=""
+DW=""
+
+function releases_() {
+	web_pipe "https://dl-cdn.alpinelinux.org/alpine/" \
+		| grep -oE 'v[0-9]+\.[0-9]+/' \
+		| tr -d '/' \
+		| sort -Vr
+}
+
+function editions_() {
+	echo standard
+}
+
+function arch_() {
+	echo amd64 arm64
+}
+
+function get_() {
+	local UPSTREAM_ARCH="x86_64"
+	[ "${ARCH:-amd64}" == "arm64" ] && UPSTREAM_ARCH="aarch64"
+	local URL="https://dl-cdn.alpinelinux.org/alpine/${RELEASE}/releases/${UPSTREAM_ARCH}"
+	local ISO=""
+	ISO=$(web_pipe "${URL}/" \
+		| grep -oE "alpine-standard-[0-9]+\.[0-9]+\.[0-9]+-${UPSTREAM_ARCH}\.iso" \
+		| sort -V \
+		| tail -n 1)
+	[ -n "${ISO}" ] || return 1
+	local HASH=""
+	HASH=$(web_pipe "${URL}/${ISO}.sha256" | grep -oE '^[[:xdigit:]]{64}' | head -n 1)
+	echo "${URL}/${ISO} ${HASH}"
+}

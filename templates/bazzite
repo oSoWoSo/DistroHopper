@@ -3,7 +3,6 @@ OSNAME="bazzite"
 PRETTY="bazzite"
 LOGO=""
 ICON="bazzite.svg"
-ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/bazzite.png"
 CATEGORY="Gaming"
 BASEDOF="Fedora SteamOS"
 HOMEPAGE="https://bazzite.gg"
@@ -30,14 +29,6 @@ function get_() {
 		kde)  ISO="bazzite-stable-amd64.iso";;
 	esac
 	HASH=$(web_pipe "${URL}/${ISO}-CHECKSUM" | cut -d' ' -f1)
-	echo "${URL}/${ISO} ${HASH}"
-}
-
-function get_() {
-	local HASH=""
-	local ISO=""
-	local URL="https://mirrors.o2switch.fr/batocera/x86_64/stable/${RELEASE}"
-	ISO="$(web_pipe "${URL}/" | grep -e 'batocera.*img.gz'| cut -d'"' -f2)"
 	echo "${URL}/${ISO} ${HASH}"
 }
 

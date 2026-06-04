@@ -1,0 +1,42 @@
+# Template file for 't4n-os'
+OSNAME="t4n-os"
+PRETTY="T4n OS"
+LOGO=""
+ICON="t4n-os.svg"
+CATEGORY="Desktop, Live Medium, Lightwight"
+BASEDOF="Void"
+DESCRIPTION="Lightweight, fast and minimalist Linux distribution based on Void Linux with vanilla Xfce desktop"
+HOMEPAGE="https://t4n-labs.github.io/t4n-os"
+CREDENTIALS="anon:voidlinux,root:voidlinux"
+GPG="https://sourceforge.net/projects/t4n-os/files/t4n-public.key"
+RSS="https://sourceforge.net/projects/t4n-os/rss?path=/"
+DW=""
+
+function releases_() {
+	echo latest
+}
+
+function editions_() {
+	web_pipe "${RSS}" \
+		| grep -oE 'T4n-OS_[^/<"]+/t4n_os-live-x86_64-[0-9]{8}-[a-z0-9-]+\.iso' \
+		| sed -E 's#^.*/t4n_os-live-x86_64-[0-9]{8}-([a-z0-9-]+)\.iso$#\1#' \
+		| sort -u
+}
+
+function get_() {
+	local FILE_PATH=""
+	FILE_PATH=$(web_pipe "${RSS}" \
+		| grep -oE "T4n-OS_[^/<\"]+/t4n_os-live-x86_64-[0-9]{8}-${EDITION}\\.iso" \
+		| head -n 1)
+	[ -n "${FILE_PATH}" ] || return 1
+	local DIR_PATH="${FILE_PATH%%/*}"
+	local URL="https://sourceforge.net/projects/t4n-os/files/${DIR_PATH}"
+	local ISO="${FILE_PATH##*/}"
+	local HASH=""
+	HASH=$(web_pipe "${URL}/t4nos-${EDITION}-sha256sums/download" \
+		| awk -v iso="${ISO}" '$2 == iso && length($1) == 64 {print $1; exit}')
+	echo "${URL}/${ISO}/download ${HASH}"
+}
+
+#https://sourceforge.net/projects/t4n-os/files/t4n-public.key/download
+#https://sourceforge.net/projects/t4n-os/files/T4n-OS_XFCE/SHA256SUMS.sig/download

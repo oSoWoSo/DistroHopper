@@ -2,8 +2,7 @@
 OSNAME="windows-server"
 PRETTY="Windows Server"
 LOGO=""
-ICON="windows.svg"
-ICON_ONLINE="https://distrowatch.com/images/yvzhuwbpy/windows-server.png"
+ICON="windows-server.svg"
 CATEGORY="advanced"
 BASEDOF="-"
 HOMEPAGE="https://www.microsoft.com/en-us/windows-server"
@@ -311,9 +310,9 @@ EOF
 
 
 echo "Downloading Spice drivers..."
-web_get https://www.spice-space.org/download/windows/spice-webdavd/spice-webdavd-x64-latest.msi "${VM_PATH}/unattended"
-web_get https://www.spice-space.org/download/windows/vdagent/vdagent-win-0.10.0/spice-vdagent-x64-0.10.0.msi "${VM_PATH}/unattended"
-web_get https://www.spice-space.org/download/windows/usbdk/UsbDk_1.0.22_x64.msi "${VM_PATH}/unattended"
+web_get https://www.spice-space.org/download/windows/spice-webdavd/spice-webdavd-x64-latest.msi "${VM_PATH}/unattended" || return $?
+web_get https://www.spice-space.org/download/windows/vdagent/vdagent-win-0.10.0/spice-vdagent-x64-0.10.0.msi "${VM_PATH}/unattended" || return $?
+web_get https://www.spice-space.org/download/windows/usbdk/UsbDk_1.0.22_x64.msi "${VM_PATH}/unattended" || return $?
 
 echo "Making unattended.iso"
 mkisofs -quiet -l -o "${VM_PATH}/unattended.iso" "${VM_PATH}/unattended/"
@@ -488,7 +487,7 @@ function download_windows_server() {
 
     # Download ISO
     FILE_NAME="${iso_download_link##*/}"
-    web_get "${iso_download_link}" "${VM_PATH}" "${FILE_NAME}"
+    web_get "${iso_download_link}" "${VM_PATH}" "${FILE_NAME}" || return $?
     OS="windows-server"
 }
 
@@ -596,14 +595,14 @@ function download_windows_workstation() {
 
     # Download ISO
     FILE_NAME="$(echo "$iso_download_link" | cut -d'?' -f1 | cut -d'/' -f5)"
-    web_get "${iso_download_link}" "${VM_PATH}" "${FILE_NAME}"
+    web_get "${iso_download_link}" "${VM_PATH}" "${FILE_NAME}" || return $?
 }
 
 function get_() {
     if [ "${OS}" == "windows-server" ]; then
-        download_windows_server "windows-server-${RELEASE}"
+        download_windows_server "windows-server-${RELEASE}" || return $?
     else
-        download_windows_workstation "${RELEASE}"
+        download_windows_workstation "${RELEASE}" || return $?
     fi
 
     if [ "${OPERATION}" == "download" ]; then
@@ -611,12 +610,12 @@ function get_() {
     fi
 
     echo "Downloading VirtIO drivers..."
-    web_get "https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso" "${VM_PATH}"
+    web_get "https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso" "${VM_PATH}" || return $?
 
     rm -f "${VM_PATH}/unattended.iso"
     case ${RELEASE} in
         10|11)
-            unattended_windows "${VM_PATH}"
+            unattended_windows "${VM_PATH}" || return $?
             ;;
     esac
 
