@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="128.0px"
+   height="128.0px"
+   viewBox="0 0 128.0 128.0"
+   version="1.1"
+   id="svg6"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <g
+     id="layer1">
+    <path
+       id="path1"
+       style="fill:#292c30"
+       d="M64 12C49 12 43 24 46 39C48 49 42 56 37 65C32 74 29 86 32 98C36 113 48 120 64 120C80 120 92 113 96 98C99 86 96 74 91 65C86 56 80 49 82 39C85 24 79 12 64 12Z" />
+    <path
+       id="path2"
+       style="fill:#f2f2ef"
+       d="M50 55C56 49 72 49 78 55C83 61 88 73 88 87C88 101 78 111 64 111C50 111 40 101 40 87C40 73 45 61 50 55Z" />
+    <path
+       id="path3"
+       style="fill:#f8f8f4"
+       d="M53 30A5 7 0 1 0 53 44A5 7 0 1 0 53 30ZM75 30A5 7 0 1 0 75 44A5 7 0 1 0 75 30Z" />
+    <path
+       id="path4"
+       style="fill:#24272a"
+       d="M53 33A2.4 3.6 0 1 0 53 40.2A2.4 3.6 0 1 0 53 33ZM75 33A2.4 3.6 0 1 0 75 40.2A2.4 3.6 0 1 0 75 33Z" />
+    <path
+       id="path5"
+       style="fill:#f7a930"
+       d="M56 46Q64 51 72 46Q69 54 64 55Q59 54 56 46Z" />
+    <path
+       id="path6"
+       style="fill:#f7a930"
+       d="M40 98C35 97 29 99 27 104C25 109 30 113 37 113H49C53 113 54 110 51 107L40 98ZM88 98C93 97 99 99 101 104C103 109 98 113 91 113H79C75 113 74 110 77 107L88 98Z" />
+  </g>
+</svg>

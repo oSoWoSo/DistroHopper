@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="445" height="428" viewBox="0 0 445 428" role="img" aria-label="Bedrock Linux ASCII logo">
+  <title>Bedrock Linux – ASCII logo</title>
+  <desc>Faithful outline conversion of the original four-line ASCII drawing using a monospace font. Transparent background; all characters are editable vector paths.</desc>
+  <g id="bedrock-logo" fill="#ffffff" fill-rule="nonzero">
+    <path d="M1233 -403V-483H0V-403Z" transform="translate(20.00000 94.00000) scale(0.0468750 -0.0468750)"/>
+<path d="M1233 -403V-483H0V-403Z" transform="translate(77.79688 94.00000) scale(0.0468750 -0.0468750)"/>
+<path d="M293 1493 1079 -190H889L102 1493Z" transform="translate(20.00000 194.00000) scale(0.0468750 -0.0468750)"/>
+<path d="M293 1493 1079 -190H889L102 1493Z" transform="translate(135.59375 194.00000) scale(0.0468750 -0.0468750)"/>
+<path d="M1233 -403V-483H0V-403Z" transform="translate(193.39062 194.00000) scale(0.0468750 -0.0468750)"/>
+<path d="M1233 -403V-483H0V-403Z" transform="translate(251.18750 194.00000) scale(0.0468750 -0.0468750)"/>
+<path d="M1233 -403V-483H0V-403Z" transform="translate(308.98438 194.00000) scale(0.0468750 -0.0468750)"/>
+<path d="M293 1493 1079 -190H889L102 1493Z" transform="translate(77.79688 294.00000) scale(0.0468750 -0.0468750)"/>
+<path d="M1233 -403V-483H0V-403Z" transform="translate(251.18750 294.00000) scale(0.0468750 -0.0468750)"/>
+<path d="M293 1493 1079 -190H889L102 1493Z" transform="translate(366.78125 294.00000) scale(0.0468750 -0.0468750)"/>
+<path d="M293 1493 1079 -190H889L102 1493Z" transform="translate(135.59375 394.00000) scale(0.0468750 -0.0468750)"/>
+<path d="M1233 -403V-483H0V-403Z" transform="translate(193.39062 394.00000) scale(0.0468750 -0.0468750)"/>
+<path d="M1233 -403V-483H0V-403Z" transform="translate(251.18750 394.00000) scale(0.0468750 -0.0468750)"/>
+<path d="M1233 -403V-483H0V-403Z" transform="translate(308.98438 394.00000) scale(0.0468750 -0.0468750)"/>
+<path d="M889 1493H1079L293 -190H102Z" transform="translate(366.78125 394.00000) scale(0.0468750 -0.0468750)"/>
+  </g>
+</svg>
