@@ -196,6 +196,68 @@ function web_pipe_json() {
 	curl --disable --silent --location --header "Accept: application/json" "${1}"
 }
 
+# Emit Atom feed entries as slug<TAB>title<TAB>version<TAB>homepage<TAB>ISO URL<TAB>icon.
+atom_feed_entries() {
+	local feed_url="${1}"
+	web_pipe "${feed_url}" | awk '
+		BEGIN { RS = "<entry>" }
+		{
+			slug = title = version = homepage = iso_url = icon = id = ""
+			if (!match($0, /<id>https:\/\/distrowatch\.com\/[^<]*<\/id>/)) {
+				next
+			}
+			id = substr($0, RSTART + 4, RLENGTH - 9)
+			slug = id
+			sub(/^.*\//, "", slug)
+			if (match($0, /<title>[^<]*<\/title>/)) {
+				title = substr($0, RSTART + 7, RLENGTH - 15)
+				version = title
+				if (sub(/^.* /, "", version) == 0) {
+					version = "-"
+				}
+			}
+			if (match($0, /&lt;a href="[^"]+"&gt;Homepage&lt;\/a&gt;/)) {
+				homepage = substr($0, RSTART, RLENGTH)
+				sub(/^&lt;a href="/, "", homepage)
+				sub(/"&gt;Homepage&lt;\/a&gt;$/, "", homepage)
+			}
+			if (match($0, /&lt;a href="[^"]+\.iso[^"]*"&gt;ISO&lt;\/a&gt;/)) {
+				iso_url = substr($0, RSTART, RLENGTH)
+				sub(/^&lt;a href="/, "", iso_url)
+				sub(/"&gt;ISO&lt;\/a&gt;$/, "", iso_url)
+			}
+			if (match($0, /&lt;img src="[^"]+"/)) {
+				icon = substr($0, RSTART, RLENGTH)
+				sub(/^&lt;img src="/, "", icon)
+				sub(/"$/, "", icon)
+			}
+			if (slug != "" && title != "") {
+				printf "%s\t%s\t%s\t%s\t%s\t%s\n", slug, title, version, \
+					(homepage == "" ? "-" : homepage), (iso_url == "" ? "-" : iso_url), \
+					(icon == "" ? "-" : icon)
+			}
+		}'
+}
+
+# Emit version<TAB>ISO URL rows for one DistroWatch slug in an Atom feed.
+atom_feed_iso_entries() {
+	local feed_url="${1}" distro_slug="${2}"
+	atom_feed_entries "${feed_url}" |
+		awk -F '\t' -v slug="${distro_slug}" '$1 == slug && $5 != "-" { print $3 "\t" $5 }'
+}
+
+# Check if a URL needs to be redirected and return the final URL
+function web_redirect() {
+	local REDIRECT_URL=""
+	local URL="${1}"
+	REDIRECT_URL=$(curl --silent --location --head --max-time 10 --write-out '%{url_effective}' --output /dev/null "${URL}" 2>/dev/null)
+	if [ -n "${REDIRECT_URL}" ] && [ "${REDIRECT_URL}" != "${URL}" ]; then
+		echo "${REDIRECT_URL}"
+	else
+		echo "${URL}"
+	fi
+}
+
 # Download a file from the web
 function web_get() {
 	local CHECK=""
@@ -215,7 +277,7 @@ function web_get() {
 	URL=$(web_redirect "${URL}")
 
 	# Process any headers
-	while (( "$#" )); do
+	while (("$#")); do
 		if [ "${1}" == "--header" ]; then
 			HEADERS+=("${1}" "${2}")
 			shift 2
@@ -243,24 +305,15 @@ function web_get() {
 	if [[ ${OS} != windows && ${OS} != macos && ${OS} != windows-server ]]; then
 		echo $"Downloading ${PRETTY} ${RELEASE} ${EDITION}"
 		echo $"- URL: ${URL}"
-		echo "- PATH: ${PWD}/${DIR}/${FILE}"
+		local _path="${DIR}/${FILE}"
+		[[ "${_path}" != /* ]] && _path="${PWD}/${_path}"
+		echo "- PATH: ${_path}"
 	fi
 
-	if ! curl --disable --progress-bar --location --output "${DIR}/${FILE}" --continue-at - --user-agent "${USER_AGENT}" "${HEADERS[@]}" -- "${URL}"; then
+	if ! curl --disable --fail --progress-bar --location --output "${DIR}/${FILE}" --continue-at - --user-agent "${USER_AGENT}" "${HEADERS[@]}" -- "${URL}"; then
 		echo $"ERROR! Failed to download ${URL} with curl."
 		rm -f "${DIR}/${FILE}"
-	fi
-}
-
-# Check if a URL needs to be redirected and return the final URL
-function web_redirect() {
-	local REDIRECT_URL=""
-	local URL="${1}"
-	REDIRECT_URL=$(curl --silent --location --head --max-time 10 --write-out '%{url_effective}' --output /dev/null "${URL}" 2>/dev/null)
-	if [ -n "${REDIRECT_URL}" ] && [ "${REDIRECT_URL}" != "${URL}" ]; then
-		echo "${REDIRECT_URL}"
-	else
-		echo "${URL}"
+		return 1
 	fi
 }
 
@@ -268,7 +321,7 @@ function web_redirect() {
 function web_check() {
 	local HEADERS=()
 	local URL="${1}"
-	while (( "$#" )); do
+	while (("$#")); do
 		if [ "${1}" == "--header" ]; then
 			HEADERS+=("${1}" "${2}")
 			shift 2
@@ -340,15 +393,15 @@ function check_hash() {
 	if [ "${OPERATION}" == "download" ]; then
 		iso="${1}"
 	else
-		iso="${VM_PATH}/${1}"
+		iso="$(find_iso "${1}")"
 	fi
-	if [[ -n "$sig" && ( -n "$key_id" || -n "${GPG:-}" ) ]]; then
+	if [[ -n "$sig" && (-n "$key_id" || -n "${GPG:-}") ]]; then
 		check_signature "$iso" "$sig" "${key_id:-${GPG:-}}"
 	elif [[ -n "${GPG:-}" && -n "${SUMS_URL:-}" ]]; then
 		local auto_sig
 		auto_sig=$(mktemp)
-		if curl --disable --silent --location --fail -o "${auto_sig}" "${SUMS_URL}.asc" 2>/dev/null \
-		|| curl --disable --silent --location --fail -o "${auto_sig}" "${SUMS_URL}.gpg" 2>/dev/null; then
+		if curl --disable --silent --location --fail -o "${auto_sig}" "${SUMS_URL}.asc" 2>/dev/null ||
+			curl --disable --silent --location --fail -o "${auto_sig}" "${SUMS_URL}.gpg" 2>/dev/null; then
 			check_signature "${iso}" "${auto_sig}" "${GPG}"
 		else
 			echo $"WARNING! GPG set but no .asc/.gpg signature found at ${SUMS_URL}"
@@ -357,12 +410,14 @@ function check_hash() {
 	fi
 	hash="${2}"
 	case ${#hash} in
-		32) hash_algo=md5sum;;
-		40) hash_algo=sha1sum;;
-		64) hash_algo=sha256sum;;
-		128) hash_algo=sha512sum;;
-		*) echo $"WARNING! Can't guess hash algorithm, not checking ${iso} hash."
-			return;;
+	32) hash_algo=md5sum ;;
+	40) hash_algo=sha1sum ;;
+	64) hash_algo=sha256sum ;;
+	128) hash_algo=sha512sum ;;
+	*)
+		echo $"WARNING! Can't guess hash algorithm, not checking ${iso} hash."
+		return
+		;;
 	esac
 	echo -n $"Checking ${iso} with ${hash_algo}... "
 	if ! echo "${hash} ${iso}" | ${hash_algo} --check --status; then
@@ -418,15 +473,55 @@ function zsync_get() {
 	fi
 }
 
+# Return the directory where a downloaded image file should live.
+# When ISO_DIR is set, .iso files go to the shared ISO directory; everything
+# else stays in the per-VM directory so template extract_() hooks keep working.
+function image_target_dir() {
+	if [ -n "${ISO_DIR:-}" ] && [[ "${1}" == *.iso || "${1}" == *.ISO ]]; then
+		echo "${ISO_DIR}"
+	else
+		echo "${VM_PATH}"
+	fi
+}
+
+# Locate a downloaded image file, whichever directory it currently lives in.
+# Used by check_hash(), which may run before make_vm_config relocates an ISO
+# into the shared ISO_DIR (e.g. ubuntu downloads + hashes inside its template).
+function find_iso() {
+	local name="${1}"
+	if [ -f "$(image_target_dir "${name}")/${name}" ]; then
+		echo "$(image_target_dir "${name}")/${name}"
+	elif [ "${ISO_DIR:-}" ] && [ -f "${VM_PATH}/${name}" ]; then
+		echo "${VM_PATH}/${name}"
+	else
+		echo "$(image_target_dir "${name}")/${name}"
+	fi
+}
+
+# Ensure a downloaded .iso physically resides in ISO_DIR before the .conf is
+# written. Covers templates that download into VM_PATH internally (ubuntu,
+# windows, reactos extract_...). Non-iso images (disk_img, img=) are untouched.
+function ensure_iso_in_shared_dir() {
+	local name="${1}"
+	if [ -n "${ISO_DIR:-}" ] && [[ "${name}" == *.iso || "${name}" == *.ISO ]]; then
+		if [ ! -f "${ISO_DIR}/${name}" ] && [ -f "${VM_PATH}/${name}" ]; then
+			mkdir -p "${ISO_DIR}"
+			echo $" - Moving ${name} to shared ISO directory ${ISO_DIR}"
+			mv "${VM_PATH}/${name}" "${ISO_DIR}/${name}"
+		fi
+	fi
+}
+
 function make_vm_config() {
 	local CONF_FILE=""
 	local IMAGE_FILE=""
 	local ISO_FILE=""
-	if [ "${OPERATION}" == "download" ]; then
+	# OPERATION is not set when make_vm_config is called outside a qget run.
+	if [ "${OPERATION:-}" == "download" ]; then
 		exit 0
 	fi
-	IMAGE_FILE="${1}"
-	ISO_FILE="${2}"
+	IMAGE_FILE="${1:-}"
+	ISO_FILE="${2:-}"
 
 	if [ "${OS}" == 'custom' ]; then
 		GUEST="${CUSTOM_OS}"
@@ -435,29 +530,54 @@ function make_vm_config() {
 	if [ -z "$GUEST" ]; then
 		GUEST="linux"
 	fi
-	if [ -z "${IMAGE_TYPE}" ]; then
+	# IMAGE_TYPE="none" means the image itself is the system disk, so no
+	# separate boot medium is attached.
+	if [ "${IMAGE_TYPE}" == "none" ]; then
+		IMAGE_TYPE=""
+	elif [ -z "$IMAGE_TYPE" ]; then
 		IMAGE_TYPE="iso"
 	fi
 
+	mkdir -p "${VM_PATH}" || return 1
 	CONF_FILE="${VM_PATH}.conf"
+
+	ensure_iso_in_shared_dir "${IMAGE_FILE}"
+	[ -n "${ISO_FILE}" ] && ensure_iso_in_shared_dir "${ISO_FILE}"
 
 	if [ ! -e "${CONF_FILE}" ]; then
 		echo $"Making ${CONF_FILE}"
-		cat << EOF > "${CONF_FILE}"
-#!${QUICKEMU} --vm
+		local DISK_PATH="${VM_PATH}/disk.qcow2"
+		local IMAGE_PATH="$(image_target_dir "${IMAGE_FILE}")/${IMAGE_FILE}"
+		if [ "${RAMDISK:-}" == "yes" ]; then
+			DISK_PATH="${RAMDISK_DIR:-/dev/shm/quickemu}/${VM_PATH}/disk.qcow2"
+			mkdir -p "$(dirname "${DISK_PATH}")" || return 1
+			echo $" - Disk will be created in RAM (tmpfs): ${DISK_PATH}"
+		fi
+		if [ -n "${ISO_DIR:-}" ] && [[ "${IMAGE_FILE}" == *.iso || "${IMAGE_FILE}" == *.ISO ]]; then
+			mkdir -p "${ISO_DIR}"
+		fi
+		local ARCH_LINE=""
+		if [ -n "${ARCH:-}" ] && [ "${ARCH}" != "amd64" ]; then
+			ARCH_LINE="arch=\"$(_qarch_to_upstream "${ARCH}")\""
+		fi
+		local IMAGE_LINE=""
+		[ -n "${IMAGE_TYPE}" ] && IMAGE_LINE="${IMAGE_TYPE}=\"${IMAGE_PATH}\""
+		cat <<EOF >"${CONF_FILE}"
+#!${QUICKEMU:-quickemu} --vm
 guest_os="${GUEST}"
-disk_img="${VM_PATH}/disk.qcow2"
-${IMAGE_TYPE}="${VM_PATH}/${IMAGE_FILE}"
+disk_img="${DISK_PATH}"
+${ARCH_LINE:+${ARCH_LINE}
+}${IMAGE_LINE}
 EOF
 		echo $" - Setting ${CONF_FILE} executable"
 		chmod u+x "${CONF_FILE}"
 		if [ -n "${ISO_FILE}" ]; then
-			echo "fixed_iso=\"${VM_PATH}/${ISO_FILE}\"" >> "${CONF_FILE}"
+			echo "fixed_iso=\"$(image_target_dir "${ISO_FILE}")/${ISO_FILE}\"" >>"${CONF_FILE}"
 		fi
 		if declare -F config_ &>/dev/null; then
 			config_
 		fi
-		if [ "${OPERATION}" == ui ]; then
+		if [ "${OPERATION:-}" == ui ]; then
 			echo
 			gum confirm $"Run new ${OS} VM?" && quickemu --vm "${CONF_FILE}"
 		fi
@@ -472,9 +592,58 @@ EOF
 	unset GUEST IMAGE_TYPE
 }
 
+# Is the given OS supported? Uses the generated metadata, so it works
+# without a network connection.
 os_support() {
 	local os="${1}"
-	qget --list "$os" 2>/dev/null | grep -q "$release"
+	[ -n "${os}" ] || return 1
+	[ -f "${PUBLIC_DIR}/${os}" ]
+}
+
+# Update the programs from their git checkout.
+#
+# The front-ends call this from their settings menu. It only works when the
+# programs were run from a git checkout; an installed copy has no repository
+# to pull from, which is reported instead of failing silently.
+update_programs() {
+	local repo="${1:-${SCRIPT_DIR:-.}}"
+	if ! command -v git >/dev/null 2>&1; then
+		echo "ERROR! git is not installed, cannot update." >&2
+		return 1
+	fi
+	if ! git -C "${repo}" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+		echo "ERROR! ${repo} is not a git checkout, cannot update." >&2
+		return 1
+	fi
+	local branch
+	branch="$(git -C "${repo}" branch --show-current)"
+	if [ -z "${branch}" ]; then
+		echo "ERROR! ${repo} is on a detached HEAD, cannot update." >&2
+		return 1
+	fi
+	echo "Updating ${progname:-DistroHopper} from branch ${branch}..."
+	if ! git -C "${repo}" pull --ff-only; then
+		echo "ERROR! The update failed. Resolve the local changes first." >&2
+		return 1
+	fi
+	echo "Update done. The new version is used the next time you start."
+	return 0
+}
+
+# Is the given release available for the given OS? The release list comes
+# from the generated metadata, so it covers the non-numeric release names
+# too ("latest", "v3.24", "45_Beta", "daily-live", ...).
+validate_release() {
+	local os="${1}"
+	local release="${2}"
+	local valid_releases=""
+	if [ -f "${PUBLIC_DIR}/${os}" ]; then
+		valid_releases=$(sed -n 's/^RELEASES="\(.*\)"$/\1/p' "${PUBLIC_DIR}/${os}" | head -n 1)
+	fi
+	if [ -z "${valid_releases}" ]; then
+		valid_releases=$(qget --list "$os" 2>/dev/null | tail -n +2 | cut -d' ' -f2)
+	fi
+	[[ " ${valid_releases} " == *" ${release} "* ]]
 }
 
 # qget wrappers for TUI scripts
@@ -499,14 +668,14 @@ qget_download() {
 	fi
 }
 
-# Optional fallback to system quickget if installed
+# Use the repository qget exclusively.
 qget_or_quickget() {
-	if command -v quickget >/dev/null 2>&1; then
-		quickget "${@}"
-	elif [ -x "${SCRIPT_DIR}/qget" ]; then
+	if [ -x "${SCRIPT_DIR}/qget" ]; then
 		"${SCRIPT_DIR}/qget" "${@}"
+	elif command -v qget >/dev/null 2>&1; then
+		qget "${@}"
 	else
-		_re "Neither qget nor quickget found"
+		_re "qget not found"
 		exit 1
 	fi
 }
@@ -516,9 +685,204 @@ qget() {
 	qget_or_quickget "${@}"
 }
 
+append_default_vm_config() {
+	local default_config="${1}"
+	local vm_config="${2}"
+	if [ -f "${default_config}" ]; then
+		echo 'Adding default values to config...'
+		cat "${default_config}" >>"${vm_config}"
+	fi
+}
+
 # Public directory for OS info files
 PUBLIC_DIR="${PUBLIC_DIR:-${SCRIPT_DIR:-.}/public}"
 export PUBLIC_DIR
+
+# Directory holding the dynamic per-distro templates
+TEMPLATES_DIR="${TEMPLATES_DIR:-${SCRIPT_DIR:-.}/templates}"
+export TEMPLATES_DIR
+
+# ---------------------------------------------------------------------------
+# Static release/edition metadata
+#
+# templates/<os> holds the *dynamic* implementation: releases_(), editions_()
+# and arch_() scrape upstream pages to discover what exists right now.
+#
+# public/<os> is the *generated* counterpart: the same functions plus the
+# releases and editions that were parsed at generation time, stored as the
+# RELEASES / EDITIONS variables (and their per-architecture overrides).
+#
+# Runtime code must not need the network to answer "which releases exist?".
+# dh_metadata_* below answers that from the static variables when they are
+# present, and only falls back to the live template functions when the static
+# data is missing (e.g. a distro that was never generated).
+# ---------------------------------------------------------------------------
+
+# dh_metadata_ready — true when <os> has generated static metadata.
+dh_metadata_ready() {
+	local os="${1}"
+	[ -n "${os}" ] || return 1
+	[ -f "${PUBLIC_DIR}/${os}" ] || return 1
+	grep -q '^RELEASES=' "${PUBLIC_DIR}/${os}" 2>/dev/null
+}
+
+# dh_metadata_releases — static release list for <os> [arch].
+# Prints the per-architecture release list when one is recorded, otherwise
+# the shared RELEASES value. Returns 1 when no static data exists.
+dh_metadata_releases() {
+	local os="${1}" arch="${2:-}"
+	local file="${PUBLIC_DIR}/${os}"
+	local var=""
+	[ -f "${file}" ] || return 1
+	if [ -n "${arch}" ]; then
+		var="RELEASES_${arch}"
+		if [ -n "${!var:-}" ]; then
+			printf '%s\n' "${!var}"
+			return 0
+		fi
+	fi
+	local releases=""
+	releases="$(sed -n 's/^RELEASES="\(.*\)"$/\1/p' "${file}" | head -n 1)"
+	[ -n "${releases}" ] || return 1
+	printf '%s\n' "${releases}"
+}
+
+# dh_metadata_editions — static edition list for <os> [arch].
+# Returns 1 when the distro declares no editions at all.
+dh_metadata_editions() {
+	local os="${1}" arch="${2:-}"
+	local file="${PUBLIC_DIR}/${os}"
+	local var=""
+	[ -f "${file}" ] || return 1
+	if [ -n "${arch}" ]; then
+		var="EDITIONS_${arch}"
+		if [ -n "${!var:-}" ]; then
+			printf '%s\n' "${!var}"
+			return 0
+		fi
+	fi
+	local editions=""
+	editions="$(sed -n 's/^EDITIONS="\(.*\)"$/\1/p' "${file}" | head -n 1)"
+	[ -n "${editions}" ] || return 1
+	printf '%s\n' "${editions}"
+}
+
+# dh_metadata_arches — static architecture list for <os>.
+dh_metadata_arches() {
+	local os="${1}"
+	local file="${PUBLIC_DIR}/${os}"
+	[ -f "${file}" ] || return 1
+	local arches=""
+	arches="$(sed -n 's/^QEMU_ARCH="\(.*\)"$/\1/p' "${file}" | head -n 1)"
+	[ -n "${arches}" ] || return 1
+	printf '%s\n' "${arches}"
+}
+
+export -f dh_metadata_ready dh_metadata_releases dh_metadata_editions dh_metadata_arches update_programs
+
+# ---------------------------------------------------------------------------
+# Load one distro's generated metadata (public/<os>).
+#
+# Sourcing a distro file defines its helper functions (releases_, editions_,
+# arch_, get_, config_, extract_). When several distros are handled in one
+# shell — as qget --list does — those definitions leak into the next distro:
+# a distro without an editions_() function would still answer with the
+# previous distro's editions. Unset the helpers first so each distro is
+# described only by its own file.
+# ---------------------------------------------------------------------------
+dh_load_os() {
+	local os="${1}"
+	local file=""
+	if [ "${DH_USE_TEMPLATES:-no}" == "yes" ]; then
+		file="${TEMPLATES_DIR}/${os}"
+	else
+		file="${PUBLIC_DIR}/${os}"
+	fi
+	[ -f "${file}" ] || return 1
+	unset -f releases_ editions_ arch_ get_ config_ extract_ languages_ 2>/dev/null
+	# Per-architecture overrides are distro specific (EDITIONS_amd64, ...).
+	# Without clearing them, a distro that has no override of its own would
+	# keep the previous distro's values.
+	unset RELEASES EDITIONS RELEASES_amd64 RELEASES_arm64 RELEASES_i386 \
+		RELEASES_i586 RELEASES_i686 RELEASES_armhf RELEASES_armv7 \
+		RELEASES_loongarch64 RELEASES_ppc64el RELEASES_riscv64 RELEASES_s390x \
+		RELEASES_x86 \
+		EDITIONS_amd64 EDITIONS_arm64 EDITIONS_i386 EDITIONS_i586 EDITIONS_i686 \
+		EDITIONS_armhf EDITIONS_armv7 EDITIONS_loongarch64 EDITIONS_ppc64el \
+		EDITIONS_riscv64 EDITIONS_s390x EDITIONS_x86 2>/dev/null
+	# shellcheck source=/dev/null
+	. "${file}"
+	return 0
+}
+export -f dh_load_os
+
+# ---------------------------------------------------------------------------
+# Mode-independent accessors for the distro metadata.
+#
+# In the default (static) mode the answers come from the variables that were
+# parsed at generation time. In template mode the discovery functions are
+# used, so the answers always reflect the current upstream state.
+# ---------------------------------------------------------------------------
+
+# dh_releases — release list of the currently loaded distro.
+dh_releases() {
+	local arch="${1:-${ARCH:-}}"
+	if [ "${DH_USE_TEMPLATES:-no}" == "yes" ]; then
+		if [[ $(type -t releases_) == function ]]; then
+			releases_
+			return 0
+		fi
+		return 1
+	fi
+	# The per-architecture release list wins when it was recorded.
+	if [ -n "${arch}" ]; then
+		local per_arch="RELEASES_${arch}"
+		if [ -n "${!per_arch:-}" ]; then
+			printf '%s\n' "${!per_arch}"
+			return 0
+		fi
+	fi
+	printf '%s\n' "${RELEASES:-}"
+}
+
+# dh_editions — edition list of the currently loaded distro for $1 (release).
+dh_editions() {
+	local release="${1:-}"
+	local arch="${2:-${ARCH:-}}"
+	if [ "${DH_USE_TEMPLATES:-no}" == "yes" ]; then
+		if [[ $(type -t editions_) == function ]]; then
+			RELEASE="${release}" ARCH="${arch}" editions_
+			return 0
+		fi
+		return 1
+	fi
+	# Release-scoped editions. The map is keyed by "arch|release"; when no
+	# architecture was selected, try every known architecture and use the
+	# first match.
+	local scoped=""
+	if [ -n "${release}" ] && declare -F _release_editions_ >/dev/null; then
+		if [ -n "${arch}" ]; then
+			scoped=$(_release_editions_ "${arch}|${release}")
+		else
+			local candidate
+			for candidate in ${QEMU_ARCH:-}; do
+				scoped=$(_release_editions_ "${candidate}|${release}")
+				[ -n "${scoped}" ] && break
+			done
+		fi
+	fi
+	if [ -n "${scoped}" ]; then
+		printf '%s\n' "${scoped}"
+		return 0
+	fi
+	local per_arch="EDITIONS_${arch}"
+	if [ -n "${!per_arch:-}" ]; then
+		printf '%s\n' "${!per_arch}"
+		return 0
+	fi
+	printf '%s\n' "${EDITIONS:-}"
+}
+export -f dh_releases dh_editions
 
 export -f error_specify_os error_specify_release error_not_supported_release \
 	error_not_supported_lang error_not_supported_argument \
@@ -768,25 +1132,36 @@ export -f table_clear table_add_row table_write table_summary
 # ---------------------------------------------------------------------------
 function _emit_entry() {
 	local OS="$1" ARCH="$2" RELEASE="$3" EDITION="$4" URL="$5" OPERATION="$6" PUBLIC_DIR="$7"
+	# Windows/macOS rows intentionally contain metadata without a download URL.
+	local ALLOW_EMPTY="${8:-false}"
 	local STATUS="OK"
+	local HAS_DOWNLOAD_URL=false
+	[[ "${URL}" =~ ^https?://[^[:space:]]+$ ]] && HAS_DOWNLOAD_URL=true
+
 	if [ "${OPERATION}" == "test" ]; then
-		STATUS=$(web_check "${URL}" && echo "PASS" || echo "FAIL")
+		if [[ "${ALLOW_EMPTY}" != true && "${HAS_DOWNLOAD_URL}" != true ]]; then
+			STATUS="FAIL"
+		else
+			STATUS=$(web_check "${URL}" && echo "PASS" || echo "FAIL")
+		fi
 		table_add_row "$OS" "$ARCH" "$RELEASE" "$EDITION" "$URL" "$STATUS"
+	elif [[ "${ALLOW_EMPTY}" != true && "${HAS_DOWNLOAD_URL}" != true ]]; then
+		STATUS="WARN"
 	fi
 
 	# Human-readable progress line
 	printf "%-5s %-13s %-10s %-10s %-16s %-30s\n" \
-		"${STATUS}" "${OS}" "${ARCH}" "${RELEASE}" "${EDITION}" "${URL}" \
-		| tee -a "${PUBLIC_DIR}/tmp_${OS}"
+		"${STATUS}" "${OS}" "${ARCH}" "${RELEASE}" "${EDITION}" "${URL}" |
+		tee -a "${PUBLIC_DIR}/tmp_${OS}"
 
 	# Structured data (consumed by write_output).
-	# Empty EDITION → "-" so bash `read` doesn't collapse adjacent tabs.
+	# Empty EDITION or URL → "-" so bash `read` doesn't collapse adjacent tabs.
 	printf '%s\t%s\t%s\t%s\t%s\n' \
-		"${ARCH}" "${RELEASE}" "${EDITION:--}" "${URL}" "${STATUS}" \
-		>> "${PUBLIC_DIR}/tmp_${OS}.dat"
+		"${ARCH}" "${RELEASE}" "${EDITION:--}" "${URL:--}" "${STATUS}" \
+		>>"${PUBLIC_DIR}/tmp_${OS}.dat"
 }
 
-function get_entries_() {
+function _default_get_entries_() {
 	local OS="$1" ARCH="$2" RELEASE="$3" OPERATION="$4" PUBLIC_DIR="$5" TEMPLATES_DIR="$6"
 	if [[ $(type -t "editions_") == function ]]; then
 		for EDITION in $(editions_); do
@@ -801,7 +1176,11 @@ function get_entries_() {
 		_emit_entry "${OS}" "${ARCH}" "${RELEASE}" "" "${URL}" "${OPERATION}" "${PUBLIC_DIR}"
 	fi
 }
-export -f _emit_entry get_entries_
+
+function get_entries_() {
+	_default_get_entries_ "$@"
+}
+export -f _emit_entry _default_get_entries_ get_entries_
 
 # ---------------------------------------------------------------------------
 # Architecture name mapping
@@ -812,15 +1191,134 @@ export -f _emit_entry get_entries_
 # ---------------------------------------------------------------------------
 _qarch_to_upstream() {
 	case "${1}" in
-		amd64)       echo x86_64 ;;
-		arm64)       echo aarch64 ;;
-		ppc64el)     echo ppc64le ;;
-		x86)         echo x86 ;;
-		i386|i686|i586|armv7|armhf|riscv64|s390x|loongarch64) echo "${1}" ;;
-		*)           echo "${1}" ;;
+	amd64) echo x86_64 ;;
+	arm64) echo aarch64 ;;
+	ppc64el) echo ppc64le ;;
+	x86) echo x86 ;;
+	i386 | i686 | i586 | armv7 | armhf | riscv64 | s390x | loongarch64) echo "${1}" ;;
+	*) echo "${1}" ;;
 	esac
 }
 export -f _qarch_to_upstream
+
+# Inverse of _qarch_to_upstream: normalise upstream/quickemu-style architecture
+# names (x86_64, aarch64, ppc64le) to the dh-style names used by templates
+# (amd64, arm64, ppc64el) at the CLI/config boundary.
+_upstream_to_qarch() {
+	case "${1}" in
+	x86_64) echo amd64 ;;
+	aarch64) echo arm64 ;;
+	ppc64le) echo ppc64el ;;
+	*) echo "${1}" ;;
+	esac
+}
+export -f _upstream_to_qarch
+
+# ---------------------------------------------------------------------------
+# VM_PATH suffix for non-native architectures. When the target VM arch differs
+# from the host arch, append -<ARCH> to keep per-arch VMs separate.
+# Host arch: NORMALISED_HOST_ARCH if set (qget sets it), else uname -m.
+# ---------------------------------------------------------------------------
+_host_arch() {
+	case "$(uname -m)" in
+	aarch64 | arm64) echo arm64 ;;
+	*) echo amd64 ;;
+	esac
+}
+
+function arch_suffix() {
+	if [ "${ARCH:-amd64}" != "${NORMALISED_HOST_ARCH:-$(_host_arch)}" ]; then
+		echo "-${ARCH}"
+	fi
+}
+export -f arch_suffix _host_arch
+
+# ---------------------------------------------------------------------------
+# Quicktest results directory resolution. Results normally live next to the
+# VMs, but the base can be overridden per-config with RESULTS_DIR:
+#   (empty)      -> "${VMS_DIR:-$HOME/vm}/results"
+#   ./           -> relative to the current working directory
+#   /abs/path    -> as-is
+#   ~/short/path -> expanded against $HOME
+# Trailing slashes are stripped. Echoes the base directory.
+# ---------------------------------------------------------------------------
+expand_results_dir() {
+	local dir="${1:-$RESULTS_DIR}"
+	case "${dir}" in
+	'') dir="${VMS_DIR:-$HOME/vm}/results" ;;
+	~*)
+		dir="${dir#\~}"
+		dir="${HOME}${dir}"
+		;;
+	/*) : ;;
+	*) dir="$(pwd)/${dir#./}" ;;
+	esac
+	dir="${dir%/}"
+	echo "${dir}"
+}
+export -f expand_results_dir
+
+# ---------------------------------------------------------------------------
+# Quicktest mouse payload builders. Pure string generators (no I/O), so they
+# can be unit-tested. Honour QT_MOUSE_MODE (relative|absolute) unless an
+# explicit mode is passed as the last argument.
+#   relative -> HMP commands for the -monitor socket:
+#               "mouse_move X Y", "mouse_button <bits>"
+#   absolute -> QMP "input-send-event" JSON lines for a QMP socket
+#               (absolute coordinates + button press/release events).
+# Button names: left|right|middle (or L/R/M, or bitmask 1/2/4).
+# ---------------------------------------------------------------------------
+_qt_btn_bits() {
+	case "${1}" in
+	left | L | 1) echo "1" ;;
+	right | R | 2) echo "2" ;;
+	middle | M | 4) echo "4" ;;
+	*) echo "${1}" ;;
+	esac
+}
+
+_qt_btn_name() {
+	case "${1}" in
+	left | L | 1) echo "left" ;;
+	right | R | 2) echo "right" ;;
+	middle | M | 4) echo "middle" ;;
+	*) echo "${1}" ;;
+	esac
+}
+export -f _qt_btn_bits _qt_btn_name
+
+qt_mouse_cmd_move() {
+	local mode="${3:-${QT_MOUSE_MODE:-relative}}"
+	if [ "${mode}" = "absolute" ]; then
+		printf '{"execute":"input-send-event","arguments":{"events":[{"type":"abs","data":{"axis":"x","value":%s}},{"type":"abs","data":{"axis":"y","value":%s}}]}}\n' "${1}" "${2}"
+	else
+		printf 'mouse_move %s %s\n' "${1}" "${2}"
+	fi
+}
+
+qt_mouse_cmd_button() {
+	local mode="${3:-${QT_MOUSE_MODE:-relative}}"
+	if [ "${mode}" = "absolute" ]; then
+		if [ "${2}" = "down" ]; then
+			printf '{"execute":"input-send-event","arguments":{"events":[{"type":"btn","data":{"down":true,"button":"%s"}}]}}\n' "$(_qt_btn_name "${1}")"
+		else
+			printf '{"execute":"input-send-event","arguments":{"events":[{"type":"btn","data":{"down":false,"button":"%s"}}]}}\n' "$(_qt_btn_name "${1}")"
+		fi
+	else
+		if [ "${2}" = "down" ]; then
+			printf 'mouse_button %s\n' "$(_qt_btn_bits "${1}")"
+		else
+			printf 'mouse_button 0\n'
+		fi
+	fi
+}
+
+qt_mouse_cmd_click() {
+	qt_mouse_cmd_button "${1}" down "${2:-}"
+	printf '\n'
+	qt_mouse_cmd_button "${1}" up "${2:-}"
+}
+export -f qt_mouse_cmd_move qt_mouse_cmd_button qt_mouse_cmd_click
 
 # ---------------------------------------------------------------------------
 # HTTP cache — memoize web_pipe / web_check for the duration of one OS run.
@@ -866,15 +1364,69 @@ export -f _web_cache_key _web_cache_get_body _web_cache_put_body \
 # ---------------------------------------------------------------------------
 # Torrent / aria2 support
 # ---------------------------------------------------------------------------
+# Hardcoded fallback tracker list used when the magnet URI carries no tr. params.
+# Override with DH_TRACKERS env var (space-separated list).
+# Keep as a single string so it can be passed to aria2c --bt-tracker=...
+# Source: https://github.com/ngosang/trackerslist (trackers_best.txt, 2026-09-29)
+# shellcheck disable=SC2034
+DH_TRACKERS_DEFAULT="udp://tracker.opentrackr.org:1337/announce udp://open.stealth.si:80/announce udp://open.demonii.com:1337/announce udp://exodus.desync.com:6969/announce udp://tracker.skynetcloud.site:6969/announce"
+
 function torrent_get() {
 	local MAGNET="${1}"
 	local DIR="${2:-.}"
+	local EXPECTED_ISO="${3:-}"
+
 	if ! command -v aria2c &>/dev/null; then
-		echo "INFO: aria2c not found, use 'web_get' fallback"
+		echo "INFO: aria2c not found, use 'web_get' fallback" >&2
 		return 1
 	fi
-	echo "Downloading via magnet link..."
-	aria2c --dir="${DIR}" --seed-time=0 "${MAGNET}"
+
+	# Ensure target directory exists — aria2c --dir= fails on missing dir (Bug #1)
+	mkdir -p "${DIR}"
+
+	# Build tracker list: use DH_TRACKERS if set, else default fallback list.
+	# If the magnet already contains tr.= parameters, aria2c will prefer those;
+	# --bt-tracker= adds *additional* trackers, it does not replace.
+	local trackers="${DH_TRACKERS:-${DH_TRACKERS_DEFAULT}}"
+
+	echo "Downloading via aria2c..."
+	# Robust aria2c invocation (Bug #6):
+	#  --continue=true          : resume partial downloads
+	#  --max-connection-per-server=4 : polite connection limit
+	#  --bt-tracker=...         : fallback trackers when magnet has none
+	#  --timeout=60             : per-request timeout (seconds)
+	#  --max-tries=5            : retry limit for transient failures
+	#  --seed-time=0            : do not seed after download (existing behaviour)
+	#  --dir="${DIR}"           : destination directory
+	aria2c \
+		--continue=true \
+		--max-connection-per-server=4 \
+		--bt-tracker="${trackers}" \
+		--timeout=60 \
+		--max-tries=5 \
+		--seed-time=0 \
+		--dir="${DIR}" \
+		"${MAGNET}" || return $?
+
+	# Post-download filename reconciliation (Bug #7):
+	# aria2c names the file from the magnet's dn= parameter, which may not
+	# match the expected ISO filename. If EXPECTED_ISO is provided and the
+	# file doesn't exist, look for exactly one .iso in DIR and rename it.
+	if [ -n "${EXPECTED_ISO}" ] && [ ! -f "${DIR}/${EXPECTED_ISO}" ]; then
+		local found_iso
+		found_iso=$(find "${DIR}" -maxdepth 1 -type f -name '*.iso' 2>/dev/null | head -n1)
+		local iso_count
+		iso_count=$(find "${DIR}" -maxdepth 1 -type f -name '*.iso' 2>/dev/null | wc -l)
+		if [ "${iso_count}" -eq 1 ] && [ -n "${found_iso}" ]; then
+			echo "Renaming downloaded file to expected name: ${EXPECTED_ISO}"
+			mv "${found_iso}" "${DIR}/${EXPECTED_ISO}"
+		else
+			echo "ERROR: Downloaded ISO not found or ambiguous (expected ${EXPECTED_ISO}, found ${iso_count} .iso files)" >&2
+			return 1
+		fi
+	fi
+
+	return 0
 }
 export -f torrent_get
 
@@ -887,66 +1439,75 @@ rosette_info() {
 		echo "Usage: rosette_info <osname>"
 		return 1
 	fi
-	
+
 	local template_file="${TEMPLATES_DIR}/${osname}"
 	if [ ! -f "$template_file" ]; then
 		echo "Template not found: $osname"
 		return 1
 	fi
-	
-	# Source the template to get BASEDOF
-	# shellcheck disable=SC1090
-	. "$template_file"
-	
+
+	# Read BASEDOF without sourcing the whole template. Sourcing it would
+	# replace the caller's releases_/editions_/get_ functions with the live,
+	# network-scraping ones — the static metadata would be lost for the rest
+	# of the run.
+	local basedof_raw=""
+	basedof_raw="$(grep -m1 '^BASEDOF=' "$template_file" 2>/dev/null)"
+	if [ -z "$basedof_raw" ]; then
+		echo "Template not found: $osname"
+		return 1
+	fi
+	BASEDOF="${basedof_raw#BASEDOF=}"
+	BASEDOF="${BASEDOF%\"}"
+	BASEDOF="${BASEDOF#\"}"
+
 	# Map BASEDOF to rosette ID
 	local rosette_id=""
 	local basedof_lower
 	basedof_lower=$(echo "${BASEDOF:-}" | tr '[:upper:]' '[:lower:]')
-	
+
 	case "$basedof_lower" in
-		*arch*)     rosette_id="arch" ;;
-		*debian*|*ubuntu*) rosette_id="debian" ;;
-		*void*)     rosette_id="void" ;;
-		*fedora*|*rhel*|*"red hat"*) rosette_id="fedora" ;;
-		*gentoo*)   rosette_id="gentoo" ;;
-		*alpine*)   rosette_id="alpine" ;;
-		*opensuse*|*suse*) rosette_id="opensuse" ;;
-		*slackware*) rosette_id="slackware" ;;
-		*nix*)      rosette_id="nix" ;;
-		*)          
-			echo "No package manager info available for $osname (based on: ${BASEDOF:-unknown})"
-			return 0
-			;;
+	*arch*) rosette_id="arch" ;;
+	*debian* | *ubuntu*) rosette_id="debian" ;;
+	*void*) rosette_id="void" ;;
+	*fedora* | *rhel* | *"red hat"*) rosette_id="fedora" ;;
+	*gentoo*) rosette_id="gentoo" ;;
+	*alpine*) rosette_id="alpine" ;;
+	*opensuse* | *suse*) rosette_id="opensuse" ;;
+	*slackware*) rosette_id="slackware" ;;
+	*nix*) rosette_id="nix" ;;
+	*)
+		echo "No package manager info available for $osname (based on: ${BASEDOF:-unknown})"
+		return 0
+		;;
 	esac
-	
+
 	local rosette_file="${SCRIPT_DIR}/data/rosette/${rosette_id}.yaml"
 	if [ ! -f "$rosette_file" ]; then
 		echo "Rosette data not found: $rosette_id"
 		return 1
 	fi
-	
+
 	# Parse YAML with grep/sed (no external deps)
 	local pkg_manager init_system
 	pkg_manager=$(grep "^package_manager:" "$rosette_file" | sed 's/^package_manager: *//' | tr -d '"')
 	init_system=$(grep "^init:" "$rosette_file" | sed 's/^init: *//' | tr -d '"')
-	
+
 	# Extract commands
 	local install_cmd remove_cmd update_cmd search_cmd
 	install_cmd=$(sed -n '/^  install:/,/^  [a-z]/p' "$rosette_file" | grep "cmd:" | sed 's/.*cmd: *//' | tr -d '"')
 	remove_cmd=$(sed -n '/^  remove:/,/^  [a-z]/p' "$rosette_file" | grep "cmd:" | sed 's/.*cmd: *//' | tr -d '"')
 	update_cmd=$(sed -n '/^  update:/,/^  [a-z]/p' "$rosette_file" | grep "cmd:" | sed 's/.*cmd: *//' | tr -d '"')
 	search_cmd=$(sed -n '/^  search:/,/^  [a-z]/p' "$rosette_file" | grep "cmd:" | sed 's/.*cmd: *//' | tr -d '"')
-	
+
 	# Display formatted output
 	echo ""
 	_g "📦 Package Manager: $pkg_manager"
 	[ -n "$init_system" ] && echo "   Init system: $init_system"
 	echo ""
 	[ -n "$install_cmd" ] && printf "   ${GREEN}install${NC}  %s\n" "$install_cmd"
-	[ -n "$remove_cmd" ]  && printf "   ${GREEN}remove${NC}   %s\n" "$remove_cmd"
-	[ -n "$update_cmd" ]  && printf "   ${GREEN}update${NC}   %s\n" "$update_cmd"
-	[ -n "$search_cmd" ]  && printf "   ${GREEN}search${NC}   %s\n" "$search_cmd"
+	[ -n "$remove_cmd" ] && printf "   ${GREEN}remove${NC}   %s\n" "$remove_cmd"
+	[ -n "$update_cmd" ] && printf "   ${GREEN}update${NC}   %s\n" "$update_cmd"
+	[ -n "$search_cmd" ] && printf "   ${GREEN}search${NC}   %s\n" "$search_cmd"
 	echo ""
 }
 export -f rosette_info
-

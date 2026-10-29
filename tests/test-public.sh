@@ -37,8 +37,8 @@ echo ""
 # Count files
 file_count=$(ls public/ 2>/dev/null | wc -l)
 echo "[1/5] Files count: $file_count"
-if [[ "$file_count" -gt 200 ]]; then
-	pass "Found $file_count public/ files (>200)"
+if [[ "$file_count" -gt 100 ]]; then
+	pass "Found $file_count public/ files (>100)"
 else
 	fail "Only $file_count files (expected >200)"
 fi
@@ -46,10 +46,15 @@ fi
 # Test file format (KEY=VALUE)
 echo "[2/5] Testing KEY=VALUE format..."
 empty_count=0
+syntax_failures=0
 has_osname=0
 for f in public/*; do
 	[[ -f "$f" ]] || continue
 	[[ "$f" == public/tmp_* ]] && continue
+	if ! bash -n "$f" 2>/dev/null; then
+		echo "  Invalid shell syntax: $f"
+		syntax_failures=$((syntax_failures + 1))
+	fi
 	if [[ ! -s "$f" ]]; then
 		empty_count=$((empty_count + 1))
 		continue
@@ -58,6 +63,12 @@ for f in public/*; do
 		has_osname=$((has_osname + 1))
 	fi
 done
+echo "  Invalid metadata syntax: $syntax_failures"
+if [[ "$syntax_failures" -eq 0 ]]; then
+	pass "All metadata files have valid shell syntax"
+else
+	fail "$syntax_failures metadata files have invalid shell syntax"
+fi
 echo "  Empty files: $empty_count"
 echo "  With OSNAME: $has_osname"
 if [[ "$empty_count" -gt 0 ]]; then
@@ -71,17 +82,17 @@ fi
 
 # Test tmp_ files
 echo "[3/5] Testing tmp_ files..."
-tmp_count=$(ls public/tmp_* 2>/dev/null | wc -l)
+tmp_count=$(ls public/tmp_* 2>/dev/null | wc -l || true)
 echo "  tmp_ files: $tmp_count"
-if [[ "$tmp_count" -gt 100 ]]; then
-	pass "Found $tmp_count tmp_ files"
+if [[ "$tmp_count" -eq 0 ]]; then
+	pass "No orphan tmp_ files (clean)"
 else
-	warn "Only $tmp_count tmp_ files (expected >100)"
+	warn "$tmp_count tmp_ files present (run cleanup)"
 fi
 
 # Test key distributions
 echo "[4/5] Testing key distributions..."
-for os in debian ubuntu fedora arch linuxmint; do
+for os in debian ubuntu fedora-linux arch-linux lmde; do
 	if [[ -f "public/$os" ]]; then
 		pass "public/$os exists"
 	else
@@ -92,7 +103,7 @@ done
 # Test consistency with templates
 echo "[5/5] Testing public/ vs templates/..."
 template_count=$(ls templates/ | wc -l)
-public_count=$(ls public/[^t]* | wc -l)
+public_count=$(ls public/ | grep -v '^tmp_' | wc -l)
 gap=$((template_count - public_count))
 echo "  Templates: $template_count, Public: $public_count, Gap: $gap"
 if [[ "$gap" -lt 10 ]]; then

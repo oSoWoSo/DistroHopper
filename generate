@@ -2,7 +2,7 @@
 # shellcheck disable=SC2317
 # shellcheck source=lib.sh
 
-SCRIPT_DIR="$(dirname "$(realpath "$0")")"
+SCRIPT_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]:-$0}")")"
 source "${SCRIPT_DIR}/lib.sh"
 
 export PUBLIC_DIR="${PUBLIC_DIR:-${SCRIPT_DIR}/public}"
@@ -44,49 +44,81 @@ check_hash() {
 
 function write_output() {
 	unset -f config_ editions_ arch_ get_ releases_ extract_
-	unset GUEST IMAGE_TYPE DW_ARCHITECTURE DW_CATEGORY DW_DESKTOP DW_URL ORIGIN EDITIONS
+	unset OSNAME PRETTY LOGO ICON ICON_ONLINE CATEGORY BASEDOF DESCRIPTION HOMEPAGE \
+		CREDENTIALS GPG RSS DW MAGNET MAGNET_PREFERRED TORRENT CHAT
+	unset GUEST IMAGE_TYPE DW_ARCHITECTURE DW_CATEGORY DW_DESKTOP DW_URL ORIGIN \
+		EDITIONS EDITIONS_LIST RELEASES QEMU_ARCH
 	. "${TEMPLATES_DIR}/${OS}"
 
 	local DAT="${PUBLIC_DIR}/tmp_${OS}.dat"
-	if [ ! -s "${DAT}" ]; then
+	local META="${PUBLIC_DIR}/tmp_${OS}.rel"
+	if [ ! -s "${DAT}" ] && [ ! -s "${META}" ]; then
 		echo "WARNING: no entries collected for ${OS}, skipping"
 		return 1
 	fi
 
-	# In test mode, only PASS rows count; otherwise everything emitted is OK.
+	# Tests keep only reachable URLs; generation keeps entries with valid URLs.
 	local _filter='OK'
 	[ "${OPERATION}" == "test" ] && _filter='PASS'
 
-	# Collect releases/editions per arch from structured tmp_${OS}.dat
-	declare -A _arch_releases=() _arch_editions=()
+	# Declared metadata (tmp_${OS}.rel) comes from the template itself and does
+	# not depend on the ISO URLs resolving, so releases that are advertised but
+	# temporarily unreachable are still offered to the user.
+	# Probed metadata (tmp_${OS}.dat) is merged on top to catch anything the
+	# template did not declare.
+	declare -A _rel_editions=() _arch_releases=()
 	local _all_archs="" _arch _rel _ed _url _st
-	while IFS=$'\t' read -r _arch _rel _ed _url _st; do
-		[[ "${_st}" == "${_filter}" ]] || continue
-		[ -n "${_arch}" ] || continue
-		[[ " ${_all_archs} " == *" ${_arch} "* ]] || _all_archs+=" ${_arch}"
-		_arch_releases[${_arch}]+=" ${_rel}"
-		[ "${_ed}" != "-" ] && [ -n "${_ed}" ] && _arch_editions[${_arch}]+=" ${_ed}"
-	done < "${DAT}"
+
+	# The edition lists are kept newline separated while they are collected:
+	# an edition can contain a space (e.g. "Brazilian Portuguese"), so a
+	# space separated list could not be split apart again.
+
+	if [ -s "${META}" ]; then
+		while IFS=$'\t' read -r _arch _rel _ed; do
+			[ -n "${_arch}" ] || continue
+			[[ " ${_all_archs} " == *" ${_arch} "* ]] || _all_archs+=" ${_arch}"
+			[[ " ${_arch_releases[${_arch}]} " == *" ${_rel} "* ]] || _arch_releases[${_arch}]+=" ${_rel}"
+			# "-" is the placeholder for "this release has no editions".
+			[ "${_ed}" != "-" ] && [ -n "${_ed}" ] && _rel_editions["${_arch}|${_rel}"]+="${_ed}"$'\n'
+		done < "${META}"
+	fi
+
+	if [ -s "${DAT}" ]; then
+		while IFS=$'\t' read -r _arch _rel _ed _url _st; do
+			[[ "${_st}" == "${_filter}" ]] || continue
+			[ -n "${_arch}" ] || continue
+			[[ " ${_all_archs} " == *" ${_arch} "* ]] || _all_archs+=" ${_arch}"
+			[[ " ${_arch_releases[${_arch}]} " == *" ${_rel} "* ]] || _arch_releases[${_arch}]+=" ${_rel}"
+			[ "${_ed}" != "-" ] && [ -n "${_ed}" ] && _rel_editions["${_arch}|${_rel}"]+="${_ed}"$'\n'
+		done < "${DAT}"
+	fi
 
 	_all_archs=$(printf '%s\n' ${_all_archs} | sort -u | grep -v '^$' | paste -sd ' ')
 	[ -z "${_all_archs}" ] && { echo "WARNING: no PASS entries for ${OS}, skipping"; return 1; }
 
-	# Default sets = union across archs
-	local _default_rel _default_ed _all_rel="" _all_ed=""
-	local _a
+	# Per-arch edition unions and the global union
+	declare -A _arch_editions=()
+	local _all_rel="" _all_ed="" _a _key _rel_eds
 	for _a in ${_all_archs}; do
 		_all_rel+=" ${_arch_releases[${_a}]}"
-		_all_ed+=" ${_arch_editions[${_a}]}"
+		for _key in "${!_rel_editions[@]}"; do
+			case "${_key}" in
+				"${_a}|"*) _arch_editions[${_a}]+="${_rel_editions[${_key}]}" ;;
+			esac
+		done
+		_all_ed+="${_arch_editions[${_a}]}"
 	done
+
+	local _default_rel _default_ed
 	_default_rel=$(printf '%s\n' ${_all_rel} | sort -ur | grep -v '^$' | paste -sd ' ')
-	_default_ed=$(printf '%s\n'  ${_all_ed}  | sort -u  | grep -v '^$' | paste -sd ' ')
+	_default_ed=$(printf '%s\n' "${_all_ed}" | sort -u | grep -v '^$' | paste -sd ' ')
 
 	# Per-arch overrides (only emitted when they differ from default)
 	local _override_lines=""
 	for _a in ${_all_archs}; do
 		local _ar _ae
 		_ar=$(printf '%s\n' ${_arch_releases[${_a}]} | sort -ur | grep -v '^$' | paste -sd ' ')
-		_ae=$(printf '%s\n' ${_arch_editions[${_a}]} | sort -u  | grep -v '^$' | paste -sd ' ')
+		_ae=$(printf '%s\n' "${_arch_editions[${_a}]}" | sort -u | grep -v '^$' | paste -sd ' ')
 		if [ "${_ar}" != "${_default_rel}" ]; then
 			_override_lines+="RELEASES_${_a}=\"${_ar}\""$'\n'
 		fi
@@ -95,45 +127,153 @@ function write_output() {
 		fi
 	done
 
-	{
-		printf '# Template file for '\''%s'\''\n' "$OS"
-		printf 'OSNAME="%s"\n' "${OSNAME:-${OS}}"
-		printf 'PRETTY="%s"\n' "${PRETTY:-}"
-		printf 'LOGO="%s"\n' "${LOGO:-}"
-		printf 'ICON="%s"\n' "${ICON:-}"
-		printf 'ICON_ONLINE="%s"\n' "${ICON_ONLINE:-}"
-		printf 'CATEGORY="%s"\n' "${CATEGORY:-}"
-		printf 'BASEDOF="%s"\n' "${BASEDOF:-}"
-		printf 'DESCRIPTION="%s"\n' "${DESCRIPTION:-}"
-		printf 'HOMEPAGE="%s"\n' "${HOMEPAGE:-}"
-		printf 'CREDENTIALS="%s"\n' "${CREDENTIALS:-}"
-		printf 'GPG="%s"\n' "${GPG:-}"
-		printf 'RSS="%s"\n' "${RSS:-}"
-		printf 'DW="%s"\n' "${DW:-}"
-		printf 'MAGNET="%s"\n' "${MAGNET:-}"
-		printf 'CHAT="%s"\n' "${CHAT:-}"
+	# Release-scoped edition map. Needed for distros whose editions depend on
+	# the release (kde-neon, fedora-linux, zorin), where one global EDITIONS list
+	# would offer editions that do not exist for the selected release.
+	#
+	# The map is emitted in full — every (arch, release) pair that has
+	# editions — whenever the release sets are not all identical. A partial
+	# map would make the missing releases fall back to the global EDITIONS
+	# list, which is the union of all releases and therefore wrong for them.
+	local _map_cases="" _case_line="" _map_needed=0
+	for _key in "${!_rel_editions[@]}"; do
+		_rel_eds=$(printf '%s\n' "${_rel_editions[${_key}]}" | sort -u | grep -v '^$' | paste -sd ' ')
+		[ -n "${_rel_eds}" ] || continue
+		[ "${_rel_eds}" == "${_default_ed}" ] || _map_needed=1
+	done
+	if [ "${_map_needed}" -eq 1 ]; then
+		for _key in "${!_rel_editions[@]}"; do
+			_rel_eds=$(printf '%s\n' "${_rel_editions[${_key}]}" | sort -u | grep -v '^$' | paste -sd ' ')
+			[ -n "${_rel_eds}" ] || continue
+			printf -v _case_line '\t\t"%s")\t echo "%s" ;;\n' "${_key}" "${_rel_eds}"
+			_map_cases+="${_case_line}"
+		done
+	fi
+
+{
+ 		printf '# Template file for '\''%s'\''\n' "$OS"
+ 		printf 'OSNAME="%s"\n' "${OSNAME:-${OS}}"
+ 		printf 'PRETTY="%s"\n' "${PRETTY:-}"
+ 		printf 'LOGO="%s"\n' "${LOGO:-}"
+ 		printf 'ICON="%s"\n' "${ICON:-}"
+ 		printf 'ICON_ONLINE="%s"\n' "${ICON_ONLINE:-}"
+ 		printf 'CATEGORY="%s"\n' "${CATEGORY:-}"
+ 		printf 'BASEDOF="%s"\n' "${BASEDOF:-}"
+ 		printf 'DESCRIPTION="%s"\n' "${DESCRIPTION:-}"
+ 		printf 'HOMEPAGE="%s"\n' "${HOMEPAGE:-}"
+ 		printf 'CREDENTIALS="%s"\n' "${CREDENTIALS:-}"
+ 		printf 'GPG="%s"\n' "${GPG:-}"
+ 		printf 'RSS="%s"\n' "${RSS:-}"
+ 		printf 'DW="%s"\n' "${DW:-}"
+ 		printf 'MAGNET="%s"\n' "${MAGNET:-}"
+ 		printf 'MAGNET_PREFERRED="%s"\n' "${MAGNET_PREFERRED:-}"
+ 		printf 'TORRENT="%s"\n' "${TORRENT:-}"
+ 		printf 'CHAT="%s"\n' "${CHAT:-}"
 		for _key in GUEST IMAGE_TYPE DW_ARCHITECTURE DW_CATEGORY DW_DESKTOP DW_URL ORIGIN; do
 			local _val="${!_key}"
 			[ -n "${_val}" ] && printf '%s="%s"\n' "${_key}" "${_val}"
 		done
+		# Constants the template defines itself (e.g. BASE_URL). Without
+		# them the generated file would build relative URLs.
+		local _const
+		while IFS= read -r _const; do
+			[ -n "${_const}" ] && printf '%s\n' "${_const}"
+		done < <(grep -E '^[A-Z_][A-Z0-9_]*="[^$]*"$' "${TEMPLATES_DIR}/${OS}" | grep -vE '^(OSNAME|PRETTY|LOGO|ICON|ICON_ONLINE|CATEGORY|BASEDOF|DESCRIPTION|HOMEPAGE|CREDENTIALS|GPG|RSS|DW|MAGNET|MAGNET_PREFERRED|TORRENT|CHAT|GUEST|IMAGE_TYPE|DW_ARCHITECTURE|DW_CATEGORY|DW_DESKTOP|DW_URL|ORIGIN)=')
 		echo
 		printf 'RELEASES="%s"\n' "${_default_rel}"
 		[ -n "${_default_ed}" ] && printf 'EDITIONS="%s"\n' "${_default_ed}"
+		# The editions as they were collected, one per line. An edition can
+		# contain a space (e.g. "Brazilian Portuguese"), so the space
+		# separated EDITIONS value above cannot be split apart again —
+		# this list can.
+		if [ -n "${_all_ed}" ]; then
+			printf 'EDITIONS_LIST="%s"\n' "$(printf '%s\n' "${_all_ed}" | sort -u | grep -v '^$' | paste -sd '\n')"
+		fi
 		printf 'QEMU_ARCH="%s"\n' "${_all_archs}"
 		if [ -n "${_override_lines}" ]; then
 			echo
 			printf '%s' "${_override_lines}"
 		fi
+		if [ -n "${_map_cases}" ]; then
+			echo
+			printf '_release_editions_() {\n'
+			printf '\tcase "${1:-}" in\n'
+			printf '%s' "${_map_cases}"
+			printf '\t\t*) return 1 ;;\n'
+			printf '\tesac\n'
+			printf '}\n'
+		fi
 
 		# Embed all template functions verbatim so public/<OS> is self-contained.
 		# get_entries_ is excluded — it's a build-time helper from lib.sh.
-		while IFS= read -r _decl; do
-			local _fn="${_decl#function }"; _fn="${_fn%%(*}"
+		# A template that declares the same function twice would otherwise
+		# put both copies into the generated file, where the second one
+		# silently wins. Only the last definition of each function is kept.
+		local _fn
+		for _fn in $(awk '
+			/^(function )?[[:alpha:]_][[:alnum:]_]*\(\)[[:space:]]*\{/ {
+				name = $0
+				sub(/^function /, "", name)
+				sub(/\(\).*/, "", name)
+				if (!seen[name]++) print name
+			}
+		' "${TEMPLATES_DIR}/${OS}"); do
 			[[ "${_fn}" == "get_entries_" ]] && continue
 			echo
-			sed -n "/^${_decl}/,/^}/p" "${TEMPLATES_DIR}/${OS}" | sed '1s/^function //'
-		done < <(grep "^function " "${TEMPLATES_DIR}/${OS}")
-	} >"${PUBLIC_DIR}/${OS}"
+			awk -v fn="${_fn}" '
+				!collect && $0 ~ ("^(function )?" fn "\\(\\)[[:space:]]*\\{") {
+					collect = 1
+					body = $0 "\n"
+					next
+				}
+				collect {
+					body = body $0 "\n"
+					if ($0 == "}") {
+						last = body
+						collect = 0
+					}
+				}
+				END { printf "%s", last }
+			' "${TEMPLATES_DIR}/${OS}" | sed '1s/^function //'
+		done
+
+		# Static overrides for the discovery helpers. The template versions
+		# above are the live, network-scraping implementations; these replace
+		# them so that answering "which releases/editions exist?" never needs
+		# the network. They are defined last, so they win.
+		echo
+		cat <<'STATIC'
+releases_() {
+	# Releases parsed at generation time — no network access needed.
+	echo "${RELEASES}"
+}
+STATIC
+		# A distro without editions must not get an editions_() function at
+		# all: callers use its presence to decide whether the distro has
+		# editions, and a function that returns nothing would look like a
+		# distro with an empty edition list.
+		if [ -n "${_default_ed}" ]; then
+			cat <<'STATIC'
+editions_() {
+	# Editions parsed at generation time — no network access needed.
+	local _scoped=""
+	if [ -n "${RELEASE:-}" ] && declare -F _release_editions_ >/dev/null; then
+		_scoped=$(_release_editions_ "${ARCH:-}|${RELEASE}")
+	fi
+	if [ -n "${_scoped}" ]; then
+		echo "${_scoped}"
+		return 0
+	fi
+	local _per_arch="EDITIONS_${ARCH:-}"
+	if [ -n "${!_per_arch:-}" ]; then
+		echo "${!_per_arch}"
+		return 0
+	fi
+	echo "${EDITIONS:-}"
+}
+STATIC
+		fi
+	} >"${PUBLIC_DIR}/${OS}.new" && mv -f "${PUBLIC_DIR}/${OS}.new" "${PUBLIC_DIR}/${OS}"
 
 	echo "wrote ${PUBLIC_DIR}/${OS}"
 }
@@ -155,8 +295,10 @@ function is_arch_supported() {
 function _iterate_os() {
 	OS="${1}"
 	mkdir -p "${PUBLIC_DIR}"
-	rm -f "${PUBLIC_DIR}/${OS}" "${PUBLIC_DIR}/tmp_${OS}" "${PUBLIC_DIR}/tmp_${OS}.dat"
-	touch "${PUBLIC_DIR}/tmp_${OS}" "${PUBLIC_DIR}/tmp_${OS}.dat"
+	# The previous metadata of this distro is kept until the new one was
+	# written successfully, so a failed run does not remove the distro.
+	rm -f "${PUBLIC_DIR}/tmp_${OS}" "${PUBLIC_DIR}/tmp_${OS}.dat" "${PUBLIC_DIR}/tmp_${OS}.rel"
+	touch "${PUBLIC_DIR}/tmp_${OS}" "${PUBLIC_DIR}/tmp_${OS}.dat" "${PUBLIC_DIR}/tmp_${OS}.rel"
 
 	# Per-OS HTTP cache — exported so child shells / subshells see it.
 	# Wiped on RETURN so each OS gets a fresh cache.
@@ -164,7 +306,11 @@ function _iterate_os() {
 	_WEB_CACHE_DIR="$(mktemp -d -t "dh-webcache-${OS}-XXXXXX")"
 	trap 'rm -rf "${_WEB_CACHE_DIR}"; unset _WEB_CACHE_DIR' RETURN
 
-	unset -f get_ releases_ editions_ arch_ config_ extract_
+	# Prevent a template-specific entry hook from leaking into the next distro.
+	unset -f get_ releases_ editions_ arch_ config_ extract_ get_entries_
+	get_entries_() {
+		_default_get_entries_ "$@"
+	}
 	. "${TEMPLATES_DIR}/${OS}"
 
 	local ARCHS
@@ -174,10 +320,50 @@ function _iterate_os() {
 		ARCHS="amd64"
 	fi
 
-	# Cache releases per arch once (releases_ may depend on ARCH/EDITION)
+	# ── Special cases ──────────────────────────────────────────────────
+	# windows*: uses languages_() instead of editions_()/get_().
+	# macos:    get_() calls exit 0 in show mode, can't use in pipeline.
+	# Both need public/ metadata + functions for qget to work at runtime.
+
+	if [[ "${OS}" == "windows"* ]] && [[ $(type -t languages_) == function ]]; then
+		for ARCH in ${ARCHS}; do
+			for RELEASE in $(releases_); do
+				. "${TEMPLATES_DIR}/${OS}"
+				languages_
+				for I18N in "${I18NS[@]}"; do
+					_emit_entry "${OS}" "${ARCH}" "${RELEASE}" "${I18N}" "" "${OPERATION}" "${PUBLIC_DIR}" true
+				done
+			done
+		done
+		return 0
+	fi
+
+	if [[ "${OS}" == "macos" ]]; then
+		for ARCH in ${ARCHS}; do
+			for RELEASE in $(releases_); do
+				. "${TEMPLATES_DIR}/${OS}"
+				_emit_entry "${OS}" "${ARCH}" "${RELEASE}" "" "" "${OPERATION}" "${PUBLIC_DIR}" true
+			done
+		done
+		return 0
+	fi
+
+	# ── General case ───────────────────────────────────────────────────
 	for ARCH in ${ARCHS}; do
 		for RELEASE in $(releases_); do
 			. "${TEMPLATES_DIR}/${OS}"
+			# Record the declared releases/editions before probing the ISO
+			# URLs. A release whose ISO is temporarily unreachable must still
+			# be offered — the URL is resolved at download time, not here.
+			if [[ $(type -t "editions_") == function ]]; then
+				for EDITION in $(editions_); do
+					printf '%s\t%s\t%s\n' "${ARCH}" "${RELEASE}" "${EDITION}" \
+						>> "${PUBLIC_DIR}/tmp_${OS}.rel"
+				done
+			else
+				printf '%s\t%s\t%s\n' "${ARCH}" "${RELEASE}" "-" \
+					>> "${PUBLIC_DIR}/tmp_${OS}.rel"
+			fi
 			get_entries_ "${OS}" "${ARCH}" "${RELEASE}" "${OPERATION}" "${PUBLIC_DIR}" "${TEMPLATES_DIR}"
 		done
 	done
@@ -300,8 +486,11 @@ function web_check() {
 	done
 	local key rc
 	key=$(_web_cache_key "HEAD${HEADERS[*]}" "${URL}")
-	if _web_cache_get_status "${key}"; then return 0; fi
-	rc=$?
+	if _web_cache_get_status "${key}"; then
+		return 0
+	else
+		rc=$?
+	fi
 	# rc=2 means not cached; otherwise it's the cached exit status
 	if [ "${rc}" != "2" ]; then return "${rc}"; fi
 	curl --silent --location --head --output /dev/null --fail --connect-timeout 30 --max-time 30 --retry 3 "${HEADERS[@]}" "${URL}"
@@ -479,8 +668,13 @@ function _run_one() {
 }
 
 function _run_parallel() {
-	rm -f TODO/all "${PUBLIC_DIR}"/*
+	rm -f TODO/all
 	touch TODO/all
+	# Only the scratch files are removed here. The generated metadata of a
+	# distro is replaced by write_output() when that distro was generated
+	# successfully, so a distro whose upstream is unreachable keeps the
+	# metadata it had instead of losing it.
+	find "${PUBLIC_DIR}" -maxdepth 1 -name 'tmp_*' -delete 2>/dev/null
 
 	local max_jobs
 	max_jobs="$(nproc 2>/dev/null || echo 4)"
@@ -586,6 +780,9 @@ function _run_all() {
 }
 
 # ---------------------------------------------------------------------------
+
+# Allow sourcing (e.g., for unit tests) without executing main.
+[ -n "${_DH_SKIP_MAIN:-}" ] && return 0
 
 OPERATION='show'
 _args=()

@@ -3,6 +3,7 @@ name: openSUSE
 package_manager: zypper
 init: systemd
 icon: opensuse.svg
+homepage: https://www.opensuse.org
 color: "#73ba25"
 
 commands:

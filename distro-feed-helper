@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+
+SCRIPT_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
+TEMPLATES_DIR="${TEMPLATES_DIR:-${SCRIPT_DIR}/templates}"
+PUBLIC_DIR="${PUBLIC_DIR:-${SCRIPT_DIR}/public}"
+DEFAULT_FEED="https://raw.githubusercontent.com/oSoWoSo/distro-feeds/public/releases.xml"
+
+usage() {
+	printf 'Usage: %s [atom-feed-url]\n' "${0##*/}"
+	printf 'Report feed entries that may need a template or a release update.\n'
+	printf 'This is advisory; it does not add unsupported OSes automatically.\n'
+}
+
+if [ "$#" -gt 1 ]; then
+	usage >&2
+	exit 2
+fi
+if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
+	usage
+	exit 0
+fi
+
+source "${SCRIPT_DIR}/lib.sh"
+
+normalize_slug() {
+	local slug="${1,,}"
+	printf '%s' "${slug//[^a-z0-9]/}"
+}
+
+declare -A TEMPLATE_BY_SLUG=()
+for template_path in "${TEMPLATES_DIR}"/*; do
+	[ -f "${template_path}" ] || continue
+	template="${template_path##*/}"
+	slug="${template,,}"
+	slug="${slug//[^a-z0-9]/}"
+	TEMPLATE_BY_SLUG["${slug}"]="${template}"
+done
+
+while IFS=$'\t' read -r feed_slug title release homepage iso_url icon; do
+	feed_slug="$(normalize_slug "${feed_slug}")"
+	template="${TEMPLATE_BY_SLUG[${feed_slug}]:-}"
+	if [ "${iso_url}" == "-" ]; then
+		_r "No ISO URL: ${title}"
+	elif [ -z "${template}" ]; then
+		_y "New OS candidate — review VM support: ${title}"
+	elif [ ! -f "${PUBLIC_DIR}/${template}" ]; then
+		_y "Template not generated: ${title}"
+	else
+		current_releases=$(awk -F '"' '$1 == "RELEASES=" { print $2; exit }' "${PUBLIC_DIR}/${template}")
+		if [[ " ${current_releases} " == *" ${release} "* ]]; then
+			_g "Already listed: ${title}"
+		else
+			_y "Add release: ${title}"
+		fi
+	fi
+	if [ -n "${template}" ]; then
+		printf '  Template: %s\n' "${template}"
+	else
+		printf '  Feed ID:  %s\n' "${feed_slug}"
+	fi
+	printf '  ISO:      %s\n' "${iso_url}"
+	if [ -z "${template}" ]; then
+		printf '  Homepage: %s\n' "${homepage}"
+		printf '  Icon:     %s\n' "${icon}"
+	fi
+	printf '\n'
+done < <(atom_feed_entries "${1:-${DEFAULT_FEED}}")

@@ -23,8 +23,8 @@ check_url() {
 	curl -s -o /dev/null -w "%{http_code}" --max-time 30 "$url" 2>/dev/null | grep -q "200\|302\|301"
 }
 
-# Function to get releases from web for linuxmint
-get_linuxmint_releases() {
+# Function to get releases from web for linux-mint
+get_linux_mint_releases() {
 	curl -s "https://linuxmint.com/download.php" 2>/dev/null |
 		grep -oP 'href="/stable/[0-9]+\.[0-9]+"' |
 		sed 's|href="/stable/||;s|"||g' | sort -Vu || echo ""
@@ -84,7 +84,7 @@ echo -e "${BLUE}========================================${NC}"
 echo ""
 
 # Verify a few test OS
-for os in linuxmint lmde debian ubuntu; do
+for os in linux-mint lmde debian ubuntu; do
 	verify_os "$os" || true
 done
 

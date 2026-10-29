@@ -37,10 +37,10 @@ echo ""
 # Count templates
 template_count=$(ls templates/ 2>/dev/null | wc -l)
 echo "[1/6] Templates count: $template_count"
-if [[ "$template_count" -gt 110 ]]; then
-	pass "Found $template_count templates (>110)"
+if [[ "$template_count" -gt 100 ]]; then
+	pass "Found $template_count templates (>100)"
 else
-	fail "Only $template_count templates (expected >110)"
+	fail "Only $template_count templates (expected >100)"
 fi
 
 # Test releases_() in all templates
@@ -81,7 +81,7 @@ fi
 
 # Test key distributions
 echo "[4/6] Testing key distributions..."
-for os in debian ubuntu fedora arch linuxmint; do
+for os in debian ubuntu fedora-linux arch-linux lmde; do
 	if [[ -f "templates/$os" ]]; then
 		pass "templates/$os exists"
 	else

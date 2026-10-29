@@ -1,0 +1,73 @@
+# Boot to live environment, inject inventories to serial console, power off
+# Ports Oculix testcase_01_bootiso (UEFI path)
+
+function test_description() {
+    cat << EOF
+Boot Odyssey Shipwreck live ISO (UEFI), add serial console to kernel cmdline,
+reach live desktop, inject package/service/network/dmesg inventories to serial,
+then power off.
+EOF
+}
+
+# Timeouts mapped from Oculix: shortwait=2, longwait=20, bootwait=120, setupwait=600
+readonly SW_SHORTWAIT=2
+readonly SW_LONGWAIT=20
+readonly SW_BOOTWAIT=120
+readonly SW_SETUPWAIT=600
+
+function test_setup() {
+    test_user_name="Test User"
+    test_user_login="test"
+    test_hostname="testshipwreck"
+    test_password="test"
+    test_root_password="roottest"
+    test_passphrase="test"
+
+    TESSERACT_LANG="eng"
+    QT_KEEP_SCREENSHOTS=true
+}
+
+# shellcheck disable=SC1090
+source "$(dirname "${BASH_SOURCE[0]}")/lib-shipwreck"
+
+function test_boot_to_live_environment() {
+    test_setup
+
+    # Start serial tap FIRST — kernel spews on ttyS0 from the first second
+    sw_serial_start
+
+    # 1. Wait for UEFI GRUB menu (120s budget, matching Oculix bootwait)
+    sw_wait_for_grub_menu "grub_menu"
+
+    # 2. Edit kernel command line to add serial console (UEFI pattern from ubuntu test)
+    sw_grub_edit_serial_console_uefi "grub_edit_serial"
+
+    # 3. Wait for live desktop (120s budget, matching Oculix bootwait)
+    sw_wait_for_live_desktop "live_desktop"
+
+    # 4. Open terminal (ctrl-alt-t) and wait for shell prompt
+    qt_send_key_combo "ctrl-alt-t"
+    qt_wait_for_text "terminal_open" "${text_shell_prompt}" 10 2
+    qt_screenshot_ppm "terminal_open"
+
+    # 5. Inject four inventories into serial console (live session, no sudo needed)
+    sw_inject_inventories_live
+
+    # 6. Assert all END markers appeared in serial log
+    sw_assert_all_serial_markers
+
+    # 7. Check network reachability from serial log (warning only)
+    sw_check_network_reachability
+
+    # 8. Close terminal (ctrl-shift-q, per ubuntu testcase convention)
+    qt_send_key_combo "ctrl-shift-q"
+    qt_screenshot_ppm "terminal_closed"
+
+    # 9. Stop serial tap, report summary, pass, power off
+    sw_serial_stop
+    sw_report_serial_summary
+    qt_test_pass "Boot to live environment completed"
+    qt_poweroff_vm
+}
+
+test_description

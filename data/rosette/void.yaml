@@ -2,7 +2,8 @@ id: void
 name: Void Linux
 package_manager: xbps
 init: runit
-icon: void.svg
+icon: void-linux.svg
+homepage: https://voidlinux.org
 color: "#478061"
 
 commands:

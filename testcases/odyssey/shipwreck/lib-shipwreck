@@ -1,0 +1,611 @@
+# Shared helpers for Odyssey Shipwreck quicktest cases
+# Sourced by each testcase via:
+#   source "$(dirname "${BASH_SOURCE[0]}")/lib-shipwreck"
+
+# Guard against double-start
+_SW_SERIAL_PID=""
+
+# Start a background tap on quickemu's serial chardev socket.
+# Socket path: ${QUICKEMU_VM_DIR}/${VMNAME}/${VMNAME}-serial.socket
+# Streams to ${QT_RESULTS}/serial.log
+sw_serial_start() {
+    local socket_path="${QUICKEMU_VM_DIR}/${VMNAME}/${VMNAME}-serial.socket"
+    local log_file="${QT_RESULTS}/serial.log"
+
+    if [ -n "${_SW_SERIAL_PID}" ] && kill -0 "${_SW_SERIAL_PID}" 2>/dev/null; then
+        qt_echo "🔌 Serial tap already running (PID ${_SW_SERIAL_PID})"
+        return 0
+    fi
+
+    if [ ! -S "${socket_path}" ]; then
+        qt_test_fail "Serial socket not found at ${socket_path}"
+    fi
+
+    qt_echo "🔌 Starting serial tap on ${socket_path} -> ${log_file}"
+    # socat -u UNIX-CONNECT:<path> - reads from socket, writes to stdout
+    # Background it and capture PID
+    socat -u "UNIX-CONNECT:${socket_path}" - >> "${log_file}" 2>&1 &
+    _SW_SERIAL_PID=$!
+    qt_echo "🔌 Serial tap PID: ${_SW_SERIAL_PID}"
+    return 0
+}
+
+# Stop the serial tap
+sw_serial_stop() {
+    if [ -n "${_SW_SERIAL_PID}" ] && kill -0 "${_SW_SERIAL_PID}" 2>/dev/null; then
+        qt_echo "🔌 Stopping serial tap (PID ${_SW_SERIAL_PID})"
+        kill "${_SW_SERIAL_PID}" 2>/dev/null
+        wait "${_SW_SERIAL_PID}" 2>/dev/null || true
+        _SW_SERIAL_PID=""
+    else
+        qt_echo "🔌 Serial tap not running"
+    fi
+    return 0
+}
+
+# Poll serial log for a literal marker string
+# Usage: sw_serial_assert "<marker>" <retries> <interval>
+sw_serial_assert() {
+    local marker="$1"
+    local retries="${2:-30}"
+    local interval="${3:-2}"
+    local log_file="${QT_RESULTS}/serial.log"
+
+    qt_echo "🔍 Waiting for serial marker: ${marker} (${retries}×${interval}s)"
+    for c in $(seq 1 "${retries}"); do
+        if [ -f "${log_file}" ] && grep -q -F "${marker}" "${log_file}"; then
+            qt_echo "✅ Found marker: ${marker} (attempt ${c})"
+            return 0
+        fi
+        qt_echo "🔁 ${c}/${retries} marker not yet present: ${marker}"
+        qt_wait_for_seconds "${interval}"
+    done
+    qt_test_fail "Serial marker never appeared: ${marker} after ${retries} retries"
+}
+
+# Poll serial log for a grep-style regex pattern
+# Usage: sw_serial_grep "<pattern>" <retries> <interval>
+# Returns 0 if found, 1 if not found after retries (non-fatal; caller decides)
+sw_serial_grep() {
+    local pattern="$1"
+    local retries="${2:-30}"
+    local interval="${3:-2}"
+    local log_file="${QT_RESULTS}/serial.log"
+
+    qt_echo "🔍 Waiting for serial pattern: ${pattern} (${retries}×${interval}s)"
+    for c in $(seq 1 "${retries}"); do
+        if [ -f "${log_file}" ] && grep -q -E "${pattern}" "${log_file}"; then
+            qt_echo "✅ Found pattern: ${pattern} (attempt ${c})"
+            return 0
+        fi
+        qt_echo "🔁 ${c}/${retries} pattern not yet present: ${pattern}"
+        qt_wait_for_seconds "${interval}"
+    done
+    qt_echo "❌ Serial pattern never appeared: ${pattern} after ${retries} retries"
+    return 1
+}
+
+# Print a short summary of expected markers found/missing and tail the log
+sw_report_serial_summary() {
+    local log_file="${QT_RESULTS}/serial.log"
+    local markers=(
+        "${text_serial_pkg_end}"
+        "${text_serial_svc_end}"
+        "${text_serial_net_end}"
+        "${text_serial_dmesg_end}"
+        "${text_serial_oupdate_end}"
+    )
+    local names=(
+        "Package list"
+        "Service status"
+        "Network status"
+        "Dmesg"
+        "OUpdate"
+    )
+
+    qt_echo "📋 Serial log summary (${log_file}):"
+    if [ -f "${log_file}" ]; then
+        local i=0
+        for m in "${markers[@]}"; do
+            if grep -q -F "${m}" "${log_file}"; then
+                qt_echo "  ✅ ${names[i]}: FOUND"
+            else
+                qt_echo "  ❌ ${names[i]}: MISSING"
+            fi
+            i=$((i+1))
+        done
+        qt_echo "📄 Last 50 lines of serial log:"
+        tail -50 "${log_file}" | while IFS= read -r line; do
+            qt_echo "  ${line}"
+        done
+    else
+        qt_echo "  ⚠️  Serial log file does not exist"
+    fi
+    return 0
+}
+
+# Type a shell command into the focused terminal and press Enter
+sw_shell() {
+    local cmd="$1"
+    qt_send_string_return "${cmd}"
+    return 0
+}
+
+# Type a sudo command with password via sudo -S -p ''
+# Usage: sw_shell_sudo <password> <command>
+sw_shell_sudo() {
+    local password="$1"
+    local cmd="$2"
+    # sudo -S reads password from stdin, -p '' suppresses prompt
+    qt_send_string "sudo -S -p '' "
+    qt_send_string "${cmd}"
+    qt_send_key_combo "ret"
+    qt_wait_for_seconds 1
+    qt_send_string_return "${password}"
+    return 0
+}
+
+# Helper: send a raw QEMU HMP key name (bypasses KEYS lookup entirely)
+# qt_send_key resolves arguments through the KEYS associative array which only
+# defines: space (" "->spc), enter/return (->ret), escape/esc (->esc), tab (->tab),
+# and alphanumerics. It does NOT have: down, up, left, right, f10, end, meta_l,
+# shift-tab, backspace, etc. So qt_send_key "space" -> KEYS["space"]="" -> sends
+# bare "sendkey " which is a silent no-op. qt_send_key_combo passes its argument
+# straight to HMP sendkey with no KEYS lookup — that is the correct path for all
+# non-character keys. This helper wraps qt_send_key_combo for clarity.
+# Usage: sw_key <qemu_hmp_key_name>
+sw_key() {
+    local qemu_key="$1"
+    case "${qemu_key}" in
+        ''|space|return|enter|f1|f2|f3|f4|f5|f6|f7|f8|f9|f11|f12|home)
+            qt_test_fail "sw_key: bad QEMU HMP key name «${qemu_key}» — use spc / ret / esc / f10"
+            ;;
+    esac
+    qt_send_key_combo "${qemu_key}"
+    return 0
+}
+
+# Helper: repeat a key N times
+# Usage: sw_tap <count> <qemu_hmp_key_name>
+sw_tap() {
+    local count="$1"
+    local key="$2"
+    local i
+    for ((i=0; i<count; i++)); do
+        sw_key "${key}"
+    done
+    return 0
+}
+
+# Helper: wait for a Calamares step screen by OCR text, screenshot, then send key sequence
+# Usage: sw_calamares_step <step_name> <ocr_text_var> <key_sequence...>
+# Example: sw_calamares_step "welcome" "text_calamares_welcome_1" "up" "up" "tab" "tab" "tab" "tab" "spc"
+# Note: key arguments must be raw QEMU HMP key names (e.g. "spc" not "space", "ret" not "enter").
+sw_calamares_step() {
+    local step_name="$1"
+    local ocr_var="$2"
+    shift 2
+    local ocr_text="${!ocr_var}"
+
+    qt_wait_for_text "${step_name}" "${ocr_text}" 20 5
+    qt_screenshot_ppm "${step_name}"
+    qt_wait_for_seconds 1
+    for key in "$@"; do
+        sw_key "${key}"
+    done
+    return 0
+}
+
+# Edit GRUB kernel command line to add serial console (UEFI path)
+# Pattern from ubuntu test_boot_to_live_environment_with_serial_console
+sw_grub_edit_serial_console_uefi() {
+    local step_name="$1"
+    sw_key "e"
+    qt_wait_for_seconds 1
+    # Move to the linux line (typically 3 downs from default entry)
+    sw_tap 3 "down"
+    sw_key "end"
+    qt_wait_for_seconds 1
+    # Screenshot BEFORE backspaces — the 12×backspace count is a guess calibrated
+    # for Ubuntu's trailing " splash" (7 chars). If Shipwreck's cmdline differs,
+    # this corrupts the linux line and the VM won't boot. The artifact shows why.
+    qt_screenshot_ppm "${step_name}_before_backspace"
+    # Backspace over trailing "splash" (typically ~12 chars: " splash")
+    sw_tap 12 "backspace"
+    qt_wait_for_seconds 1
+    qt_send_string " console=ttyS0,115200 console=tty0"
+    qt_screenshot_ppm "${step_name}"
+    sw_key "f10"
+    return 0
+}
+
+# Wait for one of several GRUB text candidates
+sw_wait_for_grub_menu() {
+    local step_name="$1"
+    local candidates=(
+        "${text_console_gnu_grub_1}"
+        "${text_console_gnu_grub_2}"
+        "${text_console_gnu_grub_3}"
+    )
+    local retries=24  # ~120s at 5s interval
+    local interval=5
+    local c found=0
+
+    qt_wait_for_seconds 5
+    for c in $(seq 1 "${retries}"); do
+        qt_screenshot_ppm "${step_name}"
+        for txt in "${candidates[@]}"; do
+            if qt_search_screenshot "${step_name}" "${txt}"; then
+                qt_echo "✅ GRUB menu detected via: ${txt}"
+                found=1
+                break 2
+            fi
+        done
+        qt_echo "🔁 ${c}/${retries} GRUB menu not yet visible"
+        qt_wait_for_seconds "${interval}"
+    done
+    if [ ${found} -eq 0 ]; then
+        qt_test_fail "GRUB menu not detected after ${retries} retries"
+    fi
+    return 0
+}
+
+# Wait for live desktop with multiple OCR candidates
+sw_wait_for_live_desktop() {
+    local step_name="$1"
+    local candidates=(
+        "${text_live_welcome_1}"
+        "${text_live_welcome_2}"
+        "${text_live_welcome_3}"
+    )
+    local retries=24  # ~120s at 5s interval
+    local interval=5
+    local c found=0
+
+    for c in $(seq 1 "${retries}"); do
+        qt_screenshot_ppm "${step_name}"
+        for txt in "${candidates[@]}"; do
+            if qt_search_screenshot "${step_name}" "${txt}"; then
+                qt_echo "✅ Live desktop detected via: ${txt}"
+                found=1
+                break 2
+            fi
+        done
+        qt_echo "🔁 ${c}/${retries} Live desktop not yet visible"
+        qt_wait_for_seconds "${interval}"
+    done
+    if [ ${found} -eq 0 ]; then
+        qt_test_fail "Live desktop not detected after ${retries} retries"
+    fi
+    return 0
+}
+
+# Inject inventory commands to serial console
+# In live session (no root password), run without sudo
+# In installed session, run with sudo using user password
+sw_inject_inventories_live() {
+    # Long typed commands (~1000 HMP round-trips); raise delay to avoid dropped chars
+    # when QEMU hasn't re-armed its monitor listener between socat connects.
+    export QEMU_INSERT_DELAY="${QEMU_INSERT_DELAY:-0.35}"
+    qt_echo "📦 Injecting live-session inventories to serial console"
+    sw_shell "echo '${text_serial_pkg_start}' > /dev/ttyS0; olist > /dev/ttyS0 2>&1; echo '${text_serial_pkg_end}' > /dev/ttyS0"
+    sw_shell "echo '${text_serial_svc_start}' > /dev/ttyS0; sv status /var/service/* > /dev/ttyS0 2>&1; echo '${text_serial_svc_end}' > /dev/ttyS0"
+    sw_shell "echo '${text_serial_net_start}' > /dev/ttyS0; ip a > /dev/ttyS0 2>&1; curl -s http://detectportal.firefox.com/canonical.html > /dev/ttyS0 2>&1; echo '${text_serial_net_end}' > /dev/ttyS0"
+    sw_shell "echo '${text_serial_dmesg_start}' > /dev/ttyS0; dmesg > /dev/ttyS0 2>&1; echo '${text_serial_dmesg_end}' > /dev/ttyS0"
+    return 0
+}
+
+sw_inject_inventories_installed() {
+    local user_password="$1"
+    # Long typed commands (~1000 HMP round-trips); raise delay to avoid dropped chars
+    # when QEMU hasn't re-armed its monitor listener between socat connects.
+    export QEMU_INSERT_DELAY="${QEMU_INSERT_DELAY:-0.35}"
+    qt_echo "📦 Injecting installed-system inventories to serial console (with sudo)"
+    sw_shell_sudo "${user_password}" "echo '${text_serial_pkg_start}' > /dev/ttyS0; olist > /dev/ttyS0 2>&1; echo '${text_serial_pkg_end}' > /dev/ttyS0"
+    sw_shell_sudo "${user_password}" "echo '${text_serial_svc_start}' > /dev/ttyS0; sv status /var/service/* > /dev/ttyS0 2>&1; echo '${text_serial_svc_end}' > /dev/ttyS0"
+    sw_shell_sudo "${user_password}" "echo '${text_serial_net_start}' > /dev/ttyS0; ip a > /dev/ttyS0 2>&1; curl -s http://detectportal.firefox.com/canonical.html > /dev/ttyS0 2>&1; echo '${text_serial_net_end}' > /dev/ttyS0"
+    sw_shell_sudo "${user_password}" "echo '${text_serial_dmesg_start}' > /dev/ttyS0; dmesg > /dev/ttyS0 2>&1; echo '${text_serial_dmesg_end}' > /dev/ttyS0"
+    sw_shell_sudo "${user_password}" "echo '${text_serial_oupdate_start}' > /dev/ttyS0; oupdate > /dev/ttyS0 2>&1; echo '${text_serial_oupdate_end}' > /dev/ttyS0"
+    # Re-run package list and service status after oupdate
+    sw_shell_sudo "${user_password}" "echo '${text_serial_pkg_start}' > /dev/ttyS0; olist > /dev/ttyS0 2>&1; echo '${text_serial_pkg_end}' > /dev/ttyS0"
+    sw_shell_sudo "${user_password}" "echo '${text_serial_svc_start}' > /dev/ttyS0; sv status /var/service/* > /dev/ttyS0 2>&1; echo '${text_serial_svc_end}' > /dev/ttyS0"
+    return 0
+}
+
+# Assert all expected serial END markers appeared
+sw_assert_all_serial_markers() {
+    sw_serial_assert "${text_serial_pkg_end}" 30 2
+    sw_serial_assert "${text_serial_svc_end}" 30 2
+    sw_serial_assert "${text_serial_net_end}" 30 2
+    sw_serial_assert "${text_serial_dmesg_end}" 30 2
+    return 0
+}
+
+sw_assert_all_serial_markers_installed() {
+    sw_serial_assert "${text_serial_pkg_end}" 30 2
+    sw_serial_assert "${text_serial_svc_end}" 30 2
+    sw_serial_assert "${text_serial_net_end}" 30 2
+    sw_serial_assert "${text_serial_dmesg_end}" 30 2
+    sw_serial_assert "${text_serial_oupdate_end}" 30 2
+    return 0
+}
+
+# Check network reachability from serial log (warning only)
+sw_check_network_reachability() {
+    if sw_serial_grep "${text_serial_inet}" 5 1; then
+        qt_echo "✅ Network reachability confirmed (inet address found in serial log)"
+    else
+        qt_echo "⚠️  Network reachability NOT confirmed (no inet address in serial log section)"
+    fi
+    return 0
+}
+
+# ============================================================
+# Shared installer runner — called by both install testcases
+# Usage: sw_run_installer <encrypt:true|false>
+# Encapsulates the full Calamares flow; individual step functions
+# remain in the testcase files so failures name the exact step.
+# ============================================================
+sw_run_installer() {
+    local encrypt="$1"  # "true" or "false"
+
+    # Boot to live desktop and start serial tap
+    sw_boot_to_live_desktop
+    sw_launch_calamares
+    sw_calamares_welcome
+    sw_calamares_time_localization
+    sw_calamares_keyboard
+    sw_calamares_de_selection
+
+    if [ "${encrypt}" = "true" ]; then
+        sw_calamares_partitioning_enc_uefi
+    else
+        sw_calamares_partitioning_noenc_uefi
+    fi
+
+    sw_calamares_users
+    sw_calamares_summary
+    sw_calamares_install
+    sw_calamares_finished_restart
+    sw_reboot_to_installed
+
+    if [ "${encrypt}" = "true" ]; then
+        sw_luks_unlock_twice
+    fi
+
+    sw_sddm_login_plasma_x11
+    sw_post_install_inventories
+    sw_serial_stop
+    sw_report_serial_summary
+    qt_poweroff_vm
+}
+
+# --- Boot to live desktop (shared) ---
+sw_boot_to_live_desktop() {
+    sw_serial_start
+    sw_wait_for_grub_menu "grub_menu"
+    sw_grub_edit_serial_console_uefi "grub_edit_serial"
+    sw_wait_for_live_desktop "live_desktop"
+}
+
+# --- Launch Calamares from application launcher ---
+sw_launch_calamares() {
+    qt_send_key_combo "meta_l"
+    qt_wait_for_seconds 1
+    qt_send_string "install"
+    qt_wait_for_seconds 1
+    qt_send_key_combo "ret"
+    qt_wait_for_seconds 3
+    qt_screenshot_ppm "calamares_launch"
+    if qt_search_screenshot "calamares_launch" "close"; then
+        qt_send_key_combo "esc"
+        qt_wait_for_seconds 1
+    fi
+}
+
+# --- Calamares Welcome / Language ---
+sw_calamares_welcome() {
+    sw_calamares_step "calamares_welcome" "text_calamares_welcome_1" "up" "up" "tab" "tab" "tab" "tab" "spc"
+}
+
+# --- Calamares Time & Localization ---
+sw_calamares_time_localization() {
+    sw_calamares_step "calamares_time_localization" "text_calamares_time_localization" "tab" "tab" "tab" "tab" "tab" "tab" "spc"
+}
+
+# --- Calamares Keyboard Selection ---
+sw_calamares_keyboard() {
+    sw_calamares_step "calamares_keyboard" "text_calamares_keyboard" "tab" "tab" "tab" "tab" "tab" "tab" "tab" "tab" "tab" "tab" "spc"
+}
+
+# --- Calamares Desktop Environment Selection (Plasma) ---
+sw_calamares_de_selection() {
+    qt_wait_for_text "calamares_de_selection" "${text_calamares_de_selection}" 20 5
+    qt_screenshot_ppm "calamares_de_selection"
+    qt_wait_for_seconds 1
+    local i
+    for ((i=0; i<5; i++)); do
+        sw_key "down"
+        sw_key "spc"
+    done
+    sw_tap 3 "tab"
+    sw_key "spc"
+}
+
+# --- Calamares Partitioning (no encryption, UEFI) ---
+sw_calamares_partitioning_noenc_uefi() {
+    sw_calamares_step "calamares_partitioning" "text_calamares_partitioning" "tab" "tab" "tab" "spc"
+    sw_key "tab"
+    sw_key "down"
+    qt_send_key_combo "shift-tab"
+    qt_send_key_combo "shift-tab"
+    qt_send_key_combo "shift-tab"
+    sw_tap 2 "tab"
+    qt_wait_for_text "calamares_partitioning_finish" "${text_calamares_partitioning_finish}" 20 5
+    qt_screenshot_ppm "calamares_partitioning_finish"
+    sw_tap 9 "tab"
+    sw_key "spc"
+}
+
+# --- Calamares Partitioning (with encryption, UEFI) ---
+sw_calamares_partitioning_enc_uefi() {
+    sw_calamares_step "calamares_partitioning" "text_calamares_partitioning" "tab" "tab" "tab" "spc"
+    sw_key "tab"
+    sw_key "down"
+    qt_send_key_combo "shift-tab"
+    qt_send_key_combo "shift-tab"
+    qt_send_key_combo "shift-tab"
+    # Enable encryption
+    sw_key "spc"
+    sw_key "tab"
+    qt_send_string "${test_passphrase}"
+    sw_key "tab"
+    qt_send_string "${test_passphrase}"
+    qt_wait_for_text "calamares_partitioning_finish" "${text_calamares_partitioning_finish}" 20 5
+    qt_screenshot_ppm "calamares_partitioning_finish"
+    sw_tap 11 "tab"
+    sw_key "spc"
+}
+
+# --- Calamares Users ---
+sw_calamares_users() {
+    # Wait for screen, then manual key sequence for precise typing
+    qt_wait_for_text "calamares_users" "${text_calamares_users}" 20 5
+    qt_screenshot_ppm "calamares_users"
+    qt_wait_for_seconds 1
+    qt_send_string "Test User"
+    sw_key "tab"
+    qt_send_string "test"
+    sw_key "tab"
+    qt_send_string "testshipwreck"
+    sw_key "tab"
+    qt_send_string "test"
+    sw_key "tab"
+    qt_send_string "test"
+    sw_tap 4 "tab"
+    qt_send_string "roottest"
+    sw_key "tab"
+    qt_send_string "roottest"
+
+    # Deliberately trigger and dismiss short-password warning (per Oculix)
+    qt_wait_for_text "calamares_pw_warn" "${text_calamares_password_short_warn}" 10 2
+    qt_screenshot_ppm "calamares_pw_warn"
+    qt_send_key_combo "shift-tab"
+    qt_send_key_combo "shift-tab"
+    qt_send_key_combo "shift-tab"
+    qt_send_key_combo "shift-tab"
+    sw_key "spc"
+    qt_wait_for_text "calamares_pw_error" "${text_calamares_password_short_error}" 10 2
+    qt_screenshot_ppm "calamares_pw_error"
+    sw_key "spc"
+    sw_tap 7 "tab"
+    sw_key "spc"
+}
+
+# --- Calamares Summary ---
+sw_calamares_summary() {
+    sw_calamares_step "calamares_summary" "text_calamares_summary" "spc"
+}
+
+# --- Calamares Install (up to 600s budget, ~60s interval) ---
+# Oculix original has no "Installing" gate; it only waits for the finish screen.
+# This gate could burn 600s and then falsely fail if OCR misses the word.
+sw_calamares_install() {
+    qt_screenshot_ppm "calamares_install"
+}
+
+# --- Calamares Finished / Restart Now ---
+sw_calamares_finished_restart() {
+    qt_wait_for_text "calamares_finished" "${text_calamares_finished}" 70 10
+    qt_screenshot_ppm "calamares_finished"
+    sw_key "tab"
+    sw_key "spc"
+    qt_wait_for_seconds 2
+    sw_tap 2 "tab"
+    sw_key "spc"
+}
+
+# --- Reboot into installed system (UEFI) ---
+# Oculix (shipwreck-install.py:548-552) does `down`×3 + `enter` at the installed GRUB
+# but that is BIOS-only; on UEFI the default entry boots by itself. We wait for the
+# installed GRUB to appear and let the default entry boot without key presses.
+sw_reboot_to_installed() {
+    local candidates=(
+        "${text_grub_installed_1}"
+        "${text_grub_installed_2}"
+        "${text_grub_installed_3}"
+    )
+    local retries=24
+    local interval=5
+    local c found=0
+
+    for c in $(seq 1 "${retries}"); do
+        qt_screenshot_ppm "grub_installed"
+        for txt in "${candidates[@]}"; do
+            if qt_search_screenshot "grub_installed" "${txt}"; then
+                qt_echo "✅ Installed-system GRUB detected via: ${txt}"
+                found=1
+                break 2
+            fi
+        done
+        qt_echo "🔁 ${c}/${retries} Installed GRUB not yet visible"
+        qt_wait_for_seconds "${interval}"
+    done
+    if [ ${found} -eq 0 ]; then
+        qt_test_fail "Installed-system GRUB not detected after ${retries} retries — booted back to live ISO?"
+    fi
+    qt_wait_for_seconds 5
+}
+
+# --- LUKS unlock (twice: root + swap) for FDE ---
+sw_luks_unlock_twice() {
+    # First unlock (root partition)
+    qt_wait_for_text "luks_unlock_1" "${text_luks_unlock_1}" 30 5
+    qt_screenshot_ppm "luks_unlock_1"
+    qt_send_string_return "${test_passphrase}"
+    qt_wait_for_seconds 3
+
+    # Second unlock (swap) — tolerant: warn if not seen, don't hard fail
+    local c found=0
+    for c in $(seq 1 10); do
+        qt_screenshot_ppm "luks_unlock_2"
+        if qt_search_screenshot "luks_unlock_2" "${text_luks_unlock_1}"; then
+            qt_echo "✅ Second LUKS unlock prompt detected"
+            qt_send_string_return "${test_passphrase}"
+            found=1
+            break
+        fi
+        qt_echo "🔁 ${c}/10 waiting for second LUKS prompt"
+        qt_wait_for_seconds 3
+    done
+    if [ ${found} -eq 0 ]; then
+        qt_echo "⚠️  Second LUKS unlock prompt not detected (may not exist on this config)"
+    fi
+}
+
+# --- SDDM Login (Plasma X11) ---
+sw_sddm_login_plasma_x11() {
+    qt_wait_for_text "sddm_login" "${text_sddm_login_1}" 20 5
+    qt_screenshot_ppm "sddm_login"
+    qt_send_key_combo "tab"
+    qt_wait_for_seconds 1
+    qt_send_key_combo "tab"
+    qt_wait_for_seconds 1
+    qt_send_key_combo "down"
+    qt_wait_for_seconds 1
+    qt_send_key_combo "ret"
+    qt_wait_for_seconds 2
+    qt_wait_for_text "sddm_password" "${text_sddm_password}" 10 2
+    qt_send_string_return "${test_password}"
+}
+
+# --- Post-install inventories in installed system ---
+sw_post_install_inventories() {
+    qt_send_key_combo "ctrl-alt-t"
+    qt_wait_for_text "post_terminal" "${text_shell_prompt}" 10 2
+    qt_screenshot_ppm "post_terminal"
+    sw_inject_inventories_installed "${test_password}"
+    sw_assert_all_serial_markers_installed
+    qt_send_key_combo "ctrl-shift-q"
+    qt_screenshot_ppm "post_terminal_closed"
+}

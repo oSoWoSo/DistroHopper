@@ -47,7 +47,7 @@ fi
 # Test --list-csv
 echo "[2/5] Testing qget --list-csv..."
 csv_output=$(timeout 10 ./qget --list-csv 2>/dev/null)
-if echo "$csv_output" | grep -q "Display Name,OS"; then
+if [[ "$csv_output" == *"Display Name,OS"* ]]; then
 	pass "qget --list-csv has header"
 else
 	fail "qget --list-csv missing header"

@@ -1,0 +1,895 @@
+### 2026-10-29
+| OS           | Arch   | Release    | Edition          | URL                                      | Status |
+|-------------|------|-----------|------------------|----------------------------------------|--------|
+| amd64        | big-sur | -          |                  | -                                        | PASS   |
+| amd64        | bios   | Bookworm   |                  | https://dietpi.com/downloads/images/DietPi_VM-x86_64-Bookworm_Installer.iso | PASS   |
+| amd64        | bios   | Forky      |                  | https://dietpi.com/downloads/images/DietPi_VM-x86_64-Forky_Installer.iso | PASS   |
+| amd64        | bios   | Trixie     |                  | https://dietpi.com/downloads/images/DietPi_VM-x86_64-Trixie_Installer.iso | PASS   |
+| amd64        | boron  | -          |                  | https://ddl.bunsenlabs.org/ddl/boron-1-240123-amd64.hybrid.iso | PASS   |
+| amd64        | catalina | -          |                  | -                                        | PASS   |
+| amd64        | current | -          |                  | https://cdimage.kali.org/current/kali-linux-2026.3-installer-amd64.iso | FAIL   |
+| amd64        | current | -          |                  | https://repo-default.voidlinux.org/live/current/void-live-x86_64-20250202-xfce-musl.iso | FAIL   |
+| amd64        | daedalus | -          |                  | https://files.devuan.org/devuan_daedalus/desktop-live/devuan_daedalus_5.0.0_amd64_desktop-live.iso | PASS   |
+| amd64        | daily-live | -          |                  | https://cdimage.ubuntu.com/ubuntu-server/daily-live/current/ | PASS   |
+| amd64        | excalibur | -          |                  | https://files.devuan.org/devuan_excalibur/desktop-live/devuan_excalibur_6.0.0_amd64_desktop-live.iso | PASS   |
+| amd64        | chimaera | -          |                  | https://files.devuan.org/devuan_chimaera/desktop-live/devuan_chimaera_4.0.3_amd64_desktop-live.iso | PASS   |
+| amd64        | kali-weekly | -          |                  | https://cdimage.kali.org/kali-weekly/kali-linux-2026-W43-installer-amd64.iso | FAIL   |
+| amd64        | latest | awesome    |                  | https://sourceforge.net/projects/d77void/files/d77void-awesome/ | PASS   |
+| amd64        | latest | base       |                  | https://sourceforge.net/projects/cereus-linux/files/isos/beta/2023.02.19/base/cereus-beta-live-x86_64-musl-base-2023.02.17.iso | PASS   |
+| amd64        | latest | bspwm      |                  | https://sourceforge.net/projects/d77void/files/d77void-bspwm/ | PASS   |
+| amd64        | latest | cinnamon   |                  | https://sourceforge.net/projects/agarimos/files/CINNAMON/20261025 | PASS   |
+| amd64        | latest | dank       |                  | https://sourceforge.net/projects/d77void/files/d77void-hyprland/ | PASS   |
+| amd64        | latest | desktop    |                  | https://mirror.zyner.org/cachyos/ISO/desktop/260809/cachyos-desktop-linux-260809.iso | PASS   |
+| amd64        | latest | dms        |                  | https://sourceforge.net/projects/d77void/files/d77void-niri/ | PASS   |
+| amd64        | latest | dwm        |                  | https://sourceforge.net/projects/d77void/files/d77void-dwm/ | PASS   |
+| amd64        | latest | en_US      |                  | https://sourceforge.net/projects/brgv-os/files/brgv-os/en_US/.iso | PASS   |
+| amd64        | latest | fluxbox    |                  | https://sourceforge.net/projects/d77void/files/d77void-fluxbox/ | PASS   |
+| amd64        | latest | gnome      |                  | https://download.bazzite.gg/bazzite-gnome-stable-amd64.iso | PASS   |
+| amd64        | latest | gnome      |                  | https://sourceforge.net/projects/agarimos/files/GNOME/20261024 | PASS   |
+| amd64        | latest | gnome      |                  | https://sourceforge.net/projects/d77void/files/d77void-gnome/ | PASS   |
+| amd64        | latest | handheld   |                  | https://mirror.zyner.org/cachyos/ISO/handheld/260628/cachyos-handheld-linux-260628.iso | PASS   |
+| amd64        | latest | herbstluftwm |                  | https://sourceforge.net/projects/d77void/files/d77void-herbstluftwm/ | PASS   |
+| amd64        | latest | -          |                  | http://builds.kolibrios.org/es_ES/latest-iso.7z | FAIL   |
+| amd64        | latest | -          |                  | https://cd2.holoiso.ru.eu.org/holoiso-installer/rel/holoiso_rel_snapshot20240603.0905.04-InstallerBuild-20240603104443-x86_64.iso | FAIL   |
+| amd64        | latest | -          |                  | https://iso.builds.garudalinux.org/iso/latest/garuda/xfce/latest.iso | FAIL   |
+| amd64        | latest | -          |                  | https://mirror.bytemark.co.uk/gentoo/releases/amd64/autobuilds/ | FAIL   |
+| amd64        | latest | -          |                  | https://mirror.rackspace.com/archlinux/iso/2026.10.01/archlinux-2026.10.01-x86_64.iso | PASS   |
+| amd64        | latest | -          |                  | https://netix.dl.sourceforge.net/project/mabox-linux/26.09/linux66/mabox-linux-26.09-Istredd-260911-linux66.iso | FAIL   |
+| amd64        | latest | -          |                  | https://repo.chimera-linux.org/live/latest/chimera-linux-x86_64-LIVE-20251220-gnome.iso | FAIL   |
+| amd64        | latest | -          |                  | https://sourceforge.net/projects/abeiros/files/PLASMA/AbeirOS-Plasma-Live-x86_64-musl-6.18.58_1-20261021.iso | PASS   |
+| amd64        | latest | -          |                  | https://sourceforge.net/projects/afagos/files/PLASMA/AfagOS-Plasma-Live-x86_64-6.18.57_1-20261019.iso | PASS   |
+| amd64        | latest | -          |                  | https://sourceforge.net/projects/archcraft/files/v26.08/archcraft-2026.08.01-x86_64.iso/download | PASS   |
+| amd64        | latest | -          |                  | https://sourceforge.net/projects/f-void/files/28_03_2024/fvoid-live-x86_64-20240328-lxqt.iso | FAIL   |
+| amd64        | latest | -          |                  | https://sourceforge.net/projects/gabeeoslinux/files/Distro/Qtile/gabeeOSLinux-Qtile-void-live-x86_64-6.18.49_1-20260906.iso/ | FAIL   |
+| amd64        | latest | -          |                  | https://sourceforge.net/projects/lazylinux/files/iso/xfce/lazylinux-live-x86_64-20260810-xfce.iso | FAIL   |
+| amd64        | latest | -          |                  | https://sourceforge.net/projects/linuxkodachi/files | FAIL   |
+| amd64        | latest | -          |                  | https://sourceforge.net/projects/loc-os/files/Loc-OS%2023/Loc-OS-23-KDE-x86_64.iso | FAIL   |
+| amd64        | latest | hyprland   |                  | https://sourceforge.net/projects/d77void/files/d77void-hyprland/ | PASS   |
+| amd64        | latest | i3wm       |                  | https://sourceforge.net/projects/d77void/files/d77void-i3wm/ | PASS   |
+| amd64        | latest | jwm        |                  | https://sourceforge.net/projects/d77void/files/d77void-JWM/ | PASS   |
+| amd64        | latest | kde        |                  | https://download.bazzite.gg/bazzite-stable-amd64.iso | PASS   |
+| amd64        | latest | labwc      |                  | https://sourceforge.net/projects/d77void/files/d77void-labwc/ | PASS   |
+| amd64        | latest | leftwm     |                  | https://sourceforge.net/projects/d77void/files/d77void-leftwm/ | PASS   |
+| amd64        | latest | lxqt       |                  | https://sourceforge.net/projects/cereus-linux/files/isos/beta/2023.02.19/base/cereus-beta-live-x86_64-musl-base-2023.02.17.iso | PASS   |
+| amd64        | latest | lxqt       |                  | https://sourceforge.net/projects/d77void/files/d77void-LXQt/ | PASS   |
+| amd64        | latest | lxqt-kwin  |                  | https://sourceforge.net/projects/agarimos/files/LXQT-KWIN/ | PASS   |
+| amd64        | latest | mango-dms  |                  | https://sourceforge.net/projects/d77void/files/d77void-mango/ | PASS   |
+| amd64        | latest | mango      |                  | https://sourceforge.net/projects/d77void/files/d77void-mango/ | PASS   |
+| amd64        | latest | mango-noctalia |                  | https://sourceforge.net/projects/d77void/files/d77void-mango/ | PASS   |
+| amd64        | latest | musl-base  |                  | https://sourceforge.net/projects/cereus-linux/files/isos/beta/2023.02.19/base/cereus-beta-live-x86_64-musl-base-2023.02.17.iso | PASS   |
+| amd64        | latest | musl-lxqt  |                  | https://sourceforge.net/projects/cereus-linux/files/isos/beta/2023.02.19/base/cereus-beta-live-x86_64-musl-base-2023.02.17.iso | PASS   |
+| amd64        | latest | musl-xfce  |                  | https://sourceforge.net/projects/cereus-linux/files/isos/beta/2023.02.19/base/cereus-beta-live-x86_64-musl-base-2023.02.17.iso | PASS   |
+| amd64        | latest | niri       |                  | https://sourceforge.net/projects/d77void/files/d77void-niri/ | PASS   |
+| amd64        | latest | niri-noctalia |                  | https://sourceforge.net/projects/d77void/files/d77void-niri/ | PASS   |
+| amd64        | latest | noctalia   |                  | https://sourceforge.net/projects/d77void/files/d77void-hyprland/ | PASS   |
+| amd64        | latest | openbox    |                  | https://sourceforge.net/projects/d77void/files/d77void-openbox/ | PASS   |
+| amd64        | latest | plasma     |                  | https://sourceforge.net/projects/agarimos/files/PLASMA/20261025 | PASS   |
+| amd64        | latest | plasma     |                  | https://sourceforge.net/projects/d77void/files/d77void-plasma/ | PASS   |
+| amd64        | latest | qtile      |                  | https://sourceforge.net/projects/d77void/files/d77void-qtile/ | PASS   |
+| amd64        | latest | river      |                  | https://sourceforge.net/projects/d77void/files/d77void-river/ | PASS   |
+| amd64        | latest | ro_RO      |                  | https://sourceforge.net/projects/brgv-os/files/brgv-os/ro_RO/.iso | PASS   |
+| amd64        | latest | sway       |                  | https://sourceforge.net/projects/d77void/files/d77void-sway/ | PASS   |
+| amd64        | latest | wayfire    |                  | https://sourceforge.net/projects/d77void/files/d77void-wayfire/ | PASS   |
+| amd64        | latest | wmd77      |                  | https://sourceforge.net/projects/d77void/files/d77void-wmd77/ | PASS   |
+| amd64        | latest | xfce       |                  | https://sourceforge.net/projects/cereus-linux/files/isos/beta/2023.02.19/base/cereus-beta-live-x86_64-musl-base-2023.02.17.iso | PASS   |
+| amd64        | latest | xfce       |                  | https://sourceforge.net/projects/d77void/files/d77void-xfce/ | PASS   |
+| amd64        | latest | xfce4      |                  | https://sourceforge.net/projects/agarimos/files/XFCE4/20261026 | PASS   |
+| amd64        | mercury-neo-2025.03.19 | -          |                  | https://mirror.alpix.eu/endeavouros/iso/EndeavourOS_Mercury-Neo-2025.03.19.iso | FAIL   |
+| amd64        | mercury-2025.02.08 | -          |                  | https://mirror.alpix.eu/endeavouros/iso/EndeavourOS_Mercury-2025.02.08.iso | FAIL   |
+| amd64        | mojave | -          |                  | -                                        | PASS   |
+| amd64        | monterey | -          |                  | -                                        | PASS   |
+| amd64        | nightly | -          |                  | https://1270333429.rsc.cdn77.org/iso/nightly.20261029.0/gnome_os_nightly.20261029.0-x86_64.iso | FAIL   |
+| amd64        | r1beta3 | -          |                  | http://mirror.rit.edu/haiku/r1beta3/haiku-r1beta3-x86_gcc2h-anyboot.iso | FAIL   |
+| amd64        | r1beta4 | -          |                  | http://mirror.rit.edu/haiku/r1beta4/haiku-r1beta4-x86_gcc2h-anyboot.iso | FAIL   |
+| amd64        | r1beta5 | -          |                  | http://mirror.rit.edu/haiku/r1beta5/haiku-r1beta5-x86_gcc2h-anyboot.iso | FAIL   |
+| amd64        | sonoma | -          |                  | -                                        | PASS   |
+| amd64        | testing | -          |                  | https://daily.grml.org/grml-full-amd64-testing/latest/grml-full-amd64-testing_latest.iso | FAIL   |
+| amd64        | testing | -          |                  | https://files.kde.org/neon/images/mobile/testing/current/neon-testing-mobile-20261025-1543.iso | FAIL   |
+| amd64        | titan-neo-2026.04.27 | -          |                  | https://mirror.alpix.eu/endeavouros/iso/EndeavourOS_Titan-Neo-2026.04.27.iso | FAIL   |
+| amd64        | titan-nova-2026.08.15 | -          |                  | https://mirror.alpix.eu/endeavouros/iso/EndeavourOS_Titan-Nova-2026.08.15.iso | FAIL   |
+| amd64        | titan-2026.03.06 | -          |                  | https://mirror.alpix.eu/endeavouros/iso/EndeavourOS_Titan-2026.03.06.iso | FAIL   |
+| amd64        | uefi   | Bookworm   |                  | https://dietpi.com/downloads/images/DietPi_VM-UEFI-x86_64-Bookworm_Installer.iso | PASS   |
+| amd64        | uefi   | Forky      |                  | https://dietpi.com/downloads/images/DietPi_VM-UEFI-x86_64-Forky_Installer.iso | PASS   |
+| amd64        | uefi   | Trixie     |                  | https://dietpi.com/downloads/images/DietPi_VM-UEFI-x86_64-Trixie_Installer.iso | PASS   |
+| amd64        | unstable | -          |                  | https://daily.grml.org/grml-full-amd64-unstable/latest/grml-full-amd64-unstable_latest.iso | FAIL   |
+| amd64        | unstable | -          |                  | https://files.kde.org/neon/images/mobile/unstable/current/neon-unstable-mobile-20261024-1248.iso | FAIL   |
+| amd64        | user   | -          |                  | https://files.kde.org/neon/images/mobile/user/current/neon-user-mobile-20261025-0728.iso | FAIL   |
+| amd64        | ventura | -          |                  | -                                        | PASS   |
+| amd64        | v23.06.23 | -          |                  | https://github.com/Athena-OS/athena/releases/download/v23.06.23/athena-rolling-x86_64.iso | PASS   |
+| amd64        | v23.11 | -          |                  | https://github.com/Athena-OS/athena/releases/download/v23.11/athena-rolling-x86_64.iso | PASS   |
+| amd64        | v3.15  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.15/releases/x86_64/alpine-virt-3.15.11-x86_64.iso | PASS   |
+| amd64        | v3.16  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.16/releases/x86_64/alpine-virt-3.16.9-x86_64.iso | PASS   |
+| amd64        | v3.17  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.17/releases/x86_64/alpine-virt-3.17.10-x86_64.iso | PASS   |
+| amd64        | v3.18  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.18/releases/x86_64/alpine-virt-3.18.12-x86_64.iso | PASS   |
+| amd64        | v3.19  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.19/releases/x86_64/alpine-virt-3.19.9-x86_64.iso | PASS   |
+| amd64        | v3.20  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.20/releases/x86_64/alpine-virt-3.20.10-x86_64.iso | PASS   |
+| amd64        | v3.21  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.21/releases/x86_64/alpine-virt-3.21.9-x86_64.iso | PASS   |
+| amd64        | v3.22  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.22/releases/x86_64/alpine-virt-3.22.7-x86_64.iso | PASS   |
+| amd64        | v3.23  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.23/releases/x86_64/alpine-virt-3.23.7-x86_64.iso | PASS   |
+| amd64        | v3.24  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.24/releases/x86_64/alpine-virt-3.24.3-x86_64.iso | PASS   |
+| amd64        | 017.01 | -          |                  | https://gobolinux.neonsys.org/017.01-ISO/GoboLinux-017.01-x86_64.iso | FAIL   |
+| amd64        | 0.7.31 | alpine-linux |                  | https://dl-cdn.alpinelinux.org/alpine/v3.24/releases/x86_64/alpine-virt-3.24.3-x86_64.iso | PASS   |
+| amd64        | 0.7.31 | arch-linux |                  | https://mirror.rackspace.com/archlinux/iso/2026.10.01/archlinux-2026.10.01-x86_64.iso | PASS   |
+| amd64        | 0.7.31 | artix-linux |                  | https://mirror3.artixlinux.org/iso/artix-community-gtk-openrc-20260821-x86_64.iso | PASS   |
+| amd64        | 0.7.31 | centos-stream |                  | https://mirror.stream.centos.org/10-stream/BaseOS/x86_64/iso/CentOS-Stream-10-latest-x86_64-boot.iso | PASS   |
+| amd64        | 0.7.31 | debian     |                  | https://cdimage.debian.org/debian-cd/13.7.0-live/amd64/iso-hybrid/debian-live-13.7.0-amd64-cinnamon.iso | PASS   |
+| amd64        | 0.7.31 | devuan-gnu-linux |                  | https://files.devuan.org/devuan_excalibur/desktop-live/devuan_excalibur_6.0.0_amd64_desktop-live.iso | PASS   |
+| amd64        | 0.7.31 | gentoo-linux |                  | https://distfiles.gentoo.org/releases/amd64/autobuilds/20261025T170057Z/install-amd64-minimal-20261025T170057Z.iso | PASS   |
+| amd64        | 0.7.31 | ubuntu-server |                  | https://releases.ubuntu.com/26.04/ubuntu-26.04-live-server-amd64.iso | PASS   |
+| amd64        | 0.7.31 | void-linux |                  | https://repo-default.voidlinux.org/live/current/void-live-x86_64-20250202-base.iso | PASS   |
+| amd64        | 10     | Arabic     |                  | -                                        | PASS   |
+| amd64        | 10     | boot       |                  | https://mirror.stream.centos.org/10-stream/BaseOS/x86_64/iso/CentOS-Stream-10-latest-x86_64-boot.iso | PASS   |
+| amd64        | 10     | boot       |                  | https://repo.almalinux.org/almalinux/10/isos/x86_64/AlmaLinux-10-latest-x86_64-boot.iso | PASS   |
+| amd64        | 10     | Brazilian  | Portuguese       | -                                        | PASS   |
+| amd64        | 10     | Bulgarian  |                  | -                                        | PASS   |
+| amd64        | 10     | Croatian   |                  | -                                        | PASS   |
+| amd64        | 10     | Czech      |                  | -                                        | PASS   |
+| amd64        | 10     | Danish     |                  | -                                        | PASS   |
+| amd64        | 10     | Dutch      |                  | -                                        | PASS   |
+| amd64        | 10     | dvd        |                  | https://repo.almalinux.org/almalinux/10/isos/x86_64/AlmaLinux-10-latest-x86_64-dvd.iso | PASS   |
+| amd64        | 10     | dvd1       |                  | https://mirror.stream.centos.org/10-stream/BaseOS/x86_64/iso/CentOS-Stream-10-latest-x86_64-dvd1.iso | PASS   |
+| amd64        | 10     | English    | International    | -                                        | PASS   |
+| amd64        | 10     | English    | (United          | -                                        | PASS   |
+| amd64        | 10     | Estonian   |                  | -                                        | PASS   |
+| amd64        | 10     | Finnish    |                  | -                                        | PASS   |
+| amd64        | 10     | French     | Canadian         | -                                        | PASS   |
+| amd64        | 10     | French     |                  | -                                        | PASS   |
+| amd64        | 10     | German     |                  | -                                        | PASS   |
+| amd64        | 10     | Greek      |                  | -                                        | PASS   |
+| amd64        | 10     | Hebrew     |                  | -                                        | PASS   |
+| amd64        | 10     | Hungarian  |                  | -                                        | PASS   |
+| amd64        | 10     | Chinese    | (Simplified)     | -                                        | PASS   |
+| amd64        | 10     | Chinese    | (Traditional)    | -                                        | PASS   |
+| amd64        | 10     | Italian    |                  | -                                        | PASS   |
+| amd64        | 10     | Japanese   |                  | -                                        | PASS   |
+| amd64        | 10     | Korean     |                  | -                                        | PASS   |
+| amd64        | 10     | Latvian    |                  | -                                        | PASS   |
+| amd64        | 10     | Lithuanian |                  | -                                        | PASS   |
+| amd64        | 10     | minimal    |                  | https://repo.almalinux.org/almalinux/10/isos/x86_64/AlmaLinux-10-latest-x86_64-minimal.iso | PASS   |
+| amd64        | 10     | Norwegian  |                  | -                                        | PASS   |
+| amd64        | 10     | Polish     |                  | -                                        | PASS   |
+| amd64        | 10     | Portuguese |                  | -                                        | PASS   |
+| amd64        | 10     | Romanian   |                  | -                                        | PASS   |
+| amd64        | 10     | Russian    |                  | -                                        | PASS   |
+| amd64        | 10     | Serbian    | Latin            | -                                        | PASS   |
+| amd64        | 10     | Slovak     |                  | -                                        | PASS   |
+| amd64        | 10     | Slovenian  |                  | -                                        | PASS   |
+| amd64        | 10     | Spanish    | (Mexico)         | -                                        | PASS   |
+| amd64        | 10     | Spanish    |                  | -                                        | PASS   |
+| amd64        | 10     | Swedish    |                  | -                                        | PASS   |
+| amd64        | 10     | Thai       |                  | -                                        | PASS   |
+| amd64        | 10     | Turkish    |                  | -                                        | PASS   |
+| amd64        | 10     | Ukrainian  |                  | -                                        | PASS   |
+| amd64        | 10.1   | boot       |                  | https://repo.almalinux.org/almalinux/10.1/isos/x86_64/AlmaLinux-10.1-x86_64-boot.iso | PASS   |
+| amd64        | 10.1   | dvd        |                  | https://repo.almalinux.org/almalinux/10.1/isos/x86_64/AlmaLinux-10.1-x86_64-dvd.iso | PASS   |
+| amd64        | 10.1   | -          |                  | https://github.com/CBPP/cbpp/releases/download/v10/cbpp-10.1-amd64-20190713.iso | PASS   |
+| amd64        | 10.1   | minimal    |                  | https://repo.almalinux.org/almalinux/10.1/isos/x86_64/AlmaLinux-10.1-x86_64-minimal.iso | PASS   |
+| amd64        | 1.0.97 | -          |                  | https://github.com/ventoy/Ventoy/releases/download/v1.0.97/ventoy-1.0.97-livecd.iso | FAIL   |
+| amd64        | 1.0.98 | -          |                  | https://github.com/ventoy/Ventoy/releases/download/v1.0.98/ventoy-1.0.98-livecd.iso | FAIL   |
+| amd64        | 1.0.99 | -          |                  | https://github.com/ventoy/Ventoy/releases/download/v1.0.99/ventoy-1.0.99-livecd.iso | FAIL   |
+| amd64        | 11     | Arabic     |                  | -                                        | PASS   |
+| amd64        | 11     | Brazilian  | Portuguese       | -                                        | PASS   |
+| amd64        | 11     | Bulgarian  |                  | -                                        | PASS   |
+| amd64        | 11     | Croatian   |                  | -                                        | PASS   |
+| amd64        | 11     | Czech      |                  | -                                        | PASS   |
+| amd64        | 11     | Danish     |                  | -                                        | PASS   |
+| amd64        | 11     | Dutch      |                  | -                                        | PASS   |
+| amd64        | 11     | English    | International    | -                                        | PASS   |
+| amd64        | 11     | English    | (United          | -                                        | PASS   |
+| amd64        | 11     | Estonian   |                  | -                                        | PASS   |
+| amd64        | 11     | Finnish    |                  | -                                        | PASS   |
+| amd64        | 11     | French     | Canadian         | -                                        | PASS   |
+| amd64        | 11     | French     |                  | -                                        | PASS   |
+| amd64        | 11     | German     |                  | -                                        | PASS   |
+| amd64        | 11     | Greek      |                  | -                                        | PASS   |
+| amd64        | 11     | Hebrew     |                  | -                                        | PASS   |
+| amd64        | 11     | Hungarian  |                  | -                                        | PASS   |
+| amd64        | 11     | Chinese    | (Simplified)     | -                                        | PASS   |
+| amd64        | 11     | Chinese    | (Traditional)    | -                                        | PASS   |
+| amd64        | 11     | Italian    |                  | -                                        | PASS   |
+| amd64        | 11     | Japanese   |                  | -                                        | PASS   |
+| amd64        | 11     | Korean     |                  | -                                        | PASS   |
+| amd64        | 11     | Latvian    |                  | -                                        | PASS   |
+| amd64        | 11     | Lithuanian |                  | -                                        | PASS   |
+| amd64        | 11     | Norwegian  |                  | -                                        | PASS   |
+| amd64        | 11     | Polish     |                  | -                                        | PASS   |
+| amd64        | 11     | Portuguese |                  | -                                        | PASS   |
+| amd64        | 11     | Romanian   |                  | -                                        | PASS   |
+| amd64        | 11     | Russian    |                  | -                                        | PASS   |
+| amd64        | 11     | Serbian    | Latin            | -                                        | PASS   |
+| amd64        | 11     | Slovak     |                  | -                                        | PASS   |
+| amd64        | 11     | Slovenian  |                  | -                                        | PASS   |
+| amd64        | 11     | Spanish    | (Mexico)         | -                                        | PASS   |
+| amd64        | 11     | Spanish    |                  | -                                        | PASS   |
+| amd64        | 11     | Swedish    |                  | -                                        | PASS   |
+| amd64        | 11     | Thai       |                  | -                                        | PASS   |
+| amd64        | 11     | Turkish    |                  | -                                        | PASS   |
+| amd64        | 11     | Ukrainian  |                  | -                                        | PASS   |
+| amd64        | 1.1.00 | -          |                  | https://github.com/ventoy/Ventoy/releases/download/v1.1.00/ventoy-1.1.00-livecd.iso | FAIL   |
+| amd64        | 1.1.01 | -          |                  | https://github.com/ventoy/Ventoy/releases/download/v1.1.01/ventoy-1.1.01-livecd.iso | FAIL   |
+| amd64        | 1.1.02 | -          |                  | https://github.com/ventoy/Ventoy/releases/download/v1.1.02/ventoy-1.1.02-livecd.iso | FAIL   |
+| amd64        | 1.1.04 | -          |                  | https://github.com/ventoy/Ventoy/releases/download/v1.1.04/ventoy-1.1.04-livecd.iso | FAIL   |
+| amd64        | 1.1.05 | -          |                  | https://github.com/ventoy/Ventoy/releases/download/v1.1.05/ventoy-1.1.05-livecd.iso | FAIL   |
+| amd64        | 1.1.06 | -          |                  | https://github.com/ventoy/Ventoy/releases/download/v1.1.06/ventoy-1.1.06-livecd.iso | FAIL   |
+| amd64        | 1.1.07 | -          |                  | https://github.com/ventoy/Ventoy/releases/download/v1.1.07/ventoy-1.1.07-livecd.iso | FAIL   |
+| amd64        | 1.1.08 | -          |                  | https://github.com/ventoy/Ventoy/releases/download/v1.1.08/ventoy-1.1.08-livecd.iso | FAIL   |
+| amd64        | 1.1.09 | -          |                  | https://github.com/ventoy/Ventoy/releases/download/v1.1.09/ventoy-1.1.09-livecd.iso | FAIL   |
+| amd64        | 1.1.10 | -          |                  | https://github.com/ventoy/Ventoy/releases/download/v1.1.10/ventoy-1.1.10-livecd.iso | FAIL   |
+| amd64        | 1.1.11 | -          |                  | https://github.com/ventoy/Ventoy/releases/download/v1.1.11/ventoy-1.1.11-livecd.iso | FAIL   |
+| amd64        | 11.11.0 | cinnamon   |                  | https://cdimage.debian.org/cdimage/archive/11.11.0-live/amd64/iso-hybrid/debian-live-11.11.0-amd64-cinnamon.iso | PASS   |
+| amd64        | 11.11.0 | gnome      |                  | https://cdimage.debian.org/cdimage/archive/11.11.0-live/amd64/iso-hybrid/debian-live-11.11.0-amd64-gnome.iso | PASS   |
+| amd64        | 11.11.0 | kde        |                  | https://cdimage.debian.org/cdimage/archive/11.11.0-live/amd64/iso-hybrid/debian-live-11.11.0-amd64-kde.iso | PASS   |
+| amd64        | 11.11.0 | lxde       |                  | https://cdimage.debian.org/cdimage/archive/11.11.0-live/amd64/iso-hybrid/debian-live-11.11.0-amd64-lxde.iso | PASS   |
+| amd64        | 11.11.0 | lxqt       |                  | https://cdimage.debian.org/cdimage/archive/11.11.0-live/amd64/iso-hybrid/debian-live-11.11.0-amd64-lxqt.iso | PASS   |
+| amd64        | 11.11.0 | mate       |                  | https://cdimage.debian.org/cdimage/archive/11.11.0-live/amd64/iso-hybrid/debian-live-11.11.0-amd64-mate.iso | PASS   |
+| amd64        | 11.11.0 | netinst    |                  | https://cdimage.debian.org/cdimage/archive/11.11.0/amd64/iso-cd/debian-11.11.0-amd64-netinst.iso | PASS   |
+| amd64        | 11.11.0 | standard   |                  | https://cdimage.debian.org/cdimage/archive/11.11.0-live/amd64/iso-hybrid/debian-live-11.11.0-amd64-standard.iso | PASS   |
+| amd64        | 11.11.0 | xfce       |                  | https://cdimage.debian.org/cdimage/archive/11.11.0-live/amd64/iso-hybrid/debian-live-11.11.0-amd64-xfce.iso | PASS   |
+| amd64        | 1.1.12 | -          |                  | https://github.com/ventoy/Ventoy/releases/download/v1.1.12/ventoy-1.1.12-livecd.iso | FAIL   |
+| amd64        | 1.1.14 | -          |                  | https://github.com/ventoy/Ventoy/releases/download/v1.1.14/ventoy-1.1.14-livecd.iso | FAIL   |
+| amd64        | 1.1.15 | -          |                  | https://github.com/ventoy/Ventoy/releases/download/v1.1.15/ventoy-1.1.15-livecd.iso | FAIL   |
+| amd64        | 1.1.16 | -          |                  | https://github.com/ventoy/Ventoy/releases/download/v1.1.16/ventoy-1.1.16-livecd.iso | FAIL   |
+| amd64        | 1.1.17 | -          |                  | https://github.com/ventoy/Ventoy/releases/download/v1.1.17/ventoy-1.1.17-livecd.iso | FAIL   |
+| amd64        | 1.1.18 | -          |                  | https://github.com/ventoy/Ventoy/releases/download/v1.1.18/ventoy-1.1.18-livecd.iso | FAIL   |
+| amd64        | 11.2   | -          |                  | https://github.com/CBPP/cbpp/releases/download/v11.2/cbpp-11.2-amd64-20230514.iso | PASS   |
+| amd64        | 1.2    | -          |                  | https://www.ibiblio.org/pub/micro/pc-stuff/freedos/files/distributions/1.2/official/FD12CD.iso | FAIL   |
+| amd64        | 12.0   | -          |                  | https://github.com/CBPP/cbpp/releases/download/v12.0/cbpp-12.0-amd64-20230611.iso | PASS   |
+| amd64        | 12.15.0 | cinnamon   |                  | https://cdimage.debian.org/cdimage/archive/12.15.0-live/amd64/iso-hybrid/debian-live-12.15.0-amd64-cinnamon.iso | PASS   |
+| amd64        | 12.15.0 | gnome      |                  | https://cdimage.debian.org/cdimage/archive/12.15.0-live/amd64/iso-hybrid/debian-live-12.15.0-amd64-gnome.iso | PASS   |
+| amd64        | 12.15.0 | kde        |                  | https://cdimage.debian.org/cdimage/archive/12.15.0-live/amd64/iso-hybrid/debian-live-12.15.0-amd64-kde.iso | PASS   |
+| amd64        | 12.15.0 | lxde       |                  | https://cdimage.debian.org/cdimage/archive/12.15.0-live/amd64/iso-hybrid/debian-live-12.15.0-amd64-lxde.iso | PASS   |
+| amd64        | 12.15.0 | lxqt       |                  | https://cdimage.debian.org/cdimage/archive/12.15.0-live/amd64/iso-hybrid/debian-live-12.15.0-amd64-lxqt.iso | PASS   |
+| amd64        | 12.15.0 | mate       |                  | https://cdimage.debian.org/cdimage/archive/12.15.0-live/amd64/iso-hybrid/debian-live-12.15.0-amd64-mate.iso | PASS   |
+| amd64        | 12.15.0 | netinst    |                  | https://cdimage.debian.org/cdimage/archive/12.15.0/amd64/iso-cd/debian-12.15.0-amd64-netinst.iso | PASS   |
+| amd64        | 12.15.0 | standard   |                  | https://cdimage.debian.org/cdimage/archive/12.15.0-live/amd64/iso-hybrid/debian-live-12.15.0-amd64-standard.iso | PASS   |
+| amd64        | 12.15.0 | xfce       |                  | https://cdimage.debian.org/cdimage/archive/12.15.0-live/amd64/iso-hybrid/debian-live-12.15.0-amd64-xfce.iso | PASS   |
+| amd64        | 13     | -          |                  | https://iso.fuss.bz.it/fuss13/client/fuss-13.7.0-amd64-live-education.iso | FAIL   |
+| amd64        | 1.3    | -          |                  | https://www.ibiblio.org/pub/micro/pc-stuff/freedos/files/distributions/1.3/official/FD13-LiveCD.zip | FAIL   |
+| amd64        | 1.3.0  | -          |                  | https://ftpmirror.gnu.org/gnu/guix//guix-system-install-1.3.0.x86_64-linux.iso | FAIL   |
+| amd64        | 13.7.0 | cinnamon   |                  | https://cdimage.debian.org/debian-cd/13.7.0-live/amd64/iso-hybrid/debian-live-13.7.0-amd64-cinnamon.iso | PASS   |
+| amd64        | 13.7.0 | gnome      |                  | https://cdimage.debian.org/debian-cd/13.7.0-live/amd64/iso-hybrid/debian-live-13.7.0-amd64-gnome.iso | PASS   |
+| amd64        | 13.7.0 | kde        |                  | https://cdimage.debian.org/debian-cd/13.7.0-live/amd64/iso-hybrid/debian-live-13.7.0-amd64-kde.iso | PASS   |
+| amd64        | 13.7.0 | lxde       |                  | https://cdimage.debian.org/debian-cd/13.7.0-live/amd64/iso-hybrid/debian-live-13.7.0-amd64-lxde.iso | PASS   |
+| amd64        | 13.7.0 | lxqt       |                  | https://cdimage.debian.org/debian-cd/13.7.0-live/amd64/iso-hybrid/debian-live-13.7.0-amd64-lxqt.iso | PASS   |
+| amd64        | 13.7.0 | mate       |                  | https://cdimage.debian.org/debian-cd/13.7.0-live/amd64/iso-hybrid/debian-live-13.7.0-amd64-mate.iso | PASS   |
+| amd64        | 13.7.0 | netinst    |                  | https://cdimage.debian.org/debian-cd/13.7.0/amd64/iso-cd/debian-13.7.0-amd64-netinst.iso | PASS   |
+| amd64        | 13.7.0 | standard   |                  | https://cdimage.debian.org/debian-cd/13.7.0-live/amd64/iso-hybrid/debian-live-13.7.0-amd64-standard.iso | PASS   |
+| amd64        | 13.7.0 | xfce       |                  | https://cdimage.debian.org/debian-cd/13.7.0-live/amd64/iso-hybrid/debian-live-13.7.0-amd64-xfce.iso | PASS   |
+| amd64        | 1.4.0  | -          |                  | https://ftpmirror.gnu.org/gnu/guix//guix-system-install-1.4.0.x86_64-linux.iso | FAIL   |
+| amd64        | 14.04  | -          |                  | https://releases.ubuntu.com/14.04/ubuntu-14.04.6-desktop-amd64.iso | PASS   |
+| amd64        | 14.04  | -          |                  | https://releases.ubuntu.com/14.04/ubuntu-14.04.6-server-amd64.iso | PASS   |
+| amd64        | 14.4   | -          |                  | https://download.freebsd.org/ftp/releases/amd64/amd64/ISO-IMAGES/14.4/FreeBSD-14.4-RELEASE-amd64-dvd1.iso | FAIL   |
+| amd64        | 14.5   | -          |                  | https://download.freebsd.org/ftp/releases/amd64/amd64/ISO-IMAGES/14.5/FreeBSD-14.5-RELEASE-amd64-dvd1.iso | FAIL   |
+| amd64        | 15     | -          |                  | https://sourceforge.net/projects/klv-airedale/files/sr15KLV-Airedale-sr15.iso | FAIL   |
+| amd64        | 15.0   | -          |                  | https://download.freebsd.org/ftp/releases/amd64/amd64/ISO-IMAGES/15.0/FreeBSD-15.0-RELEASE-amd64-dvd1.iso | FAIL   |
+| amd64        | 1.5.0  | -          |                  | https://ftpmirror.gnu.org/gnu/guix//guix-system-install-1.5.0.x86_64-linux.iso | FAIL   |
+| amd64        | 15.1   | -          |                  | https://download.freebsd.org/ftp/releases/amd64/amd64/ISO-IMAGES/15.1/FreeBSD-15.1-RELEASE-amd64-dvd1.iso | FAIL   |
+| amd64        | 16     | -          |                  | https://plug-mirror.rcac.purdue.edu/zorin-iso/16/Zorin-OS-16.3-Education-64-bit.iso | FAIL   |
+| amd64        | 16     | -          |                  | https://sourceforge.net/projects/klv-airedale/files/sr16KLV-Airedale-sr16.iso | FAIL   |
+| amd64        | 16.04  | -          |                  | https://cdimage.ubuntu.com/kubuntu/releases/16.04/release/kubuntu-16.04.6-desktop-amd64.iso | PASS   |
+| amd64        | 16.04  | -          |                  | https://cdimage.ubuntu.com/lubuntu/releases/16.04/release/lubuntu-16.04.6-desktop-amd64.iso | PASS   |
+| amd64        | 16.04  | -          |                  | https://cdimage.ubuntu.com/ubuntukylin/releases/16.04/release/ubuntukylin-16.04.7-desktop-amd64.iso | PASS   |
+| amd64        | 16.04  | -          |                  | https://cdimage.ubuntu.com/ubuntu-mate/releases/16.04/release/ubuntu-mate-16.04.6-desktop-amd64.iso | PASS   |
+| amd64        | 16.04  | -          |                  | https://cdimage.ubuntu.com/ubuntustudio/releases/16.04/release/ubuntustudio-16.04.5-dvd-amd64.iso | PASS   |
+| amd64        | 16.04  | -          |                  | https://cdimage.ubuntu.com/xubuntu/releases/16.04/release/xubuntu-16.04.6-desktop-amd64.iso | PASS   |
+| amd64        | 16.04  | -          |                  | https://releases.ubuntu.com/16.04/ubuntu-16.04.7-desktop-amd64.iso | PASS   |
+| amd64        | 16.04  | -          |                  | https://releases.ubuntu.com/16.04/ubuntu-16.04.7-server-amd64.iso | PASS   |
+| amd64        | 17     | -          |                  | https://plug-mirror.rcac.purdue.edu/zorin-iso/17/Zorin-OS-17.3-Education-64-bit-r2.iso | FAIL   |
+| amd64        | 17     | -          |                  | https://sourceforge.net/projects/klv-airedale/files/sr17KLV-Airedale-sr17.iso | FAIL   |
+| amd64        | 18     | -          |                  | https://plug-mirror.rcac.purdue.edu/zorin-iso/18/Zorin-OS-18.1-Education-64-bit.iso | FAIL   |
+| amd64        | 18     | -          |                  | https://sourceforge.net/projects/klv-airedale/files/sr18KLV-Airedale-sr18.iso | FAIL   |
+| amd64        | 1.8.0  | -          |                  | https://github.com/IceWhaleTech/ZimaOS/releases/download/1.8.0/zimaos-x86_64-1.8.0_installer.iso | FAIL   |
+| amd64        | 18.04  | -          |                  | https://cdimage.ubuntu.com/kubuntu/releases/18.04/release/kubuntu-18.04.5-desktop-amd64.iso | PASS   |
+| amd64        | 18.04  | -          |                  | https://cdimage.ubuntu.com/lubuntu/releases/18.04/release/lubuntu-18.04.5-desktop-amd64.iso | PASS   |
+| amd64        | 18.04  | -          |                  | https://cdimage.ubuntu.com/ubuntu-budgie/releases/18.04/release/ubuntu-budgie-18.04.5-desktop-amd64.iso | PASS   |
+| amd64        | 18.04  | -          |                  | https://cdimage.ubuntu.com/ubuntukylin/releases/18.04/release/ubuntukylin-18.04.5-desktop-amd64.iso | PASS   |
+| amd64        | 18.04  | -          |                  | https://cdimage.ubuntu.com/ubuntu-mate/releases/18.04/release/ubuntu-mate-18.04.5-desktop-amd64.iso | PASS   |
+| amd64        | 18.04  | -          |                  | https://cdimage.ubuntu.com/ubuntustudio/releases/18.04/release/ubuntustudio-18.04-dvd-amd64.iso | PASS   |
+| amd64        | 18.04  | -          |                  | https://cdimage.ubuntu.com/xubuntu/releases/18.04/release/xubuntu-18.04.5-desktop-amd64.iso | PASS   |
+| amd64        | 18.04  | -          |                  | https://releases.ubuntu.com/18.04/ubuntu-18.04.6-desktop-amd64.iso | PASS   |
+| amd64        | 18.04  | -          |                  | https://releases.ubuntu.com/18.04/ubuntu-18.04.6-live-server-amd64.iso | PASS   |
+| amd64        | 18.2.3.9 | -          |                  | https://download.whonix.org/libvirt/18.2.3.9/Whonix-LXQt-18.2.3.9.Intel_AMD64.qcow2.libvirt.xz | FAIL   |
+| amd64        | 18.2.4.1 | -          |                  | https://download.whonix.org/libvirt/18.2.4.1/Whonix-LXQt-18.2.4.1.Intel_AMD64.qcow2.libvirt.xz | FAIL   |
+| amd64        | 18.2.4.2 | -          |                  | https://download.whonix.org/libvirt/18.2.4.2/Whonix-LXQt-18.2.4.2.Intel_AMD64.qcow2.libvirt.xz | FAIL   |
+| amd64        | 20.04  | -          |                  | https://cdimage.ubuntu.com/kubuntu/releases/20.04/release/kubuntu-20.04.6-desktop-amd64.iso | PASS   |
+| amd64        | 20.04  | -          |                  | https://cdimage.ubuntu.com/lubuntu/releases/20.04/release/lubuntu-20.04.5-desktop-amd64.iso | PASS   |
+| amd64        | 20.04  | -          |                  | https://cdimage.ubuntu.com/ubuntu-budgie/releases/20.04/release/ubuntu-budgie-20.04.6-desktop-amd64.iso | PASS   |
+| amd64        | 20.04  | -          |                  | https://cdimage.ubuntu.com/ubuntukylin/releases/20.04/release/ubuntukylin-20.04.6-desktop-amd64.iso | PASS   |
+| amd64        | 20.04  | -          |                  | https://cdimage.ubuntu.com/ubuntu-mate/releases/20.04/release/ubuntu-mate-20.04.6-desktop-amd64.iso | PASS   |
+| amd64        | 20.04  | -          |                  | https://cdimage.ubuntu.com/ubuntustudio/releases/20.04/release/ubuntustudio-20.04.5-dvd-amd64.iso | PASS   |
+| amd64        | 20.04  | -          |                  | https://cdimage.ubuntu.com/xubuntu/releases/20.04/release/xubuntu-20.04.6-desktop-amd64.iso | PASS   |
+| amd64        | 20.04  | -          |                  | https://releases.ubuntu.com/20.04/ubuntu-20.04.6-desktop-amd64.iso | PASS   |
+| amd64        | 20.04  | -          |                  | https://releases.ubuntu.com/20.04/ubuntu-20.04.6-live-server-amd64.iso | PASS   |
+| amd64        | 2016   | English    | (United          | -                                        | PASS   |
+| amd64        | 2016   | French     |                  | -                                        | PASS   |
+| amd64        | 2016   | German     |                  | -                                        | PASS   |
+| amd64        | 2016   | Chinese    | (Simplified)     | -                                        | PASS   |
+| amd64        | 2016   | Italian    |                  | -                                        | PASS   |
+| amd64        | 2016   | Japanese   |                  | -                                        | PASS   |
+| amd64        | 2016   | Russian    |                  | -                                        | PASS   |
+| amd64        | 2016   | Spanish    |                  | -                                        | PASS   |
+| amd64        | 2019   | English    | (United          | -                                        | PASS   |
+| amd64        | 2019   | French     |                  | -                                        | PASS   |
+| amd64        | 2019   | German     |                  | -                                        | PASS   |
+| amd64        | 2019   | Chinese    | (Simplified)     | -                                        | PASS   |
+| amd64        | 2019   | Italian    |                  | -                                        | PASS   |
+| amd64        | 2019   | Japanese   |                  | -                                        | PASS   |
+| amd64        | 2019   | Russian    |                  | -                                        | PASS   |
+| amd64        | 2019   | Spanish    |                  | -                                        | PASS   |
+| amd64        | 2022   | English    | (United          | -                                        | PASS   |
+| amd64        | 2022   | French     |                  | -                                        | PASS   |
+| amd64        | 2022   | German     |                  | -                                        | PASS   |
+| amd64        | 2022   | Chinese    | (Simplified)     | -                                        | PASS   |
+| amd64        | 2022   | Italian    |                  | -                                        | PASS   |
+| amd64        | 2022   | Japanese   |                  | -                                        | PASS   |
+| amd64        | 2022   | Russian    |                  | -                                        | PASS   |
+| amd64        | 2022   | Spanish    |                  | -                                        | PASS   |
+| amd64        | 2024.rc7 | cdrom      |                  | https://www.damnsmalllinux.org/download/dsl-2024.rc7.iso | PASS   |
+| amd64        | 2024.rc7 | lz4        |                  | https://www.damnsmalllinux.org/download/dsl-2024.rc7.lz4.iso | PASS   |
+| amd64        | 2026.04 | -          |                  | https://download.grml.org/grml-full-2026.04-amd64.iso | FAIL   |
+| amd64        | 20260813 | base-dinit |                  | https://iso.artixlinux.org/iso/artix-base-dinit-20260813-x86_64.iso | PASS   |
+| amd64        | 20260813 | base-openrc |                  | https://iso.artixlinux.org/iso/artix-base-openrc-20260813-x86_64.iso | PASS   |
+| amd64        | 20260813 | base-runit |                  | https://iso.artixlinux.org/iso/artix-base-runit-20260813-x86_64.iso | PASS   |
+| amd64        | 20260813 | base-s6    |                  | https://iso.artixlinux.org/iso/artix-base-s6-20260813-x86_64.iso | PASS   |
+| amd64        | 20260813 | cinnamon-dinit |                  | https://iso.artixlinux.org/iso/artix-cinnamon-dinit-20260814-x86_64.iso | PASS   |
+| amd64        | 20260813 | cinnamon-openrc |                  | https://iso.artixlinux.org/iso/artix-cinnamon-openrc-20260814-x86_64.iso | PASS   |
+| amd64        | 20260813 | community-gtk-openrc |                  | https://iso.artixlinux.org/iso/artix-community-gtk-openrc-20260821-x86_64.iso | PASS   |
+| amd64        | 20260813 | community-qt-openrc |                  | https://iso.artixlinux.org/iso/artix-community-qt-openrc-20260821-x86_64.iso | PASS   |
+| amd64        | 20260813 | lxqt-runit |                  | https://iso.artixlinux.org/iso/artix-lxqt-runit-20260816-x86_64.iso | PASS   |
+| amd64        | 20260813 | mate-dinit |                  | https://iso.artixlinux.org/iso/artix-mate-dinit-20260813-x86_64.iso | PASS   |
+| amd64        | 20260813 | mate-openrc |                  | https://iso.artixlinux.org/iso/artix-mate-openrc-20260813-x86_64.iso | PASS   |
+| amd64        | 20260813 | plasma-dinit |                  | https://iso.artixlinux.org/iso/artix-plasma-dinit-20260813-x86_64.iso | PASS   |
+| amd64        | 20260813 | plasma-openrc |                  | https://iso.artixlinux.org/iso/artix-plasma-openrc-20260813-x86_64.iso | PASS   |
+| amd64        | 20260813 | xfce-dinit |                  | https://iso.artixlinux.org/iso/artix-xfce-dinit-20260813-x86_64.iso | PASS   |
+| amd64        | 20260813 | xfce-openrc |                  | https://iso.artixlinux.org/iso/artix-xfce-openrc-20260813-x86_64.iso | PASS   |
+| amd64        | 20260814 | base-dinit |                  | https://iso.artixlinux.org/iso/artix-base-dinit-20260813-x86_64.iso | PASS   |
+| amd64        | 20260814 | base-openrc |                  | https://iso.artixlinux.org/iso/artix-base-openrc-20260813-x86_64.iso | PASS   |
+| amd64        | 20260814 | base-runit |                  | https://iso.artixlinux.org/iso/artix-base-runit-20260813-x86_64.iso | PASS   |
+| amd64        | 20260814 | base-s6    |                  | https://iso.artixlinux.org/iso/artix-base-s6-20260813-x86_64.iso | PASS   |
+| amd64        | 20260814 | cinnamon-dinit |                  | https://iso.artixlinux.org/iso/artix-cinnamon-dinit-20260814-x86_64.iso | PASS   |
+| amd64        | 20260814 | cinnamon-openrc |                  | https://iso.artixlinux.org/iso/artix-cinnamon-openrc-20260814-x86_64.iso | PASS   |
+| amd64        | 20260814 | community-gtk-openrc |                  | https://iso.artixlinux.org/iso/artix-community-gtk-openrc-20260821-x86_64.iso | PASS   |
+| amd64        | 20260814 | community-qt-openrc |                  | https://iso.artixlinux.org/iso/artix-community-qt-openrc-20260821-x86_64.iso | PASS   |
+| amd64        | 20260814 | lxqt-runit |                  | https://iso.artixlinux.org/iso/artix-lxqt-runit-20260816-x86_64.iso | PASS   |
+| amd64        | 20260814 | mate-dinit |                  | https://iso.artixlinux.org/iso/artix-mate-dinit-20260813-x86_64.iso | PASS   |
+| amd64        | 20260814 | mate-openrc |                  | https://iso.artixlinux.org/iso/artix-mate-openrc-20260813-x86_64.iso | PASS   |
+| amd64        | 20260814 | plasma-dinit |                  | https://iso.artixlinux.org/iso/artix-plasma-dinit-20260813-x86_64.iso | PASS   |
+| amd64        | 20260814 | plasma-openrc |                  | https://iso.artixlinux.org/iso/artix-plasma-openrc-20260813-x86_64.iso | PASS   |
+| amd64        | 20260814 | xfce-dinit |                  | https://iso.artixlinux.org/iso/artix-xfce-dinit-20260813-x86_64.iso | PASS   |
+| amd64        | 20260814 | xfce-openrc |                  | https://iso.artixlinux.org/iso/artix-xfce-openrc-20260813-x86_64.iso | PASS   |
+| amd64        | 20260816 | base-dinit |                  | https://iso.artixlinux.org/iso/artix-base-dinit-20260813-x86_64.iso | PASS   |
+| amd64        | 20260816 | base-openrc |                  | https://iso.artixlinux.org/iso/artix-base-openrc-20260813-x86_64.iso | PASS   |
+| amd64        | 20260816 | base-runit |                  | https://iso.artixlinux.org/iso/artix-base-runit-20260813-x86_64.iso | PASS   |
+| amd64        | 20260816 | base-s6    |                  | https://iso.artixlinux.org/iso/artix-base-s6-20260813-x86_64.iso | PASS   |
+| amd64        | 20260816 | cinnamon-dinit |                  | https://iso.artixlinux.org/iso/artix-cinnamon-dinit-20260814-x86_64.iso | PASS   |
+| amd64        | 20260816 | cinnamon-openrc |                  | https://iso.artixlinux.org/iso/artix-cinnamon-openrc-20260814-x86_64.iso | PASS   |
+| amd64        | 20260816 | community-gtk-openrc |                  | https://iso.artixlinux.org/iso/artix-community-gtk-openrc-20260821-x86_64.iso | PASS   |
+| amd64        | 20260816 | community-qt-openrc |                  | https://iso.artixlinux.org/iso/artix-community-qt-openrc-20260821-x86_64.iso | PASS   |
+| amd64        | 20260816 | lxqt-runit |                  | https://iso.artixlinux.org/iso/artix-lxqt-runit-20260816-x86_64.iso | PASS   |
+| amd64        | 20260816 | mate-dinit |                  | https://iso.artixlinux.org/iso/artix-mate-dinit-20260813-x86_64.iso | PASS   |
+| amd64        | 20260816 | mate-openrc |                  | https://iso.artixlinux.org/iso/artix-mate-openrc-20260813-x86_64.iso | PASS   |
+| amd64        | 20260816 | plasma-dinit |                  | https://iso.artixlinux.org/iso/artix-plasma-dinit-20260813-x86_64.iso | PASS   |
+| amd64        | 20260816 | plasma-openrc |                  | https://iso.artixlinux.org/iso/artix-plasma-openrc-20260813-x86_64.iso | PASS   |
+| amd64        | 20260816 | xfce-dinit |                  | https://iso.artixlinux.org/iso/artix-xfce-dinit-20260813-x86_64.iso | PASS   |
+| amd64        | 20260816 | xfce-openrc |                  | https://iso.artixlinux.org/iso/artix-xfce-openrc-20260813-x86_64.iso | PASS   |
+| amd64        | 20260821 | base-dinit |                  | https://iso.artixlinux.org/iso/artix-base-dinit-20260813-x86_64.iso | PASS   |
+| amd64        | 20260821 | base-openrc |                  | https://iso.artixlinux.org/iso/artix-base-openrc-20260813-x86_64.iso | PASS   |
+| amd64        | 20260821 | base-runit |                  | https://iso.artixlinux.org/iso/artix-base-runit-20260813-x86_64.iso | PASS   |
+| amd64        | 20260821 | base-s6    |                  | https://iso.artixlinux.org/iso/artix-base-s6-20260813-x86_64.iso | PASS   |
+| amd64        | 20260821 | cinnamon-dinit |                  | https://iso.artixlinux.org/iso/artix-cinnamon-dinit-20260814-x86_64.iso | PASS   |
+| amd64        | 20260821 | cinnamon-openrc |                  | https://iso.artixlinux.org/iso/artix-cinnamon-openrc-20260814-x86_64.iso | PASS   |
+| amd64        | 20260821 | community-gtk-openrc |                  | https://iso.artixlinux.org/iso/artix-community-gtk-openrc-20260821-x86_64.iso | PASS   |
+| amd64        | 20260821 | community-qt-openrc |                  | https://iso.artixlinux.org/iso/artix-community-qt-openrc-20260821-x86_64.iso | PASS   |
+| amd64        | 20260821 | lxqt-runit |                  | https://iso.artixlinux.org/iso/artix-lxqt-runit-20260816-x86_64.iso | PASS   |
+| amd64        | 20260821 | mate-dinit |                  | https://iso.artixlinux.org/iso/artix-mate-dinit-20260813-x86_64.iso | PASS   |
+| amd64        | 20260821 | mate-openrc |                  | https://iso.artixlinux.org/iso/artix-mate-openrc-20260813-x86_64.iso | PASS   |
+| amd64        | 20260821 | plasma-dinit |                  | https://iso.artixlinux.org/iso/artix-plasma-dinit-20260813-x86_64.iso | PASS   |
+| amd64        | 20260821 | plasma-openrc |                  | https://iso.artixlinux.org/iso/artix-plasma-openrc-20260813-x86_64.iso | PASS   |
+| amd64        | 20260821 | xfce-dinit |                  | https://iso.artixlinux.org/iso/artix-xfce-dinit-20260813-x86_64.iso | PASS   |
+| amd64        | 20260821 | xfce-openrc |                  | https://iso.artixlinux.org/iso/artix-xfce-openrc-20260813-x86_64.iso | PASS   |
+| amd64        | 2026.09 | -          |                  | https://download.grml.org/grml-full-2026.09-amd64.iso | FAIL   |
+| amd64        | 2026-10-03 | k612       |                  | https://iso.biglinux.com.br/biglinux_2026-10-03_k612.iso | PASS   |
+| amd64        | 2026-10-03 | k618       |                  | https://iso.biglinux.com.br/biglinux_2026-10-03_k618.iso | PASS   |
+| amd64        | 2026-10-03 | k72        |                  | https://iso.biglinux.com.br/biglinux_2026-10-03_k72.iso | PASS   |
+| amd64        | 20.9   | -          |                  | https://cdimage.deepin.com/releases/20.9/deepin-desktop-community-20.9-amd64.iso | PASS   |
+| amd64        | 21     | base-runit |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-21/runit-bullseye/antiX-21-runit_x64-base.iso | PASS   |
+| amd64        | 21     | base-sysv  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-21/antiX-21_x64-base.iso | PASS   |
+| amd64        | 21     | core-runit |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-21/runit-bullseye/antiX-21-runit_x64-core.iso | PASS   |
+| amd64        | 21     | core-sysv  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-21/antiX-21_x64-core.iso | PASS   |
+| amd64        | 21     | full-runit |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-21/runit-bullseye/antiX-21-runit_x64-full.iso | PASS   |
+| amd64        | 21     | full-sysv  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-21/antiX-21_x64-full.iso | PASS   |
+| amd64        | 21     | net-runit  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-21/runit-bullseye/antiX-21-runit-net_x64-net.iso | PASS   |
+| amd64        | 21     | net-sysv   |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-21/antiX-21-net_x64-net.iso | PASS   |
+| amd64        | 21.3   | -          |                  | https://pub.linuxmint.io/stable/21.3/linuxmint-21.3-xfce-64bit.iso | FAIL   |
+| amd64        | 22     | base-runit |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-22/runit-antiX-22/antiX-22-runit_x64-base.iso | PASS   |
+| amd64        | 22     | base-sysv  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-22/antiX-22_x64-base.iso | PASS   |
+| amd64        | 22     | core-runit |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-22/runit-antiX-22/antiX-22-runit_x64-core.iso | PASS   |
+| amd64        | 22     | core-sysv  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-22/antiX-22_x64-core.iso | PASS   |
+| amd64        | 22     | full-runit |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-22/runit-antiX-22/antiX-22-runit_x64-full.iso | PASS   |
+| amd64        | 22     | full-sysv  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-22/antiX-22_x64-full.iso | PASS   |
+| amd64        | 22     | net-runit  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-22/runit-antiX-22/antiX-22-runit-net_x64-net.iso | PASS   |
+| amd64        | 22     | net-sysv   |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-22/antiX-22-net_x64-net.iso | PASS   |
+| amd64        | 22.04  | -          |                  | https://cdimage.ubuntu.com/kubuntu/releases/22.04/release/kubuntu-22.04.5-desktop-amd64.iso | PASS   |
+| amd64        | 22.04  | -          |                  | https://cdimage.ubuntu.com/lubuntu/releases/22.04/release/lubuntu-22.04.5-desktop-amd64.iso | PASS   |
+| amd64        | 22.04  | -          |                  | https://cdimage.ubuntu.com/ubuntu-budgie/releases/22.04/release/ubuntu-budgie-22.04.5-desktop-amd64.iso | PASS   |
+| amd64        | 22.04  | -          |                  | https://cdimage.ubuntu.com/ubuntukylin/releases/22.04/release/ubuntukylin-22.04.5-desktop-amd64.iso | PASS   |
+| amd64        | 22.04  | -          |                  | https://cdimage.ubuntu.com/ubuntu-mate/releases/22.04/release/ubuntu-mate-22.04.5-desktop-amd64.iso | PASS   |
+| amd64        | 22.04  | -          |                  | https://cdimage.ubuntu.com/ubuntustudio/releases/22.04/release/ubuntustudio-22.04.5-dvd-amd64.iso | PASS   |
+| amd64        | 22.04  | -          |                  | https://cdimage.ubuntu.com/xubuntu/releases/22.04/release/xubuntu-22.04.5-desktop-amd64.iso | PASS   |
+| amd64        | 22.04  | -          |                  | https://releases.ubuntu.com/22.04/ubuntu-22.04.5-desktop-amd64.iso | PASS   |
+| amd64        | 22.04  | -          |                  | https://releases.ubuntu.com/22.04/ubuntu-22.04.5-live-server-amd64.iso | PASS   |
+| amd64        | 22.1   | -          |                  | https://pub.linuxmint.io/stable/22.1/linuxmint-22.1-xfce-64bit.iso | FAIL   |
+| amd64        | 22.10  | -          |                  | https://github.com/Vanilla-OS/live-iso/releases/download/22.10-r8/VanillaOS-22.10-all.20230226.iso | FAIL   |
+| amd64        | 22.10-r1 | -          |                  | https://github.com/Vanilla-OS/live-iso/releases/download/22.10-r1/VanillaOS-22.10-all.20221230.iso | FAIL   |
+| amd64        | 22.10-r2 | -          |                  | https://github.com/Vanilla-OS/live-iso/releases/download/22.10-r2/VanillaOS-22.10-all.20221231.iso | FAIL   |
+| amd64        | 22.10-r3 | -          |                  | https://github.com/Vanilla-OS/live-iso/releases/download/22.10-r3/VanillaOS-22.10-all.20230105.iso | FAIL   |
+| amd64        | 22.10-r4 | -          |                  | https://github.com/Vanilla-OS/live-iso/releases/download/22.10-r4/VanillaOS-22.10-all.20230115.iso | FAIL   |
+| amd64        | 22.10-r5 | -          |                  | https://github.com/Vanilla-OS/live-iso/releases/download/22.10-r5/VanillaOS-22.10-all.20230116.iso | FAIL   |
+| amd64        | 22.10-r6 | -          |                  | https://github.com/Vanilla-OS/live-iso/releases/download/22.10-r6/VanillaOS-22.10-all.20230123.iso | FAIL   |
+| amd64        | 22.10-r7 | -          |                  | https://github.com/Vanilla-OS/live-iso/releases/download/22.10-r7.5/VanillaOS-22.10-all.20230214.iso | FAIL   |
+| amd64        | 22.10-r7.5 | -          |                  | https://github.com/Vanilla-OS/live-iso/releases/download/22.10-r7.5/VanillaOS-22.10-all.20230214.iso | FAIL   |
+| amd64        | 22.10-r8 | -          |                  | https://github.com/Vanilla-OS/live-iso/releases/download/22.10-r8/VanillaOS-22.10-all.20230226.iso | FAIL   |
+| amd64        | 22.2   | -          |                  | https://pub.linuxmint.io/stable/22.2/linuxmint-22.2-xfce-64bit.iso | FAIL   |
+| amd64        | 22.3   | -          |                  | https://pub.linuxmint.io/stable/22.3/linuxmint-22.3-xfce-64bit.iso | FAIL   |
+| amd64        | 23     | base-runit |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23/runit-antiX-23/antiX-23-runit_x64-base.iso | PASS   |
+| amd64        | 23     | base-sysv  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23/antiX-23_x64-base.iso | PASS   |
+| amd64        | 23     | core-runit |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23/runit-antiX-23/antiX-23-runit_x64-core.iso | PASS   |
+| amd64        | 23     | core-sysv  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23/antiX-23_x64-core.iso | PASS   |
+| amd64        | 23     | full-runit |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23/runit-antiX-23/antiX-23-runit_x64-full.iso | PASS   |
+| amd64        | 23     | full-sysv  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23/antiX-23_x64-full.iso | PASS   |
+| amd64        | 23     | net-runit  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23/runit-antiX-23/antiX-23-runit-net_x64-net.iso | PASS   |
+| amd64        | 23     | net-sysv   |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23/antiX-23-net_x64-net.iso | PASS   |
+| amd64        | 23.06  | -          |                  | https://images.blendos.co/track/gnome/blendOS-23.06-x86_64-gnome.iso | PASS   |
+| amd64        | 23.1   | base-runit |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23.1/runit-antiX-23.1/antiX-23.1-runit_x64-base.iso | PASS   |
+| amd64        | 23.1   | base-sysv  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23.1/antiX-23.1_x64-base.iso | PASS   |
+| amd64        | 23.1   | core-runit |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23.1/runit-antiX-23.1/antiX-23.1-runit_x64-core.iso | PASS   |
+| amd64        | 23.1   | core-sysv  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23.1/antiX-23.1_x64-core.iso | PASS   |
+| amd64        | 23.1   | full-runit |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23.1/runit-antiX-23.1/antiX-23.1-runit_x64-full.iso | PASS   |
+| amd64        | 23.1   | full-sysv  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23.1/antiX-23.1_x64-full.iso | PASS   |
+| amd64        | 23.1   | -          |                  | https://cdimage.deepin.com/releases/23.1/amd64/deepin-desktop-community-23.1-amd64.iso | PASS   |
+| amd64        | 23.1   | net-runit  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23.1/runit-antiX-23.1/antiX-23.1-runit-net_x64-net.iso | PASS   |
+| amd64        | 23.1   | net-sysv   |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23.1/antiX-23.1-net_x64-net.iso | PASS   |
+| amd64        | 23.2   | base-runit |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23.2/runit-antiX-23.2/antiX-23.2-runit_x64-base.iso | PASS   |
+| amd64        | 23.2   | base-sysv  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23.2/antiX-23.2_x64-base.iso | PASS   |
+| amd64        | 23.2   | core-runit |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23.2/runit-antiX-23.2/antiX-23.2-runit_x64-core.iso | PASS   |
+| amd64        | 23.2   | core-sysv  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23.2/antiX-23.2_x64-core.iso | PASS   |
+| amd64        | 23.2   | full-runit |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23.2/runit-antiX-23.2/antiX-23.2-runit_x64-full.iso | PASS   |
+| amd64        | 23.2   | full-sysv  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23.2/antiX-23.2_x64-full.iso | PASS   |
+| amd64        | 23.2   | net-runit  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23.2/runit-antiX-23.2/antiX-23.2-runit-net_x64-net.iso | PASS   |
+| amd64        | 23.2   | net-sysv   |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23.2/antiX-23.2-net_x64-net.iso | PASS   |
+| amd64        | 24.04  | -          |                  | https://cdimage.ubuntu.com/edubuntu/releases/24.04/release/edubuntu-24.04.3-desktop-amd64.iso | PASS   |
+| amd64        | 24.04  | -          |                  | https://cdimage.ubuntu.com/kubuntu/releases/24.04/release/kubuntu-24.04.3-desktop-amd64.iso | PASS   |
+| amd64        | 24.04  | -          |                  | https://cdimage.ubuntu.com/lubuntu/releases/24.04/release/lubuntu-24.04.3-desktop-amd64.iso | PASS   |
+| amd64        | 24.04  | -          |                  | https://cdimage.ubuntu.com/ubuntu-budgie/releases/24.04/release/ubuntu-budgie-24.04.3-desktop-amd64.iso | PASS   |
+| amd64        | 24.04  | -          |                  | https://cdimage.ubuntu.com/ubuntucinnamon/releases/24.04/release/ubuntucinnamon-24.04.3-desktop-amd64.iso | PASS   |
+| amd64        | 24.04  | -          |                  | https://cdimage.ubuntu.com/ubuntukylin/releases/24.04/release/ubuntukylin-24.04.3-desktop-amd64.iso | PASS   |
+| amd64        | 24.04  | -          |                  | https://cdimage.ubuntu.com/ubuntu-mate/releases/24.04/release/ubuntu-mate-24.04.3-desktop-amd64.iso | PASS   |
+| amd64        | 24.04  | -          |                  | https://cdimage.ubuntu.com/ubuntustudio/releases/24.04/release/ubuntustudio-24.04.3-dvd-amd64.iso | PASS   |
+| amd64        | 24.04  | -          |                  | https://cdimage.ubuntu.com/ubuntu-unity/releases/24.04/release/ubuntu-unity-24.04.3-desktop-amd64.iso | PASS   |
+| amd64        | 24.04  | -          |                  | https://cdimage.ubuntu.com/xubuntu/releases/24.04/release/xubuntu-24.04.3-desktop-amd64.iso | PASS   |
+| amd64        | 24.04  | -          |                  | https://releases.ubuntu.com/24.04/ubuntu-24.04.3-desktop-amd64.iso | PASS   |
+| amd64        | 24.04  | -          |                  | https://releases.ubuntu.com/24.04/ubuntu-24.04.3-live-server-amd64.iso | PASS   |
+| amd64        | 24.10.1 | -          |                  | https://download.ghostbsd.org/releases/amd64/24.10.1/GhostBSD-24.10.1-XFCE.iso | FAIL   |
+| amd64        | 25     | base-runit |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-25/runit-antiX-25/antiX-25-runit_x64-base.iso | PASS   |
+| amd64        | 25     | base-sysv  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-25/antiX-25_x64-base.iso | PASS   |
+| amd64        | 25     | core-runit |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-25/runit-antiX-25/antiX-25-runit_x64-core.iso | PASS   |
+| amd64        | 25     | core-sysv  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-25/antiX-25_x64-core.iso | PASS   |
+| amd64        | 25     | full-runit |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-25/runit-antiX-25/antiX-25-runit_x64-full.iso | PASS   |
+| amd64        | 25     | full-sysv  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-25/antiX-25_x64-full.iso | PASS   |
+| amd64        | 25     | net-runit  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-25/runit-antiX-25/antiX-25-runit-net_x64-net.iso | PASS   |
+| amd64        | 25     | net-sysv   |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-25/antiX-25-net_x64-net.iso | PASS   |
+| amd64        | 25.0.1 | -          |                  | https://cdimage.deepin.com/releases/25.0.1/amd64/deepin-desktop-community-25.0.1-amd64.iso | PASS   |
+| amd64        | 25.01-R14.2p1 | -          |                  | https://download.ghostbsd.org/releases/amd64/25.01-R14.2p1/GhostBSD-25.01-R14.2p1-XFCE.iso | FAIL   |
+| amd64        | 25.0.10 | -          |                  | https://cdimage.deepin.com/releases/25.0.10/amd64/deepin-desktop-community-25.0.10-amd64.iso | PASS   |
+| amd64        | 25.02-R14.3p2 | -          |                  | https://download.ghostbsd.org/releases/amd64/25.02-R14.3p2/GhostBSD-25.02-R14.3p2-XFCE.iso | FAIL   |
+| amd64        | 25.1.0 | -          |                  | https://cdimage.deepin.com/releases/25.1.0/amd64/deepin-desktop-community-25.1.0-amd64.iso | PASS   |
+| amd64        | 25.10  | -          |                  | https://releases.ubuntu.com/25.10/ubuntu-25.10-live-server-amd64.iso | PASS   |
+| amd64        | 25.2.0 | -          |                  | https://cdimage.deepin.com/releases/25.2.0/amd64/deepin-desktop-community-25.2.0-amd64.iso | PASS   |
+| amd64        | 26     | base-runit |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-26/runit-antiX-26/antiX-26-runit_x64-base.iso | PASS   |
+| amd64        | 26     | base-sysv  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-26/antiX-26_x64-base.iso | PASS   |
+| amd64        | 26     | core-runit |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-26/runit-antiX-26/antiX-26-runit_x64-core.iso | PASS   |
+| amd64        | 26     | core-sysv  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-26/antiX-26_x64-core.iso | PASS   |
+| amd64        | 26     | full-runit |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-26/runit-antiX-26/antiX-26-runit_x64-full.iso | PASS   |
+| amd64        | 26     | full-sysv  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-26/antiX-26_x64-full.iso | PASS   |
+| amd64        | 26     | net-runit  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-26/runit-antiX-26/antiX-26-runit-net_x64-net.iso | PASS   |
+| amd64        | 26     | net-sysv   |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-26/antiX-26-net_x64-net.iso | PASS   |
+| amd64        | 26.04  | -          |                  | https://cdimage.ubuntu.com/edubuntu/releases/26.04/release/edubuntu-26.04-desktop-amd64.iso | PASS   |
+| amd64        | 26.04  | -          |                  | https://cdimage.ubuntu.com/kubuntu/releases/26.04/release/kubuntu-26.04-desktop-amd64.iso | PASS   |
+| amd64        | 26.04  | -          |                  | https://cdimage.ubuntu.com/lubuntu/releases/26.04/release/lubuntu-26.04-desktop-amd64.iso | PASS   |
+| amd64        | 26.04  | -          |                  | https://cdimage.ubuntu.com/ubuntu-budgie/releases/26.04/release/ubuntu-budgie-26.04-desktop-amd64.iso | PASS   |
+| amd64        | 26.04  | -          |                  | https://cdimage.ubuntu.com/ubuntucinnamon/releases/26.04/release/ubuntucinnamon-26.04-desktop-amd64.iso | PASS   |
+| amd64        | 26.04  | -          |                  | https://cdimage.ubuntu.com/ubuntukylin/releases/26.04/release/ubuntukylin-26.04-desktop-amd64.iso | PASS   |
+| amd64        | 26.04  | -          |                  | https://cdimage.ubuntu.com/ubuntustudio/releases/26.04/release/ubuntustudio-26.04-desktop-amd64.iso | PASS   |
+| amd64        | 26.04  | -          |                  | https://cdimage.ubuntu.com/ubuntu-unity/releases/26.04/release/ubuntu-unity-26.04-desktop-amd64.iso | PASS   |
+| amd64        | 26.04  | -          |                  | https://cdimage.ubuntu.com/xubuntu/releases/26.04/release/xubuntu-26.04-desktop-amd64.iso | PASS   |
+| amd64        | 26.04  | -          |                  | https://releases.ubuntu.com/26.04/ubuntu-26.04-desktop-amd64.iso | PASS   |
+| amd64        | 26.04  | -          |                  | https://releases.ubuntu.com/26.04/ubuntu-26.04-live-server-amd64.iso | PASS   |
+| amd64        | 26.10  | -          |                  | https://cdimage.ubuntu.com/edubuntu/releases/26.10/release/edubuntu-26.10-desktop-amd64.iso | PASS   |
+| amd64        | 26.10  | -          |                  | https://cdimage.ubuntu.com/kubuntu/releases/26.10/release/kubuntu-26.10-desktop-amd64.iso | PASS   |
+| amd64        | 26.10  | -          |                  | https://cdimage.ubuntu.com/lubuntu/releases/26.10/release/lubuntu-26.10-desktop-amd64.iso | PASS   |
+| amd64        | 26.10  | -          |                  | https://cdimage.ubuntu.com/ubuntu-budgie/releases/26.10/release/ubuntu-budgie-26.10-desktop-amd64.iso | PASS   |
+| amd64        | 26.10  | -          |                  | https://cdimage.ubuntu.com/ubuntucinnamon/releases/26.10/release/ubuntucinnamon-26.10-desktop-amd64.iso | PASS   |
+| amd64        | 26.10  | -          |                  | https://cdimage.ubuntu.com/ubuntukylin/releases/26.10/release/ubuntukylin-26.10-desktop-amd64.iso | PASS   |
+| amd64        | 26.10  | -          |                  | https://cdimage.ubuntu.com/ubuntu-mate/releases/26.10/release/ubuntu-mate-26.10-desktop-amd64.iso | PASS   |
+| amd64        | 26.10  | -          |                  | https://cdimage.ubuntu.com/ubuntustudio/releases/26.10/release/ubuntustudio-26.10-desktop-amd64.iso | PASS   |
+| amd64        | 26.10  | -          |                  | https://cdimage.ubuntu.com/ubuntu-unity/releases/26.10/release/ubuntu-unity-26.10-desktop-amd64.iso | PASS   |
+| amd64        | 26.10  | -          |                  | https://cdimage.ubuntu.com/xubuntu/releases/26.10/release/xubuntu-26.10-desktop-amd64.iso | PASS   |
+| amd64        | 26.10  | -          |                  | https://releases.ubuntu.com/26.10/ubuntu-26.10-beta-desktop-amd64.iso | PASS   |
+| amd64        | 26.10  | -          |                  | https://releases.ubuntu.com/26.10/ubuntu-26.10-beta-live-server-amd64.iso | PASS   |
+| amd64        | 3.0    | -          |                  | https://github.com/Vanilla-OS/live-iso/releases/download/3.0/Vanilla-OS-3-stable-amd64.20260828.iso | FAIL   |
+| amd64        | 3.0    | -          |                  | https://osrelease.download.prss.microsoft.com/pr/download/AzureLinux-3.0-x86_64.iso | PASS   |
+| amd64        | 38     | -          |                  | https://mirrors.o2switch.fr/batocera/x86_64/stable/38/batocera-x86_64-x86_64-38-20231014.img.gz | PASS   |
+| amd64        | 39     | -          |                  | https://mirrors.o2switch.fr/batocera/x86_64/stable/39/batocera-x86_64-x86_64-39-20240304.img.gz | PASS   |
+| amd64        | 40     | -          |                  | https://mirrors.o2switch.fr/batocera/x86_64/stable/40/batocera-x86_64-40-20240801.img.gz | PASS   |
+| amd64        | 41     | -          |                  | https://mirrors.o2switch.fr/batocera/x86_64/stable/41/batocera-x86_64-41-20250106.img.gz | PASS   |
+| amd64        | 42     | -          |                  | https://download.fedoraproject.org/pub/fedora/linux/releases/42/Spins/x86_64/iso/Fedora-i3-Live-x86_64-42-1.1.iso | FAIL   |
+| amd64        | 4.2    | -          |                  | https://mega.nz/folder/SxwFTCTZ#s_qwDWrSWr7ZSTBVJC9Q_g/file/vx-4.2.iso | FAIL   |
+| amd64        | 42     | -          |                  | https://mirrors.o2switch.fr/batocera/x86_64/stable/42/batocera-x86_64-42-20251006.img.gz | PASS   |
+| amd64        | 43     | -          |                  | https://download.fedoraproject.org/pub/fedora/linux/releases/43/Spins/x86_64/iso/Fedora-i3-Live-43-1.6.x86_64.iso | FAIL   |
+| amd64        | 44     | -          |                  | https://download.fedoraproject.org/pub/fedora/linux/releases/44/Spins/x86_64/iso/Fedora-i3-Live-44-1.7.x86_64.iso | FAIL   |
+| amd64        | 45_Beta | -          |                  | https://download.fedoraproject.org/pub/fedora/linux/releases/test/45_Beta/Spins/x86_64/iso/Fedora-i3-Live-45_Beta-1.3.x86_64.iso | FAIL   |
+| amd64        | 5.0.0  | -          |                  | http://mirror-master.dragonflybsd.org/iso-images/dfly-x86_64-5.0.0_REL.iso.bz2 | PASS   |
+| amd64        | 5.0.1  | -          |                  | http://mirror-master.dragonflybsd.org/iso-images/dfly-x86_64-5.0.1_REL.iso.bz2 | PASS   |
+| amd64        | 5.0.2  | -          |                  | http://mirror-master.dragonflybsd.org/iso-images/dfly-x86_64-5.0.2_REL.iso.bz2 | PASS   |
+| amd64        | 5.2.0  | -          |                  | http://mirror-master.dragonflybsd.org/iso-images/dfly-x86_64-5.2.0_REL.iso.bz2 | PASS   |
+| amd64        | 5.2.1  | -          |                  | http://mirror-master.dragonflybsd.org/iso-images/dfly-x86_64-5.2.1_REL.iso.bz2 | PASS   |
+| amd64        | 5.2.2  | -          |                  | http://mirror-master.dragonflybsd.org/iso-images/dfly-x86_64-5.2.2_REL.iso.bz2 | PASS   |
+| amd64        | 5.4.0  | -          |                  | http://mirror-master.dragonflybsd.org/iso-images/dfly-x86_64-5.4.0_REL.iso.bz2 | PASS   |
+| amd64        | 5.4.1  | -          |                  | http://mirror-master.dragonflybsd.org/iso-images/dfly-x86_64-5.4.1_REL.iso.bz2 | PASS   |
+| amd64        | 5.4.2  | -          |                  | http://mirror-master.dragonflybsd.org/iso-images/dfly-x86_64-5.4.2_REL.iso.bz2 | PASS   |
+| amd64        | 5.4.3  | -          |                  | http://mirror-master.dragonflybsd.org/iso-images/dfly-x86_64-5.4.3_REL.iso.bz2 | PASS   |
+| amd64        | 5.6.0  | -          |                  | http://mirror-master.dragonflybsd.org/iso-images/dfly-x86_64-5.6.0_REL.iso.bz2 | PASS   |
+| amd64        | 5.6.1  | -          |                  | http://mirror-master.dragonflybsd.org/iso-images/dfly-x86_64-5.6.1_REL.iso.bz2 | PASS   |
+| amd64        | 5.6.2  | -          |                  | http://mirror-master.dragonflybsd.org/iso-images/dfly-x86_64-5.6.2_REL.iso.bz2 | PASS   |
+| amd64        | 5.6.3  | -          |                  | http://mirror-master.dragonflybsd.org/iso-images/dfly-x86_64-5.6.3_REL.iso.bz2 | PASS   |
+| amd64        | 5.8.0  | -          |                  | http://mirror-master.dragonflybsd.org/iso-images/dfly-x86_64-5.8.0_REL.iso.bz2 | PASS   |
+| amd64        | 5.8.1  | -          |                  | http://mirror-master.dragonflybsd.org/iso-images/dfly-x86_64-5.8.1_REL.iso.bz2 | PASS   |
+| amd64        | 5.8.2  | -          |                  | http://mirror-master.dragonflybsd.org/iso-images/dfly-x86_64-5.8.2_REL.iso.bz2 | PASS   |
+| amd64        | 5.8.3  | -          |                  | http://mirror-master.dragonflybsd.org/iso-images/dfly-x86_64-5.8.3_REL.iso.bz2 | PASS   |
+| amd64        | 5.8.5  | -          |                  | https://distro.ibiblio.org/easyos/amd64/releases/kirkstone/2025/5.8.5/easy-5.8.5-amd64.img | PASS   |
+| amd64        | 5.9    | -          |                  | https://distro.ibiblio.org/easyos/amd64/releases/kirkstone/2025/5.9/easy-5.9-amd64.img | PASS   |
+| amd64        | 6.0    | -          |                  | https://sourceforge.net/projects/linux-lite/files/6.0/linux-lite-6.0-64bit.iso | FAIL   |
+| amd64        | 6.0.0  | -          |                  | http://mirror-master.dragonflybsd.org/iso-images/dfly-x86_64-6.0.0_REL.iso.bz2 | PASS   |
+| amd64        | 6.0.1  | -          |                  | http://mirror-master.dragonflybsd.org/iso-images/dfly-x86_64-6.0.1_REL.iso.bz2 | PASS   |
+| amd64        | 6.0.4  | -          |                  | https://ams3.dl.elementary.io/download/MTc5MzMxMjQ0OQo=/elementaryos-6.0.4-stable..iso | FAIL   |
+| amd64        | 6.0.4  | -          |                  | https://images-dl.endlessm.com/release/6.0.4/eos-amd64-amd64/es/eos-eos6.0-amd64-amd64.241023-184649.es.iso | FAIL   |
+| amd64        | 6.0.5  | -          |                  | https://images-dl.endlessm.com/release/6.0.5/eos-amd64-amd64/es/eos-eos6.0-amd64-amd64.241023-184649.es.iso | FAIL   |
+| amd64        | 6.0.6  | -          |                  | https://images-dl.endlessm.com/release/6.0.6/eos-amd64-amd64/es/eos-eos6.0-amd64-amd64.241023-184649.es.iso | FAIL   |
+| amd64        | 6.0.7  | -          |                  | https://images-dl.endlessm.com/release/6.0.7/eos-amd64-amd64/es/eos-eos6.0-amd64-amd64.241023-184649.es.iso | FAIL   |
+| amd64        | 6.0.8  | -          |                  | https://images-dl.endlessm.com/release/6.0.8/eos-amd64-amd64/es/eos-eos6.0-amd64-amd64.241023-184649.es.iso | FAIL   |
+| amd64        | 6.1.0  | -          |                  | https://ams3.dl.elementary.io/download/MTc5MzMxMjQ0OQo=/elementaryos-6.1.0-stable..iso | FAIL   |
+| amd64        | 6.2    | -          |                  | https://sourceforge.net/projects/linux-lite/files/6.2/linux-lite-6.2-64bit.iso | FAIL   |
+| amd64        | 6.2.1  | -          |                  | http://mirror-master.dragonflybsd.org/iso-images/dfly-x86_64-6.2.1_REL.iso.bz2 | PASS   |
+| amd64        | 6.2.2  | -          |                  | http://mirror-master.dragonflybsd.org/iso-images/dfly-x86_64-6.2.2_REL.iso.bz2 | PASS   |
+| amd64        | 6.4    | -          |                  | https://sourceforge.net/projects/linux-lite/files/6.4/linux-lite-6.4-64bit.iso | FAIL   |
+| amd64        | 6.4.0  | -          |                  | http://mirror-master.dragonflybsd.org/iso-images/dfly-x86_64-6.4.0_REL.iso.bz2 | PASS   |
+| amd64        | 6.4.1  | -          |                  | http://mirror-master.dragonflybsd.org/iso-images/dfly-x86_64-6.4.1_REL.iso.bz2 | PASS   |
+| amd64        | 6.4.2  | -          |                  | http://mirror-master.dragonflybsd.org/iso-images/dfly-x86_64-6.4.2_REL.iso.bz2 | PASS   |
+| amd64        | 6.6    | -          |                  | https://sourceforge.net/projects/linux-lite/files/6.6/linux-lite-6.6-64bit.iso | FAIL   |
+| amd64        | 7      | -          |                  | https://pub.linuxmint.io/debian/lmde-7-cinnamon-64bit.iso | FAIL   |
+| amd64        | 7.0.0  | apppack    |                  | https://sourceforge.net/projects/bodhilinux/files/7.0.0/bodhi-7.0.0-64-apppack.iso | PASS   |
+| amd64        | 7.0.0  | -          |                  | https://ams3.dl.elementary.io/download/MTc5MzMxMjQ0OQo=/elementaryos-7.0.0-stable..iso | FAIL   |
+| amd64        | 7.0.0  | hwe        |                  | https://sourceforge.net/projects/bodhilinux/files/7.0.0/bodhi-7.0.0-64-hwe.iso | PASS   |
+| amd64        | 7.0.0  | standard   |                  | https://sourceforge.net/projects/bodhilinux/files/7.0.0/bodhi-7.0.0-64.iso | PASS   |
+| amd64        | 7.0.0  | s76        |                  | https://sourceforge.net/projects/bodhilinux/files/7.0.0/bodhi-7.0.0-64-s76.iso | PASS   |
+| amd64        | 7.1    | x86        |                  | https://mirrors.gigenet.com/OSDN/android-x86/67834/android-x86-7.1-r5.iso | PASS   |
+| amd64        | 7.1    | x86_64     |                  | https://mirrors.gigenet.com/OSDN/android-x86/67834/android-x86_64-7.1-r5.iso | PASS   |
+| amd64        | 7.1.0  | -          |                  | https://ams3.dl.elementary.io/download/MTc5MzMxMjQ0OQo=/elementaryos-7.1.0-stable..iso | FAIL   |
+| amd64        | 7.1.1  | -          |                  | https://ams3.dl.elementary.io/download/MTc5MzMxMjQ0OQo=/elementaryos-7.1.1-stable..iso | FAIL   |
+| amd64        | 8      | boot       |                  | https://repo.almalinux.org/almalinux/8/isos/x86_64/AlmaLinux-8-latest-x86_64-boot.iso | PASS   |
+| amd64        | 8      | dvd        |                  | https://repo.almalinux.org/almalinux/8/isos/x86_64/AlmaLinux-8-latest-x86_64-dvd.iso | PASS   |
+| amd64        | 8      | minimal    |                  | https://repo.almalinux.org/almalinux/8/isos/x86_64/AlmaLinux-8-latest-x86_64-minimal.iso | PASS   |
+| amd64        | 8.0.0  | -          |                  | https://ams3.dl.elementary.io/download/MTc5MzMxMjQ0OQo=/elementaryos-8.0.0-stable..iso | FAIL   |
+| amd64        | 8.0.1  | -          |                  | https://ams3.dl.elementary.io/download/MTc5MzMxMjQ0OQo=/elementaryos-8.0.1-stable..iso | FAIL   |
+| amd64        | 8.0.2  | -          |                  | https://ams3.dl.elementary.io/download/MTc5MzMxMjQ0OQo=/elementaryos-8.0.2-stable..iso | FAIL   |
+| amd64        | 8.1    | x86        |                  | https://mirrors.gigenet.com/OSDN/android-x86/69704/android-x86-8.1-r6.iso | PASS   |
+| amd64        | 8.1    | x86_64     |                  | https://mirrors.gigenet.com/OSDN/android-x86/69704/android-x86_64-8.1-r6.iso | PASS   |
+| amd64        | 8.1.0  | -          |                  | https://ams3.dl.elementary.io/download/MTc5MzMxMjQ0OQo=/elementaryos-8.1.0-stable..iso | FAIL   |
+| amd64        | 8.1.1  | -          |                  | https://ams3.dl.elementary.io/download/MTc5MzMxMjQ0OQo=/elementaryos-8.1.1-stable..iso | FAIL   |
+| amd64        | 9      | boot       |                  | https://mirror.stream.centos.org/9-stream/BaseOS/x86_64/iso/CentOS-Stream-9-latest-x86_64-boot.iso | PASS   |
+| amd64        | 9      | boot       |                  | https://repo.almalinux.org/almalinux/9/isos/x86_64/AlmaLinux-9-latest-x86_64-boot.iso | PASS   |
+| amd64        | 9      | dvd        |                  | https://repo.almalinux.org/almalinux/9/isos/x86_64/AlmaLinux-9-latest-x86_64-dvd.iso | PASS   |
+| amd64        | 9      | dvd1       |                  | https://mirror.stream.centos.org/9-stream/BaseOS/x86_64/iso/CentOS-Stream-9-latest-x86_64-dvd1.iso | PASS   |
+| amd64        | 9      | minimal    |                  | https://repo.almalinux.org/almalinux/9/isos/x86_64/AlmaLinux-9-latest-x86_64-minimal.iso | PASS   |
+| amd64        | 9.0    | -          |                  | https://github.com/CBPP/cbpp/releases/download/v9/cbpp-9.0-amd64-20170621.iso | PASS   |
+| amd64        | 9.0    | x86        |                  | https://mirrors.gigenet.com/OSDN/android-x86/71931/android-x86-9.0-r2.iso | PASS   |
+| amd64        | 9.0    | x86_64     |                  | https://mirrors.gigenet.com/OSDN/android-x86/71931/android-x86_64-9.0-r2.iso | PASS   |
+| armhf        | v3.15  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.15/releases/armhf/alpine-virt--armhf.iso | PASS   |
+| armhf        | v3.16  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.16/releases/armhf/alpine-virt--armhf.iso | PASS   |
+| armhf        | v3.17  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.17/releases/armhf/alpine-virt--armhf.iso | PASS   |
+| armhf        | v3.18  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.18/releases/armhf/alpine-virt--armhf.iso | PASS   |
+| armhf        | v3.19  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.19/releases/armhf/alpine-virt--armhf.iso | PASS   |
+| armhf        | v3.20  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.20/releases/armhf/alpine-virt--armhf.iso | PASS   |
+| armhf        | v3.21  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.21/releases/armhf/alpine-virt--armhf.iso | PASS   |
+| armhf        | v3.22  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.22/releases/armhf/alpine-virt--armhf.iso | PASS   |
+| armhf        | v3.23  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.23/releases/armhf/alpine-virt--armhf.iso | PASS   |
+| armhf        | v3.24  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.24/releases/armhf/alpine-virt--armhf.iso | PASS   |
+| armv7        | v3.15  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.15/releases/armv7/alpine-virt-3.15.11-armv7.iso | PASS   |
+| armv7        | v3.16  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.16/releases/armv7/alpine-virt-3.16.9-armv7.iso | PASS   |
+| armv7        | v3.17  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.17/releases/armv7/alpine-virt-3.17.10-armv7.iso | PASS   |
+| armv7        | v3.18  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.18/releases/armv7/alpine-virt-3.18.12-armv7.iso | PASS   |
+| armv7        | v3.19  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.19/releases/armv7/alpine-virt-3.19.9-armv7.iso | PASS   |
+| armv7        | v3.20  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.20/releases/armv7/alpine-virt-3.20.10-armv7.iso | PASS   |
+| armv7        | v3.21  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.21/releases/armv7/alpine-virt-3.21.9-armv7.iso | PASS   |
+| armv7        | v3.22  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.22/releases/armv7/alpine-virt-3.22.7-armv7.iso | PASS   |
+| armv7        | v3.23  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.23/releases/armv7/alpine-virt-3.23.7-armv7.iso | PASS   |
+| armv7        | v3.24  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.24/releases/armv7/alpine-virt-3.24.3-armv7.iso | PASS   |
+| arm64        | current | -          |                  | https://repo-default.voidlinux.org/live/current/void-live-aarch64-20250202-xfce-musl.iso | FAIL   |
+| arm64        | testing | -          |                  | https://daily.grml.org/grml-full-arm64-testing/latest/grml-full-arm64-testing_latest.iso | FAIL   |
+| arm64        | unstable | -          |                  | https://daily.grml.org/grml-full-arm64-unstable/latest/grml-full-arm64-unstable_latest.iso | FAIL   |
+| arm64        | v3.15  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.15/releases/aarch64/alpine-virt-3.15.11-aarch64.iso | PASS   |
+| arm64        | v3.16  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.16/releases/aarch64/alpine-virt-3.16.9-aarch64.iso | PASS   |
+| arm64        | v3.17  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.17/releases/aarch64/alpine-virt-3.17.10-aarch64.iso | PASS   |
+| arm64        | v3.18  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.18/releases/aarch64/alpine-virt-3.18.12-aarch64.iso | PASS   |
+| arm64        | v3.19  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.19/releases/aarch64/alpine-virt-3.19.9-aarch64.iso | PASS   |
+| arm64        | v3.20  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.20/releases/aarch64/alpine-virt-3.20.10-aarch64.iso | PASS   |
+| arm64        | v3.21  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.21/releases/aarch64/alpine-virt-3.21.9-aarch64.iso | PASS   |
+| arm64        | v3.22  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.22/releases/aarch64/alpine-virt-3.22.7-aarch64.iso | PASS   |
+| arm64        | v3.23  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.23/releases/aarch64/alpine-virt-3.23.7-aarch64.iso | PASS   |
+| arm64        | v3.24  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.24/releases/aarch64/alpine-virt-3.24.3-aarch64.iso | PASS   |
+| arm64        | 0.7.31 | alpine-linux |                  | https://dl-cdn.alpinelinux.org/alpine/v3.24/releases/aarch64/alpine-virt-3.24.3-aarch64.iso | PASS   |
+| arm64        | 0.7.31 | centos-stream |                  | https://mirror.stream.centos.org/10-stream/BaseOS/aarch64/iso/CentOS-Stream-10-latest-aarch64-boot.iso | PASS   |
+| arm64        | 0.7.31 | debian     |                  | https://cdimage.debian.org/cdimage/archive/13.7.0/arm64/iso-cd/debian-13.7.0-arm64-netinst.iso | PASS   |
+| arm64        | 0.7.31 | raspberry-pi-os |                  | https://downloads.raspberrypi.com/raspios_lite_arm64/images/raspios_lite_arm64-2026-10-06/2026-10-06-raspios-trixie-arm64-lite.img.xz | PASS   |
+| arm64        | 0.7.31 | void-linux |                  | https://repo-default.voidlinux.org/live/current/void-live-aarch64-20250202-base.iso | PASS   |
+| arm64        | 10     | boot       |                  | https://mirror.stream.centos.org/10-stream/BaseOS/aarch64/iso/CentOS-Stream-10-latest-aarch64-boot.iso | PASS   |
+| arm64        | 10     | boot       |                  | https://repo.almalinux.org/almalinux/10/isos/aarch64/AlmaLinux-10-latest-aarch64-boot.iso | PASS   |
+| arm64        | 10     | dvd        |                  | https://repo.almalinux.org/almalinux/10/isos/aarch64/AlmaLinux-10-latest-aarch64-dvd.iso | PASS   |
+| arm64        | 10     | dvd1       |                  | https://mirror.stream.centos.org/10-stream/BaseOS/aarch64/iso/CentOS-Stream-10-latest-aarch64-dvd1.iso | PASS   |
+| arm64        | 10     | minimal    |                  | https://repo.almalinux.org/almalinux/10/isos/aarch64/AlmaLinux-10-latest-aarch64-minimal.iso | PASS   |
+| arm64        | 10.1   | boot       |                  | https://repo.almalinux.org/almalinux/10.1/isos/aarch64/AlmaLinux-10.1-aarch64-boot.iso | PASS   |
+| arm64        | 10.1   | dvd        |                  | https://repo.almalinux.org/almalinux/10.1/isos/aarch64/AlmaLinux-10.1-aarch64-dvd.iso | PASS   |
+| arm64        | 10.1   | minimal    |                  | https://repo.almalinux.org/almalinux/10.1/isos/aarch64/AlmaLinux-10.1-aarch64-minimal.iso | PASS   |
+| arm64        | 11.11.0 | cinnamon   |                  | https://cdimage.debian.org/cdimage/archive/11.11.0-live/arm64/iso-dvd/debian-live-11.11.0-arm64-cinnamon.iso | PASS   |
+| arm64        | 11.11.0 | gnome      |                  | https://cdimage.debian.org/cdimage/archive/11.11.0-live/arm64/iso-dvd/debian-live-11.11.0-arm64-gnome.iso | PASS   |
+| arm64        | 11.11.0 | kde        |                  | https://cdimage.debian.org/cdimage/archive/11.11.0-live/arm64/iso-dvd/debian-live-11.11.0-arm64-kde.iso | PASS   |
+| arm64        | 11.11.0 | lxde       |                  | https://cdimage.debian.org/cdimage/archive/11.11.0-live/arm64/iso-dvd/debian-live-11.11.0-arm64-lxde.iso | PASS   |
+| arm64        | 11.11.0 | lxqt       |                  | https://cdimage.debian.org/cdimage/archive/11.11.0-live/arm64/iso-dvd/debian-live-11.11.0-arm64-lxqt.iso | PASS   |
+| arm64        | 11.11.0 | mate       |                  | https://cdimage.debian.org/cdimage/archive/11.11.0-live/arm64/iso-dvd/debian-live-11.11.0-arm64-mate.iso | PASS   |
+| arm64        | 11.11.0 | netinst    |                  | https://cdimage.debian.org/cdimage/archive/11.11.0/arm64/iso-cd/debian-11.11.0-arm64-netinst.iso | PASS   |
+| arm64        | 11.11.0 | standard   |                  | https://cdimage.debian.org/cdimage/archive/11.11.0-live/arm64/iso-dvd/debian-live-11.11.0-arm64-standard.iso | PASS   |
+| arm64        | 11.11.0 | xfce       |                  | https://cdimage.debian.org/cdimage/archive/11.11.0-live/arm64/iso-dvd/debian-live-11.11.0-arm64-xfce.iso | PASS   |
+| arm64        | 12.15.0 | cinnamon   |                  | https://cdimage.debian.org/cdimage/archive/12.15.0-live/arm64/iso-dvd/debian-live-12.15.0-arm64-cinnamon.iso | PASS   |
+| arm64        | 12.15.0 | gnome      |                  | https://cdimage.debian.org/cdimage/archive/12.15.0-live/arm64/iso-dvd/debian-live-12.15.0-arm64-gnome.iso | PASS   |
+| arm64        | 12.15.0 | kde        |                  | https://cdimage.debian.org/cdimage/archive/12.15.0-live/arm64/iso-dvd/debian-live-12.15.0-arm64-kde.iso | PASS   |
+| arm64        | 12.15.0 | lxde       |                  | https://cdimage.debian.org/cdimage/archive/12.15.0-live/arm64/iso-dvd/debian-live-12.15.0-arm64-lxde.iso | PASS   |
+| arm64        | 12.15.0 | lxqt       |                  | https://cdimage.debian.org/cdimage/archive/12.15.0-live/arm64/iso-dvd/debian-live-12.15.0-arm64-lxqt.iso | PASS   |
+| arm64        | 12.15.0 | mate       |                  | https://cdimage.debian.org/cdimage/archive/12.15.0-live/arm64/iso-dvd/debian-live-12.15.0-arm64-mate.iso | PASS   |
+| arm64        | 12.15.0 | netinst    |                  | https://cdimage.debian.org/cdimage/archive/12.15.0/arm64/iso-cd/debian-12.15.0-arm64-netinst.iso | PASS   |
+| arm64        | 12.15.0 | standard   |                  | https://cdimage.debian.org/cdimage/archive/12.15.0-live/arm64/iso-dvd/debian-live-12.15.0-arm64-standard.iso | PASS   |
+| arm64        | 12.15.0 | xfce       |                  | https://cdimage.debian.org/cdimage/archive/12.15.0-live/arm64/iso-dvd/debian-live-12.15.0-arm64-xfce.iso | PASS   |
+| arm64        | 13.7.0 | cinnamon   |                  | https://cdimage.debian.org/cdimage/archive/13.7.0-live/arm64/iso-dvd/debian-live-13.7.0-arm64-cinnamon.iso | PASS   |
+| arm64        | 13.7.0 | gnome      |                  | https://cdimage.debian.org/cdimage/archive/13.7.0-live/arm64/iso-dvd/debian-live-13.7.0-arm64-gnome.iso | PASS   |
+| arm64        | 13.7.0 | kde        |                  | https://cdimage.debian.org/cdimage/archive/13.7.0-live/arm64/iso-dvd/debian-live-13.7.0-arm64-kde.iso | PASS   |
+| arm64        | 13.7.0 | lxde       |                  | https://cdimage.debian.org/cdimage/archive/13.7.0-live/arm64/iso-dvd/debian-live-13.7.0-arm64-lxde.iso | PASS   |
+| arm64        | 13.7.0 | lxqt       |                  | https://cdimage.debian.org/cdimage/archive/13.7.0-live/arm64/iso-dvd/debian-live-13.7.0-arm64-lxqt.iso | PASS   |
+| arm64        | 13.7.0 | mate       |                  | https://cdimage.debian.org/cdimage/archive/13.7.0-live/arm64/iso-dvd/debian-live-13.7.0-arm64-mate.iso | PASS   |
+| arm64        | 13.7.0 | netinst    |                  | https://cdimage.debian.org/cdimage/archive/13.7.0/arm64/iso-cd/debian-13.7.0-arm64-netinst.iso | PASS   |
+| arm64        | 13.7.0 | standard   |                  | https://cdimage.debian.org/cdimage/archive/13.7.0-live/arm64/iso-dvd/debian-live-13.7.0-arm64-standard.iso | PASS   |
+| arm64        | 13.7.0 | xfce       |                  | https://cdimage.debian.org/cdimage/archive/13.7.0-live/arm64/iso-dvd/debian-live-13.7.0-arm64-xfce.iso | PASS   |
+| arm64        | 2026.04 | -          |                  | https://download.grml.org/grml-full-2026.04-arm64.iso | FAIL   |
+| arm64        | 2026.09 | -          |                  | https://download.grml.org/grml-full-2026.09-arm64.iso | FAIL   |
+| arm64        | 3.0    | -          |                  | https://osrelease.download.prss.microsoft.com/pr/download/AzureLinux-3.0-aarch64.iso | PASS   |
+| arm64        | 42     | -          |                  | https://download.fedoraproject.org/pub/fedora/linux/releases/42/Spins/aarch64/iso/Fedora-i3-Live-aarch64-42-1.1.iso | FAIL   |
+| arm64        | 43     | -          |                  | https://download.fedoraproject.org/pub/fedora/linux/releases/43/Spins/aarch64/iso/Fedora-i3-Live-43-1.6.aarch64.iso | FAIL   |
+| arm64        | 44     | -          |                  | https://download.fedoraproject.org/pub/fedora/linux/releases/44/Spins/aarch64/iso/Fedora-i3-Live-44-1.7.aarch64.iso | FAIL   |
+| arm64        | 45_Beta | -          |                  | https://download.fedoraproject.org/pub/fedora/linux/releases/test/45_Beta/Spins/aarch64/iso/Fedora-i3-Live-45_Beta-1.3.aarch64.iso | FAIL   |
+| arm64        | 8      | boot       |                  | https://repo.almalinux.org/almalinux/8/isos/aarch64/AlmaLinux-8-latest-aarch64-boot.iso | PASS   |
+| arm64        | 8      | dvd        |                  | https://repo.almalinux.org/almalinux/8/isos/aarch64/AlmaLinux-8-latest-aarch64-dvd.iso | PASS   |
+| arm64        | 8      | minimal    |                  | https://repo.almalinux.org/almalinux/8/isos/aarch64/AlmaLinux-8-latest-aarch64-minimal.iso | PASS   |
+| arm64        | 9      | boot       |                  | https://mirror.stream.centos.org/9-stream/BaseOS/aarch64/iso/CentOS-Stream-9-latest-aarch64-boot.iso | PASS   |
+| arm64        | 9      | boot       |                  | https://repo.almalinux.org/almalinux/9/isos/aarch64/AlmaLinux-9-latest-aarch64-boot.iso | PASS   |
+| arm64        | 9      | dvd        |                  | https://repo.almalinux.org/almalinux/9/isos/aarch64/AlmaLinux-9-latest-aarch64-dvd.iso | PASS   |
+| arm64        | 9      | dvd1       |                  | https://mirror.stream.centos.org/9-stream/BaseOS/aarch64/iso/CentOS-Stream-9-latest-aarch64-dvd1.iso | PASS   |
+| arm64        | 9      | minimal    |                  | https://repo.almalinux.org/almalinux/9/isos/aarch64/AlmaLinux-9-latest-aarch64-minimal.iso | PASS   |
+| edubuntu     | amd64  | 24.04      | xfce             | https://cdimage.ubuntu.com/edubuntu/releases/24.04/release/edubuntu-24.04.3-desktop-amd64.iso | PASS   |
+| edubuntu     | amd64  | 26.04      | xfce             | https://cdimage.ubuntu.com/edubuntu/releases/26.04/release/edubuntu-26.04-desktop-amd64.iso | PASS   |
+| edubuntu     | amd64  | 26.10      | xfce             | https://cdimage.ubuntu.com/edubuntu/releases/26.10/release/edubuntu-26.10-desktop-amd64.iso | PASS   |
+| i386         | 21     | base-runit |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-21/runit-bullseye/antiX-21-runit_386-base.iso | PASS   |
+| i386         | 21     | base-sysv  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-21/antiX-21_386-base.iso | PASS   |
+| i386         | 21     | core-runit |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-21/runit-bullseye/antiX-21-runit_386-core.iso | PASS   |
+| i386         | 21     | core-sysv  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-21/antiX-21_386-core.iso | PASS   |
+| i386         | 21     | full-runit |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-21/runit-bullseye/antiX-21-runit_386-full.iso | PASS   |
+| i386         | 21     | full-sysv  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-21/antiX-21_386-full.iso | PASS   |
+| i386         | 21     | net-runit  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-21/runit-bullseye/antiX-21-runit-net_386-net.iso | PASS   |
+| i386         | 21     | net-sysv   |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-21/antiX-21-net_386-net.iso | PASS   |
+| i386         | 22     | base-runit |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-22/runit-antiX-22/antiX-22-runit_386-base.iso | PASS   |
+| i386         | 22     | base-sysv  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-22/antiX-22_386-base.iso | PASS   |
+| i386         | 22     | core-runit |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-22/runit-antiX-22/antiX-22-runit_386-core.iso | PASS   |
+| i386         | 22     | core-sysv  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-22/antiX-22_386-core.iso | PASS   |
+| i386         | 22     | full-runit |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-22/runit-antiX-22/antiX-22-runit_386-full.iso | PASS   |
+| i386         | 22     | full-sysv  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-22/antiX-22_386-full.iso | PASS   |
+| i386         | 22     | net-runit  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-22/runit-antiX-22/antiX-22-runit-net_386-net.iso | PASS   |
+| i386         | 22     | net-sysv   |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-22/antiX-22-net_386-net.iso | PASS   |
+| i386         | 23     | base-runit |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23/runit-antiX-23/antiX-23-runit_386-base.iso | PASS   |
+| i386         | 23     | base-sysv  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23/antiX-23_386-base.iso | PASS   |
+| i386         | 23     | core-runit |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23/runit-antiX-23/antiX-23-runit_386-core.iso | PASS   |
+| i386         | 23     | core-sysv  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23/antiX-23_386-core.iso | PASS   |
+| i386         | 23     | full-runit |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23/runit-antiX-23/antiX-23-runit_386-full.iso | PASS   |
+| i386         | 23     | full-sysv  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23/antiX-23_386-full.iso | PASS   |
+| i386         | 23     | net-runit  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23/runit-antiX-23/antiX-23-runit-net_386-net.iso | PASS   |
+| i386         | 23     | net-sysv   |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23/antiX-23-net_386-net.iso | PASS   |
+| i386         | 23.1   | base-runit |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23.1/runit-antiX-23.1/antiX-23.1-runit_386-base.iso | PASS   |
+| i386         | 23.1   | base-sysv  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23.1/antiX-23.1_386-base.iso | PASS   |
+| i386         | 23.1   | core-runit |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23.1/runit-antiX-23.1/antiX-23.1-runit_386-core.iso | PASS   |
+| i386         | 23.1   | core-sysv  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23.1/antiX-23.1_386-core.iso | PASS   |
+| i386         | 23.1   | full-runit |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23.1/runit-antiX-23.1/antiX-23.1-runit_386-full.iso | PASS   |
+| i386         | 23.1   | full-sysv  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23.1/antiX-23.1_386-full.iso | PASS   |
+| i386         | 23.1   | net-runit  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23.1/runit-antiX-23.1/antiX-23.1-runit-net_386-net.iso | PASS   |
+| i386         | 23.1   | net-sysv   |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23.1/antiX-23.1-net_386-net.iso | PASS   |
+| i386         | 23.2   | base-runit |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23.2/runit-antiX-23.2/antiX-23.2-runit_386-base.iso | PASS   |
+| i386         | 23.2   | base-sysv  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23.2/antiX-23.2_386-base.iso | PASS   |
+| i386         | 23.2   | core-runit |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23.2/runit-antiX-23.2/antiX-23.2-runit_386-core.iso | PASS   |
+| i386         | 23.2   | core-sysv  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23.2/antiX-23.2_386-core.iso | PASS   |
+| i386         | 23.2   | full-runit |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23.2/runit-antiX-23.2/antiX-23.2-runit_386-full.iso | PASS   |
+| i386         | 23.2   | full-sysv  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23.2/antiX-23.2_386-full.iso | PASS   |
+| i386         | 23.2   | net-runit  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23.2/runit-antiX-23.2/antiX-23.2-runit-net_386-net.iso | PASS   |
+| i386         | 23.2   | net-sysv   |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-23.2/antiX-23.2-net_386-net.iso | PASS   |
+| i386         | 25     | base-runit |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-25/runit-antiX-25/antiX-25-runit_386-base.iso | PASS   |
+| i386         | 25     | base-sysv  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-25/antiX-25_386-base.iso | PASS   |
+| i386         | 25     | core-runit |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-25/runit-antiX-25/antiX-25-runit_386-core.iso | PASS   |
+| i386         | 25     | core-sysv  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-25/antiX-25_386-core.iso | PASS   |
+| i386         | 25     | full-runit |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-25/runit-antiX-25/antiX-25-runit_386-full.iso | PASS   |
+| i386         | 25     | full-sysv  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-25/antiX-25_386-full.iso | PASS   |
+| i386         | 25     | net-runit  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-25/runit-antiX-25/antiX-25-runit-net_386-net.iso | PASS   |
+| i386         | 25     | net-sysv   |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-25/antiX-25-net_386-net.iso | PASS   |
+| i386         | 26     | base-runit |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-26/runit-antiX-26/antiX-26-runit_386-base.iso | PASS   |
+| i386         | 26     | base-sysv  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-26/antiX-26_386-base.iso | PASS   |
+| i386         | 26     | core-runit |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-26/runit-antiX-26/antiX-26-runit_386-core.iso | PASS   |
+| i386         | 26     | core-sysv  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-26/antiX-26_386-core.iso | PASS   |
+| i386         | 26     | full-runit |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-26/runit-antiX-26/antiX-26-runit_386-full.iso | PASS   |
+| i386         | 26     | full-sysv  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-26/antiX-26_386-full.iso | PASS   |
+| i386         | 26     | net-runit  |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-26/runit-antiX-26/antiX-26-runit-net_386-net.iso | PASS   |
+| i386         | 26     | net-sysv   |                  | https://sourceforge.net/projects/antix-linux/files/Final/antiX-26/antiX-26-net_386-net.iso | PASS   |
+| i686         | current | -          |                  | https://repo-default.voidlinux.org/live/current/void-live-i686-20250202-xfce-musl.iso | FAIL   |
+| kubuntu      | amd64  | 16.04      | es_ES            | https://cdimage.ubuntu.com/kubuntu/releases/16.04/release/kubuntu-16.04.6-desktop-amd64.iso | PASS   |
+| kubuntu      | amd64  | 18.04      | es_ES            | https://cdimage.ubuntu.com/kubuntu/releases/18.04/release/kubuntu-18.04.5-desktop-amd64.iso | PASS   |
+| kubuntu      | amd64  | 20.04      | es_ES            | https://cdimage.ubuntu.com/kubuntu/releases/20.04/release/kubuntu-20.04.6-desktop-amd64.iso | PASS   |
+| kubuntu      | amd64  | 22.04      | es_ES            | https://cdimage.ubuntu.com/kubuntu/releases/22.04/release/kubuntu-22.04.5-desktop-amd64.iso | PASS   |
+| kubuntu      | amd64  | 24.04      | es_ES            | https://cdimage.ubuntu.com/kubuntu/releases/24.04/release/kubuntu-24.04.3-desktop-amd64.iso | PASS   |
+| kubuntu      | amd64  | 26.04      | es_ES            | https://cdimage.ubuntu.com/kubuntu/releases/26.04/release/kubuntu-26.04-desktop-amd64.iso | PASS   |
+| kubuntu      | amd64  | 26.10      | es_ES            | https://cdimage.ubuntu.com/kubuntu/releases/26.10/release/kubuntu-26.10-desktop-amd64.iso | PASS   |
+| loongarch64  | v3.15  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.15/releases/loongarch64/alpine-virt--loongarch64.iso | PASS   |
+| loongarch64  | v3.16  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.16/releases/loongarch64/alpine-virt--loongarch64.iso | PASS   |
+| loongarch64  | v3.17  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.17/releases/loongarch64/alpine-virt--loongarch64.iso | PASS   |
+| loongarch64  | v3.18  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.18/releases/loongarch64/alpine-virt--loongarch64.iso | PASS   |
+| loongarch64  | v3.19  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.19/releases/loongarch64/alpine-virt--loongarch64.iso | PASS   |
+| loongarch64  | v3.20  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.20/releases/loongarch64/alpine-virt--loongarch64.iso | PASS   |
+| loongarch64  | v3.21  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.21/releases/loongarch64/alpine-virt--loongarch64.iso | PASS   |
+| loongarch64  | v3.22  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.22/releases/loongarch64/alpine-virt--loongarch64.iso | PASS   |
+| loongarch64  | v3.23  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.23/releases/loongarch64/alpine-virt--loongarch64.iso | PASS   |
+| loongarch64  | v3.24  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.24/releases/loongarch64/alpine-virt--loongarch64.iso | PASS   |
+| lubuntu      | amd64  | 16.04      | kde              | https://cdimage.ubuntu.com/lubuntu/releases/16.04/release/lubuntu-16.04.6-desktop-amd64.iso | PASS   |
+| lubuntu      | amd64  | 18.04      | kde              | https://cdimage.ubuntu.com/lubuntu/releases/18.04/release/lubuntu-18.04.5-desktop-amd64.iso | PASS   |
+| lubuntu      | amd64  | 20.04      | kde              | https://cdimage.ubuntu.com/lubuntu/releases/20.04/release/lubuntu-20.04.5-desktop-amd64.iso | PASS   |
+| lubuntu      | amd64  | 22.04      | kde              | https://cdimage.ubuntu.com/lubuntu/releases/22.04/release/lubuntu-22.04.5-desktop-amd64.iso | PASS   |
+| lubuntu      | amd64  | 24.04      | kde              | https://cdimage.ubuntu.com/lubuntu/releases/24.04/release/lubuntu-24.04.3-desktop-amd64.iso | PASS   |
+| lubuntu      | amd64  | 26.04      | kde              | https://cdimage.ubuntu.com/lubuntu/releases/26.04/release/lubuntu-26.04-desktop-amd64.iso | PASS   |
+| lubuntu      | amd64  | 26.10      | kde              | https://cdimage.ubuntu.com/lubuntu/releases/26.10/release/lubuntu-26.10-desktop-amd64.iso | PASS   |
+| ppc64el      | v3.15  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.15/releases/ppc64le/alpine-virt--ppc64le.iso | PASS   |
+| ppc64el      | v3.16  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.16/releases/ppc64le/alpine-virt--ppc64le.iso | PASS   |
+| ppc64el      | v3.17  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.17/releases/ppc64le/alpine-virt--ppc64le.iso | PASS   |
+| ppc64el      | v3.18  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.18/releases/ppc64le/alpine-virt--ppc64le.iso | PASS   |
+| ppc64el      | v3.19  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.19/releases/ppc64le/alpine-virt--ppc64le.iso | PASS   |
+| ppc64el      | v3.20  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.20/releases/ppc64le/alpine-virt--ppc64le.iso | PASS   |
+| ppc64el      | v3.21  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.21/releases/ppc64le/alpine-virt--ppc64le.iso | PASS   |
+| ppc64el      | v3.22  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.22/releases/ppc64le/alpine-virt--ppc64le.iso | PASS   |
+| ppc64el      | v3.23  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.23/releases/ppc64le/alpine-virt--ppc64le.iso | PASS   |
+| ppc64el      | v3.24  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.24/releases/ppc64le/alpine-virt--ppc64le.iso | PASS   |
+| ppc64el      | 10     | boot       |                  | https://repo.almalinux.org/almalinux/10/isos/ppc64le/AlmaLinux-10-latest-ppc64le-boot.iso | PASS   |
+| ppc64el      | 10     | dvd        |                  | https://repo.almalinux.org/almalinux/10/isos/ppc64le/AlmaLinux-10-latest-ppc64le-dvd.iso | PASS   |
+| ppc64el      | 10     | minimal    |                  | https://repo.almalinux.org/almalinux/10/isos/ppc64le/AlmaLinux-10-latest-ppc64le-minimal.iso | PASS   |
+| ppc64el      | 10.1   | boot       |                  | https://repo.almalinux.org/almalinux/10.1/isos/ppc64le/AlmaLinux-10.1-ppc64le-boot.iso | PASS   |
+| ppc64el      | 10.1   | dvd        |                  | https://repo.almalinux.org/almalinux/10.1/isos/ppc64le/AlmaLinux-10.1-ppc64le-dvd.iso | PASS   |
+| ppc64el      | 10.1   | minimal    |                  | https://repo.almalinux.org/almalinux/10.1/isos/ppc64le/AlmaLinux-10.1-ppc64le-minimal.iso | PASS   |
+| ppc64el      | 42     | -          |                  | https://download.fedoraproject.org/pub/fedora-secondary/releases/42/Workstation/ppc64le/iso/Fedora-Workstation-Live-42-1.1.ppc64le.iso | FAIL   |
+| ppc64el      | 43     | -          |                  | https://download.fedoraproject.org/pub/fedora-secondary/releases/43/Workstation/ppc64le/iso/Fedora-Workstation-Live-43-1.6.ppc64le.iso | FAIL   |
+| ppc64el      | 44     | -          |                  | https://download.fedoraproject.org/pub/fedora-secondary/releases/44/Workstation/ppc64le/iso/Fedora-Workstation-Live-44-1.7.ppc64le.iso | FAIL   |
+| ppc64el      | 45_Beta | -          |                  | https://download.fedoraproject.org/pub/fedora-secondary/releases/test/45_Beta/Server/ppc64le/iso/Fedora-Server-dvd-ppc64le-45_Beta-1.3.iso | FAIL   |
+| ppc64el      | 8      | boot       |                  | https://repo.almalinux.org/almalinux/8/isos/ppc64le/AlmaLinux-8-latest-ppc64le-boot.iso | PASS   |
+| ppc64el      | 8      | dvd        |                  | https://repo.almalinux.org/almalinux/8/isos/ppc64le/AlmaLinux-8-latest-ppc64le-dvd.iso | PASS   |
+| ppc64el      | 8      | minimal    |                  | https://repo.almalinux.org/almalinux/8/isos/ppc64le/AlmaLinux-8-latest-ppc64le-minimal.iso | PASS   |
+| ppc64el      | 9      | boot       |                  | https://repo.almalinux.org/almalinux/9/isos/ppc64le/AlmaLinux-9-latest-ppc64le-boot.iso | PASS   |
+| ppc64el      | 9      | dvd        |                  | https://repo.almalinux.org/almalinux/9/isos/ppc64le/AlmaLinux-9-latest-ppc64le-dvd.iso | PASS   |
+| ppc64el      | 9      | minimal    |                  | https://repo.almalinux.org/almalinux/9/isos/ppc64le/AlmaLinux-9-latest-ppc64le-minimal.iso | PASS   |
+| riscv64      | v3.15  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.15/releases/riscv64/alpine-virt--riscv64.iso | PASS   |
+| riscv64      | v3.16  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.16/releases/riscv64/alpine-virt--riscv64.iso | PASS   |
+| riscv64      | v3.17  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.17/releases/riscv64/alpine-virt--riscv64.iso | PASS   |
+| riscv64      | v3.18  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.18/releases/riscv64/alpine-virt--riscv64.iso | PASS   |
+| riscv64      | v3.19  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.19/releases/riscv64/alpine-virt--riscv64.iso | PASS   |
+| riscv64      | v3.20  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.20/releases/riscv64/alpine-virt--riscv64.iso | PASS   |
+| riscv64      | v3.21  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.21/releases/riscv64/alpine-virt--riscv64.iso | PASS   |
+| riscv64      | v3.22  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.22/releases/riscv64/alpine-virt--riscv64.iso | PASS   |
+| riscv64      | v3.23  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.23/releases/riscv64/alpine-virt--riscv64.iso | PASS   |
+| riscv64      | v3.24  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.24/releases/riscv64/alpine-virt--riscv64.iso | PASS   |
+| s390x        | v3.15  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.15/releases/s390x/alpine-virt--s390x.iso | PASS   |
+| s390x        | v3.16  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.16/releases/s390x/alpine-virt--s390x.iso | PASS   |
+| s390x        | v3.17  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.17/releases/s390x/alpine-virt--s390x.iso | PASS   |
+| s390x        | v3.18  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.18/releases/s390x/alpine-virt--s390x.iso | PASS   |
+| s390x        | v3.19  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.19/releases/s390x/alpine-virt--s390x.iso | PASS   |
+| s390x        | v3.20  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.20/releases/s390x/alpine-virt--s390x.iso | PASS   |
+| s390x        | v3.21  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.21/releases/s390x/alpine-virt--s390x.iso | PASS   |
+| s390x        | v3.22  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.22/releases/s390x/alpine-virt--s390x.iso | PASS   |
+| s390x        | v3.23  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.23/releases/s390x/alpine-virt--s390x.iso | PASS   |
+| s390x        | v3.24  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.24/releases/s390x/alpine-virt--s390x.iso | PASS   |
+| s390x        | 10     | boot       |                  | https://repo.almalinux.org/almalinux/10/isos/s390x/AlmaLinux-10-latest-s390x-boot.iso | PASS   |
+| s390x        | 10     | dvd        |                  | https://repo.almalinux.org/almalinux/10/isos/s390x/AlmaLinux-10-latest-s390x-dvd.iso | PASS   |
+| s390x        | 10     | minimal    |                  | https://repo.almalinux.org/almalinux/10/isos/s390x/AlmaLinux-10-latest-s390x-minimal.iso | PASS   |
+| s390x        | 10.1   | boot       |                  | https://repo.almalinux.org/almalinux/10.1/isos/s390x/AlmaLinux-10.1-s390x-boot.iso | PASS   |
+| s390x        | 10.1   | dvd        |                  | https://repo.almalinux.org/almalinux/10.1/isos/s390x/AlmaLinux-10.1-s390x-dvd.iso | PASS   |
+| s390x        | 10.1   | minimal    |                  | https://repo.almalinux.org/almalinux/10.1/isos/s390x/AlmaLinux-10.1-s390x-minimal.iso | PASS   |
+| s390x        | 42     | -          |                  | https://download.fedoraproject.org/pub/fedora-secondary/releases/42/Server/s390x/iso/Fedora-Server-dvd-s390x-42-1.1.iso | FAIL   |
+| s390x        | 43     | -          |                  | https://download.fedoraproject.org/pub/fedora-secondary/releases/43/Server/s390x/iso/Fedora-Server-dvd-s390x-43-1.6.iso | FAIL   |
+| s390x        | 44     | -          |                  | https://download.fedoraproject.org/pub/fedora-secondary/releases/44/Server/s390x/iso/Fedora-Server-dvd-s390x-44-1.7.iso | FAIL   |
+| s390x        | 45_Beta | -          |                  | https://download.fedoraproject.org/pub/fedora-secondary/releases/test/45_Beta/Server/s390x/iso/Fedora-Server-dvd-s390x-45_Beta-1.3.iso | FAIL   |
+| s390x        | 8      | boot       |                  | https://repo.almalinux.org/almalinux/8/isos/s390x/AlmaLinux-8-latest-s390x-boot.iso | PASS   |
+| s390x        | 8      | dvd        |                  | https://repo.almalinux.org/almalinux/8/isos/s390x/AlmaLinux-8-latest-s390x-dvd.iso | PASS   |
+| s390x        | 8      | minimal    |                  | https://repo.almalinux.org/almalinux/8/isos/s390x/AlmaLinux-8-latest-s390x-minimal.iso | PASS   |
+| s390x        | 9      | boot       |                  | https://repo.almalinux.org/almalinux/9/isos/s390x/AlmaLinux-9-latest-s390x-boot.iso | PASS   |
+| s390x        | 9      | dvd        |                  | https://repo.almalinux.org/almalinux/9/isos/s390x/AlmaLinux-9-latest-s390x-dvd.iso | PASS   |
+| s390x        | 9      | minimal    |                  | https://repo.almalinux.org/almalinux/9/isos/s390x/AlmaLinux-9-latest-s390x-minimal.iso | PASS   |
+| ubuntu       | amd64  | 14.04      | xfce-wayland     | https://releases.ubuntu.com/14.04/ubuntu-14.04.6-desktop-amd64.iso | PASS   |
+| ubuntu       | amd64  | 16.04      | xfce-wayland     | https://releases.ubuntu.com/16.04/ubuntu-16.04.7-desktop-amd64.iso | PASS   |
+| ubuntu       | amd64  | 18.04      | xfce-wayland     | https://releases.ubuntu.com/18.04/ubuntu-18.04.6-desktop-amd64.iso | PASS   |
+| ubuntu       | amd64  | 20.04      | xfce-wayland     | https://releases.ubuntu.com/20.04/ubuntu-20.04.6-desktop-amd64.iso | PASS   |
+| ubuntu       | amd64  | 22.04      | xfce-wayland     | https://releases.ubuntu.com/22.04/ubuntu-22.04.5-desktop-amd64.iso | PASS   |
+| ubuntu       | amd64  | 24.04      | xfce-wayland     | https://releases.ubuntu.com/24.04/ubuntu-24.04.3-desktop-amd64.iso | PASS   |
+| ubuntu       | amd64  | 26.04      | xfce-wayland     | https://releases.ubuntu.com/26.04/ubuntu-26.04-desktop-amd64.iso | PASS   |
+| ubuntu       | amd64  | 26.10      | xfce-wayland     | https://releases.ubuntu.com/26.10/ubuntu-26.10-beta-desktop-amd64.iso | PASS   |
+| ubuntu-budgie | amd64  | 18.04      | xfce-wayland     | https://cdimage.ubuntu.com/ubuntu-budgie/releases/18.04/release/ubuntu-budgie-18.04.5-desktop-amd64.iso | PASS   |
+| ubuntu-budgie | amd64  | 20.04      | xfce-wayland     | https://cdimage.ubuntu.com/ubuntu-budgie/releases/20.04/release/ubuntu-budgie-20.04.6-desktop-amd64.iso | PASS   |
+| ubuntu-budgie | amd64  | 22.04      | xfce-wayland     | https://cdimage.ubuntu.com/ubuntu-budgie/releases/22.04/release/ubuntu-budgie-22.04.5-desktop-amd64.iso | PASS   |
+| ubuntu-budgie | amd64  | 24.04      | xfce-wayland     | https://cdimage.ubuntu.com/ubuntu-budgie/releases/24.04/release/ubuntu-budgie-24.04.3-desktop-amd64.iso | PASS   |
+| ubuntu-budgie | amd64  | 26.04      | xfce-wayland     | https://cdimage.ubuntu.com/ubuntu-budgie/releases/26.04/release/ubuntu-budgie-26.04-desktop-amd64.iso | PASS   |
+| ubuntu-budgie | amd64  | 26.10      | xfce-wayland     | https://cdimage.ubuntu.com/ubuntu-budgie/releases/26.10/release/ubuntu-budgie-26.10-desktop-amd64.iso | PASS   |
+| ubuntu-cinnamon | amd64  | 24.04      | xfce-wayland     | https://cdimage.ubuntu.com/ubuntucinnamon/releases/24.04/release/ubuntucinnamon-24.04.3-desktop-amd64.iso | PASS   |
+| ubuntu-cinnamon | amd64  | 26.04      | xfce-wayland     | https://cdimage.ubuntu.com/ubuntucinnamon/releases/26.04/release/ubuntucinnamon-26.04-desktop-amd64.iso | PASS   |
+| ubuntu-cinnamon | amd64  | 26.10      | xfce-wayland     | https://cdimage.ubuntu.com/ubuntucinnamon/releases/26.10/release/ubuntucinnamon-26.10-desktop-amd64.iso | PASS   |
+| ubuntu-kylin | amd64  | 16.04      | xfce-wayland     | https://cdimage.ubuntu.com/ubuntukylin/releases/16.04/release/ubuntukylin-16.04.7-desktop-amd64.iso | PASS   |
+| ubuntu-kylin | amd64  | 18.04      | xfce-wayland     | https://cdimage.ubuntu.com/ubuntukylin/releases/18.04/release/ubuntukylin-18.04.5-desktop-amd64.iso | PASS   |
+| ubuntu-kylin | amd64  | 20.04      | xfce-wayland     | https://cdimage.ubuntu.com/ubuntukylin/releases/20.04/release/ubuntukylin-20.04.6-desktop-amd64.iso | PASS   |
+| ubuntu-kylin | amd64  | 22.04      | xfce-wayland     | https://cdimage.ubuntu.com/ubuntukylin/releases/22.04/release/ubuntukylin-22.04.5-desktop-amd64.iso | PASS   |
+| ubuntu-kylin | amd64  | 24.04      | xfce-wayland     | https://cdimage.ubuntu.com/ubuntukylin/releases/24.04/release/ubuntukylin-24.04.3-desktop-amd64.iso | PASS   |
+| ubuntu-kylin | amd64  | 26.04      | xfce-wayland     | https://cdimage.ubuntu.com/ubuntukylin/releases/26.04/release/ubuntukylin-26.04-desktop-amd64.iso | PASS   |
+| ubuntu-kylin | amd64  | 26.10      | xfce-wayland     | https://cdimage.ubuntu.com/ubuntukylin/releases/26.10/release/ubuntukylin-26.10-desktop-amd64.iso | PASS   |
+| ubuntu-mate  | amd64  | 16.04      | xfce-wayland     | https://cdimage.ubuntu.com/ubuntu-mate/releases/16.04/release/ubuntu-mate-16.04.6-desktop-amd64.iso | PASS   |
+| ubuntu-mate  | amd64  | 18.04      | xfce-wayland     | https://cdimage.ubuntu.com/ubuntu-mate/releases/18.04/release/ubuntu-mate-18.04.5-desktop-amd64.iso | PASS   |
+| ubuntu-mate  | amd64  | 20.04      | xfce-wayland     | https://cdimage.ubuntu.com/ubuntu-mate/releases/20.04/release/ubuntu-mate-20.04.6-desktop-amd64.iso | PASS   |
+| ubuntu-mate  | amd64  | 22.04      | xfce-wayland     | https://cdimage.ubuntu.com/ubuntu-mate/releases/22.04/release/ubuntu-mate-22.04.5-desktop-amd64.iso | PASS   |
+| ubuntu-mate  | amd64  | 24.04      | xfce-wayland     | https://cdimage.ubuntu.com/ubuntu-mate/releases/24.04/release/ubuntu-mate-24.04.3-desktop-amd64.iso | PASS   |
+| ubuntu-mate  | amd64  | 26.10      | xfce-wayland     | https://cdimage.ubuntu.com/ubuntu-mate/releases/26.10/release/ubuntu-mate-26.10-desktop-amd64.iso | PASS   |
+| ubuntu-server | amd64  | daily-live | xfce-wayland     | https://cdimage.ubuntu.com/ubuntu-server/daily-live/current/ | PASS   |
+| ubuntu-server | amd64  | 14.04      | xfce-wayland     | https://releases.ubuntu.com/14.04/ubuntu-14.04.6-server-amd64.iso | PASS   |
+| ubuntu-server | amd64  | 16.04      | xfce-wayland     | https://releases.ubuntu.com/16.04/ubuntu-16.04.7-server-amd64.iso | PASS   |
+| ubuntu-server | amd64  | 18.04      | xfce-wayland     | https://releases.ubuntu.com/18.04/ubuntu-18.04.6-live-server-amd64.iso | PASS   |
+| ubuntu-server | amd64  | 20.04      | xfce-wayland     | https://releases.ubuntu.com/20.04/ubuntu-20.04.6-live-server-amd64.iso | PASS   |
+| ubuntu-server | amd64  | 22.04      | xfce-wayland     | https://releases.ubuntu.com/22.04/ubuntu-22.04.5-live-server-amd64.iso | PASS   |
+| ubuntu-server | amd64  | 25.10      | xfce-wayland     | https://releases.ubuntu.com/25.10/ubuntu-25.10-live-server-amd64.iso | PASS   |
+| ubuntu-studio | amd64  | 16.04      | xfce-wayland     | https://cdimage.ubuntu.com/ubuntustudio/releases/16.04/release/ubuntustudio-16.04.5-dvd-amd64.iso | PASS   |
+| ubuntu-studio | amd64  | 18.04      | xfce-wayland     | https://cdimage.ubuntu.com/ubuntustudio/releases/18.04/release/ubuntustudio-18.04-dvd-amd64.iso | PASS   |
+| ubuntu-studio | amd64  | 20.04      | xfce-wayland     | https://cdimage.ubuntu.com/ubuntustudio/releases/20.04/release/ubuntustudio-20.04.5-dvd-amd64.iso | PASS   |
+| ubuntu-studio | amd64  | 22.04      | xfce-wayland     | https://cdimage.ubuntu.com/ubuntustudio/releases/22.04/release/ubuntustudio-22.04.5-dvd-amd64.iso | PASS   |
+| ubuntu-studio | amd64  | 24.04      | xfce-wayland     | https://cdimage.ubuntu.com/ubuntustudio/releases/24.04/release/ubuntustudio-24.04.3-dvd-amd64.iso | PASS   |
+| ubuntu-studio | amd64  | 26.04      | xfce-wayland     | https://cdimage.ubuntu.com/ubuntustudio/releases/26.04/release/ubuntustudio-26.04-desktop-amd64.iso | PASS   |
+| ubuntu-studio | amd64  | 26.10      | xfce-wayland     | https://cdimage.ubuntu.com/ubuntustudio/releases/26.10/release/ubuntustudio-26.10-desktop-amd64.iso | PASS   |
+| ubuntu-unity | amd64  | 24.04      | xfce-wayland     | https://cdimage.ubuntu.com/ubuntu-unity/releases/24.04/release/ubuntu-unity-24.04.3-desktop-amd64.iso | PASS   |
+| ubuntu-unity | amd64  | 26.04      | xfce-wayland     | https://cdimage.ubuntu.com/ubuntu-unity/releases/26.04/release/ubuntu-unity-26.04-desktop-amd64.iso | PASS   |
+| ubuntu-unity | amd64  | 26.10      | xfce-wayland     | https://cdimage.ubuntu.com/ubuntu-unity/releases/26.10/release/ubuntu-unity-26.10-desktop-amd64.iso | PASS   |
+| xubuntu      | amd64  | 16.04      | LXQt             | https://cdimage.ubuntu.com/xubuntu/releases/16.04/release/xubuntu-16.04.6-desktop-amd64.iso | PASS   |
+| xubuntu      | amd64  | 18.04      | LXQt             | https://cdimage.ubuntu.com/xubuntu/releases/18.04/release/xubuntu-18.04.5-desktop-amd64.iso | PASS   |
+| xubuntu      | amd64  | 20.04      | LXQt             | https://cdimage.ubuntu.com/xubuntu/releases/20.04/release/xubuntu-20.04.6-desktop-amd64.iso | PASS   |
+| xubuntu      | amd64  | 22.04      | LXQt             | https://cdimage.ubuntu.com/xubuntu/releases/22.04/release/xubuntu-22.04.5-desktop-amd64.iso | PASS   |
+| xubuntu      | amd64  | 24.04      | LXQt             | https://cdimage.ubuntu.com/xubuntu/releases/24.04/release/xubuntu-24.04.3-desktop-amd64.iso | PASS   |
+| xubuntu      | amd64  | 26.04      | LXQt             | https://cdimage.ubuntu.com/xubuntu/releases/26.04/release/xubuntu-26.04-desktop-amd64.iso | PASS   |
+| xubuntu      | amd64  | 26.10      | LXQt             | https://cdimage.ubuntu.com/xubuntu/releases/26.10/release/xubuntu-26.10-desktop-amd64.iso | PASS   |
+| x86          | v3.15  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.15/releases/x86/alpine-virt-3.15.11-x86.iso | PASS   |
+| x86          | v3.16  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.16/releases/x86/alpine-virt-3.16.9-x86.iso | PASS   |
+| x86          | v3.17  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.17/releases/x86/alpine-virt-3.17.10-x86.iso | PASS   |
+| x86          | v3.18  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.18/releases/x86/alpine-virt-3.18.12-x86.iso | PASS   |
+| x86          | v3.19  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.19/releases/x86/alpine-virt-3.19.9-x86.iso | PASS   |
+| x86          | v3.20  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.20/releases/x86/alpine-virt-3.20.10-x86.iso | PASS   |
+| x86          | v3.21  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.21/releases/x86/alpine-virt-3.21.9-x86.iso | PASS   |
+| x86          | v3.22  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.22/releases/x86/alpine-virt-3.22.7-x86.iso | PASS   |
+| x86          | v3.23  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.23/releases/x86/alpine-virt-3.23.7-x86.iso | PASS   |
+| x86          | v3.24  | -          |                  | https://dl-cdn.alpinelinux.org/alpine/v3.24/releases/x86/alpine-virt-3.24.3-x86.iso | PASS   |
+

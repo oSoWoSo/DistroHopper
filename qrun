@@ -6,6 +6,10 @@
 _define_variables() {
 	color=$((RANDOM % 255 + 1))
 	progname="${progname:="${0##*/}"}"
+	# The runtime state is per user, so two users (or two instances) do not
+	# overwrite each other's list of supported systems.
+	tmpdir="${TMPDIR:-/tmp}/qrun-${USER:-$(id -un)}"
+	mkdir -p "${tmpdir}"
 	#configdir="$HOME/.config/$progname"
 	version='0.3'
 	vms=(*.conf)
@@ -15,7 +19,16 @@ _define_variables() {
 	if ! command -v quickemu >/dev/null 2>&1; then
 		gum style --foreground 1 "You are missing quickemu!"
 	fi
-	QUICKGET=$(command -v quickget)
+	if command -v qget >/dev/null 2>&1; then
+		QUICKGET=$(command -v qget)
+		QUICKGET_QGET=yes
+	elif command -v quickget >/dev/null 2>&1; then
+		QUICKGET=$(command -v quickget)
+		QUICKGET_QGET=no
+	else
+		gum style --foreground 1 "You are missing qget and quickget!"
+		exit 2
+	fi
 	#export BORDER="rounded"
 	export BORDERS_FOREGROUND="$color"
 	export GUM_CHOOSE_CURSOR_FOREGROUND="$color"
@@ -34,19 +47,27 @@ _define_variables() {
 
 _generate_supported() {
 	echo "Extracting OS Editions and Releases..."
-	rm -rf /tmp/distros
-	mkdir -p /tmp/distros
-	"$QUICKGET" | awk 'NR==2,/zorin/' | cut -d':' -f2 | grep -o '[^ ]*' > /tmp/supported
+	rm -rf "${tmpdir}/distros"
+	mkdir -p "${tmpdir}/distros"
+	if [ "${QUICKGET_QGET}" = "yes" ]; then
+		"$QUICKGET" --list-os > "${tmpdir}/supported"
+	else
+		"$QUICKGET" | awk 'NR==2,/zorin/' | cut -d':' -f2 | grep -o '[^ ]*' > "${tmpdir}/supported"
+	fi
 	while read -r get_name; do
-		supported=$($QUICKGET "$get_name" | sed 1d)
+		if [ "${QUICKGET_QGET}" = "yes" ]; then
+			supported=$("$QUICKGET" --show --plain "$get_name" | sed 1d)
+		else
+			supported=$("$QUICKGET" "$get_name" | sed 1d)
+		fi
 		echo "$get_name"
 		echo "$supported"
-		echo "$supported" > "/tmp/distros/${get_name}"
-	done < /tmp/supported
+		echo "$supported" > "${tmpdir}/distros/${get_name}"
+	done < "${tmpdir}/supported"
 }
 
 _if_needed() {
-	if [ ! -f /tmp/supported ]; then
+	if [ ! -f "${tmpdir}/supported" ]; then
 		_generate_supported
 	fi
 }
@@ -60,7 +81,7 @@ show_vms() {
 }
 
 show_headers() {
-	if [ -f /tmp/icons ]; then
+	if [ -f "${tmpdir}/icons" ]; then
 		icons=yes
 	else
 		icons=""
@@ -79,7 +100,7 @@ show_headers() {
 	logo_border=$(gum style --padding "0 1" --border=rounded --border-foreground $color "$logo")
 
 	tip_header=$(gum style --bold "Tip: ")
-	distro=$(shuf -n 1 /tmp/supported)
+	distro=$(shuf -n 1 "${tmpdir}/supported")
 	tip_distro=$(gum style "try $distro")
 	tip_temp=$(gum join "$tip_header" "$tip_distro")
 	tip_distro_info=$("$QUICKGET" "${distro}" | sed 1d | sed '/^$/q')
@@ -120,17 +141,42 @@ show_headers() {
 }
 
 gum_filter_os() {
-	os=$(gum filter < /tmp/supported)
-	choices=$(cat "/tmp/distros/$os")
+	os=$(gum filter < "${tmpdir}/supported")
+	choices=$(cat "${tmpdir}/distros/$os")
 }
 
 gum_filter_release() {
-	release=$(echo "$choices" | grep 'Releases:' | cut -f2 | grep -o '[^ ]*' | gum filter)
+	release=$(echo "$choices" | grep 'Releases:' | cut -d':' -f2 | grep -o '[^ ]*' | gum filter)
 }
 
 gum_filter_edition() {
-	echo·"$choices"· | ·grep·'Editions:' 2>/dev/null && edition=$(echo "$choices" | grep 'Editions:' | cut -f2 | grep -o '[^ ]*' | gum filter)
+	edition=""
+	if echo "$choices" | grep -q 'Editions:'; then
+		edition=$(printf '%s\n' "$choices" | sed -n '/^EditionsList:$/,$p' | sed '1d; /^$/d' | gum filter)
+	fi
 }
+qrun_host_arch() {
+	case "$(uname -m)" in
+		x86_64) echo amd64 ;;
+		aarch64) echo arm64 ;;
+		ppc64le) echo ppc64el ;;
+		*) uname -m ;;
+	esac
+}
+
+gum_filter_arch() {
+	local architectures
+	architectures=$(echo "$choices" | sed -n 's/^Archs:[[:space:]]*//p')
+	[ -z "$architectures" ] && architectures="$(qrun_host_arch)"
+	if [ "$(echo "$architectures" | wc -w)" -gt 1 ]; then
+		ARCH=$(printf '%s\n' $architectures | gum filter)
+		[ -z "$ARCH" ] && { printf 'Architecture selection cancelled.\n' >&2; return 1; }
+	else
+		ARCH="$architectures"
+	fi
+	return 0
+}
+
 
 gum_choose_VM() {
 	if find . -maxdepth 1 -name '*.conf' >/dev/null 2>&1; then
@@ -143,27 +189,98 @@ gum_choose_VM() {
 create_VM() {
 	gum_filter_os
 	if [ -z "$os" ]; then
-		exit 100
-	elif [ "$(echo "$choices" | wc -l)" = 1 ]; then
-		clear
+		return 0
+	fi
+	clear
+	if [ "${QUICKGET_QGET}" = "yes" ]; then
+		choices=$("$QUICKGET" --show --plain "$os") || return 1
+		gum_filter_arch || return 0
+		choices=$("$QUICKGET" --show --plain --arch "$ARCH" "$os") || return 1
 		gum_filter_release
-		clear
-		"$QUICKGET" "$os" "$release"
+		[ -z "$release" ] && return 0
+		choices=$("$QUICKGET" --show --plain --arch "$ARCH" --release "$release" "$os") || return 1
+		if echo "$choices" | grep -q 'Editions:'; then
+			gum_filter_edition
+			[ -z "$edition" ] && return 0
+			"$QUICKGET" --arch "$ARCH" "$os" "$release" "$edition"
+		else
+			"$QUICKGET" --arch "$ARCH" "$os" "$release"
+		fi
 	else
-		clear
-		gum_filter_release
-		clear
-		gum_filter_edition
-		clear
-		"$QUICKGET" "$os" "$release" "$edition"
+		if echo "$choices" | grep -q 'Editions:'; then
+			gum_filter_release
+			[ -z "$release" ] && return 0
+			gum_filter_edition
+			[ -z "$edition" ] && return 0
+			"$QUICKGET" "$os" "$release" "$edition"
+		else
+			gum_filter_release
+			[ -n "$release" ] && "$QUICKGET" "$os" "$release"
+		fi
 	fi
 	show_headers
 }
 
 run_VM() {
-	quickemu -vm "$chosen.conf"
+	quickemu "$@" -vm "$chosen.conf"
 	show_headers
 }
+snapshot_run() {
+	local output status=0
+	output=$(quickemu "$@" 2>&1) || status=$?
+	printf '%s\n' "$output" | gum pager
+	return "$status"
+}
+
+snapshot_VM() {
+	gum_choose_VM
+	[ -n "$chosen" ] || return 0
+
+	local vm_conf="${chosen}.conf" action snapshot_tag safety_tag status=0
+	if [ ! -f "$vm_conf" ]; then
+		gum style --foreground 1 "VM configuration not found: $vm_conf"
+		return 1
+	fi
+	gum style "Snapshots affect the configured primary disk only. Stop the VM before managing snapshots."
+
+	action=$(printf 'list\ncreate\nrestore\ndelete\n' | gum choose)
+	[ -n "$action" ] || return 0
+
+	case "$action" in
+		list)
+			snapshot_run --snapshot info -vm "$vm_conf" || status=$?
+			;;
+		create)
+			snapshot_tag=$(gum input --prompt "Snapshot tag: ")
+			[ -n "$snapshot_tag" ] || return 0
+			snapshot_run --snapshot create "$snapshot_tag" -vm "$vm_conf" || status=$?
+			;;
+		restore)
+			snapshot_tag=$(gum input --prompt "Snapshot tag to restore: ")
+			[ -n "$snapshot_tag" ] || return 0
+			gum confirm "Restore '$snapshot_tag'? A safety snapshot will be created first." || return 0
+			safety_tag="before-restore-$(date +%Y%m%d-%H%M%S)-${RANDOM}"
+			if ! snapshot_run --snapshot create "$safety_tag" -vm "$vm_conf"; then
+				show_headers
+				return 1
+			fi
+			snapshot_run --snapshot apply "$snapshot_tag" -vm "$vm_conf" || status=$?
+			;;
+		delete)
+			snapshot_tag=$(gum input --prompt "Snapshot tag to delete: ")
+			[ -n "$snapshot_tag" ] || return 0
+			gum confirm "Delete snapshot '$snapshot_tag'? This cannot be undone." || return 0
+			snapshot_run --snapshot delete "$snapshot_tag" -vm "$vm_conf" || status=$?
+			;;
+		*)
+			return 0
+			;;
+	esac
+
+	show_headers
+	return "$status"
+}
+
 
 gum_choose_running() {
 	pid_files=(*/*.pid)
@@ -247,14 +364,14 @@ open_distro_homepage() {
 # shellcheck disable=SC2015
 icons_or() {
 	gum confirm "   Use icons?
-need Nerd Fonts" && echo "yes" > /tmp/icons || rm /tmp/icons 2>/dev/null
+need Nerd Fonts" && echo "yes" > "${tmpdir}/icons" || rm -f "${tmpdir}/icons" 2>/dev/null
 	show_headers
 }
 
 # MENU
 _show_menu() {
 	while true; do
-		if [ -f /tmp/icons ]; then
+		if [ -f "${tmpdir}/icons" ]; then
 			icons=yes
 		else
 			icons=""
@@ -262,37 +379,43 @@ _show_menu() {
 		if [ "$icons" == yes ]; then
 			start=$(echo " create
 󰜎 run
+󰖟 run offline
+󰐕 snapshots
 󰖟 homepages
  ssh into
  kill
 󰆳 delete
 󱌝 icons
-󰩈 exit" | gum filter --height 11)
-#󰩈 exit" | gum choose --selected '󰜎 run')
+󰩈 exit" | gum filter --height 13)
 			case $start in
 				' create') create_VM;;
 				'󰜎 run') gum_choose_VM && run_VM;;
+				'󰖟 run offline') gum_choose_VM && run_VM --offline;;
+				'󰐕 snapshots') snapshot_VM;;
 				' ssh into') ssh_into;;
 				'󰖟 homepages') open_distro_homepage;;
 				' kill') kill_vm;;
 				'󰆳 delete') gum_choose_VM_to_delete;;
 				'󱌝 icons') icons_or;;
 				'󰩈 exit') exit 0;;
-				esac
+			esac
 		else
 			start=$(echo "create
 run
+run offline
 homepage
+snapshots
 ssh into
 kill
 delete
 icons
-exit $progname" | gum filter --height 11)
-#exit $progname" | gum choose --selected 'run')
+exit $progname" | gum filter --height 13)
 			case $start in
 				create) create_VM;;
 				run) gum_choose_VM && run_VM;;
+				'run offline') gum_choose_VM && run_VM --offline;;
 				'ssh into') ssh_into;;
+				snapshots) snapshot_VM;;
 				homepage) open_distro_homepage;;
 				kill) kill_vm;;
 				delete) gum_choose_VM_to_delete;;
@@ -305,6 +428,18 @@ exit $progname" | gum filter --height 11)
 
 # run
 #clear
+if [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then
+	cat <<'EOF'
+Usage: qrun [--help]
+
+Interactive quickemu VM manager. For multi-architecture guests, select the
+architecture before release and edition. The UI shows options supported by
+that architecture. If only upstream quickget is available, the fallback
+does not provide architecture selection.
+EOF
+	exit 0
+fi
+
 _define_variables
 _if_needed
 show_headers

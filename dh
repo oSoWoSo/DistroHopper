@@ -2,7 +2,7 @@
 
 function wayland_check() {
 	if [ -n "$XDG_SESSION_ID" ]; then
-		session_type=$(loginctl show-session "$XDG_SESSION_ID" -p Type 2>/dev/null | cut -d= -f2)
+		session_type=$(loginctl show-session "$XDG_SESSION_ID" -p Type 2>$DH_NULL | cut -d= -f2)
 	else
 		session_type=""
 	fi
@@ -23,6 +23,37 @@ function wayland_check() {
 	esac
 }
 
+SCRIPT_DIR="$(dirname "$(realpath "$0")")"
+
+# Get OS description from template files
+# For ready VMs (e.g. "ubuntu-24.04"), progressively strips release suffix
+# to find the matching template ("ubuntu"). Falls back to empty string.
+get_os_description() {
+	local name="$1" candidate
+	# Try exact match first (for supported VMs where name == OS name)
+	if [ -f "${SCRIPT_DIR}/templates/${name}" ]; then
+		OS="$name" bash -c "source '${SCRIPT_DIR}/templates/${name}' >$DH_NULL 2>$DH_NULL; echo \$DESCRIPTION" 2>$DH_NULL
+		return
+	fi
+	# Progressive strip for ready VMs (e.g. "ubuntu-budgie-24.04" → "ubuntu")
+	candidate="$name"
+	while [ -n "$candidate" ]; do
+		next="${candidate%-*}"
+		[ "$next" = "$candidate" ] && break
+		candidate="$next"
+		if [ -f "${SCRIPT_DIR}/templates/${candidate}" ]; then
+			OS="$candidate" bash -c "source '${SCRIPT_DIR}/templates/${candidate}' >$DH_NULL 2>$DH_NULL; echo \$DESCRIPTION" 2>$DH_NULL
+			return
+		fi
+	done
+	# Last chance: whatever candidate remains (handles no-hyphen names).
+	if [ -n "$candidate" ] && [ -f "${SCRIPT_DIR}/templates/${candidate}" ]; then
+		OS="$candidate" bash -c "source '${SCRIPT_DIR}/templates/${candidate}' >$DH_NULL 2>$DH_NULL; echo \$DESCRIPTION" 2>$DH_NULL
+		return
+	fi
+	echo ""
+}
+
 root=""
 function root_check() {
 	if [ "$(id -u)" != 0 ]; then
@@ -41,17 +72,40 @@ function set_variables() {
 	#bash -x ./dh 2>&1 | tee output.log
 	#progname="${progname:="${0##*/}"}"
 	progname="DistroHopper"
-	version="0.91"
+	export GDK_CORE_DEVICE_EVENTS=1
+	version="0.93"
 	#GTK_THEME="alt-dialog"
-	DH_CONFIG_DIR="$HOME/.config/dh"
-	DH_CONFIG="$DH_CONFIG_DIR/config"
-	DH_ICON_DIR="$DH_CONFIG_DIR/icons"
-	VMS_DIR="$HOME/vm"
+	DH_CONFIG_DIR="${HOME}/.config/dh"
+	DH_CONFIG="${DH_CONFIG_DIR}/config"
+	DH_ICON_DIR="${DH_CONFIG_DIR}/icons"
+
 	PATH_PREFIX="/usr/bin/"
 	TMP_DIR="/tmp"
-	terminal="sakura"
+	# The terminal emulator the desktop entry opens. "true" means no
+	# terminal, which is the safe default: an entry naming a terminal that
+	# is not installed does not start.
+	terminal="false"
+	# shellcheck disable=SC2089
 	replace='"!"'
-	export DH_CONFIG_DIR DH_CONFIG replace DH_ICON_DIR PATH_PREFIX TMP_DIR terminal VMS_DIR
+	VMS_DIR="${HOME}/vm"
+	RAMDISK="no"
+	RAMDISK_DIR="/dev/shm/quickemu"
+	ISO_DIR=""
+	USE_TEMPLATES="no"
+	if [ -f "${DH_CONFIG}" ]; then
+		# shellcheck source=/dev/null
+		. "${DH_CONFIG}"
+	fi
+	[ -n "${VMS_DIR}" ] || VMS_DIR="${HOME}/vm"
+	[ -n "${RAMDISK}" ] || RAMDISK="no"
+	[ -n "${RAMDISK_DIR}" ] || RAMDISK_DIR="/dev/shm/quickemu"
+	[ -n "${USE_TEMPLATES}" ] || USE_TEMPLATES="no"
+	[ -n "${terminal}" ] || terminal="true"
+	if [ "${USE_TEMPLATES}" == "yes" ]; then
+		export DH_USE_TEMPLATES="yes"
+	fi
+	# shellcheck disable=SC2090
+	export DH_CONFIG_DIR DH_CONFIG replace DH_ICON_DIR PATH_PREFIX TMP_DIR terminal VMS_DIR RAMDISK RAMDISK_DIR ISO_DIR USE_TEMPLATES
 	#check_and_set_mode
 	# Set traps to catch the signals and exit gracefully
 	trap "exit" INT
@@ -60,7 +114,7 @@ function set_variables() {
 # installation ---------------------------------------------------------
 
 function dependencies_check_gui() {
-	[ -f "$PATH_PREFIX/yad" ] || echo "Yad not installed!"
+	[ -f "${PATH_PREFIX}/yad" ] || echo "Yad not installed!"
 }
 
 function install_needed_apt() {
@@ -82,13 +136,13 @@ function install_needed_dnf() {
 function install_dependencies() {
 	# Find the current distribution and install dependecies
 	if [ -f /etc/os-release ]; then
-		if [ -f "$PATH_PREFIX/pacman" ]; then
+		if [ -f "${PATH_PREFIX}/pacman" ]; then
 			install_needed_pacman
-		elif [ -f "$PATH_PREFIX/apt" ]; then
+		elif [ -f "${PATH_PREFIX}/apt" ]; then
 			install_needed_apt
-		elif [ -f "$PATH_PREFIX/xbps-install" ]; then
+		elif [ -f "${PATH_PREFIX}/xbps-install" ]; then
 			install_needed_xbps
-		elif [ -f "$PATH_PREFIX/dnf" ]; then
+		elif [ -f "${PATH_PREFIX}/dnf" ]; then
 			install_needed_dnf
 		else
 			echo "Error unknown distro!"
@@ -98,80 +152,143 @@ function install_dependencies() {
 }
 
 function create_dirs() {
-	mkdir -p "$DH_CONFIG_DIR"
-	touch "$DH_CONFIG"
-	mkdir -p "$DH_ICON_DIR"
+	mkdir -p "${DH_CONFIG_DIR}"
+	touch "${DH_CONFIG}"
+	mkdir -p "${DH_ICON_DIR}"
+	mkdir -p "${DH_CONFIG_DIR}/supported"
+	mkdir -p "${DH_CONFIG_DIR}/ready"
+}
+
+function save_config() {
+	local temp_config
+	mkdir -p "${DH_CONFIG_DIR}" || return 1
+	temp_config=$(mktemp "${DH_CONFIG}.XXXXXX") || return 1
+	{
+		printf 'VMS_DIR=%q\nexport VMS_DIR\n' "${VMS_DIR}"
+		printf 'RAMDISK=%q\nexport RAMDISK\n' "${RAMDISK}"
+		printf 'RAMDISK_DIR=%q\nexport RAMDISK_DIR\n' "${RAMDISK_DIR}"
+		printf 'ISO_DIR=%q\nexport ISO_DIR\n' "${ISO_DIR}"
+		printf 'USE_TEMPLATES=%q\nexport USE_TEMPLATES\n' "${USE_TEMPLATES}"
+	} >"${temp_config}" || {
+		rm -f "${temp_config}"
+		return 1
+	}
+	mv -f "${temp_config}" "${DH_CONFIG}"
+	echo "Config saved: ${DH_CONFIG}"
 }
 
 function choose_vms_dir() {
-	NEWDIR="$(yad --width=900 --height=900 --file --directory --title="Where to save VMs?")"
-	VMS_DIR="$NEWDIR"
+	local new_dir
+	new_dir="$(yad --width=900 --height=900 --file --directory \
+		--title="Where to save VMs?" --filename="${VMS_DIR}")" || return 1
+	[ -n "${new_dir}" ] || return 1
+	VMS_DIR="${new_dir}"
 	export VMS_DIR
-	echo "VMS_DIR=\"$VMS_DIR\"\nexport VMS_DIR" > "$DH_CONFIG"
+	save_config
+	echo "VMs directory set to: ${VMS_DIR}"
 }
+
+function set_vms_directory() {
+	echo "[dh] Set VMs directory..."
+	local old_dir="${VMS_DIR}"
+	choose_vms_dir || return
+	[ "${VMS_DIR}" == "${old_dir}" ] && return
+	renew_ready_vms
+	renew_supported_vms
+}
+
+function set_ramdisk() {
+	echo "[dh] RAM disk..."
+	local output enabled ramdisk_dir
+	output="$(yad --title="RAM disk" --form --separator=$'\t' \
+		--field="Create VM disk in RAM (tmpfs)":CHK \
+		--field="RAM disk directory":DIR \
+		"$([ "${RAMDISK}" == "yes" ] && echo TRUE || echo FALSE)" "${RAMDISK_DIR}")" || return 1
+	enabled="${output%%$'\t'*}"
+	ramdisk_dir="${output#*$'\t'}"
+	[ "${output}" != "${enabled}" ] || return 1
+	case "${enabled}" in
+		TRUE) RAMDISK="yes" ;;
+		FALSE) RAMDISK="no" ;;
+		*) return 1 ;;
+	esac
+	[ -n "${ramdisk_dir}" ] || return 1
+	RAMDISK_DIR="${ramdisk_dir}"
+	export RAMDISK RAMDISK_DIR
+	save_config || return 1
+	echo "RAM disk: ${RAMDISK} (${RAMDISK_DIR})"
+	yad --title="RAM disk" --width=400 \
+		--text="$([ "${RAMDISK}" == "yes" ] && echo "RAM disk enabled: ${RAMDISK_DIR}" || echo "RAM disk disabled")"
+}
+
 
 DH_VERSION_FILE=""
 function install_dh() {
-	DH_VERSION_FILE="$DH_CONFIG_DIR/version"
+	DH_VERSION_FILE="${DH_CONFIG_DIR}/version"
 	local install_type="fresh"
 
-	if [ -f "$DH_VERSION_FILE" ]; then
+	if [ -f "${DH_VERSION_FILE}" ]; then
 		local old_version
-		old_version=$(cat "$DH_VERSION_FILE")
-		if [ "$old_version" != "$version" ]; then
+		old_version=$(cat "${DH_VERSION_FILE}")
+		if [ "${old_version}" != "${version}" ]; then
 			install_type="upgrade"
-			echo "Upgrading DistroHopper $old_version → $version"
+			echo "Upgrading DistroHopper ${old_version} → ${version}"
 		else
 			install_type="reinstall"
-			echo "DistroHopper $version already installed"
+			echo "DistroHopper ${version} already installed"
 		fi
 	else
-		echo "Installing DistroHopper $version"
+		echo "Installing DistroHopper ${version}"
 	fi
 
-	cp -f generate qget q dh quickemu quickreport chunkcheck "$PATH_PREFIX" >/dev/null 2>&1 || $root cp -f generate qget q dh quickemu quickreport chunkcheck "$PATH_PREFIX"
-	cp -f icons/* "$DH_ICON_DIR/" >/dev/null 2>&1 || $root cp -f icons/* "$DH_ICON_DIR/"
-	mkdir -p "$DH_CONFIG_DIR/ready"
-	mkdir -p "$DH_CONFIG_DIR/supported"
-	echo "$version" > "$DH_VERSION_FILE"
+	cp -f "${SCRIPT_DIR}"/{generate,qget,q,dh,quickemu,quickreport,chunkcheck,lib.sh} "${PATH_PREFIX}" >$DH_NULL 2>$DH_NULL || \
+		$root cp -f "${SCRIPT_DIR}"/{generate,qget,q,dh,quickemu,quickreport,chunkcheck,lib.sh} "${PATH_PREFIX}"
+	cp -f "${SCRIPT_DIR}"/dh-refresh "${PATH_PREFIX}" >$DH_NULL 2>$DH_NULL || \
+		$root cp -f "${SCRIPT_DIR}"/dh-refresh "${PATH_PREFIX}"
+	mkdir -p "${PATH_PREFIX}/public" "${PATH_PREFIX}/templates" >$DH_NULL 2>$DH_NULL || $root mkdir -p "${PATH_PREFIX}/public" "${PATH_PREFIX}/templates"
+	cp -f "${SCRIPT_DIR}"/public/* "${PATH_PREFIX}/public/" >$DH_NULL 2>$DH_NULL || $root cp -f "${SCRIPT_DIR}"/public/* "${PATH_PREFIX}/public/"
+	cp -f "${SCRIPT_DIR}"/templates/* "${PATH_PREFIX}/templates/" >$DH_NULL 2>$DH_NULL || $root cp -f "${SCRIPT_DIR}"/templates/* "${PATH_PREFIX}/templates/"
+	if [ -d "${SCRIPT_DIR}/icons" ]; then
+		cp -f "${SCRIPT_DIR}"/icons/* "${DH_ICON_DIR}/" >$DH_NULL 2>$DH_NULL || $root cp -f "${SCRIPT_DIR}"/icons/* "${DH_ICON_DIR}/"
+	fi
+	mkdir -p "${DH_CONFIG_DIR}/ready"
+	mkdir -p "${DH_CONFIG_DIR}/supported"
+	echo "${version}" > "${DH_VERSION_FILE}"
 }
 
 # shellcheck disable=SC2154
 function create_desktop_entry() {
-	cat <<EOF >${DESKTOP_FILE}
+	cat <<EOF > "${DESKTOP_FILE}"
 [Desktop Entry]
-Version=$version
-Type=$type
-Name=$name
-GenericName=$gname
-Comment=$comment
-Exec=$execmd
-Icon=$icon
-Terminal=$terminal
-X-MultipleArgs=$args
-Type=$type
-Categories=$categories
-StartupNotify=$notify
-MimeType=$mime
-Keywords=$keyword
+Version=${version}
+Type=${type}
+Name=${name}
+GenericName=${gname}
+Comment=${comment}
+Exec=${execmd}
+Icon=${icon}
+Terminal=${terminal}
+X-MultipleArgs=${args}
+Type=${type}
+Categories=${categories}
+StartupNotify=${notify}
+MimeType=${mime}
+Keywords=${keyword}
 
 EOF
+	chmod +x "${DESKTOP_FILE}"
 }
 
+# shellcheck disable=SC2269
 function desktop_entry_dh() {
-	echo "$MSG_INTERM"
-	run_in_terminal
 	DESKTOP_FILE="${TMP_DIR}/dh.desktop"
 	type='Application'
 	name='DistroHopper'
 	comment='Quickly download, create and run VM of any operating system.'
 	version="${version}"
 	execmd="sh -c 'cd ${VMS_DIR} && dh'"
-	if [ "$interminal" = "yes" ]; then
-		terminal='true'
-	fi
-	icon="$DH_ICON_DIR/hop.svg"
-	categories='System;Virtualization;'
+	icon="${DH_ICON_DIR}/hop.svg"
+	categories='System;X-Virtualization;'
 	export -f create_desktop_entry
 	create_desktop_entry
 	$root cp "${TMP_DIR}/dh.desktop" /usr/share/applications/
@@ -188,135 +305,185 @@ function installation_process() {
 
 # basic ----------------------------------------------------------------
 
-#run_in_terminal() {
-#	yad --title "terminal" --text "Do you want show output in the terminal?" && interminal="yes" || interminal="no"
-#}
-
+run_in_terminal() {
+	if [ -t 1 ] || [ "${DH_DEBUG:-}" = "1" ]; then
+		interminal="yes"
+	else
+		interminal="no"
+	fi
+}
+# shellcheck disable=SC2269
 function renew_ready_vms() {
-	cd "$VMS_DIR" || { echo "ERROR: VMS_DIR not set!"; exit 1; }
-	rm -r "$DH_CONFIG_DIR"/ready >/dev/null 2>&1
-	mkdir -p "$DH_CONFIG_DIR"/ready
+	echo "[dh] Renew ready..."
+	# YAD field actions run in separate bash processes, so reload persisted
+	# settings to pick up a VM directory chosen after the GUI was opened.
+	if [ -f "${DH_CONFIG}" ]; then
+		# shellcheck source=/dev/null
+		. "${DH_CONFIG}"
+	fi
+	# The VMs are read from VMS_DIR, but the working directory is restored
+	# afterwards: a later relative path (e.g. ./qget) would otherwise be
+	# resolved inside the VMs directory.
+	local _old_dir="${PWD}"
+	cd "${VMS_DIR}" || { echo "ERROR: VMS_DIR not set!"; exit 1; }
+	rm -f "${DH_CONFIG_DIR}/ready"/*.desktop >$DH_NULL 2>$DH_NULL
+	mkdir -p "${DH_CONFIG_DIR}/ready"
 	for vm_conf in *.conf; do
-		VMname=$(basename "$VMS_DIR/$vm_conf" .conf)
-		echo "creating $VMname"
+		[ -f "${vm_conf}" ] || continue
+		[ "${vm_conf}" = "distrohopper.conf" ] && continue
+		VMname=$(basename "${VMS_DIR}/${vm_conf}" .conf)
+		echo "${VMname}.desktop"
 		# Use fuzzy matching to find the best matching icon file (ready to run VMs)
-		icon_name=$(basename "$VMS_DIR/$vm_conf" .conf | cut -d'-' -f -2)
-		icon_file=$(find "$DH_ICON_DIR" -type f -iname "${icon_name// /}.*")
+		icon_name=$(basename "${VMS_DIR}/${vm_conf}" .conf | cut -d'-' -f -2)
+		icon_file=$(find "${DH_ICON_DIR}" -type f -iname "${icon_name// /}.*")
 		# If no icon was found, try shorter name (ready to run VMs)
-		if [ -z "$icon_file" ]; then
-			icon_name=$(basename "$VMS_DIR/$vm_conf" .conf | cut -d'-' -f1)
-			icon_file=$(find "$DH_ICON_DIR" -type f -iname "${icon_name// /}.*")
+		if [ -z "${icon_file}" ]; then
+			icon_name=$(basename "${VMS_DIR}/${vm_conf}" .conf | cut -d'-' -f1)
+			icon_file=$(find "${DH_ICON_DIR}" -type f -iname "${icon_name// /}.*")
 		fi
-		if [ -z "$icon_file" ]; then
-			icon_file="$DH_ICON_DIR/tux.svg"
+		if [ -z "${icon_file}" ]; then
+			icon_file="${DH_ICON_DIR}/tux.svg"
 		fi
 		DESKTOP_FILE="${DH_CONFIG_DIR}/ready/${VMname}.desktop"
 		type='Application'
 		name="${VMname}"
-		comment=$(qget "$VMname" | grep 'Description:' | cut -d: -f2)
+		# Try quickget for a more accurate description (old version approach)
+		comment=$("${SCRIPT_DIR}/qget" --show --plain "${VMname}" 2>$DH_NULL | grep 'Description' | sed 's/^Description:[[:space:]]*//')
+		[ -z "${comment}" ] && comment=$(get_os_description "${VMname}")
 		version="${version}"
 		execmd="sh -c 'cd ${VMS_DIR} && quickemu -vm ${vm_conf};$SHELL'"
 		icon="${icon_file}"
-		categories='System;Virtualization;'
+		categories='System;X-Virtualization;'
 		create_desktop_entry
 	done
+	cd "${_old_dir}" || true
+	echo "[dh] Renew ready complete"
 }
-
-function renew_ready() {
-	cd "$VMS_DIR" || { echo "ERROR: VMS_DIR not set!"; exit 1; }
-	#	for files in "$VMS_DIR"/*; do
-	#	if [ ! -e *.conf ]; then
-	#		echo $"No .conf files found"
-	#		return
-	#	fi
-	for vm_conf in *.conf; do
-		if [ "$vm_conf" == "distrohopper.conf" ]; then
-			continue # skip processing distrohopper.conf
-		fi
-		VMname=$(basename "$VMS_DIR/$vm_conf" .conf)
-		# Use fuzzy matching to find the best matching icon file (ready to run VMs)
-		icon_name=$(basename "$VMS_DIR/$vm_conf" .conf | cut -d'-' -f -2)
-		icon_file=$(find "$DH_ICON_DIR" -type f -iname "${icon_name// /}.*")
-		# If no icon was found, try shorter name (ready to run VMs)
-		if [ -z "$icon_file" ]; then
-			icon_name=$(basename "$VMS_DIR/$vm_conf" .conf | cut -d'-' -f1)
-			icon_file=$(find "$DH_ICON_DIR" -type f -iname "${icon_name// /}.*")
-		fi
-		if [ -z "$icon_file" ]; then
-			icon_file="$DH_ICON_DIR/tux.svg"
-		fi
-		# content of desktop files (ready to run VMs)
-		mkdir -p "$DH_CONFIG_DIR/ready"
-		cat <<EOF >"$DH_CONFIG_DIR/ready/$VMname.desktop"
-[Desktop Entry]
-Type=Application
-Name=$VMname
-Exec=sh -c 'cd ${VMS_DIR} && quickemu -vm ${vm_conf}'
-Icon=$icon_file
-Categories=System;Virtualization;
-
-EOF
-	done
-}
-
 function renew_supported_vms() {
-	local qget_cmd
-	if [ -x "./qget" ]; then
-		qget_cmd="./qget"
-	elif [ -x "$PATH_PREFIX/qget" ]; then
-		qget_cmd="$PATH_PREFIX/qget"
+	echo "[dh] Renew supported..."
+	local qget_cmd os_info release_edition_options release_edition_opts_fmt icon_source
+	# Refresh the user icon cache before rebuilding supported desktop entries.
+	# New icons added to the repository are otherwise missed until reinstall.
+	icon_source="${SCRIPT_DIR}/icons"
+	if [ -d "${icon_source}" ]; then
+		cp -f "${icon_source}"/* "${DH_ICON_DIR}/" >$DH_NULL 2>$DH_NULL || $root cp -f "${icon_source}"/* "${DH_ICON_DIR}/"
+	fi
+	# The repository copy first, then the installed one. The paths are
+	# absolute so the lookup does not depend on the current directory.
+	if [ -x "${SCRIPT_DIR}/qget" ]; then
+		qget_cmd="${SCRIPT_DIR}/qget"
+	elif [ -x "${PATH_PREFIX}/qget" ]; then
+		qget_cmd="${PATH_PREFIX}/qget"
 	else
 		qget_cmd="qget"
 	fi
 
-	echo "Regenerating supported"
-	rm -r "$DH_CONFIG_DIR"/supported >/dev/null 2>&1
-	mkdir -p "$DH_CONFIG_DIR"/supported
-	$qget_cmd | awk 'NR==3,/zorin/' | grep -o '[^ ]*' >"$DH_CONFIG_DIR/supported.md"
+	rm -f "${DH_CONFIG_DIR}/supported"/*.desktop >$DH_NULL 2>$DH_NULL
+	mkdir -p "${DH_CONFIG_DIR}/supported" >$DH_NULL 2>$DH_NULL
+	"$qget_cmd" --list-os >"${DH_CONFIG_DIR}/supported.md" 2>$DH_NULL
+	if [ ! -s "${DH_CONFIG_DIR}/supported.md" ]; then
+		echo "WARNING: qget --list-os produced no entries" >&2
+	fi
 	while read -r get_name; do
-		VMname=$(echo "$get_name" | tr ' ' '_')
-		releases=$($qget_cmd "$VMname" | grep 'Releases' | cut -d: -f2 | sed 's/^ //' | sed 's/ *$//')
-		editions=$($qget_cmd "$VMname" | grep 'Editions' | cut -d: -f2 | sed 's/^ //' | sed 's/ *$//')
-		architectures=$($qget_cmd "$VMname" | grep "Architectures" | cut -d: -f2 | sed "s/^ //" | sed "s/ *$//")
-		icon_name="$DH_ICON_DIR/$get_name"
-		if [ -f "$icon_name.svg" ]; then
-			icon_file="$icon_name.svg"
-		elif [ -f "$icon_name.png" ]; then
-			icon_file="$icon_name.png"
+		VMname=$(echo "${get_name}" | tr ' ' '_')
+		os_info=$("$qget_cmd" --show --plain "${VMname}" 2>$DH_NULL)
+		releases=$(printf '%s\n' "${os_info}" | awk -F: '$1 ~ /^[[:space:]]*Releases[[:space:]]*$/ {sub(/^[^:]*:[[:space:]]*/, ""); sub(/[[:space:]]*$/, ""); print; exit}')
+		editions=$(printf '%s\n' "${os_info}" | awk -F: '$1 ~ /^[[:space:]]*Editions[[:space:]]*$/ {sub(/^[^:]*:[[:space:]]*/, ""); sub(/[[:space:]]*$/, ""); print; exit}')
+		# The editions one per line. An edition can contain a space (e.g.
+		# "Brazilian Portuguese"), so the space separated value above cannot
+		# be split apart again — this list can.
+		editions_list=$(printf '%s\n' "${os_info}" | sed -n '/^EditionsList:$/,$p' | sed '1d; /^$/d; /^Description:/,$d; /^RSS:/,$d; /^DistroWatch:/,$d')
+		architectures=$(printf '%s\n' "${os_info}" | awk -F: '$1 ~ /^[[:space:]]*(Archs|Architectures)[[:space:]]*$/ {sub(/^[^:]*:[[:space:]]*/, ""); sub(/[[:space:]]*$/, ""); print; exit}')
+		icon_name="${DH_ICON_DIR}/${get_name}"
+		if [ -f "${icon_name}.svg" ]; then
+			icon_file="${icon_name}.svg"
+		elif [ -f "${icon_name}.png" ]; then
+			icon_file="${icon_name}.png"
 		else
-			icon_file="$DH_ICON_DIR/tux.svg"
+			icon_file="${DH_ICON_DIR}/tux.svg"
 		fi
-		echo "creating $VMname entry"
-		echo ""
+		echo "${VMname}.desktop"
 		# Check if there are editions
-		DESKTOP_FILE="$DH_CONFIG_DIR/supported/$VMname.desktop"
+		DESKTOP_FILE="${DH_CONFIG_DIR}/supported/${VMname}.desktop"
 		type="Application"
-		name="$get_name"
+		name="${get_name}"
 		arch_opts="${architectures:-x86_64}"
 		arch_opts_fmt=$(echo "$arch_opts" | tr ' ' '!')
-		if [ -z "$editions" ]; then
-			execmd="sh -c 'cd ${VMS_DIR} && GDK_BACKEND=x11 yad --form --field=\"Architecture:CB\" \"$arch_opts_fmt\" --field=\"Release:CB\" \"${releases// /$replace}\" | cut -d\"|\" -f2 | xargs -I{} sh -c \"qget --arch {} ${get_name} {}\";$SHELL'"
-		elif [ "$interminal" = "yes" ]; then
-			terminal="true"
-		else
-			execmd="sh -c 'cd ${VMS_DIR} && GDK_BACKEND=x11 yad --form --separator=\" \" --field=\"Architecture:CB\" \"$arch_opts_fmt\" --field=\"Release:CB\" \"${releases// /$replace}\" --field=\"Edition:CB\" \"${editions// /$replace}\" | cut -d\"|\" -f2- | xargs -I{} sh -c \"qget --arch {} ${get_name} {}\";$SHELL'"
+		release_edition_options=""
+		if [ "$(echo "$arch_opts" | wc -w)" -gt 1 ]; then
+			local selected_arch selected_release selected_edition arch_info release_info arch_releases arch_editions
+			for selected_arch in ${arch_opts}; do
+				arch_info=$("$qget_cmd" --show --plain --arch "${selected_arch}" "${VMname}" 2>$DH_NULL)
+				arch_releases=$(printf '%s\n' "${arch_info}" | sed -n 's/^Releases:[[:space:]]*//p')
+				[ -z "$arch_releases" ] && arch_releases="${releases}"
+				arch_editions=$(printf '%s\n' "${arch_info}" | sed -n 's/^Editions:[[:space:]]*//p')
+				arch_editions_list=$(printf '%s\n' "${arch_info}" | sed -n '/^EditionsList:$/,$p' | sed '1d; /^$/d; /^Description:/,$d; /^RSS:/,$d; /^DistroWatch:/,$d')
+				for selected_release in ${arch_releases}; do
+					release_info=$("$qget_cmd" --show --plain --arch "${selected_arch}" --release "${selected_release}" "${VMname}" 2>$DH_NULL)
+					release_editions=$(printf '%s\n' "${release_info}" | sed -n 's/^Editions:[[:space:]]*//p')
+					release_editions_list=$(printf '%s\n' "${release_info}" | sed -n '/^EditionsList:$/,$p' | sed '1d; /^$/d; /^Description:/,$d; /^RSS:/,$d; /^DistroWatch:/,$d')
+					[ -z "$release_editions_list" ] && release_editions_list="${arch_editions_list:-$editions_list}"
+					# The editions are read line by line, so an edition that
+					# contains a space stays one entry.
+					if [ -z "${release_editions_list}" ]; then
+						# Distro has no editions for this release/arch: still
+						# offer the (arch, release) combination.
+						release_edition_options+="${selected_arch};${selected_release}; "
+					else
+						while IFS= read -r selected_edition; do
+							[ -n "$selected_edition" ] || continue
+							release_edition_options+="${selected_arch};${selected_release};${selected_edition} "
+						done <<< "${release_editions_list}"
+					fi
+				done
+			done
+		elif [ "${VMname}" == "kde-neon" ] && [ -f "${SCRIPT_DIR}/public/${VMname}" ]; then
+			local selected_release selected_edition release_editions
+			for selected_release in ${releases}; do
+				release_editions=$(RELEASE="${selected_release}" ARCH="${arch_opts%% *}" bash -c '. "$1"; editions_' _ "${SCRIPT_DIR}/public/${VMname}")
+				for selected_edition in ${release_editions}; do
+					release_edition_options+="${selected_release}-${selected_edition} "
+				done
+			done
 		fi
-		icon="$icon_file"
-		categories='System;Virtualization;'
+		release_edition_opts_fmt=$(echo "${release_edition_options}" | tr ' ' '!')
+		if [ -z "$editions" ] && [ "$(echo "$arch_opts" | wc -w)" -le 1 ]; then
+			execmd="bash -c 'mkdir -p \"${VMS_DIR}\"; cd \"${VMS_DIR}\" || exit; choice=\$(GDK_BACKEND=x11 yad --form --separator=\"|\" --field=\"Architecture:CB\" \"${arch_opts_fmt}\" --field=\"Release:CB\" \"${releases// /$replace}\"); [ -n \"\$choice\" ] || exit 0; IFS=\"|\" read -r arch release <<< \"\$choice\"; ${qget_cmd} --arch \"\$arch\" \"${get_name}\" \"\$release\"'"
+		elif [ "$interminal" = "yes" ]; then
+			terminal="false"
+		elif [ "$(echo "$arch_opts" | wc -w)" -gt 1 ]; then
+			execmd="bash -c 'mkdir -p \"${VMS_DIR}\"; cd \"${VMS_DIR}\" || exit; choice=\$(GDK_BACKEND=x11 yad --form --field=\"Architecture / Release / Edition:CB\" \"${release_edition_opts_fmt}\"); [ -n \"\$choice\" ] || exit 0; IFS=\";\" read -r arch release edition <<< \"\$choice\"; ${qget_cmd} --arch \"\$arch\" \"${get_name}\" \"\$release\" \"\$edition\"'"
+		elif [ "${VMname}" == "kde-neon" ]; then
+			execmd="bash -c 'mkdir -p \"${VMS_DIR}\"; cd \"${VMS_DIR}\" || exit; choice=\$(GDK_BACKEND=x11 yad --form --separator=\"|\" --field=\"Architecture:CB\" \"${arch_opts_fmt}\" --field=\"Release / edition:CB\" \"${release_edition_opts_fmt}\"); [ -n \"\$choice\" ] || exit 0; arch=\${choice%%|*}; release_edition=\${choice#*|}; release=\${release_edition%%-*}; edition=\${release_edition#*-}; ${qget_cmd} --arch \"\$arch\" \"${get_name}\" \"\$release\" \"\$edition\"'"
+		else
+			# The editions are joined with the "!" separator of the yad
+			# combobox, so an edition that contains a space stays one entry.
+			local editions_fmt
+			editions_fmt=$(printf '%s\n' "${editions_list}" | tr '\n' ' ' | tr ' ' '!')
+			execmd="bash -c 'mkdir -p \"${VMS_DIR}\"; cd \"${VMS_DIR}\" || exit; choice=\$(GDK_BACKEND=x11 yad --form --separator=\"|\" --field=\"Architecture:CB\" \"${arch_opts_fmt}\" --field=\"Release:CB\" \"${releases// /$replace}\" --field=\"Edition:CB\" \"${editions_fmt}\"); [ -n \"\$choice\" ] || exit 0; IFS=\"|\" read -r arch release edition <<< \"\$choice\"; ${qget_cmd} --arch \"\$arch\" \"${get_name}\" \"\$release\" \"\$edition\"'"
+		fi
+		icon="${icon_file}"
+		# Try quickget for a more accurate description (old version approach)
+		comment=$("${SCRIPT_DIR}/qget" --show --plain "${get_name}" 2>$DH_NULL | grep 'Description' | sed 's/^Description:[[:space:]]*//')
+		[ -z "${comment}" ] && comment=$(get_os_description "${get_name}")
+		categories='System;X-Virtualization;'
 		create_desktop_entry
-	done <"$DH_CONFIG_DIR"/supported.md
+	done < "${DH_CONFIG_DIR}/supported.md"
+	echo "[dh] Renew supported complete"
 }
 
 function distrohopper_about() {
-		yad --about --pname=DistroHopper --image="$DH_ICON_DIR"/hop.svg --pversion="$version" \
+	echo "[dh] About..."
+		yad --about --pname=DistroHopper --image="${DH_ICON_DIR}/hop.svg" --pversion="${version}" \
 		 --copyright=AGPL3 --comments="random comment" --license=ALGPL3 --authors=zenobit --website=dh.osowoso.org \
 		 --website-label="oSoWoSo"
 	}
 
 function help_show() {
+	echo "[dh] Help..."
 	local help_text
 	help_text="$(cat <<EOF
-DistroHopper v. $version
+DistroHopper v. ${version}
 
 Quick start:
   ./dh i && dh s g
@@ -330,73 +497,142 @@ Arguments:
   r  ready            Manage ready-to-run VMs
   l  language         Switch language
 
+Architecture:
+  Multi-architecture systems offer compatible architecture and edition
+  combinations in the download selector. The selected architecture is
+  passed to qget when the VM is created.
+
+Metadata source:
+  Releases and editions come from the generated public/ files, so they
+  are known without network access. Use 'dh-refresh' to update them, or
+  switch to the live templates in the Options tab when you need the
+  current upstream state right away.
+
 Homepage: dh.osowoso.org
 Source:   github.com/oSoWoSo/distrohopper
 EOF
 )"
-	yad --text-info --title="DistroHopper Help" --window-icon="$DH_ICON_DIR/hop.svg" \
+	yad --text-info --title="DistroHopper Help" --window-icon="${DH_ICON_DIR}/hop.svg" \
 		--width=600 --height=500 --center --button="Close":0 \
 		--fontname="Monospace" --editable=false <<<"$help_text"
 }
 
+function set_iso_dir() {
+	echo "[dh] ISO dir..."
+	local output status
+	if [ -n "${ISO_DIR}" ]; then
+		yad --title="ISO directory" --width=400 \
+			--text="Shared ISO directory: ${ISO_DIR}" \
+			--button="Change":0 --button="Disable sharing":1
+		status=$?
+		case "${status}" in
+			0) ;;
+			1)
+				ISO_DIR=""
+				export ISO_DIR
+				save_config
+				echo "ISO directory sharing disabled"
+				return
+				;;
+			*) return 1 ;;
+		esac
+	fi
+	output="$(yad --title="ISO directory" --file --directory --width=900 --height=900 \
+		--text="Choose shared ISO directory" --button="OK":0 --button="Cancel":1 \
+		--filename="${ISO_DIR:-${VMS_DIR}}")" || return 1
+	[ -n "${output}" ] || return 1
+	ISO_DIR="${output}"
+	export ISO_DIR
+	save_config
+	echo "ISO directory set to: ${ISO_DIR}"
+}
+
+function set_use_templates() {
+	echo "[dh] Metadata source..."
+	local output
+	output="$(yad --title="Metadata source" --form --separator=$'\t' \
+		--field="Read releases and editions from templates (live) instead of the generated public/ files":CHK \
+		"$([ "${USE_TEMPLATES}" == "yes" ] && echo TRUE || echo FALSE)")" || return 1
+	output="${output//[[:space:]]/}"
+	case "${output}" in
+		TRUE) USE_TEMPLATES="yes" ;;
+		FALSE) USE_TEMPLATES="no" ;;
+		*) echo "Metadata source: cancelled/unknown (${output})"; return 1 ;;
+	esac
+	echo "Metadata source selected: ${output}"
+	export USE_TEMPLATES
+	if [ "${USE_TEMPLATES}" == "yes" ]; then
+		export DH_USE_TEMPLATES="yes"
+	else
+		unset DH_USE_TEMPLATES
+	fi
+	save_config || return 1
+	echo "Metadata source changed to: ${USE_TEMPLATES}"
+	echo "Metadata source: $([ "${USE_TEMPLATES}" == "yes" ] && echo templates || echo public)"
+	yad --title="Metadata source" --width=520 \
+		--text="$([ "${USE_TEMPLATES}" == "yes" ] && echo "Using templates/: releases and editions are looked up live, which needs network access and is slower." || echo "Using public/: releases and editions come from the generated metadata, which works offline.")"
+}
+
 function first_run() {
+	echo "[dh] Install dh..."
 	installation_process
 	echo "Installation done"
 	echo "Update supported..."
 	renew_supported_vms
 }
 
-function distrohopper_run_gui() {
-	key=$((RANDOM % 9000 + 1000))
-	yad --plug="$key" --tabnum=1 --monitor --icons --listen --read-dir="$DH_CONFIG_DIR"/ready --sort-by-name --no-buttons --borders=0 --icon-size=46 --item-width=76 &
-	yad --plug="$key" --tabnum=2 --monitor --icons --listen --read-dir="$DH_CONFIG_DIR"/supported --sort-by-name --no-buttons --borders=0 --icon-size=46 --item-width=76 &
-	yad --dynamic --notebook --key="$key" --monitor --listen --window-icon="$DH_ICON_DIR"/hop.svg --width=900 --height=900 --title="DistroHopper" --tab="run VM" --tab="download VM"
-}
+function distrohopper_gui() {
+	export DH_CONFIG_DIR DH_ICON_DIR PATH_PREFIX SCRIPT_DIR TMP_DIR VMS_DIR RAMDISK RAMDISK_DIR ISO_DIR DH_NULL
+	export progname root version
+	export -f choose_vms_dir
+	export -f create_desktop_entry create_dirs dependencies_check_gui desktop_entry_dh
+	export -f distrohopper_about first_run get_os_description help_show
+	export -f install_dh install_dependencies install_needed_apt install_needed_dnf install_needed_pacman install_needed_xbps
+	export -f installation_process renew_ready_vms renew_supported_vms root_check save_config
+	export -f set_iso_dir set_ramdisk set_vms_directory set_use_templates
 
-function WIP_buttons() {
-	export root
-	export VMSDIR
-	#export -f run_in_terminal
-	export -f distrohopper_about
-	export -f help_show
-	export -f first_run
-	export -f create_desktop_entry
-	export -f renew_supported_vms
-	export -f renew_ready
-	export -f renew_ready_vms
-	key=$((RANDOM % 9000 + 1000))
-	yad --plug="$key" --tabnum=1 --monitor --icons --listen \
-		--read-dir="$DH_CONFIG_DIR/ready" --sort-by-name --borders=0 \
-		--icon-size=46 --item-width=76 &
-	yad --plug="$key" --tabnum=2 --monitor --icons --listen \
-		--read-dir="$DH_CONFIG_DIR/supported" --sort-by-name --borders=0 \
-		--icon-size=46 --item-width=76 &
-	yad --plug="$key" --tabnum=3 --monitor --icons --borders=0 --use-interp \
-		--icon-size=46 --item-width=76 --columns=1 --form --text-align=center \
-		--field="Set VMs directory!!Set default directory where VMs are stored":DIR \
-		--field="Install dh!!Install DistroHopper":FBTN "first_run" \
-		--field="Renew supported!!Update supported VMs":FBTN "renew_supported_vms" \
-		--field="Renew ready!!Update ready to run VMs":FBTN "renew_ready_vms" \
-		--field="Help!!Show this help and exit":FBTN "help_show" \
-		--field="About!!Show info about DistroHopper":FBTN "distrohopper_about" &
-	yad --dynamic --notebook --key="$key" --monitor --listen \
+	local key=$((RANDOM % 9000 + 1000))
+	yad --plug="${key}" --tabnum=1 --monitor --icons --listen \
+		--read-dir="${DH_CONFIG_DIR}/ready" --sort-by-name --borders=0 \
+		--icon-size=46 --item-width=76 --vscroll-policy=always &
+	yad --plug="${key}" --tabnum=2 --monitor --icons --listen \
+		--read-dir="${DH_CONFIG_DIR}/supported" --sort-by-name --borders=0 \
+		--icon-size=46 --item-width=76 --vscroll-policy=always &
+	yad --plug="${key}" --tabnum=3 --form --cycle-read --use-interp \
+		--borders=0 --text-align=center --align-buttons \
+		--field="RAM disk!!Create VM disk in RAM (tmpfs) instead of on disk":FBTN "bash -c 'set_ramdisk'" \
+		--field="ISO dir!!Set shared ISO directory (or keep in each VM)":FBTN "bash -c 'set_iso_dir'" \
+		--field="Metadata source!!Use templates (live) or public (offline) for releases and editions":FBTN "bash -c 'set_use_templates'" \
+		--field="Install dh!!Install DistroHopper":FBTN "bash -c 'first_run'" \
+		--field="Renew supported!!Update supported VMs":FBTN "bash -c 'renew_supported_vms'" \
+		--field="Renew ready!!Update ready to run VMs":FBTN "bash -c 'renew_ready_vms'" \
+		--field="Help!!Show this help":FBTN "bash -c 'help_show'" \
+		--field="About!!Show info about DistroHopper":FBTN "bash -c 'distrohopper_about'" \
+		--field="Set VMs directory!!Set default directory where VMs are stored":FBTN "bash -c 'set_vms_directory'" &
+	yad --notebook --key="${key}" --monitor --listen \
 		--mouse --selectable-labels --no-buttons \
-		--window-icon="$DH_ICON_DIR/hop.svg" --width=900 --height=900 \
-		--title="DistroHopper" --tab="run VM" --tab="download VM" --tab="Options"
-	# posible: --undecorated --fixed ontop --buttons-layout=spread edge start end center --keep-icon-size --image=IMAGE --splash
-	VAR1="$?"
-	echo "  DEBUG: VAR1 = $VAR1"
-	echo $?
+		--window-icon="${DH_ICON_DIR}/hop.svg" --width=900 --height=900 \
+		--title="${progname}" --tab="run VM" --tab="download VM" --tab="Options"
 }
 
+run_in_terminal
+if [ "${interminal}" = "yes" ]; then
+	export DH_DEBUG=1
+	DH_NULL=/dev/stdout
+else
+	DH_NULL=/dev/null
+fi
+export DH_NULL
 wayland_check
 root_check
 set_variables
-if [ -f "$DH_CONFIG" ]; then
+# Ensure previously generated desktop entries are executable.
+find "${DH_CONFIG_DIR}/ready" "${DH_CONFIG_DIR}/supported" -type f -name '*.desktop' -exec chmod +x {} + 2>/dev/null || true
+if [ -f "${DH_CONFIG}" ]; then
 	echo "Already installed"
 else
 	first_run
 	echo "Installation finished"
 fi
 #distrohopper_run_gui
-WIP_buttons
+distrohopper_gui

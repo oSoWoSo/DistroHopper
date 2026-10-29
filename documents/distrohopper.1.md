@@ -43,6 +43,61 @@ See it in action on youtube...
 
 [![tui](https://img.youtube.com/vi/gJ5hqYEskOw/0.jpg)](https://www.youtube.com/watch?v=gJ5hqYEskOw)
 
+# Where the releases and editions come from
+
+DistroHopper keeps two copies of the per-distro information.
+
+`templates/<os>` is the **dynamic** one. Its `releases_()`, `editions_()` and
+`arch_()` functions scrape the upstream mirror to find out what exists right
+now. They need the network, and they are slow.
+
+`public/<os>` is the **static** one. It is generated from the template and
+contains the same functions plus the releases and editions that were parsed
+at generation time, stored as plain variables:
+
+    RELEASES="v3.24 v3.23 …"
+    EDITIONS="boot dvd minimal"
+    QEMU_ARCH="amd64 arm64 …"
+
+The front-ends read the static copy, so listing the supported systems and
+picking a release works without a network connection. Only the actual
+download needs one.
+
+# Updating the metadata
+
+`generate` rebuilds `public/` from `templates/`:
+
+    ./generate <os>        # one distro
+    ./generate --all       # every distro, in order
+    ./generate --parallel  # every distro, in parallel
+    ./generate --test <os> # check whether the image URLs still resolve
+
+A distro whose upstream cannot be reached keeps its previous metadata, so a
+failed run never removes a distro from the list.
+
+`dh-refresh` does the same, but is meant to be run unattended:
+
+    dh-refresh                # refresh every distro now
+    dh-refresh alpine debian  # refresh only these
+    dh-refresh --install-cron # schedule a daily refresh at 04:00
+    dh-refresh --show-cron    # show the current schedule
+    dh-refresh --remove-cron  # remove the schedule
+
+The schedule is opt-in: nothing is installed until you ask for it, and the
+other entries in your crontab are left alone.
+
+# Using the live templates instead
+
+When you need the current upstream state right away — for example when a new
+release was announced minutes ago — you can read the templates directly
+instead of the generated metadata:
+
+    qget --templates --show <os>
+    qget --templates --list
+
+The same switch exists in the GUI, under *Options → Metadata source*. The
+templates are always current, but they need the network and are slower.
+
 # Why I creating this?
   Because I wanna learn
 

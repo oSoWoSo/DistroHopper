@@ -1,0 +1,108 @@
+# Odyssey Shipwreck Calamares install (UEFI)
+
+# Tesseract language code
+TESSERACT_LANG="eng"
+
+# GRUB menu — short, high-contrast fragments that OCR reliably picks up
+# The GRUB menu shows "Odyssey" and "Shipwreck" but exact phrasing varies by build.
+# We provide several candidates and the test loops over them.
+text_console_gnu_grub_1="GNU GRUB"
+text_console_gnu_grub_2="Odyssey"
+text_console_gnu_grub_3="Shipwreck"
+
+# Live desktop welcome / first-boot screen
+text_live_welcome_1="Welcome to Odyssey"
+text_live_welcome_2="Shipwreck"
+text_live_welcome_3="Live Session"
+
+# Shell prompt — permissive pattern for $ or # prompt followed by space
+# Used by qt_grep_screenshot_text (BRE); [$#] matches literal $ or #, space avoids matching mid-line
+text_shell_prompt="[\$\#] "
+text_shell_prompt_root="#"
+
+# Calamares Welcome screen
+text_calamares_welcome_1="Welcome to the Odyssey installer"
+text_calamares_welcome_2="This program will guide you"
+
+# Calamares Language / Time & Localization
+text_calamares_time_localization="Time and Location"
+text_calamares_time_localization_alt="Timezone"
+
+# Calamares Keyboard
+text_calamares_keyboard="Keyboard model"
+text_calamares_keyboard_alt="Keyboard layout"
+
+# Calamares Desktop Environment Selection
+text_calamares_de_selection="Desktop Environment"
+text_calamares_de_selection_alt="Choose your desktop"
+
+# Calamares Partitioning
+text_calamares_partitioning="Partitioning"
+text_calamares_partitioning_alt="Installation type"
+text_calamares_erase_disk="Erase disk"
+text_calamares_encrypt_checkbox="Encrypt"
+text_calamares_swap_no_hibernate="Swap (no hibernation)"
+text_calamares_partitioning_finish="Summary"
+text_calamares_partitioning_finish_alt="Review"
+
+# Calamares Users
+text_calamares_users="User"
+text_calamares_users_alt="Computer Name"
+text_calamares_password_short_warn="password is short"
+text_calamares_password_short_error="too short"
+
+# Calamares Summary
+text_calamares_summary="Summary"
+text_calamares_summary_alt="overview"
+
+# Calamares Install progress / finish
+text_calamares_install="Install"
+text_calamares_installing="Installing"
+text_calamares_finished="All done"
+text_calamares_finished_alt="Installation complete"
+text_calamares_restart_now="Restart now"
+text_calamares_restart_now_alt="Reboot now"
+
+# Post-reboot: GRUB (installed system)
+text_grub_installed_1="Odyssey"
+text_grub_installed_2="Shipwreck"
+text_grub_installed_3="advanced options"
+
+# LUKS unlock prompt (FDE)
+text_luks_unlock_1="Please unlock"
+text_luks_unlock_2="Enter passphrase"
+text_luks_unlock_3="cryptsetup"
+
+# SDDM login screen
+text_sddm_login_1="Login"
+text_sddm_login_2="Plasma"
+text_sddm_session_x11="Plasma (X11)"
+text_sddm_session_wayland="Plasma (Wayland)"
+text_sddm_password="Password"
+
+# Plasma desktop welcome
+text_plasma_welcome_1="Welcome to Plasma"
+text_plasma_welcome_2="Odyssey Shipwreck"
+
+# Serial console markers (exact strings from Oculix)
+text_serial_pkg_start="=== PACKAGE LIST START ==="
+text_serial_pkg_end="=== PACKAGE LIST END ==="
+text_serial_svc_start="=== SERVICE STATUS START ==="
+text_serial_svc_end="=== SERVICE STATUS END ==="
+text_serial_net_start="=== NETWORK STATUS START ==="
+text_serial_net_end="=== NETWORK STATUS END ==="
+text_serial_dmesg_start="=== DMESG START ==="
+text_serial_dmesg_end="=== DMESG END ==="
+text_serial_oupdate_start="=== OUPDATE START ==="
+text_serial_oupdate_end="=== OUPDATE END ==="
+
+# Network check in serial log
+text_serial_inet="inet "
+
+# Commands available in live session
+text_cmd_olist="olist"
+text_cmd_sv_status="sv status"
+text_cmd_ip_a="ip a"
+text_cmd_curl="curl"
+text_cmd_dmesg="dmesg"
+text_cmd_oupdate="oupdate"

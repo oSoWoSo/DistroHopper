@@ -16,11 +16,56 @@ Can be used together with quickemu
 [quicktui](https://github.com/oSoWoSo/DistroHopper/blob/all/quicktui) TUI using gum (🚧 usable but under heavy development)
 
 🐅
-[qrun](https://github.com/oSoWoSo/DistroHopper/blob/all/qrun) TUI using gum
+[qrun](https://github.com/oSoWoSo/DistroHopper/blob/all/qrun) TUI using gum (offline launch and snapshot management)
 [![asciicast](https://asciinema.org/a/fPcYGWhF8aGoJJ5M30Q1CWdqe.svg)](https://asciinema.org/a/fPcYGWhF8aGoJJ5M30Q1CWdqe)
 
 🦈
 [q](https://github.com/oSoWoSo/DistroHopper/blob/all/q) TUI using gum
+
+and
+
+## How the release and edition lists are built
+
+`templates/<os>` is the **dynamic** part: its `releases_()`, `editions_()` and
+`arch_()` functions scrape the upstream mirror to find out which releases and
+editions exist right now. They need the network and they are slow.
+
+`public/<os>` is the **static** part: the same functions plus the releases and
+editions that were parsed at generation time, stored as plain variables:
+
+    RELEASES="v3.24 v3.23 …"
+    EDITIONS="boot dvd minimal"
+    QEMU_ARCH="amd64 arm64 …"
+
+The front-ends read the static copy, so listing the supported systems and
+picking a release works **without a network connection**. Only the download
+itself needs one.
+
+Rebuild the static copy with:
+
+    ./generate <os>        # one distro
+    ./generate --all       # every distro, in order
+    ./generate --parallel  # every distro, in parallel
+    ./generate --test <os> # check whether the image URLs still resolve
+
+A distro whose upstream cannot be reached keeps its previous metadata, so a
+failed run never removes a distro from the list.
+
+`dh-refresh` does the same unattended and can schedule itself:
+
+    dh-refresh --install-cron   # refresh every day at 04:00
+    dh-refresh --show-cron      # show the schedule
+    dh-refresh --remove-cron    # remove the schedule
+
+The schedule is opt-in, and the other entries in your crontab are left alone.
+
+To read the live templates instead of the generated metadata — for example
+right after a new release was announced — use `--templates`:
+
+    qget --templates --show <os>
+    qget --templates --list
+
+The same switch is in the GUI under *Options → Metadata source*.
 
 and
 

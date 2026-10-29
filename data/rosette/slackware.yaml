@@ -3,6 +3,7 @@ name: Slackware
 package_manager: slackpkg
 init: sysvinit
 icon: slackware.svg
+homepage: https://www.slackware.com
 color: "#54487A"
 
 commands:

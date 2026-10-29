@@ -1413,6 +1413,20 @@ function web_pipe_json() {
      curl --disable --silent --location --header "Accept: application/json" "${1}"
 }
 
+# checks if a URL needs to be redirected and returns the final URL
+function web_redirect() {
+    local REDIRECT_URL=""
+    local URL="${1}"
+    # Check for URL redirections
+    # Output to nonexistent directory so the download fails fast
+    REDIRECT_URL=$(curl --disable --silent --location --fail --write-out '%{url_effective}' --output /var/cache/${RANDOM}/${RANDOM} "${URL}" )
+    if [ "${REDIRECT_URL}" != "${URL}" ]; then
+        echo "${REDIRECT_URL}"
+    else
+        echo "${URL}"
+    fi
+}
+
 # Download a file from the web
 function web_get() {
     local CHECK=""
@@ -1472,20 +1486,6 @@ function web_get() {
         echo "ERROR! Failed to download ${URL} with curl."
         rm -f "${DIR}/${FILE}"
         exit 1
-    fi
-}
-
-# checks if a URL needs to be redirected and returns the final URL
-function web_redirect() {
-    local REDIRECT_URL=""
-    local URL="${1}"
-    # Check for URL redirections
-    # Output to nonexistent directory so the download fails fast
-    REDIRECT_URL=$(curl --disable --silent --location --fail --write-out '%{url_effective}' --output /var/cache/${RANDOM}/${RANDOM} "${URL}" )
-    if [ "${REDIRECT_URL}" != "${URL}" ]; then
-        echo "${REDIRECT_URL}"
-    else
-        echo "${URL}"
     fi
 }
 
@@ -3681,7 +3681,7 @@ function create_config() {
     fi
     if [[ "${INPUT}" == "http://"* ]] || [[ "${INPUT}" == "https://"* ]]; then
         INPUT="$(web_redirect "${INPUT}")"
-        if [[ "${INPUT}" == *".iso" ]] || [[ "${INPUT}" == *".img" ]]; then
+        if [[ "${INPUT}" == *".iso" ]] || [[ "${INPUT}" == *".img" ]] || [[ "${INPUT}" == *".ISO" ]] || [[ "${INPUT}" == *".IMG" ]]; then
             web_get "${INPUT}" "${VM_PATH}"
             INPUT="${INPUT##*/}"
         else

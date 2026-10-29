@@ -186,63 +186,71 @@ function snapshot_apply() {
     local TAG="${1}"
     if [ -z "${TAG}" ]; then
         echo " - ERROR! No snapshot tag provided."
-        exit
+        return 1
     fi
 
-    if [ -e "${disk_img}" ]; then
-        if ${QEMU_IMG} snapshot -q -a "${TAG}" "${disk_img}"; then
-            echo " - Applied snapshot '${TAG}' to ${disk_img}"
-        else
-            echo " - ERROR! Failed to apply snapshot '${TAG}' to ${disk_img}"
-        fi
-    else
+    if [ ! -e "${disk_img}" ]; then
         echo " - NOTE! ${disk_img} not found. Doing nothing."
+        return 1
+    fi
+    if ${QEMU_IMG} snapshot -q -a "${TAG}" "${disk_img}"; then
+        echo " - Applied snapshot '${TAG}' to ${disk_img}"
+    else
+        echo " - ERROR! Failed to apply snapshot '${TAG}' to ${disk_img}"
+        return 1
     fi
 }
+
 
 function snapshot_create() {
     echo "Snapshotting ${disk_img}"
     local TAG="${1}"
     if [ -z "${TAG}" ]; then
         echo "- ERROR! No snapshot tag provided."
-        exit
+        return 1
     fi
 
-    if [ -e "${disk_img}" ]; then
-        if ${QEMU_IMG} snapshot -q -c "${TAG}" "${disk_img}"; then
-            echo " - Created snapshot '${TAG}' for ${disk_img}"
-        else
-            echo " - ERROR! Failed to create snapshot '${TAG}' for ${disk_img}"
-        fi
-    else
+    if [ ! -e "${disk_img}" ]; then
         echo " - NOTE! ${disk_img} not found. Doing nothing."
+        return 1
+    fi
+    if ${QEMU_IMG} snapshot -q -c "${TAG}" "${disk_img}"; then
+        echo " - Created snapshot '${TAG}' for ${disk_img}"
+    else
+        echo " - ERROR! Failed to create snapshot '${TAG}' for ${disk_img}"
+        return 1
     fi
 }
+
 
 function snapshot_delete() {
     echo "Snapshot removal ${disk_img}"
     local TAG="${1}"
     if [ -z "${TAG}" ]; then
         echo " - ERROR! No snapshot tag provided."
-        exit
+        return 1
     fi
 
-    if [ -e "${disk_img}" ]; then
-        if ${QEMU_IMG} snapshot -q -d "${TAG}" "${disk_img}"; then
-            echo " - Deleted snapshot '${TAG}' from ${disk_img}"
-        else
-            echo " - ERROR! Failed to delete snapshot '${TAG}' from ${disk_img}"
-        fi
-    else
+    if [ ! -e "${disk_img}" ]; then
         echo " - NOTE! ${disk_img} not found. Doing nothing."
+        return 1
+    fi
+    if ${QEMU_IMG} snapshot -q -d "${TAG}" "${disk_img}"; then
+        echo " - Deleted snapshot '${TAG}' from ${disk_img}"
+    else
+        echo " - ERROR! Failed to delete snapshot '${TAG}' from ${disk_img}"
+        return 1
     fi
 }
 
+
 function snapshot_info() {
     echo
-    if [ -e "${disk_img}" ]; then
-        ${QEMU_IMG} info "${disk_img}"
+    if [ ! -e "${disk_img}" ]; then
+        echo " - NOTE! ${disk_img} not found."
+        return 1
     fi
+    ${QEMU_IMG} info "${disk_img}"
 }
 
 function get_port() {
@@ -981,7 +989,7 @@ function configure_bios() {
                             "${SHARE_PATH}/OVMF/x64/OVMF_CODE.secboot.fd","${SHARE_PATH}/OVMF/x64/OVMF_VARS.fd" \
                             "${SHARE_PATH}/edk2-ovmf/OVMF_CODE.secboot.fd","${SHARE_PATH}/edk2-ovmf/OVMF_VARS.fd" \
                             "${SHARE_PATH}/qemu/ovmf-x86_64-smm-ms-code.bin","${SHARE_PATH}/qemu/ovmf-x86_64-smm-ms-vars.bin" \
-                            "${SHARE_PATH}/qemu/edk2-x86_64-secure-code.fd","${SHARE_PATH}/qemu/edk2-x86_64-code.fd" \
+                            "${SHARE_PATH}/qemu/edk2-x86_64-secure-code.fd","${SHARE_PATH}/qemu/edk2-i386-vars.fd" \
                             "${SHARE_PATH}/edk2-ovmf/x64/OVMF_CODE.secboot.fd","${SHARE_PATH}/edk2-ovmf/x64/OVMF_VARS.fd" \
                             "${SHARE_PATH}/edk2/x64/OVMF_CODE.secboot.4m.fd","${SHARE_PATH}/edk2/x64/OVMF_VARS.4m.fd" \
                             "${SHARE_PATH}/edk2/ovmf/OVMF_CODE_4M.secboot.qcow2","${SHARE_PATH}/edk2/ovmf/OVMF_VARS_4M.secboot.qcow2"
@@ -993,7 +1001,7 @@ function configure_bios() {
                             "${SHARE_PATH}/OVMF/x64/OVMF_CODE.fd","${SHARE_PATH}/OVMF/x64/OVMF_VARS.fd" \
                             "${SHARE_PATH}/edk2-ovmf/OVMF_CODE.fd","${SHARE_PATH}/edk2-ovmf/OVMF_VARS.fd" \
                             "${SHARE_PATH}/qemu/ovmf-x86_64-4m-code.bin","${SHARE_PATH}/qemu/ovmf-x86_64-4m-vars.bin" \
-                            "${SHARE_PATH}/qemu/edk2-x86_64-code.fd","${SHARE_PATH}/qemu/edk2-x86_64-code.fd" \
+                            "${SHARE_PATH}/qemu/edk2-x86_64-code.fd","${SHARE_PATH}/qemu/edk2-i386-vars.fd" \
                             "${SHARE_PATH}/edk2-ovmf/x64/OVMF_CODE.fd","${SHARE_PATH}/edk2-ovmf/x64/OVMF_VARS.fd" \
                             "${SHARE_PATH}/edk2/x64/OVMF_CODE.4m.fd","${SHARE_PATH}/edk2/x64/OVMF_VARS.4m.fd" \
                             "${SHARE_PATH}/edk2/ovmf/OVMF_CODE_4M.qcow2","${SHARE_PATH}/edk2/ovmf/OVMF_VARS_4M.qcow2"
@@ -1007,9 +1015,10 @@ function configure_bios() {
             for f in "${ovmfs[@]}"; do
                 # shellcheck disable=SC2086
                 set -- ${f};
-                if [ -e "${1}" ]; then
+                if [ -e "${1}" ] && [ -e "${2}" ]; then
                     EFI_CODE="${1}"
                     EFI_EXTRA_VARS="${2}"
+                    break
                 fi
             done
             IFS=$_IFS
@@ -2599,14 +2608,11 @@ readonly LAUNCHER=$(basename "${0}")
 readonly DISK_MIN_SIZE=$((197632 * 8))
 readonly VERSION="4.9.9"
 
-# Default architecture is x86_64, can be overridden by config file (arch="aarch64")
-arch="${arch:-x86_64}"
-ARCH_VM="${arch}"
+# Check for qemu-img early; the guest QEMU binary depends on the VM config.
 ARCH_HOST=$(uname -m)
-QEMU=$(command -v "qemu-system-${ARCH_VM}")
 QEMU_IMG=$(command -v qemu-img)
-if [ ! -x "${QEMU}" ] || [ ! -x "${QEMU_IMG}" ]; then
-    echo "ERROR! QEMU not found. Please make sure 'qemu-system-${ARCH_VM}' and 'qemu-img' are installed."
+if [ ! -x "${QEMU_IMG}" ]; then
+    echo "ERROR! qemu-img not found. Please make sure qemu-img is installed."
     exit 1
 fi
 
@@ -2866,23 +2872,27 @@ if [ -n "${VM}" ] && [ -e "${VM}" ]; then
     fi
 
     if [ -n "${SNAPSHOT_ACTION}" ]; then
+        if [ -n "${VM_PID}" ]; then
+            echo "ERROR! Cannot manage snapshots while the VM is running."
+            exit 1
+        fi
         case ${SNAPSHOT_ACTION} in
             apply)
-                snapshot_apply "${SNAPSHOT_TAG}"
-                snapshot_info
-                exit;;
+                snapshot_apply "${SNAPSHOT_TAG}" || exit 1
+                snapshot_info || exit 1
+                exit 0;;
             create)
-                snapshot_create "${SNAPSHOT_TAG}"
-                snapshot_info
-                exit;;
+                snapshot_create "${SNAPSHOT_TAG}" || exit 1
+                snapshot_info || exit 1
+                exit 0;;
             delete)
-                snapshot_delete "${SNAPSHOT_TAG}"
-                snapshot_info
-                exit;;
+                snapshot_delete "${SNAPSHOT_TAG}" || exit 1
+                snapshot_info || exit 1
+                exit 0;;
             info)
                 echo "Snapshot information ${disk_img}"
-                snapshot_info
-                exit;;
+                snapshot_info || exit 1
+                exit 0;;
             *)
                 echo "ERROR! \"${SNAPSHOT_ACTION}\" is not a supported snapshot action."
                 usage

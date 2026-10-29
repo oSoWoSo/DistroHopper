@@ -2,7 +2,8 @@ id: alpine
 name: Alpine Linux
 package_manager: apk
 init: openrc
-icon: alpine.svg
+icon: alpine-linux.svg
+homepage: https://alpinelinux.org/
 color: "#0d597f"
 
 commands:

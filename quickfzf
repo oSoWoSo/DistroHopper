@@ -22,7 +22,16 @@ tui_define_variables() {
 	if ! command -v quickemu >/dev/null 2>&1; then
 		echo 'You are missing quickemu...' && exit 1
 	fi
-	QUICKGET=$(command -v quickget) || exit 2
+	if command -v qget >/dev/null 2>&1; then
+		QUICKGET=$(command -v qget)
+		QUICKGET_QGET=yes
+	elif [ -x "${SCRIPT_DIR}/qget" ]; then
+		QUICKGET="${SCRIPT_DIR}/qget"
+		QUICKGET_QGET=yes
+	else
+		QUICKGET=$(command -v quickget) || exit 2
+		QUICKGET_QGET=no
+	fi
 	if ! command -v fzf >/dev/null 2>&1; then
 		echo 'You are missing fzf...' && exit 3
 	fi
@@ -72,31 +81,62 @@ advanced & settings" | fzf --height 10% --layout=reverse --info=inline --header-
 }
 
 fzf_get_releases() {
-	release=$(echo "$choices" | grep 'Releases' | cut -f2 | grep -o '[^ ]*' | fzf --cycle --header='Choose Release')
+	release=$(echo "$choices" | grep 'Releases:' | cut -d':' -f2 | grep -o '[^ ]*' | fzf --cycle --header='Choose Release')
+}
+fzf_get_architecture() {
+	local architectures
+	architectures=$(echo "$choices" | sed -n 's/^Archs:[[:space:]]*//p')
+	[ -z "$architectures" ] && architectures="$(_host_arch)"
+	if [ "$(echo "$architectures" | wc -w)" -gt 1 ]; then
+		ARCH=$(printf '%s\n' $architectures | fzf --cycle --header='Choose Architecture')
+		[ -z "$ARCH" ] && { printf 'Architecture selection cancelled.\n' >&2; return 1; }
+	else
+		ARCH="$architectures"
+	fi
+	return 0
 }
 
+
 fzf_get_editions() {
-	edition=$(echo "$choices" | grep 'Editions' | cut -f2 | grep -o '[^ ]*' | fzf --cycle --header='Choose Edition')
+	edition=$(printf '%s\n' "$choices" | sed -n '/^EditionsList:$/,$p' | sed '1d; /^$/d' | fzf --cycle --header='Choose Edition')
 }
 
 tui_create_VM() {
-	os=$("$QUICKGET" | awk 'NR==2,/zorin/' | cut -d':' -f2 | grep -o '[^ ]*' | fzf --cycle --header='Choose OS to download')
-	choices=$("$QUICKGET" "$os" | awk 'NR==5,NR==8' | sed '/^$/q')
-	# Get the release and edition to download, if necessary
-	if [ -z "$os" ]; then exit 100
-	elif [ "$(echo "$choices" | wc -l)" = 3 ]; then
+	if [ "${QUICKGET_QGET}" = "yes" ]; then
+		os=$("$QUICKGET" --list-os | fzf --cycle --header='Choose OS to download')
+		[ -z "$os" ] && exit 100
+		choices=$("$QUICKGET" --show --plain "$os")
+		fzf_get_architecture || exit 100
+		choices=$("$QUICKGET" --show --plain --arch "$ARCH" "$os")
 		fzf_get_releases || exit 101
-		printf '\n Trying to download %s %s...\n\n' "$os" "$release"
-		"$QUICKGET" "$os" "$release" || exit 104
-		#cat "${configdir}/vm" >> $(ls -t | head -n1)
+		[ -z "$release" ] && exit 101
+		choices=$("$QUICKGET" --show --plain --arch "$ARCH" --release "$release" "$os")
+		if echo "$choices" | grep -q 'Editions:'; then
+			fzf_get_editions || exit 103
+			[ -z "$edition" ] && exit 103
+			printf '\n Trying to download %s %s %s (%s)...\n\n' "$os" "$release" "$edition" "$ARCH"
+			"$QUICKGET" --arch "$ARCH" "$os" "$release" "$edition" || exit 105
+		else
+			printf '\n Trying to download %s %s (%s)...\n\n' "$os" "$release" "$ARCH"
+			"$QUICKGET" --arch "$ARCH" "$os" "$release" || exit 104
+		fi
 	else
-		fzf_get_releases || exit 102
-		fzf_get_editions || exit 103
-		printf '\n Trying to download %s %s %s...\n\n' "$os" "$release" "$edition"
-		"$QUICKGET" "$os" "$release" "$edition" || exit 105
-		#echo "${configdir}/vm" >> ./"$(ls -t | head -n1)"
+		os=$("$QUICKGET" | awk 'NR==2,/zorin/' | cut -d':' -f2 | grep -o '[^ ]*' | fzf --cycle --header='Choose OS to download')
+		choices=$("$QUICKGET" "$os" | awk 'NR==5,NR==8' | sed '/^$/q')
+		if [ -z "$os" ]; then exit 100
+		elif [ "$(echo "$choices" | wc -l)" = 3 ]; then
+			fzf_get_releases || exit 101
+			printf '\n Trying to download %s %s...\n\n' "$os" "$release"
+			"$QUICKGET" "$os" "$release" || exit 104
+		else
+			fzf_get_releases || exit 102
+			fzf_get_editions || exit 103
+			printf '\n Trying to download %s %s %s...\n\n' "$os" "$release" "$edition"
+			"$QUICKGET" "$os" "$release" "$edition" || exit 105
+		fi
 	fi
 }
+
 
 tui_edit_default_VMs_config() {
 	printf 'For example:\ncpu_cores="2"\nram="4G"\n'
@@ -104,6 +144,10 @@ tui_edit_default_VMs_config() {
 }
 
 fzf_edit_VM_config() {
+	if [ -z "$EDITOR" ]; then
+		echo 'editor: Not set! edit configs will not work!'
+		return 1
+	fi
 	find *.conf | fzf --cycle --header='Choose config to edit' --height 10% --layout=reverse --info=inline --preview 'cat {}' --bind 'enter:become($EDITOR {})' || exit 104
 }
 
@@ -138,10 +182,10 @@ tui_run_VM() {
 }
 
 quickget_add_distro() {
-	echo "for now with yad only" #TODO
+	echo "for now with yad only" 
 	yad --form --field="Pretty name" "" --field="Name" "" --field="Releases" "" --field="Editions" "" --field="URL" "" --field="ISO" "" --field="Checksum file" "" > "${TMP}/template"
 	PRETTY_NAME="$(cat "${TMP}/template" | cut -d'|' -f1)"
-	NAME="$("${TMP}/template" > cut -d'|' -f2)"
+	NAME="$(cat "${TMP}/template" | cut -d'|' -f2)"
 	RELEASES="$(cat "${TMP}/template" | cut -d'|' -f3)"
 	EDITIONS="$(cat "${TMP}/template" | cut -d'|' -f4)"
 	URL="$(cat "${TMP}/template" | cut -d'|' -f5)"
@@ -253,13 +297,13 @@ quickget_show_ISOs_urls(){
 		if [ -z "$editions" ]; then
 			for release in $releases; do
 				echo "$get_name" >> "${TMP}/test"
-				timeout 3 "$QUICKGET" -s "$get_name" "${release}" >> "${TMP}/test" && $(killall zsync >> /dev/null)
+				timeout 3 "$QUICKGET" -s "$get_name" "${release}" >> "${TMP}/test" && killall zsync >/dev/null 2>&1
 			done
 		else
 			while read -r release; do
 				for edition in $editions; do
 					echo "$get_name" >> "${TMP}/test"
-					timeout 3 "$QUICKGET" -s "$get_name" "${release}" "${edition}" >> "${TMP}/test" && $(killall zsync >> /dev/null)
+					timeout 3 "$QUICKGET" -s "$get_name" "${release}" "${edition}" >> "${TMP}/test" && killall zsync >/dev/null 2>&1
 				done
 			done < releases
 		fi
@@ -270,7 +314,10 @@ quickget_show_ISOs_urls(){
 
 quickget_open_distro_homepage(){
     os=$("$QUICKGET" | awk 'NR==2,/zorin/' | cut -d':' -f2 | grep -o '[^ ]*' | fzf --cycle --header='Choose distro homepage to open')
-    xdg-open $("$QUICKGET" "$os" | grep 'Website' | cut -f2)
+    local homepage
+    homepage=$("$QUICKGET" --show --plain "$os" | grep '^Website:' | sed 's/^Website:[[:space:]]*//')
+    [ -n "$homepage" ] || return
+    xdg-open "$homepage"
 }
 
 tui_advanced_menu() {
@@ -315,6 +362,18 @@ tui_run() {
 	tui_action_prompt_fzf || exit 7
 	tui_what_to_do || exit 8
 }
+
+if [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then
+	cat <<'EOF'
+Usage: quickfzf [--help]
+
+For multi-architecture guests, select the architecture before release and
+edition. The UI then shows options supported by that architecture. If only
+upstream quickget is available, the fallback does not provide architecture
+selection.
+EOF
+	exit 0
+fi
 
 while true
 do

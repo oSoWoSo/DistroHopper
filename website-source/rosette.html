@@ -136,8 +136,9 @@
     padding: 3px 8px;
     font-size: 13px;
     font-family: var(--font);
+    text-decoration: none;
   }
-  .theme-btn:hover { border-color: var(--accent); }
+  .theme-btn:hover { border-color: var(--accent); color: var(--accent); }
 
   #distro-icons { 
     display: flex; 
@@ -339,9 +340,8 @@
           <div id="header-card">
             <div id="header-top">
               <span id="r-title">Rosette Stone</span>
-              <div id="header-controls">
-                <button class="theme-btn" onclick="toggleTheme()">🌓</button>
-              </div>
+              <a id="distro-homepage" class="theme-btn" target="_blank" rel="noopener">Project ↗</a>
+              <button class="theme-btn" onclick="toggleTheme()" aria-label="Toggle theme">🌓</button>
             </div>
             <div id="distro-icons"></div>
             <div id="cat-buttons"></div>
@@ -539,6 +539,10 @@ function renderDistroIcons() {
         <span class="distro-btn-label">${d.name.split('/')[0].trim()}</span>
       </button>
     `).join('');
+  const distro = S.distros[S.activeDistro];
+  const homepage = document.getElementById('distro-homepage');
+  homepage.href = distro.homepage;
+  homepage.setAttribute('aria-label', `Visit ${distro.name} official website`);
 }
 
 function renderCategoryButtons() {

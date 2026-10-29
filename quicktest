@@ -1,0 +1,1102 @@
+#!/usr/bin/env bash
+export LC_ALL=C
+
+# Quicktest - A script to automate testing of software in Quickemu VMs
+# Copyright (C) 2024  Alan Pope
+# SPDX-License-Identifier: MIT
+
+readonly VERSION="0.3.2"
+
+# Whoami!?
+LAUNCHER=$(basename "${0}")
+
+# Whereami!?
+readonly T_SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
+# DistroHopper integration: pull in shared helpers and the dh config
+# (VMS_DIR, RESULTS_DIR, T_MOUSE_MODE, ...) when present. Never fatal.
+SCRIPT_DIR="${T_SCRIPT_DIR}"
+if [ -f "${SCRIPT_DIR}/lib.sh" ]; then
+	source "${SCRIPT_DIR}/lib.sh"
+fi
+if [ -f "${HOME}/.config/dh/config" ]; then
+	source "${HOME}/.config/dh/config"
+fi
+
+# What time is it? (used in log file names)
+T_START_TIME=$(date +%Y%m%d-%H%M%S)
+
+# Lots of echo or not so much?
+# This maybe needs work, as we're already pretty
+# frugal with the output. But we can always add more
+DEBUG=true
+
+# A one line per testcase run summary log file. Essentially success or failure
+T_SUMMARY_LOG="${T_SUMMARY_LOG:-$T_SCRIPT_DIR/quicktest.log}"
+
+# Filename of the main log file generated on a per-testcase basis
+# The full path is set further down once the generated T_RESULTS
+# folder is known and created
+T_LOG="${T_LOG:-quicktest.log}"
+
+# The location where the test case scripts are located
+T_TESTCASES_DIR="${T_TESTCASES_DIR:-$T_SCRIPT_DIR/testcases}"
+
+# Location of the keymaps for qemu
+T_KEYMAPS_DIR="${T_KEYMAPS_DIR:-$T_TESTCASES_DIR/keymaps}"
+
+# Notify the user with a desktop notification when the test
+# is successful or fails
+T_NOTIFY="${T_NOTIFY:-true}"
+
+# If the user has already downloaded the ISO and doesn't feel
+# it's necessary to SHA256SUM check it, they can skip that step
+# by setting this to true.
+T_QGET_SKIP="${T_QGET_SKIP:-false}"
+
+# The location where qget and quickemu will run, and thus
+# store the downloaded ISO files and disk images.
+# DistroHopper: default to the dh VMS_DIR when configured.
+QUICKEMU_VM_DIR="${QUICKEMU_VM_DIR:-${VMS_DIR:-$T_SCRIPT_DIR/machines}}"
+
+# DistroHopper: mouse input mode used by the t_mouse_* helpers.
+# relative -> HMP "mouse_move"/"mouse_button" on the -monitor socket,
+# absolute -> QMP "input-send-event" (requires the qmp socket injected
+#             into the VM .conf by t_launch_quickemu).
+T_MOUSE_MODE="${T_MOUSE_MODE:-relative}"
+
+# DistroHopper: target architecture for the VM under test. Defaults to the
+# host architecture (see arch_suffix() in lib.sh for the -<arch> suffix).
+# Resolved to the host arch later, once lib.sh helpers are available.
+T_ARCH="${T_ARCH:-${ARCH:-}}"
+
+# The display type used by quickemu when it launches qemu
+# This can be 'none' for none, 'spice' for a spice viewer
+QUICKEMU_DISPLAY="${QUICKEMU_DISPLAY:-spice}"
+
+# The default resolution of the VM display
+# Make sure these are divisible by 8 or qemu freaks out
+# but it will look fine in spice viewer. However any 
+# screenshots will be distorted like trapezoid.
+QUICKEMU_WIDTH="${QUICKEMU_WIDTH:-1408}"
+QUICKEMU_HEIGHT="${QUICKEMU_HEIGHT:-792}"
+
+# By default we expect the VM to have a network connection
+# however, some tests may behave differently with no network
+# So within those tests they should be able to disable the network
+# This variable can then be used to determine if the network is 
+# enabled or disabled
+QUICKEMU_NETWORK="${QUICKEMU_NETWORK:-true}"
+
+# There may be new options to pass to quickemu, so we allow
+# the user to specify them here.
+QUICKEMU_OPTS="${QUICKEMU_OPTS:-}"
+
+# We should figure out which tesseract options are optimal
+# for doing OCR of screenshots from the VM
+# Each test case can override this
+# The tessedit_write_images can be useful for peeking into the
+# internal analysis that tesseract does. It can be useful for 
+# seeing what tesseract sees.
+# Note --psm and -l must come before the others, if specified
+#TESSERACT_OCR_OPTIONS="--loglevel ALL -c tessedit_write_images=true"
+TESSERACT_OCR_OPTIONS="${TESSERACT_OCR_OPTIONS:---loglevel OFF quiet}"
+
+# We scale up images by 3x which might not be necessary in some cases.
+# Set this to zero to disable scaling. Otherwise it's a percentage
+T_SCALE_IMAGE="${T_SCALE_IMAGE_PC:-300%}"
+
+# The command we use to convert images. 
+T_SCALE_COMMAND="${T_SCALE_COMMAND:-/usr/bin/convert}"
+
+# Currently we default keyboard layout to en_US, but this
+# can be overridden by each test case
+# Note however that a keymaps/la_CO file must exist. Use
+# keymaps/en_US as a template
+T_TEST_LANG="${T_TEST_LANG:-en_US}"
+
+TESSERACT_LANG="${TESSERACT_LANG:-eng}"
+
+# If screenshots are taken, they're then turned into a compilation
+# timelapse video and the images are removed. This can be overridden
+# by each test case
+T_KEEP_SCREENSHOTS="${T_KEEP_SCREENSHOTS:-false}"
+
+# If we use tesseract-ocr to create text files from screenshots
+# we can choose to keep those text file results or not. The text files
+# can be useful for determining what went wrong in a test, and they
+# may also be useful for identifying what text on the screen was recognised
+# and so what should be included in test cases or not.
+T_KEEP_TESSERACT_TEXT="${T_KEEP_TESSERACT_TEXT:-false}"
+
+# After a successful run, we can create a timelapse video of the
+# screenshots taken during the test. This can be overridden by each
+# test case. But we still ask for ffmpeg to be installed.
+T_CREATE_TIMELAPSE="${T_CREATE_TIMELAPSE:-true}"
+
+# The output video path and filename
+T_TIMELAPSE_VIDEO="${T_TIMELAPSE_VIDEO:-quicktest.mp4}"
+
+# Screenshots have a sequentially increasing number, as well as a
+# descriptive test case in the file name. This is the counter.
+T_SCREENSHOT_COUNT="${T_SCREENSHOT_COUNT:-0}"
+
+# A tiny delay after each key-press inserted into qemu
+QEMU_INSERT_DELAY="${QEMU_INSERT_DELAY:-0.2}"
+
+# A timeout which is used when quicktest detects that the VM is already running
+# We show a message warning the user, so they have an opportunity to let the timer
+# run out, or press ctrl-c to stop the script before it does something unexpected
+T_VM_WARNING_TIMEOUT="${T_VM_WARNING_TIMEOUT:-10}"
+
+# You can disable the error about the VM already running if you want, which may
+# be useful for follow-on tests which expect the VM to be running
+# Can be overridden in specific tests that need it
+T_DISABLE_VM_RUNNING_ERROR="${T_DISABLE_VM_RUNNING_ERROR:-false}"
+
+# Similarly to the above, we have a timeout for when quicktest detects that the disk
+# has been modified. 
+T_DISK_WARNING_TIMEOUT="${T_DISK_WARNING_TIMEOUT:-10}"
+
+# You can disable the warning about the disk image being modified if you want, which may
+# be useful for follow-on tests which expect the disk to be modified (e.g. by an installer)
+# Can be overridden in specific tests that need it
+T_DISABLE_DISK_WARNING="${T_DISABLE_DISK_WARNING:-false}"
+
+# At the end of the test run, once everything is complete, we use `open` to pop open the
+# default file manager on the host, showing the results of the test, as a convenience. 
+# quicktest is typically used on a QA person's machine, but may also be run in some CI
+# farm. So it's possible to disbale this behaviour.
+T_OPEN_RESULTS="${T_OPEN_RESULTS:-true}"
+
+# Minimum version of quickemu required
+QUICKEMU_MIN_VERSION="4.9.4"
+
+# Array of key mappings for qemu - e.g. M is shift-m
+# Each test case can override this, and each test case
+# may have only one, or many langiage files to support this
+# This is especially important when entering passwords
+# in the VM as they're not visible.
+declare -A KEYS
+
+# We need Bash 4.x or newer for this script
+if ((BASH_VERSINFO[0] < 4)); then
+    echo "🚨 Sorry, you need bash 4.0 or newer to run this script."
+    exit 1
+fi
+
+# Catch ctrl+c because we don't want to have to stab it numerous times
+# to get out of all these nested scripts when things Go Bad(TM)
+# trap ctrl-c and call ctrl_c()
+trap ctrl_c INT
+function ctrl_c() {
+    echo "💥 Trapped CTRL-C"
+    t_uninject_qmp
+    exit 99
+}
+
+# We are a bit excessive with logging, but it's useful for debugging
+# We will likely reduce the amount it spams the console at some point
+function t_start_logging() {
+    exec 3>&1 4>&2
+    trap 'exec 2>&4 1>&3' 0 1 2 3
+    exec 1> >(tee -a "$T_FULL_LOG") 2>&1
+    t_echo "🪵 Started logging: $T_FULL_LOG"
+}
+
+function t_echo {
+    if [ ! -z "$DEBUG" ]; then
+        local datestamp
+        datestamp=$(date +"%Y%m%d-%H%M%S")
+        echo "[$datestamp] $*"
+    fi
+}
+
+# I love Frank, Ian and Glenn, and their letters. They're the best.
+function t_usage() {
+    echo "             _      _    _            _ "  
+    echo "  __ _ _   _(_) ___| | _| |_ ___  ___| |_" 
+    echo " / _' | | | | |/ __| |/ / __/ _ \/ __| __|"
+    echo "| (_| | |_| | | (__|   <| |_| __/\__ \ |_ "
+    echo " \__, |\__,_|_|\___|_|\_\\\__\___||___/\__|"
+    echo "    |_| v${VERSION}, using Quickemu ${QUICKEMU_VER_LONG}"
+    echo "--------------------------------------------------------------------------------"
+    echo " Project - https://github.com/oSoWoSo/quicktest"
+    echo "--------------------------------------------------------------------------------"
+    echo 
+    echo "Usage"
+    echo "  ${LAUNCHER} testcase <arguments>"
+    echo "  ${LAUNCHER} test_install_entire_disk_with_defaults"
+    echo 
+    echo "Advanced usage:"
+    echo "  ${LAUNCHER} test_boot_to_login alpine v3.11"
+    echo "  ${LAUNCHER} test_install_entire_disk_with_defaults ubuntu-mate daily-live"
+    echo
+    echo "Arguments"
+    echo " --help         (-h)        : Show this help message"
+    echo " --list-tests   (-ls)       : Show all available tests, filtered by OS/Release/Edition if specified"
+    echo " --version      (-v)        : Show this help message"
+}
+
+# List all available tests from the tests directory. 
+# Each test can put a few lines of comments at the top. We output them
+# here so you can get a list with a description of each one.
+function t_list_tests() {
+    local os
+    local release
+    local tmpfile
+    tmpfile=$(mktemp)
+    echo "Available test cases"
+    echo "OS | Release / Edition | Test case | Short description" > $tmpfile
+    for os in "$T_TESTCASES_DIR"/*; do
+        if [ -d "$os" ]; then
+            if [ "$(basename $os)" == "keymaps" ]; then
+                continue
+            fi
+            for release in "$os"/*; do
+                if [ -d "$release" ]; then
+                    find $release/test_* -type f |
+                    while read file; do
+                        echo "$(basename $os) | $(basename $release) | $(basename $file) | $(head -n 1 "$file" | grep '^#')" >> "$tmpfile"
+                    done
+                fi
+            done
+        fi
+    done
+    column -t -s '|' "$tmpfile"
+    rm "$tmpfile"
+}
+
+###
+### SNIPPETS - functions used by tests
+###
+###
+### NETWORK - functions to enable and disable or otherwise
+###           manipulate the network
+
+# Re-enable the network by re-adding the device
+# TODO figure out syntax
+# As yet untested
+function t_enable_network() {
+    t_echo "🛜 Enabling network"
+    sendkey "netdev_add nic"
+}
+
+# TODO figure out syntax
+# As yet untested
+function t_disable_network() {
+    t_echo "🛜 Disabling network"
+    sendkey "netdev_del id=nic"
+}
+
+###
+### WAIT - functions to wait for various OS events to occur
+###
+
+# A simple sleep to wait for a bit. We should try and avoid using
+# these if possible, so tests can go faster, and not have random
+# delays. However, sometimes we need to wait for something to happen
+function t_wait_for_seconds() {
+    local seconds="$1"
+    t_echo "⏳ $seconds s"
+    local seconds=$1
+    sleep "$seconds"
+}
+
+# This shouldn't be used in real tests I supsect but only for debugging
+function t_wait_for_host_keypress() {
+    t_echo "✋ Waiting for host keypress"
+    read -n 1 -s -r -p "Press any key to continue"
+}
+
+
+# This is way more useful than the above, as it waits for a specific
+# piece of text to appear on the screen. We take a screenshot and then
+# use tessaract to OCR the text. We can then search for the text in the
+# resulting output. We can also invert the image and try again, as some
+# text might be hard for tesseract to read in the default format.
+# Note that we also specify a number of retries and an interval between
+# each try. This is useful because people have different speed computers
+# making it hard to know when a task is done. So we just do what a human does,
+# and look at the screen until we see what we want.
+# For a long running event like an install doing copying of files, which may take
+# 10 minutes or more, perhaps have 10 retries with a 60 second interval.
+function t_wait_for_text() {
+    local test_name="$1"
+    local text="$2"  
+    local retries=$3
+    local interval=$4
+    for c in $( seq 1 $retries ); do
+        t_echo "🔁 $c / $retries «$text» "
+        t_screenshot_ppm "$test_name"
+        # We only ever OCR the most recent image, so we just send the text name and the screenshot count
+        if t_search_screenshot "$test_name" "$text"; then
+            return 0
+        fi
+        t_wait_for_seconds "$interval"
+    done
+    t_test_fail "Coulnd't find text «$text» in screenshot «$T_SCREENSHOT_COUNT» after $retries retries"
+}
+
+###
+### TTY - functions to handle using the TTY console from the qemu monitor
+###
+
+# Functions to handle using the TTY console from the qemu monitor 
+# This could be useful to run commands on the host by logging in from the
+# console, or to switch to a different TTY to see what's happening or
+# capture logs
+function t_switch_to_tty() {
+    tty="$1"
+    t_echo "🖳 Switching to tty$tty"
+    t_sendkey "ctrl-alt-f$tty"
+}
+
+###
+### SYSTEM - functions to manipulate the VM system
+###
+
+# A rather brutal way to turn the VM off and on again
+function t_reboot_vm() {
+    t_echo "🔃 Rebooting the VM"
+    t_send_command "system_reset"
+}
+
+# This powers off the VM, and should really only be used
+# at the end when cleaning up.
+function t_poweroff_vm() {
+    t_echo "🔌 Powering off the VM"
+    # Qemu has a 'system_powerdown' command but that seems broken (qemu bug 1410)
+    # t_send_command "system_powerdown"
+    # So for now we'll manually kill the machine but this is not ideal (quickemu bug 1195)
+    local quickemu_pid=""
+    quickemu_pid="${QUICKEMU_VM_DIR}/${VMNAME}/${VMNAME}.pid"
+    if [ -e "$quickemu_pid"  ]; then
+        if ! kill $(cat "$quickemu_pid"); then
+            t_echo "🚨 Failed to power off the VM"
+            exit 1
+        else
+            rm "$quickemu_pid"
+        fi
+    fi
+}
+
+# DistroHopper: strip the QMP socket line we appended to the VM .conf for
+# absolute mouse support, so the next plain quickemu run is unaffected.
+function t_uninject_qmp() {
+    if [ -n "${T_QMP_CONF_APPENDED:-}" ] && [ -n "${T_QMP_SOCKET:-}" ]; then
+        # Escape / and & for the sed address
+        local esc
+        esc=$(printf '%s' "${T_QMP_SOCKET}" | sed 's/[\/&]/\\&/g')
+        sed -i "/${esc}/d" "${T_QMP_CONF_APPENDED}" 2>/dev/null || true
+        T_QMP_CONF_APPENDED=""
+    fi
+}
+
+###
+### KEYBOARD - functions to manipulate the VM keyboard
+###
+
+# This sends a key-combo like ctrl-alt-delete or 
+# meta_l-up to maximise a window
+function t_send_key_combo() {
+    local key_combo="$1"
+    t_echo "⌨️ «$key_combo»"
+    local qemu_cmd="sendkey $key_combo"
+    #echo "$qemu_cmd | $QEMU_SOCKET_COMMAND"
+    echo "$qemu_cmd" | $QEMU_SOCKET_COMMAND > /dev/null
+    # Be nice if we detected if the key combo was successful, rather 
+    # than have a timeout. But that's a problem for another day.
+    sleep "$QEMU_INSERT_DELAY"
+}
+
+ # This similar but only sends a single key and references the
+ # keys look up list to map the legend on the key to the names
+ # by which qemu knows them.
+ # e.g. M is shift-m.
+ function t_send_key() {
+    local key_name="$1"
+    # Don't send empty keypresses
+    if [ ! "$key_name" == "" ]; then
+        local qemu_key_name="${KEYS[$key_name]}"
+        local qemu_cmd="sendkey $qemu_key_name"
+        t_echo "⌨️ «$key_name»"
+        #echo "$qemu_cmd | $QEMU_SOCKET_COMMAND"
+        echo "$qemu_cmd" | $QEMU_SOCKET_COMMAND > /dev/null
+        # Be nice if we detected if the key combo was successful, rather 
+        # than have a timeout. But that's a problem for futur popey.
+        sleep "$QEMU_INSERT_DELAY"
+    fi
+}
+
+# Useful for typing in a word, or a command, or a password
+function t_send_string() {
+    local input_string="$1"
+    while IFS= read -r -n1 char; do
+        t_send_key "$char"
+    done <<< "$input_string"
+}
+
+# A simple helper that types the string and then presses return key
+function t_send_string_return() {
+    local input_string="$1"
+    t_echo "⌨️ «$input_string» then «RETURN»"
+    t_send_string "$input_string"
+    t_send_key_combo "ret"
+}
+
+# Function to send a series of keypresses followed by tab key
+function t_send_string_tab() {
+    local input_string="$1"
+    t_echo "⌨️ Typing «$input_string» then «TAB»"
+    t_send_string "$input_string"
+    t_send_key_combo "tab"
+}
+
+function t_send_command() {
+    local qemu_full_cmd="$1"
+    local qemu_cmd="$(echo $qemu_full_cmd | awk '{print $1}')"
+    local qemu_arg="$(echo $qemu_full_cmd | awk '{print $2}')"
+    # This may or may not expaand to be useful if we use some other
+    # weird qemu commands which have parameters. But for now, it's
+    # just a switch statement with two cases.
+    case "$qemu_cmd" in
+        screendump)
+            qemu_cmd="$qemu_cmd $(basename "$qemu_arg")"
+            ;;
+        *)
+            t_echo " "
+            ;; 
+    esac
+    # This was informational but a bit much in log output
+    # t_echo "ℹ️ Inserting command «$qemu_cmd»"
+    if ! echo "$qemu_full_cmd" | $QEMU_SOCKET_COMMAND > /dev/null; then
+        t_echo "🚨 qemu command failed"
+        exit 1
+    fi
+}
+
+###
+### MOUSE - functions to manipulate the VM mouse
+###
+
+# Send a raw mouse payload to qemu. In absolute mode the payload is JSON for
+# the QMP socket (with the qmp_capabilities handshake), otherwise HMP commands
+# for the -monitor socket. DistroHopper: command strings are generated by the
+# t_mouse_cmd_* helpers from lib.sh so they stay unit-testable.
+function t_mouse_send() {
+    local payload="${1}"
+    if [ "${T_MOUSE_MODE}" == "absolute" ]; then
+        if [ -z "${QMP_SOCKET_COMMAND:-}" ]; then
+            t_echo "🚨 QMP socket is not available. Absolute mouse requires the VM to be launched via quicktest with T_MOUSE_MODE=absolute."
+            return 1
+        fi
+        {
+            printf '{"execute":"qmp_capabilities"}\n'
+            printf '%s\n' "${payload}"
+        } | $QMP_SOCKET_COMMAND > /dev/null 2>&1
+    else
+        if [ -z "${QEMU_SOCKET_COMMAND:-}" ]; then
+            t_echo "🚨 QEMU socket is not available."
+            return 1
+        fi
+        printf '%s\n' "${payload}" | $QEMU_SOCKET_COMMAND > /dev/null 2>&1
+    fi
+    sleep "$QEMU_INSERT_DELAY"
+}
+
+# Move the mouse relative (HMP) or to absolute coordinates (QMP).
+function t_mouse_move() {
+    t_echo "🖱️ Move mouse to ${1}, ${2}"
+    t_mouse_send "$(t_mouse_cmd_move "$1" "$2")"
+}
+
+# Press or release a mouse button: left, right or middle.
+function t_mouse_button() {
+    t_echo "🖱️ ${1} button ${2}"
+    t_mouse_send "$(t_mouse_cmd_button "$1" "$2")"
+}
+
+# Click a mouse button at the current position.
+function t_mouse_click() {
+    t_echo "🖱️ Click ${1:-left}"
+    t_mouse_send "$(t_mouse_cmd_click "${1:-left}")"
+}
+
+# Move the mouse to a position and click there in one go.
+function t_mouse_click_at() {
+    t_echo "🖱️ Click ${3:-left} at ${1}, ${2}"
+    t_mouse_send "$(t_mouse_cmd_move "$1" "$2")
+$(t_mouse_cmd_click "${3:-left}")"
+}
+
+# Click in the top right corner of the VM display. Only meaningful in
+# absolute mode (the default quickemu tablet mouse ignores relative moves).
+function t_mouse_click_top_right() {
+    local btn="${1:-left}"
+    if [ "${T_MOUSE_MODE}" != "absolute" ]; then
+        t_echo "⚠️ t_mouse_click_top_right only works in absolute mode (T_MOUSE_MODE=absolute). Ignoring."
+        return 1
+    fi
+    t_mouse_click_at "$((QUICKEMU_WIDTH - 1))" 0 "${btn}"
+}
+
+### SCREENSHOT - functions to take screenshots and search for text
+
+function t_screenshot_ppm() {
+    local test_name="$1"
+    # Increment the screenshot counter, so we can keep track of them in
+    # sequence
+    T_SCREENSHOT_COUNT=$((T_SCREENSHOT_COUNT+1))
+    local screenshot_count
+    screenshot_count=$(printf "%04d" $T_SCREENSHOT_COUNT)
+    local ppmname="$T_RESULTS"/screenshot_"$screenshot_count"_"$test_name".ppm
+    t_echo "📷 $(basename $ppmname)"
+    t_send_command "screendump $ppmname"
+    # Make sure ppm file actually exists after the above command
+    if [ ! -f "$ppmname" ]; then
+        t_test_fail "🚨 Screenshot failed"
+    fi
+}
+
+function t_run_tesseract() {
+    local ocrimage="$1"
+    local ocrtext="$2"
+    if ! $TESSERACT -l "$TESSERACT_LANG" "$ocrimage" "$ocrtext" $TESSERACT_OCR_OPTIONS ; then
+        t_test_fail "🚨 OCR failed"
+    fi
+}
+
+function t_grep_screenshot_text() {
+    local searchterm="$1"
+    local screenshot_count="$2"
+    local ocrtext="$3"
+    t_echo "🔍 «$searchterm» in screenshot «$screenshot_count»"
+    if ! grep -q "$searchterm" "$ocrtext"; then
+        t_echo "❌ «$searchterm»"
+        return 1
+    else
+        t_echo "✅ «$searchterm»"
+        return 0
+    fi
+}
+
+function t_search_screenshot() {
+    local test_name="$1"
+    local searchterm="$2"
+    local screenshot_count
+    screenshot_count=$(printf "%04d" $T_SCREENSHOT_COUNT)
+    local dumpedimage="$T_RESULTS"/screenshot_"$screenshot_count"_"$test_name"
+    # The text file generated by tesseract lives in the same results folder and is
+    # named the same as the screenshot, but with a .txt extension
+    local ocrtext=$dumpedimage
+    # If we need to scale the image (to make it easier for tesseract to find things)
+    # then we do that here. We scale by 300% by default, but this can be overridden
+    if [ "$T_SCALE_IMAGE" == "0" ]; then
+        # We aren't scaling, so just use the original image as captured
+        # Tesseract adds the .txt suffix when creating output files.
+        t_run_tesseract "$dumpedimage.ppm" "$ocrtext"
+    else
+        local scaledimage="${dumpedimage}_x3"
+        if ! $T_SCALE_COMMAND "$dumpedimage".ppm -scale "$T_SCALE_IMAGE" "$scaledimage.ppm"; then
+            t_echo "🚨 Image scaling failed"
+            exit 1
+        else
+            # Image was scaled, so we need to OCR the scaled image
+            # Tesseract adds the .txt suffix when creating output files.
+            t_run_tesseract "$scaledimage.ppm" "$ocrtext"
+            # We don't keep the scaled image, so we delete it now
+            rm "$scaledimage.ppm"
+        fi
+    fi
+    t_grep_screenshot_text "$searchterm" "$screenshot_count" "$ocrtext.txt"
+}
+
+function t_ocr_only() {
+    local test_name="$1"
+    # Scans the previous screenshot, without looking for specific text
+    local screenshot_count
+    screenshot_count=$(printf "%04d" $T_SCREENSHOT_COUNT)
+    local ppmname="$T_RESULTS"/screenshot_"$screenshot_count"_"$test_name".ppm
+    local ppmx3name="$T_RESULTS"/screenshot_"$screenshot_count"_"$test_name"_x3.ppm
+    local txtname="$T_RESULTS"/screenshot_"$screenshot_count"_"$test_name"
+
+    if ! $T_SCALE_COMMAND "$ppmname" -scale 300% "$ppmx3name"; then
+        t_echo "🚨 Image scaling failed"
+        exit 1
+    fi
+    if ! $TESSERACT -l "$TESSERACT_LANG" "$ppmx3name" "$txtname" $TESSERACT_OCR_OPTIONS ; then
+        t_echo "🚨 OCR failed"
+        exit 1
+    fi
+    # Delete the 3x screenshot as we don't need it
+    rm "$ppmx3name"
+}
+
+
+# Load in the actual test case we're about to launch
+function t_source_quicktest_scripts() {
+    if [ ! -f "${T_TESTCASES_DIR}"/"${OS}"/"${RELEASE}${EDITIONPATH}"/"${TESTCASE}" ]; then
+        t_echo "🚨 Test case ${TESTCASE} does not exist for ${OS}-${RELEASE}${EDITIONSUFFIX}."
+        exit 1
+    fi
+    if source "${T_TESTCASES_DIR}"/"${OS}"/"${RELEASE}${EDITIONPATH}"/"${TESTCASE}"; then
+        t_echo "✅ Source quicktest scripts succeeded."
+        return 0
+    else
+        t_echo "🚨 Source quicktest scripts failed."
+        return 1
+    fi
+}
+
+# Launch qget to download the ISO and create the disk image
+# If the disk image already exists, we still run this, as it will
+# update the disk image if the ISO has changed (in some cases)
+# It also checks the checksum of thet_test_fail ISO
+function t_launch_qget() {
+    t_echo "🚀 qget ${OS} ${RELEASE} ${EDITION} in ${QUICKEMU_VM_DIR}"
+    pushd "${QUICKEMU_VM_DIR}" > /dev/null || return 1
+    # DistroHopper: for non-native architectures pass --arch so qget fetches
+    # the right ISO and writes a matching <os>-<release>-<arch>.conf.
+    if [ "${ARCH}" != "${NORMALISED_HOST_ARCH}" ]; then
+        t_echo "ℹ️ Requesting ${ARCH} architecture"
+        if ! $QGET --arch "${ARCH}" "${OS}" "${RELEASE}" "${EDITION}"; then
+            return 1
+        fi
+    elif ! $QGET "${OS}" "${RELEASE}" "${EDITION}"; then
+        return 1
+    fi
+    t_echo "✅ qget succeeded."
+    popd > /dev/null || return 1
+    return 0
+}
+
+# Launch quickemu to start the VM
+function t_launch_quickemu() {
+    t_echo "🚀 Launch quickemu ${VMNAME}.conf in ${QUICKEMU_VM_DIR}"
+    pushd "${QUICKEMU_VM_DIR}" > /dev/null || return 1
+    # Check to see if it's already running
+    if [ -e "${VMNAME}/${VMNAME}.pid" ]; then
+        # Do we care though?
+        # If T_DISABLE_VM_RUNNING_ERROR is true then we don't care, so issue a warning, wait and continue
+        if $T_DISABLE_VM_RUNNING_ERROR ; then
+            t_echo "▶️ VM is already running as expected. Continuing."
+            t_wait_for_seconds "$T_VM_WARNING_TIMEOUT"
+        else
+            t_echo "⚠️ VM is already running. Stopping test case"
+            t_test_fail "VM is already running"
+        fi
+    fi
+    # Check if the disk image exists and already likely contains an OS
+    if [ -f "${VMNAME}/disk.qcow2" ]; then
+        t_echo "🖴 Disk image exists"
+        local disk_size_units=$(qemu-img info "${VMNAME}/disk.qcow2" | grep ^disk | awk -F ' ' '{print $4}')
+        # Check if it's likely to contain data (based on the arbitrary size being at least 1GiB)
+        if [ "$disk_size_units" == "GiB" ]; then
+            # Do we care though?
+            if $T_DISABLE_DISK_WARNING ; then
+                t_echo "🖴 Disk image likely contains data. Continuing."
+            else
+                t_echo "⚠️ ${VMNAME}/disk.qcow2 likely contains data"
+                t_wait_for_seconds "$T_DISK_WARNING_TIMEOUT"
+            fi
+        fi
+    else
+        t_echo "✅ Disk image does not yet exist."
+    fi
+    # By default we have network connection, but we may disable that for some tests
+    if ! $QUICKEMU_NETWORK; then
+        t_echo "🚨 Network is disabled"
+        QUICKEMU_OPTS="${QUICKEMU_OPTS} --offline"
+    fi
+    # DistroHopper: for absolute mouse support we need a QMP socket, which the
+    # quickemu HMP-only -monitor does not provide. Inject a QMP socket through
+    # the .conf's extra_args line and remember to strip it again afterwards.
+    if [ "${T_MOUSE_MODE}" == "absolute" ]; then
+        T_QMP_SOCKET="${QUICKEMU_VM_DIR}/${VMNAME}/${VMNAME}-qmp.socket"
+        if ! grep -q "${T_QMP_SOCKET}" "${VMNAME}.conf" 2>/dev/null; then
+            printf 'extra_args=" -qmp unix:%s,server=on,wait=off "\n' "${T_QMP_SOCKET}" >> "${VMNAME}.conf"
+            T_QMP_CONF_APPENDED="${QUICKEMU_VM_DIR}/${VMNAME}.conf"
+        fi
+    fi
+    if ! $QUICKEMU $QUICKEMU_OPTS --display "$QUICKEMU_DISPLAY" --width "$QUICKEMU_WIDTH" --height "$QUICKEMU_HEIGHT" --vm "${VMNAME}".conf; then
+        # this is due to https://github.com/quickemu-project/quickemu/issues/1170
+        # fixed in later releases
+        # Once quickemu is updated we remove popd and change to return 1
+        # popd > /dev/null || return 1
+        return 0 
+    else
+        popd > /dev/null || return 1
+        return 0
+    fi
+}
+
+# We use the socket to inject keypresses into qemu, and reboot it
+# Let's make sure the socket exists, and if it does, we'll use socat as
+# the command to do the injection
+# https://gist.github.com/mvidner/8939289
+function t_get_qemu_socket() {
+    local qemu_socket="${QUICKEMU_VM_DIR}/${VMNAME}/${VMNAME}-monitor.socket"
+    local qemu_socket_rel=$(realpath -s --relative-to=$PWD $qemu_socket)
+    if [ ! -S "${qemu_socket_rel}" ]; then
+        t_echo "🚨 QEMU socket is not found."
+        return 1
+    else
+        t_echo "ℹ️ QEMU socket is ${qemu_socket_rel}"
+        #QEMU_SOCKET_COMMAND="nc -N -U $QEMU_SOCKET"
+        # Now using socat, which seems decent, but it puts all kinds of 
+        # garbage on the screen. We'll redirect it to /dev/null
+        # It might be qemu, not socat, but whatever.
+        QEMU_SOCKET_COMMAND="$SOCAT - unix-connect:$qemu_socket_rel" > /dev/null
+    fi
+    # DistroHopper: also wire up the QMP socket for absolute mouse control
+    # when it was injected into the VM .conf.
+    if [ "${T_MOUSE_MODE}" == "absolute" ] && [ -n "${T_QMP_SOCKET}" ]; then
+        local qmp_socket_rel
+        qmp_socket_rel=$(realpath -s --relative-to=$PWD "$T_QMP_SOCKET")
+        if [ ! -S "${qmp_socket_rel}" ]; then
+            t_echo "🚨 QMP socket is not found (${qmp_socket_rel})."
+            return 1
+        fi
+        t_echo "ℹ️ QMP socket is ${qmp_socket_rel}"
+        QMP_SOCKET_COMMAND="$SOCAT - unix-connect:${qmp_socket_rel}"
+    fi
+    return 0
+}
+
+function t_load_texts() {
+    # Load the texts for the current language
+    local lang="${T_TESTCASES_DIR}"/"${OS}"/"${RELEASE}${EDITIONPATH}"/i18n/"$T_TEST_LANG"
+    if [ -e "$lang" ]; then
+        source "$lang"
+        t_echo "✅ Load texts succeeded."
+        return 0
+    else
+        t_echo "🚨 Load texts failed."
+        return 1
+    fi
+}
+
+# Load in the key map things for Qemu.
+function t_load_keys() {
+    if [ -f "${T_KEYMAPS_DIR}/${T_TEST_LANG}" ]; then
+        source "${T_KEYMAPS_DIR}/${T_TEST_LANG}"
+        t_echo "✅ Load keys succeeded."
+        return 0
+    else
+        return 1
+    fi
+}
+
+# Here we actually launch the test case. 
+function t_launch_testcase() {
+    t_echo "🚀 Launch test case ${OS}/${RELEASE}${EDITIONPATH}/${TESTCASE}"
+    "$TESTCASE"
+}
+
+function t_write_summary_log() {
+    local emoji="$1"
+    if [ ! $T_SUMMARY_LOG == "" ]; then
+        local t_end_time=$(date +%Y%m%d-%H%M%S)
+        echo "$emoji ${T_START_TIME} ${t_end_time} ${OS} ${RELEASE} ${EDITIONPATH} ${TESTCASE}"  >> "$T_SUMMARY_LOG"
+        if $T_NOTIFY ; then
+            "$T_NOTIFY_SEND" "quicktest" "${emoji} ${OS} ${RELEASE} ${EDITIONPATH} ${TESTCASE}"
+        fi        
+    fi
+
+}
+
+# The standard place we end up when stuff fails. We then spit out the function name
+# that last called, and a link to the log and the results directory
+function t_test_fail() {
+    t_echo "🚨 Test failed."
+    t_echo "Last error in: $1"
+    t_echo "🪵 $T_FULL_LOG"
+    t_echo "📁 $T_RESULTS"
+    if $T_OPEN_RESULTS ; then
+        xdg-open "$T_RESULTS"
+    fi
+    t_uninject_qmp
+    t_poweroff_vm
+    t_write_summary_log "🚨 FAIL "
+    exit 99
+}
+
+# Sometimes the tests pass. This is where we end up when that happens
+function t_test_pass() {
+    t_echo "🪵 $T_FULL_LOG"
+    t_echo "📁 $T_RESULTS"
+    t_echo "🎉 Test passed: $1"
+    if $T_OPEN_RESULTS ; then
+        xdg-open "$T_RESULTS"
+    fi
+    t_write_summary_log "🎉 PASS "
+}
+
+# This is where we clean up after ourselves. We optionally make a timelapse video from the screenshots
+function t_cleanup() {
+    t_echo "🧼 Cleanup"
+    pushd "$T_RESULTS" > /dev/null || return 1
+    if $T_CREATE_TIMELAPSE ; then
+        t_echo "📹 Making video"
+        if ! $FFMPEG -hide_banner -loglevel error -framerate 1/3 -pattern_type glob -i 'screenshot_*.ppm' -c:v libx264 -pix_fmt yuv420p "$T_TIMELAPSE_VIDEO"; then
+            t_echo "🚨 ffmpeg failed"
+        fi 
+    fi
+    if $T_KEEP_SCREENSHOTS ; then
+        t_echo "ℹ️ Keeping images as requested"
+    else
+        t_echo "ℹ️ Removing images as requested"
+        rm screenshot_*.ppm
+    fi
+    if $T_KEEP_TESSERACT_TEXT ; then
+        t_echo "ℹ️ Keeping text files as requested"
+    else
+        t_echo "ℹ️ Removing text files as requested"
+        rm screenshot_*.txt
+    fi
+    popd > /dev/null || return 1
+    t_uninject_qmp
+}
+
+###
+### MAIN
+###
+
+# Take command line arguments
+# The -a/--arch flag may be given before the positional arguments.
+while [ $# -gt 0 ]; do
+    case "${1}" in
+    --list-tests|-ls)
+        t_list_tests
+        exit;;
+    -version|--version|-v)
+        echo "quicktest ${VERSION}"
+        exit;;
+    -a|--arch)
+        T_ARCH="${2}"
+        shift 2
+        continue
+        ;;
+    -h|--h|-help|--help)
+        t_usage
+        exit;;
+    *)
+        break
+        ;;
+    esac
+done
+
+if [ -z "${1:-}" ]; then
+    t_usage
+    exit 0
+fi
+
+TESTCASE="${1}"
+if [ -z "$(find "${T_TESTCASES_DIR}" -type f -name "${TESTCASE}")" ]; then
+    echo "🚨 Test case ${TESTCASE} does not exist."
+    exit 1
+fi
+shift
+
+OS=${1:-"ubuntu"}
+shift
+
+RELEASE=${1:-"24.04"}
+shift
+
+EDITION=${1:-""}
+
+# DistroHopper: resolve the downloader, preferring this project's qget,
+# then qget from PATH, then a vendored qget in the script dir.
+resolver_qget() {
+    if command -v qget > /dev/null 2>&1; then
+        command -v qget
+    elif [ -x "${SCRIPT_DIR}/qget" ]; then
+        echo "${SCRIPT_DIR}/qget"
+    #elif command -v quickget > /dev/null 2>&1; then
+    #    command -v quickget
+    #elif [ -x "${SCRIPT_DIR}/quickget" ]; then
+    #    echo "${SCRIPT_DIR}/quickget"
+    fi
+}
+
+# DistroHopper: resolve quickemu, preferring the PATH, then a vendored copy
+# in the script dir.
+resolver_quickemu() {
+    if command -v quickemu > /dev/null 2>&1; then
+        command -v quickemu
+    elif [ -x "${SCRIPT_DIR}/quickemu" ]; then
+        echo "${SCRIPT_DIR}/quickemu"
+    fi
+}
+
+# Check for required commands
+if $T_CREATE_TIMELAPSE && ! FFMPEG=$(command -v ffmpeg); then
+    echo "🚨 ffmpeg is not found."
+    exit 1
+fi
+if ! SOCAT=$(command -v socat); then
+    echo "🚨 socat is not found."
+    exit 1
+fi
+if ! TESSERACT=$(command -v tesseract); then
+    # In Void Linux is tesseract command only tesseract-ocr
+    if ! TESSERACT=$(command -v tesseract-ocr); then
+        echo "🚨 tesseract is not found."
+        exit 1
+    fi
+fi
+QUICKEMU=$(resolver_quickemu)
+if [ -z "${QUICKEMU}" ]; then
+    echo "🚨 quickemu is not found."
+    exit 1
+else
+    QUICKEMU_VER_LONG=$($QUICKEMU --version)
+    
+    # Check if QUICKEMU_VER_LONG is at least the minimum required QUICKEMU_MIN_VERSION
+    if [[ $QUICKEMU_VER_LONG =~ ([0-9]+)\.([0-9]+)\.([0-9]+) ]]; then
+        QUICKEMU_VER_MAJOR="${BASH_REMATCH[1]}"
+        QUICKEMU_VER_MINOR="${BASH_REMATCH[2]}"
+        QUICKEMU_VER_PATCH="${BASH_REMATCH[3]}"
+
+        if [[ $QUICKEMU_MIN_VERSION =~ ([0-9]+)\.([0-9]+)\.([0-9]+) ]]; then
+        QUICKEMU_MIN_MAJOR="${BASH_REMATCH[1]}"
+        QUICKEMU_MIN_MINOR="${BASH_REMATCH[2]}"
+        QUICKEMU_MIN_PATCH="${BASH_REMATCH[3]}"
+        else
+            echo "🚨 quickemu version $QUICKEMU_MIN_VERSION is not valid."
+            exit 1
+        fi
+
+        if [[ $QUICKEMU_VER_MAJOR -lt $QUICKEMU_MIN_MAJOR ]] || \
+           [[ $QUICKEMU_VER_MAJOR -eq $QUICKEMU_MIN_MAJOR && $QUICKEMU_VER_MINOR -lt $QUICKEMU_MIN_MINOR ]] || \
+           [[ $QUICKEMU_VER_MAJOR -eq $QUICKEMU_MIN_MAJOR && $QUICKEMU_VER_MINOR -eq $QUICKEMU_MIN_MINOR && $QUICKEMU_VER_PATCH -lt $QUICKEMU_MIN_PATCH ]]; then
+            echo "🚨 quickemu version $QUICKEMU_MIN_VERSION or newer is required."
+            exit 1
+        fi
+    else
+        echo "🚨 quickemu version $QUICKEMU_VER_LONG is not valid."
+        exit 1
+    fi
+fi
+if $T_NOTIFY; then
+    if ! T_NOTIFY_SEND=$(command -v notify-send); then
+        echo "🚨 notify-send is not found."
+    fi
+fi
+QGET=$(resolver_qget)
+if [ -z "${QGET}" ]; then
+    echo "🚨 No qget found."
+    exit 1
+fi
+
+# Set edition suffix if needed
+if [ ! "${EDITION}" == "" ]; then
+    EDITIONSUFFIX="-${EDITION}"
+    EDITIONPATH="/${EDITION}"
+else
+    EDITIONSUFFIX=""
+    EDITIONPATH=""
+fi
+
+# DistroHopper: normalise host/target architectures and compute the VM name.
+# Foreign-arch VMs get a "-<arch>" suffix (see arch_suffix() in lib.sh),
+# which qget also applies when writing the .conf, creating the VM dir/socket
+# and naming the disk image. Works standalone when lib.sh is unavailable.
+NORMALISED_HOST_ARCH="$(uname -m)"
+case "${NORMALISED_HOST_ARCH}" in
+    aarch64|arm64) NORMALISED_HOST_ARCH="arm64" ;;
+    *)             NORMALISED_HOST_ARCH="amd64" ;;
+esac
+if command -v _host_arch > /dev/null 2>&1; then
+    NORMALISED_HOST_ARCH="$(_host_arch)"
+fi
+ARCH="${T_ARCH:-$NORMALISED_HOST_ARCH}"
+if command -v arch_suffix > /dev/null 2>&1; then
+    ARCH_SUFFIX="$(arch_suffix)"
+else
+    ARCH_SUFFIX=""
+fi
+VMNAME="${OS}-${RELEASE}${EDITIONSUFFIX}${ARCH_SUFFIX}"
+
+# DistroHopper: results base honours ~/.config/dh/config (RESULTS_DIR) when
+# present; falls back to the VMs directory's results folder.
+if command -v expand_results_dir > /dev/null 2>&1; then
+    T_RESULTS_BASE="$(expand_results_dir)"
+else
+    T_RESULTS_BASE="$(pwd)/results"
+fi
+T_RESULTS="${T_RESULTS_BASE}/${OS}/${RELEASE}${EDITIONPATH}/${TESTCASE}/${T_START_TIME}"
+T_FULL_LOG="$T_RESULTS/$T_LOG"
+
+if  ! mkdir -p "$T_RESULTS";  then
+    echo "🚨 Failed to create results directory."
+    exit 1
+fi
+
+# We source the quicktest scripts, because they may override sett
+if ! t_source_quicktest_scripts; then
+    echo "🚨 Source quicktest scripts failed."
+    exit 1
+fi
+
+# Start logging
+if ! t_start_logging ; then
+    echo "🚨 Start logging failed."
+    exit 1
+fi
+
+# We start by running whatever is necessary to configure the test
+# This function lives inside the test, and it maybe change 
+# qget or quickemu launch settings, so that's why we run it here.
+if ! test_setup; then
+    echo "🚨 Test setup failed."
+    exit 1
+fi
+
+# Run qget to get (or check) the install image
+if ! $T_QGET_SKIP; then 
+    if ! t_launch_qget; then
+        echo "🚨 qget failed."
+        exit 1
+    fi
+else
+    echo "ℹ️ Skipping qget"
+fi
+
+# Launch the VM
+if ! t_launch_quickemu; then
+    echo "🚨 quickemu failed."
+    exit 1
+fi
+
+# Obtain the socket from Qemu so wQEMUe can poke keypresses into the VM
+# and trigger screenshot captures
+if ! t_get_qemu_socket; then
+    echo "🚨 Qemu socket is not found."
+    exit 1
+fi
+
+# Load the keymaps which map keys for different layouts
+if ! t_load_keys; then
+    echo "🚨 Load keys ${T_KEYMAPS_DIR}/${T_TEST_LANG} failed."
+    exit 1
+fi
+
+if ! t_load_texts; then
+    echo "🚨 Load texts ${T_TEXTS_DIR}/${T_TEST_LANG} failed."
+    exit 1
+fi
+
+# Finally we launch the actual test case.
+if ! t_launch_testcase; then
+    echo "🚨 Test case ${TESTCASE} failed."
+    exit 1
+fi
+
+# If the test case passes, we clean up after ourselves
+t_cleanup
+t_test_pass "${TESTCASE}"
+
+# Fin

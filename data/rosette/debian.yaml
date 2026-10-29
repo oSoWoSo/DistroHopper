@@ -3,6 +3,7 @@ name: Debian / Ubuntu
 package_manager: apt
 init: systemd
 icon: debian.svg
+homepage: https://www.debian.org
 color: "#d70751"
 
 commands:

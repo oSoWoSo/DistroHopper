@@ -1,0 +1,39 @@
+# Install Odyssey Shipwreck to entire disk with defaults and FDE (UEFI, full encryption)
+# Thin wrapper calling shared installer from lib-shipwreck
+
+function test_description() {
+    cat << EOF
+Clean install of Odyssey Shipwreck (UEFI) using Calamares with all defaults
+and full-disk encryption (LUKS). Boots live ISO, runs installer with encryption,
+reboots, unlocks LUKS (root + swap), logs into Plasma (X11), runs post-install
+inventories, powers off.
+EOF
+}
+
+# Timeouts mapped from Oculix: shortwait=2, longwait=20, bootwait=120, setupwait=600
+readonly SW_SHORTWAIT=2
+readonly SW_LONGWAIT=20
+readonly SW_BOOTWAIT=120
+readonly SW_SETUPWAIT=600
+
+function test_setup() {
+    test_user_name="Test User"
+    test_user_login="test"
+    test_hostname="testshipwreck"
+    test_password="test"
+    test_root_password="roottest"
+    test_passphrase="test"
+
+    TESSERACT_LANG="eng"
+    QT_KEEP_SCREENSHOTS=true
+}
+
+# shellcheck disable=SC1090
+source "$(dirname "${BASH_SOURCE[0]}")/lib-shipwreck"
+
+function test_install_entire_disk_with_defaults_fde() {
+    test_setup
+    sw_run_installer "true"
+}
+
+test_description

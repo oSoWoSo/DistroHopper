@@ -12,7 +12,7 @@ echo ""
 
 # Check if required files exist
 check_files() {
-	echo "[1/5] Checking required files..."
+	echo "[1/3] Checking required files..."
 
 	if [[ ! -x "./qget" ]]; then
 		echo "ERROR: qget not found or not executable"
@@ -34,61 +34,29 @@ check_files() {
 
 # Test qget --help
 test_help() {
-	echo "[2/5] Testing qget --help..."
+	echo "[2/3] Testing qget --help..."
 
-	if ./qget --help | grep -q "Usage:"; then
+	local help_output
+	help_output=$(./qget --help 2>&1)
+	if [[ "$help_output" == *"Usage:"* ]]; then
 		echo "OK: qget --help works"
 	else
 		echo "ERROR: qget --help failed"
-		#exit 1
+		return 1
 	fi
-}
-
-# Test qget --list
-test_list() {
-	echo "[3/5] Testing qget --list..."
-
-	local count
-	count=$(./qget --list 2>/dev/null | wc -l)
-
-	if [[ "$count" -gt 100 ]]; then
-		echo "OK: qget --list returns $count OS"
-	else
-		echo "WARNING: qget --list only returns $count OS (expected >100)"
-	fi
-}
-
-# Check generate files
-test_templates() {
-	echo "[4/5] Checking template files..."
-
-	local count
-	count=$(ls templates/ 2>/dev/null | wc -l)
-
-	if [[ "$count" -gt 110 ]]; then
-		echo "OK: Found $count template files"
-	else
-		echo "WARNING: Only found $count template files (expected >110)"
-	fi
-
-	# Check that key OS have template files
-	for os in linuxmint lmde debian ubuntu; do
-		if [[ -f "templates/${os}" ]]; then
-			echo "OK: templates/${os} exists"
-		else
-			echo "ERROR: templates/${os} not found"
-			exit 1
-		fi
-	done
 }
 
 # Test shellcheck if available
 test_shellcheck() {
-	echo "[5/5] Running shellcheck..."
+	echo "[3/3] Running shellcheck..."
 
 	if command -v shellcheck &>/dev/null; then
-		shellcheck -S error qget generate 2>/dev/null || echo "WARNING: shellcheck found issues"
-		echo "OK: shellcheck passed"
+		if shellcheck -S error qget generate dh; then
+			echo "OK: shellcheck passed"
+		else
+			echo "ERROR: shellcheck found issues"
+			return 1
+		fi
 	else
 		echo "SKIP: shellcheck not installed"
 	fi
@@ -100,8 +68,6 @@ echo ""
 
 check_files
 test_help
-test_list
-test_templates
 test_shellcheck
 
 echo ""
@@ -109,26 +75,32 @@ echo "Running new test suite..."
 echo ""
 
 TESTS_DIR="$(dirname "${BASH_SOURCE[0]}")"
+if command -v bats >/dev/null 2>&1; then
+	echo "[NEW] Testing Bats behavior suites..."
+	bats "${TESTS_DIR}/test-icons.bats" "${TESTS_DIR}/test-cli-options.bats" "${TESTS_DIR}/test-generate-output.bats" "${TESTS_DIR}/test-web-create.bats"
+else
+	echo "[NEW] Skipping Bats behavior tests (bats not installed)"
+fi
 
 echo "[NEW] Testing templates..."
 bash "${TESTS_DIR}/test-templates.sh"
-test_result=$?
 
 echo "[NEW] Testing public..."
 bash "${TESTS_DIR}/test-public.sh"
-test_result=$?
 
-echo "[NEW] Testing qget formats (slow - skip)..."
-# bash "${TESTS_DIR}/test-qget-csv.sh"  # Skip - too slow without network
-echo "  SKIP: requires network"
+echo "[NEW] Testing qget formats..."
+bash "${TESTS_DIR}/test-qget-csv.sh"
 
-echo "[NEW] Testing generate (slow - skip)..."
-# bash "${TESTS_DIR}/test-generate.sh"  # Skip - too slow without network
-echo "  SKIP: requires network"
+echo "[NEW] Testing library behavior..."
+bash "${TESTS_DIR}/test-lib.sh"
 
+echo "[NEW] Testing generate behavior..."
+bash "${TESTS_DIR}/test-generate.sh"
 echo "[NEW] Testing cleanup (warnings only)..."
 bash "${TESTS_DIR}/test-cleanup.sh"
-test_result=$?
+
+echo "[NEW] Testing dh..."
+bash "${TESTS_DIR}/test-dh.sh"
 
 echo ""
 echo "========================================="

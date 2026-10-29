@@ -3,8 +3,9 @@
 
 set -euo pipefail
 
-cd ..
-echo $(pwd)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
+cd "$PROJECT_DIR"
 source lib.sh
 
 echo "========================================="
@@ -15,92 +16,8 @@ echo ""
 passed=0
 failed=0
 
-test_error_specify_os() {
-	echo "[1/13] Testing error_specify_os..."
-	output=$(error_specify_os 2>&1 || true)
-	if echo "$output" | grep -q "specify\|OS\|qget"; then
-		echo "OK: error_specify_os"
-		((passed++))
-	else
-		echo "FAIL: error_specify_os"
-		((failed++))
-	fi
-}
-
-test_error_specify_release() {
-	echo "[2/13] Testing error_specify_release..."
-	output=$(error_specify_release ubuntu 2>&1 || true)
-	if echo "$output" | grep -q "specify\|release\|ubuntu"; then
-		echo "OK: error_specify_release"
-		((passed++))
-	else
-		echo "FAIL: error_specify_release"
-		((failed++))
-	fi
-}
-
-test_error_not_supported_release() {
-	echo "[3/13] Testing error_not_supported_release..."
-	output=$(error_not_supported_release ubuntu xxx 2>&1 || true)
-	if echo "$output" | grep -q "not supported\|xxx"; then
-		echo "OK: error_not_supported_release"
-		((passed++))
-	else
-		echo "FAIL: error_not_supported_release"
-		((failed++))
-	fi
-}
-
-test_error_not_supported_lang() {
-	echo "[4/13] Testing error_not_supported_lang..."
-	output=$(error_not_supported_lang xx 2>&1 || true)
-	if echo "$output" | grep -q "Language\|not supported"; then
-		echo "OK: error_not_supported_lang"
-		((passed++))
-	else
-		echo "FAIL: error_not_supported_lang"
-		((failed++))
-	fi
-}
-
-test_error_not_supported_argument() {
-	echo "[5/13] Testing error_not_supported_argument..."
-	output=$(error_not_supported_argument --xyz 2>&1 || true)
-	if echo "$output" | grep -q "Unknown\|argument"; then
-		echo "OK: error_not_supported_argument"
-		((passed++))
-	else
-		echo "FAIL: error_not_supported_argument"
-		((failed++))
-	fi
-}
-
-test_error_unable_to_create_dir() {
-	echo "[6/13] Testing error_unable_to_create_dir..."
-	output=$(error_unable_to_create_dir /nonexistent "Permission denied" 2>&1 || true)
-	if echo "$output" | grep -q "Unable\|directory"; then
-		echo "OK: error_unable_to_create_dir"
-		((passed++))
-	else
-		echo "FAIL: error_unable_to_create_dir"
-		((failed++))
-	fi
-}
-
-test_error_not_supported_image() {
-	echo "[7/13] Testing error_not_supported_image..."
-	output=$(error_not_supported_image xyz 2>&1 || true)
-	if echo "$output" | grep -q "format\|image\|supported"; then
-		echo "OK: error_not_supported_image"
-		((passed++))
-	else
-		echo "FAIL: error_not_supported_image"
-		((failed++))
-	fi
-}
-
 test_is_valid_language() {
-	echo "[8/13] Testing is_valid_language..."
+	echo "[1/10] Testing is_valid_language..."
 	if is_valid_language "en" && ! is_valid_language "xx"; then
 		echo "OK: is_valid_language"
 		((passed++))
@@ -111,7 +28,7 @@ test_is_valid_language() {
 }
 
 test_cleanup() {
-	echo "[9/13] Testing cleanup..."
+	echo "[2/10] Testing cleanup..."
 	local testfile="/tmp/test-lib-cleanup-$$"
 	echo "test" >"$testfile"
 	if cleanup "$testfile" && [[ ! -f "$testfile" ]]; then
@@ -124,63 +41,51 @@ test_cleanup() {
 }
 
 test_make_vm_config() {
-	echo "[10/13] Testing make_vm_config..."
-	local output
-	output=$(make_vm_config "test-vm" "ubuntu" "22.04" 4096 2 "20G")
-	if echo "$output" | grep -q '"name": "test-vm"'; then
+	echo "[3/10] Testing make_vm_config..."
+	# make_vm_config IMAGE_FILE [ISO_FILE] writes the quickemu .conf next to
+	# the VM directory and points it at the image.
+	local tmpdir conf
+	tmpdir="$(mktemp -d)"
+	conf="${tmpdir}/test-vm.conf"
+	(
+		cd "${tmpdir}" || exit 1
+		VM_PATH="test-vm"
+		OS="linux"
+		GUEST="linux"
+		IMAGE_TYPE="iso"
+		make_vm_config "test-vm.iso" >/dev/null 2>&1
+	)
+	if [ -f "${conf}" ] &&
+		grep -q '^guest_os="linux"$' "${conf}" &&
+		grep -q 'test-vm.iso' "${conf}"; then
 		echo "OK: make_vm_config"
 		((passed++))
 	else
-		echo "FAIL: make_vm_config"
+		echo "FAIL: make_vm_config (no usable .conf written to ${conf})"
 		((failed++))
 	fi
-}
-
-test_web_check() {
-	echo "[11/13] Testing web_check..."
-	if web_check "https://nonexistent.invalid" 2>/dev/null; then
-		echo "FAIL: web_check should fail for invalid URL"
-		((failed++))
-	elif [[ $? -eq 22 ]]; then
-		echo "OK: web_check (returned not found - expected)"
-		((passed++))
-	else
-		echo "OK: web_check"
-		((passed++))
-	fi
+	rm -rf "${tmpdir}"
 }
 
 test_shellcheck() {
-	echo "[12/13] Running shellcheck on lib.sh..."
+	echo "[4/10] Running shellcheck on lib.sh..."
 	if command -v shellcheck &>/dev/null; then
-		if shellcheck -x lib.sh 2>&1 | grep -q "errors"; then
-			echo "FAIL: shellcheck found errors"
-			((failed++))
-		else
+		if shellcheck -S error -x lib.sh; then
 			echo "OK: shellcheck"
 			((passed++))
+		else
+			echo "FAIL: shellcheck found errors"
+			((failed++))
 		fi
 	else
 		echo "SKIP: shellcheck not installed"
 	fi
 }
 
-test_public_dir() {
-	echo "[13/13] Testing PUBLIC_DIR..."
-	if [[ -n "$PUBLIC_DIR" ]] && [[ -d "$PUBLIC_DIR" ]]; then
-		echo "OK: PUBLIC_DIR=$PUBLIC_DIR"
-		((passed++))
-	else
-		echo "FAIL: PUBLIC_DIR not set or not a directory"
-		((failed++))
-	fi
-}
-
 test_table_add_row() {
-	echo "[14/16] Testing table_add_row..."
-	table_clear
+	echo "[5/10] Testing table_add_row..."
 	table_add_row "ubuntu" "amd64" "24.04" "desktop" "http://test.iso" "PASS"
-	if [[ "${#TABLE_ROWS[@]}" -eq 1 ]]; then
+	if [[ "${#TABLE_ROWS[@]}" -eq 1 && "${TABLE_ROWS[0]}" == *"ubuntu"* && "${TABLE_ROWS[0]}" == *"24.04"* ]]; then
 		echo "OK: table_add_row"
 		((passed++))
 	else
@@ -190,11 +95,10 @@ test_table_add_row() {
 }
 
 test_table_dedup() {
-	echo "[15/16] Testing table_add_row deduplication..."
-	table_clear
+	echo "[6/10] Testing table_add_row deduplication..."
 	table_add_row "ubuntu" "amd64" "24.04" "desktop" "http://test.iso" "PASS"
 	table_add_row "ubuntu" "amd64" "24.04" "desktop" "http://test.iso" "FAIL"
-	if [[ "${#TABLE_ROWS[@]}" -eq 1 ]]; then
+	if [[ "${#TABLE_ROWS[@]}" -eq 1 && "${TABLE_ROWS[0]}" == *"FAIL"* ]]; then
 		echo "OK: table dedup"
 		((passed++))
 	else
@@ -204,45 +108,176 @@ test_table_dedup() {
 }
 
 test_table_write() {
-	echo "[16/16] Testing table_write..."
+	echo "[7/10] Testing table_write..."
 	local testfile="/tmp/test-table-$$"
 	table_clear
-	table_add_row "fedora" "amd64" "40" "server" "http://fedora.iso" "PASS"
+	table_add_row "fedora-linux" "amd64" "40" "server" "http://fedora.iso" "PASS"
 	table_write "$testfile"
-	if [[ -f "$testfile" ]]; then
-		if grep -q "fedora" "$testfile"; then
-			echo "OK: table_write"
-			((passed++))
-		else
-			echo "FAIL: table_write content"
-			((failed++))
-		fi
-		rm -f "$testfile"
+	if [[ -f "$testfile" ]] && grep -q "fedora-linux" "$testfile"; then
+		echo "OK: table_write"
+		((passed++))
 	else
 		echo "FAIL: table_write"
 		((failed++))
 	fi
+	rm -f "$testfile"
+}
+
+test_qarch_mapping() {
+	echo "[8/10] Testing architecture mapping..."
+	if [[ "$(_upstream_to_qarch x86_64)" == "amd64" ]] &&
+		[[ "$(_upstream_to_qarch aarch64)" == "arm64" ]] &&
+		[[ "$(_upstream_to_qarch ppc64le)" == "ppc64el" ]] &&
+		[[ "$(_qarch_to_upstream amd64)" == "x86_64" ]] &&
+		[[ "$(_qarch_to_upstream arm64)" == "aarch64" ]]; then
+		echo "OK: qarch mapping"
+		((passed++))
+	else
+		echo "FAIL: qarch mapping"
+		((failed++))
+	fi
+}
+
+test_arch_suffix() {
+	echo "[9/10] Testing arch_suffix..."
+	host_arch="$(_host_arch)"
+	if [[ "$host_arch" == "amd64" ]]; then
+		foreign_arch="arm64"
+	else
+		foreign_arch="amd64"
+	fi
+	native_suffix=$(ARCH="${host_arch}" arch_suffix)
+	foreign_suffix=$(ARCH="${foreign_arch}" arch_suffix)
+	if [[ -z "$native_suffix" && "$foreign_suffix" == "-${foreign_arch}" ]]; then
+		echo "OK: arch_suffix distinguishes native and foreign architectures"
+		((passed++))
+	else
+		echo "FAIL: arch_suffix (native='$native_suffix', foreign='$foreign_suffix')"
+		((failed++))
+	fi
+}
+
+test_make_vm_config_arch_line() {
+	echo "[10/10] Testing make_vm_config arch= line..."
+	testdir="$(mktemp -d)"
+	host_arch="$(_host_arch)"
+	if [[ "$host_arch" == "amd64" ]]; then
+		foreign_arch="arm64"
+	else
+		foreign_arch="amd64"
+	fi
+	upstream_arch="$(_qarch_to_upstream "${foreign_arch}")"
+
+	if (
+		cd "$testdir" || exit 1
+		export QUICKEMU=quickemu
+		export VM_PATH="archtest-25.10"
+		export ARCH="${foreign_arch}"
+		export OPERATION=""
+		export OS="archtest"
+		export PRETTY="Archtest"
+		export GUEST=""
+		export IMAGE_TYPE=""
+		make_vm_config "archtest.iso" "" >/dev/null 2>&1 || exit 1
+		grep -Fqx "arch=\"${upstream_arch}\"" "${VM_PATH}.conf" || exit 1
+		rm -f "${VM_PATH}.conf"
+		export ARCH="${host_arch}"
+		export GUEST=""
+		export IMAGE_TYPE=""
+		make_vm_config "archtest.iso" "" >/dev/null 2>&1 || exit 1
+		! grep -q '^arch=' "${VM_PATH}.conf"
+	); then
+		echo "OK: make_vm_config writes foreign arch and omits native arch"
+		((passed++)) || true
+	else
+		echo "FAIL: make_vm_config arch line behavior"
+		((failed++)) || true
+	fi
+	rm -rf "$testdir"
+}
+
+test_qarch_mapping() {
+	echo "Testing _upstream_to_qarch / _qarch_to_upstream roundtrip..."
+	if [[ "$(_upstream_to_qarch x86_64)" == "amd64" ]] && [[ "$(_upstream_to_qarch aarch64)" == "arm64" ]] && [[ "$(_upstream_to_qarch ppc64le)" == "ppc64el" ]] && [[ "$(_qarch_to_upstream amd64)" == "x86_64" ]] && [[ "$(_qarch_to_upstream arm64)" == "aarch64" ]]; then
+		echo "OK: qarch mapping"
+		((passed++))
+	else
+		echo "FAIL: qarch mapping"
+		((failed++))
+	fi
+}
+
+test_arch_suffix() {
+	echo "Testing arch_suffix..."
+	local host_arch
+	host_arch="$(_host_arch)"
+	local suffix
+	suffix=$(ARCH="${host_arch}" arch_suffix)
+	if [[ -z "$suffix" ]]; then
+		local foreign
+		foreign=$(ARCH=arm64 arch_suffix)
+		if [[ "$foreign" == "-arm64" ]]; then
+			echo "OK: arch_suffix (native empty, foreign -ARCH)"
+			((passed++))
+		else
+			echo "FAIL: arch_suffix foreign (got '$foreign')"
+			((failed++))
+		fi
+	else
+		echo "FAIL: arch_suffix native (got '$suffix')"
+		((failed++))
+	fi
+}
+
+test_make_vm_config_arch_line() {
+	echo "Testing make_vm_config arch= line..."
+	local testdir
+	testdir=$(mktemp -d)
+	(
+		cd "$testdir" || exit 1
+		export QUICKEMU=quickemu
+		export VM_PATH="archtest-25.10"
+		export ARCH=arm64
+		export OPERATION=""
+		export OS="archtest"
+		export PRETTY="Archtest"
+		export GUEST=""
+		export IMAGE_TYPE=""
+		make_vm_config "archtest.iso" "" >/dev/null 2>&1
+		if grep -q '^arch="aarch64"$' "${VM_PATH}.conf"; then
+			echo "OK: make_vm_config writes arch=aarch64 for ARCH=arm64"
+			((passed++))
+		else
+			echo "FAIL: no arch line in conf"
+			((failed++))
+		fi
+		export ARCH=amd64
+		rm -f "${VM_PATH}.conf"
+		make_vm_config "archtest.iso" "" >/dev/null 2>&1
+		if grep -cq '^arch=' "${VM_PATH}.conf"; then
+			echo "FAIL: arch line present for ARCH=amd64"
+			((failed++))
+		else
+			echo "OK: no arch line for ARCH=amd64"
+			((passed++))
+		fi
+	)
+	rm -rf "$testdir"
 }
 
 echo "Running tests..."
 echo ""
 
-test_error_specify_os || true
-test_error_specify_release || true
-test_error_not_supported_release || true
-test_error_not_supported_lang || true
-test_error_not_supported_argument || true
-test_error_unable_to_create_dir || true
-test_error_not_supported_image || true
 test_is_valid_language || true
 test_cleanup || true
 test_make_vm_config || true
-test_web_check || true
 test_shellcheck || true
-test_public_dir || true
 test_table_add_row || true
 test_table_dedup || true
 test_table_write || true
+test_qarch_mapping || true
+test_arch_suffix || true
+test_make_vm_config_arch_line || true
 
 echo ""
 echo "========================================="

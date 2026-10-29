@@ -2,7 +2,8 @@ id: fedora
 name: Fedora
 package_manager: dnf
 init: systemd
-icon: fedora.svg
+icon: fedora-linux.svg
+homepage: https://www.fedoraproject.org
 color: "#294172"
 
 commands:

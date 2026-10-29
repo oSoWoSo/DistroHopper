@@ -110,21 +110,33 @@ define_variables() {
 		TERMUX=1; tmpdir="$(pwd)/tmp"
 	fi
 }
-ARCH="x86_64"
+ARCH="$(_host_arch)"
 
 generate_supported() {
 	echo "Extracting OS Editions and Releases..."
 	rm -rf "$tmpdir/distros"
 	mkdir -p "$tmpdir/distros"
-	qget --list-os 2>/dev/null > "$tmpdir/supported"
+	"$QUICKGET" --list-os 2>/dev/null > "$tmpdir/supported"
 	while read -r get_name; do
 		echo "$get_name"
-		qget --show "$get_name" 2>/dev/null > "$tmpdir/distros/${get_name}"
+		"$QUICKGET" --show --plain "$get_name" 2>/dev/null > "$tmpdir/distros/${get_name}"
 	done < "$tmpdir/supported"
 }
 
 if_needed() {
-	if [ ! -f "$tmpdir"/supported ]; then
+	# The cached list is refreshed when it is missing, and also when the
+	# generated metadata is newer than the cache — otherwise a newly added
+	# distro would never show up.
+	local _cache="${tmpdir}/supported"
+	local _stale=0
+	if [ ! -f "${_cache}" ]; then
+		_stale=1
+	elif [ -n "${PUBLIC_DIR:-}" ]; then
+		local _newest
+		_newest=$(find "${PUBLIC_DIR}" -maxdepth 1 -type f ! -name 'tmp_*' -newer "${_cache}" -print -quit 2>/dev/null)
+		[ -n "${_newest}" ] && _stale=1
+	fi
+	if [ "${_stale}" -eq 1 ]; then
 		generate_supported
 	fi
 }
@@ -145,7 +157,11 @@ Uses gum to provide a simple TUI for quickemu and quickget 'https://github.com/q
 For menus you can use arrow keys or fuzzy filtering and then ENTER
 (e + ENTER for exit or b + ENTER for back to main menu)
 
-If is posible choose more options use TAB for highliting desired and then ENTER
+When creating a multi-architecture distro, choose the guest architecture
+before its release and edition. The host architecture is the default when
+supported; otherwise the first supported architecture is used.
+
+If possible choose more options use TAB for highlighting desired and then ENTER
 
 Config files are stored at $configdir
 
@@ -177,18 +193,18 @@ gum_choose_release() {
 
 gum_choose_arch() {
 	arch_file="$tmpdir/distros/$os"
-	architectures="x86_64"
+	architectures="$(_host_arch)"
 	if [ -f "$arch_file" ]; then
-		architectures=$(grep -i "Architectures:" "$arch_file" | cut -d: -f2 | sed "s/^ //")
+		architectures=$(grep -i "Archs:" "$arch_file" | cut -d: -f2 | sed "s/^ //")
 	fi
-	[ -z "$architectures" ] && architectures="x86_64"
+	[ -z "$architectures" ] && architectures="$(_host_arch)"
 	local arch_count
 	arch_count=$(echo "$architectures" | wc -w)
 	if [ "$arch_count" -gt 1 ]; then
 		title="Choose architecture"
 		show_header
 		ARCH=$(echo "$architectures" | tr ' ' '\n' | gum choose --prompt="Choose architecture")
-		ARCH="${ARCH:-x86_64}"
+		ARCH="${ARCH:-$(_host_arch)}"
 	else
 		ARCH="${architectures}"
 	fi
@@ -210,23 +226,27 @@ gum_filter_release() {
 }
 
 gum_filter_edition() {
-	edition=$(echo "$choices" | grep 'Editions:' | cut -d: -f2 | grep -o '[^ ]*' | gum filter --sort)
+	edition=$(printf '%s\n' "$choices" | sed -n '/^EditionsList:$/,$p' | sed '1d; /^$/d' | gum filter --sort)
 }
 
 gum_filter_arch() {
 	arch_file="$tmpdir/distros/$os"
-	architectures="x86_64"
+	architectures="$(_host_arch)"
 	if [ -f "$arch_file" ]; then
-		architectures=$(grep -i "Architectures:" "$arch_file" | cut -d: -f2 | sed "s/^ //")
+		architectures=$(grep -i "Archs:" "$arch_file" | cut -d: -f2 | sed "s/^ //")
 	fi
-	[ -z "$architectures" ] && architectures="x86_64"
-	local arch_count
+	[ -z "$architectures" ] && architectures="$(_host_arch)"
+	local arch_count default_arch
 	arch_count=$(echo "$architectures" | wc -w)
+	default_arch="$(_host_arch)"
+	if ! printf '%s\n' $architectures | grep -Fxq "$default_arch"; then
+		default_arch="${architectures%% *}"
+	fi
 	if [ "$arch_count" -gt 1 ]; then
 		title="Filter architecture"
 		show_header
-		ARCH=$(echo "$architectures" | tr ' ' '\n' | gum filter --sort --placeholder="architecture (default: x86_64)")
-		ARCH="${ARCH:-x86_64}"
+		ARCH=$(echo "$architectures" | tr ' ' '\n' | gum filter --sort --placeholder="architecture (default: $default_arch)")
+		ARCH="${ARCH:-$default_arch}"
 	else
 		ARCH="${architectures}"
 	fi
@@ -258,16 +278,18 @@ gum_choose_VM2() {
 
 create_VM() {
 	gum_filter_os
-	if [ -z "$os" ]; then exit 100
-	elif ! echo "$choices" | grep -q "Editions:"; then
-		gum_filter_release
-		gum_filter_arch
-		qget --arch "$ARCH" "$os" "$release"
-	else
-		gum_filter_release
+	if [ -z "$os" ]; then exit 100; fi
+	gum_filter_arch
+	choices=$("$QUICKGET" --show --plain --arch "$ARCH" "$os") || return 1
+	gum_filter_release
+	[ -z "$release" ] && return 0
+	choices=$("$QUICKGET" --show --plain --arch "$ARCH" --release "$release" "$os") || return 1
+	if echo "$choices" | grep -q "Editions:"; then
 		gum_filter_edition
-		gum_filter_arch
-		qget --arch "$ARCH" "$os" "$release" "$edition"
+		[ -z "$edition" ] && return 0
+		"$QUICKGET" --arch "$ARCH" "$os" "$release" "$edition"
+	else
+		"$QUICKGET" --arch "$ARCH" "$os" "$release"
 	fi
 	show_headers
 }
@@ -280,19 +302,17 @@ create_VM2() {
 		gum_choose_release
 		gum_choose_arch
 		qget --arch "$ARCH" "$os" "$release"
-		if [ -f "${configdir}/default_vm_config" ]; then
-			echo 'Adding default values to config...'
-			cat "${configdir}/default_vm_config" >> "$os-$release.conf"
-		fi
+		append_default_vm_config "${configdir}/default_vm_config" "$os-$release$(arch_suffix).conf"
 	else
 		clear
 		gum_choose_release
 		gum_choose_edition
 		gum_choose_arch
-		gum spin --spinner $spinner --show-output --title="Downloading $os $release $edition" -- qget --arch "$ARCH" "$os" "$release" "$edition"
-		if [ -f "${configdir}/default_vm_config" ]; then
-			echo 'Adding default values to config...'
-			cat "${configdir}/default_vm_config" >> "$os-$release-$edition.conf"
+		if [ "$os" = "bedrock-linux" ]; then
+			QGET_DEFAULT_VM_CONFIG="${configdir}/default_vm_config" qget --arch "$ARCH" "$os" "$release" "$edition"
+		else
+			gum spin --spinner $spinner --show-output --title="Downloading $os $release $edition" -- qget --arch "$ARCH" "$os" "$release" "$edition"
+			append_default_vm_config "${configdir}/default_vm_config" "$os-$release-$edition$(arch_suffix).conf"
 		fi
 	fi
 	echo "
@@ -521,26 +541,25 @@ test_ISOs_download() {
 	rm "$tmpdir/test" 2>/dev/null
 	cd "$tmpdir" || exit
 	touch "$tmpdir/test"
-	#qget | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' > supported
 	os=$(gum filter < "$tmpdir"/supported)
-	choices=$(qget "$os" | sed 1d)
+	choices=$("$QUICKGET" --show --plain "$os" | sed 1d)
 		while read -r get_name; do
 		echo "Trying $get_name..."
 		mkdir -p "$tmpdir/_distros/$get_name" && cd "$tmpdir/_distros/$get_name" || exit
-		releases=$(qget "$get_name" | grep 'Releases:' | cut -f2 | sed 's/^ //' | sed 's/ *$//')
+		releases=$("$QUICKGET" --show --plain "$get_name" | grep 'Releases:' | cut -f2 | sed 's/^ //' | sed 's/ *$//')
 		echo "$releases" > releases
-		editions=$(qget "$get_name" | grep 'Editions:' | cut -f2 | sed 's/^ //' | sed 's/ *$//')
+		editions=$("$QUICKGET" --show --plain "$get_name" | grep 'Editions:' | cut -f2 | sed 's/^ //' | sed 's/ *$//')
 		echo "$editions" > editions
 		if [ -z "$editions" ]; then
 			for release in $releases; do
 				echo "$get_name" >> "$tmpdir/test"
-				timeout 10 qget -t "$get_name" "${release}" >> "$tmpdir/test"
+				timeout 10 "$QUICKGET" --check "$get_name" "${release}" >> "$tmpdir/test"
 			done
 		else
 			while read -r release; do
 				for edition in $editions; do
 					echo "$get_name" >> "$tmpdir/test"
-					timeout 10 qget -t "$get_name" "${release}" "${edition}" >> "$tmpdir/test"
+					timeout 10 "$QUICKGET" --check "$get_name" "${release}" "${edition}" >> "$tmpdir/test"
 				done
 			done < releases
 		fi
@@ -553,24 +572,24 @@ show_ISOs_urls(){
 	rm -r "$tmpdir/test" 2>/dev/null
 	cd "$tmpdir" || exit
 	touch "$tmpdir/test"
-	qget | sed 1d | cut -d':' -f2 | grep -o '[^ ]*' > supported
+	"$QUICKGET" --list-os > supported
 	while read -r get_name; do
 		echo "Trying $get_name..."
 		mkdir -p "$tmpdir/_distros/$get_name" && cd "$tmpdir/_distros/$get_name" || exit
-		releases=$(qget "$get_name" | grep 'Releases' | cut -d':' -f2 | sed 's/^ //' | sed 's/ *$//')
+		releases=$("$QUICKGET" --show --plain "$get_name" | grep 'Releases' | cut -d':' -f2 | sed 's/^ //' | sed 's/ *$//')
 		echo "$releases" > releases
-		editions=$(qget "$get_name" | grep 'Editions' | cut -d':' -f2 | sed 's/^ //' | sed 's/ *$//')
+		editions=$("$QUICKGET" --show --plain "$get_name" | grep 'Editions' | cut -d':' -f2 | sed 's/^ //' | sed 's/ *$//')
 		echo "$editions" > editions
 		if [ -z "$editions" ]; then
 			for release in $releases; do
 				echo "$get_name" >> "$tmpdir/test"
-				timeout 5 qget -s "$get_name" "${release}" >> "$tmpdir/test" #&& $(killall zsync >> /dev/null)
+				timeout 5 "$QUICKGET" --url "$get_name" "${release}" >> "$tmpdir/test" #&& $(killall zsync >> /dev/null)
 			done
 		else
 			while read -r release; do
 				for edition in $editions; do
 					echo "$get_name" >> "$tmpdir/test"
-					timeout 5 qget -s "$get_name" "${release}" "${edition}" >> "$tmpdir/test" #&& $(killall zsync >> /dev/null)
+					timeout 5 "$QUICKGET" --url "$get_name" "${release}" "${edition}" >> "$tmpdir/test" #&& $(killall zsync >> /dev/null)
 				done
 			done < releases
 		fi
@@ -667,6 +686,13 @@ change_quickget_cmd() {
 	[ -z "$cmd" ] && return
 	QUICKGET="$cmd"
 	config_set QUICKGET "$QUICKGET" "${configdir}/config"
+}
+
+# Update the programs from their git checkout.
+update_quicktui() {
+	title="Update $progname"
+	show_header
+	update_programs "${SCRIPT_DIR}"
 }
 
 change_spinner() {
@@ -796,7 +822,7 @@ show_header_tip() {
 /Description:/ ||
 /Releases:/ ||
 /Editions:/ ||
-/Architectures:/
+/Archs:/
 ')
 	# Set tip lenght (wrap)
 	tip7=$(gum style --width=77 "$tip6")
@@ -825,7 +851,7 @@ show_header_tip_without() {
 	tip6=$(qget --show "$tip3" 2>/dev/null | awk '/Website:/ ||
 /Releases:/ ||
 /Editions:/ ||
-/Architectures:/
+/Archs:/
 ')
 	# Join again
 	tip8=$(gum join --vertical --align top "$tip5" "$tip6")
@@ -1062,6 +1088,91 @@ show_menu_advanced_icons() {
 	done
 }
 
+## DH CONFIG EDITOR
+
+# Write KEY VALUE into the dh config file using the same quoted
+# "key=\"value\"" + "export key" format that the dh GUI writes.
+config_set_dh() {
+	local dhcfg="${HOME}/.config/dh/config"
+	mkdir -p "$(dirname "$dhcfg")"
+	if grep -q "^${1}=" "$dhcfg" 2>/dev/null; then
+		sed -i "s|^${1}=.*|${1}=\"${2}\"|" "$dhcfg"
+	else
+		printf '%s="%s"\n' "${1}" "${2}" >> "$dhcfg"
+		printf 'export %s\n' "${1}" >> "$dhcfg"
+	fi
+}
+
+# Edit one DistroHopper config variable picked by the user.
+config_edit_var() {
+	local key="$1" dhcfg="${HOME}/.config/dh/config" newval=""
+	case "$key" in
+		VMS_DIR)
+			title="VMS_DIR"
+			show_header
+			printf '\nDirectory where VMs and their .conf files are stored.\nqget downloads and quickemu runs from here.\n\n'
+			newval=$(gum input --prompt 'VMS_DIR: ' --value "${VMS_DIR:-$HOME/vm}")
+			[ -z "$newval" ] && return
+			if [ ! -d "$newval" ]; then
+				gum confirm "Create directory $newval?" && mkdir -p "$newval" || return
+			fi
+			;;
+		RAMDISK)
+			title="RAMDISK"
+			show_header
+			printf '\nCreate each VM disk in RAM (tmpfs) instead of on disk.\nDisk files are placed in RAMDISK_DIR. Data is lost on host reboot.\n\n'
+			newval=$(printf 'yes\nno' | gum choose --header 'Create VM disk in RAM (tmpfs)?' \
+				--selected "$([ "${RAMDISK:-no}" = yes ] && echo 0 || echo 1)")
+			[ -z "$newval" ] && return
+			;;
+		RAMDISK_DIR)
+			title="RAMDISK_DIR"
+			show_header
+			printf '\nDirectory where RAM disks are created when RAMDISK=yes.\nDefault: /dev/shm/quickemu (tmpfs).\n\n'
+			newval=$(gum input --prompt 'RAMDISK_DIR: ' --value "${RAMDISK_DIR:-/dev/shm/quickemu}")
+			[ -z "$newval" ] && return
+			;;
+		ISO_DIR)
+			title="ISO_DIR"
+			show_header
+			printf '\nShared directory for ISO files. Leave empty to keep each ISO\ninside its VM folder (default behavior).\n\n'
+			newval=$(gum input --prompt 'ISO_DIR (empty = keep ISO per VM): ' --value "${ISO_DIR:-}")
+			;;
+		*) return;;
+	esac
+	config_set_dh "$key" "$newval"
+	# shellcheck source=/dev/null
+	. "$dhcfg"
+	gum style --padding "0 1" --border="$BORDER" --border-foreground="$BORDERS_FOREGROUND" \
+		"$key is now: $newval"
+}
+
+# Pick a config variable to edit; each entry shows current value + explanation.
+config_editor() {
+	title="configuration editor"
+	show_header
+	local dhcfg="${HOME}/.config/dh/config"
+	# shellcheck source=/dev/null
+	[ -f "$dhcfg" ] && . "$dhcfg"
+	local choice
+	while true; do
+		choice=$(printf '%s\n' \
+			"VMS_DIR ${VMS_DIR:-$HOME/vm} -- directory where VMs and their .conf files are stored" \
+			"RAMDISK ${RAMDISK:-no} -- create VM disk in RAM (tmpfs) instead of on disk" \
+			"RAMDISK_DIR ${RAMDISK_DIR:-/dev/shm/quickemu} -- directory used for RAM disks when RAMDISK=yes" \
+			"ISO_DIR ${ISO_DIR:-<unset>} -- shared ISO directory, <unset> = ISO stays in each VM folder" \
+			"back to main menu" \
+			"exit $progname" \
+			| gum filter --height 8 --prompt='pick a variable to edit: ')
+		case "$choice" in
+			"back to main menu") return;;
+			"exit "* ) exit 0;;
+			"") return;;
+			*) config_edit_var "${choice%% *}";;
+		esac
+	done
+}
+
 show_menu_settings() {
 	while true
 	do
@@ -1069,6 +1180,7 @@ show_menu_settings() {
 	show_header
 	start=$(echo "update $progname
 regenerate supported
+config editor
 download command
 icons
 accent color
@@ -1080,6 +1192,7 @@ exit $progname" | gum filter --height "$settingsMenuHeight")
 	case $start in
 		"update $progname" ) update_quicktui;;
 		'regenerate supported' ) generate_supported;;
+		'config editor' ) config_editor;;
 		'download command' ) change_quickget_cmd;;
 		'icons' ) icons_or;;
 		'accent color' ) change_color;;
@@ -1099,6 +1212,7 @@ show_menu_settings_icons() {
 	show_header
 	start=$(echo " update $progname
  regenerate supported
+󰛉 config editor
 󱑤 download command
 󱌝 icons
  accent color
@@ -1110,6 +1224,7 @@ show_menu_settings_icons() {
 	case $start in
 		" update $progname" ) update_quicktui;;
 		' regenerate supported' ) generate_supported;;
+		'󰛉 config editor' ) config_editor;;
 		'󱑤 download command' ) change_quickget_cmd;;
 		'󱌝 icons' ) icons_or;;
 		' accent color' ) change_color;;

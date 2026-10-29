@@ -2,7 +2,8 @@ id: gentoo
 name: Gentoo Linux
 package_manager: portage
 init: openrc
-icon: gentoo.svg
+icon: gentoo-linux.svg
+homepage: https://www.gentoo.org
 color: "#54487a"
 
 commands:

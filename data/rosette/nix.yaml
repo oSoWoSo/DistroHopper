@@ -3,6 +3,7 @@ name: Nix / NixOS
 package_manager: nix
 init: systemd
 icon: nixos.svg
+homepage: https://nixos.org
 color: "#5277c3"
 
 commands:

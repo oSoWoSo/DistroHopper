@@ -460,7 +460,7 @@ _card_html() {
     ${meta_row}
     <p class="distro-description">${description}</p>
     <div class="distro-actions">
-      <button class="download-btn"><img src="icons/floppy.svg" alt="Download"> Direct Download</button>
+      <button class="download-btn"><img src="icons/download.svg" alt="" aria-hidden="true"> Direct Download</button>
     </div>
   </div>
 </div>
@@ -691,11 +691,11 @@ _generate_distros_page() {
 	nav_html=$(cat "$nav_file")
 	rm -f "$nav_file"
 
-	local toggle_html svg_color_html particles_init_html floppy_inline
+	local toggle_html svg_color_html particles_init_html download_inline
 	toggle_html=$(cat ${SRC_DIR}/toggle.html)
 	svg_color_html=$(cat ${SRC_DIR}/svg-color.html)
 	particles_init_html=$(cat ${SRC_DIR}/particles-config.html)
-	floppy_inline=$(sed 's/ width="[0-9]*"//; s/ height="[0-9]*"//' icons/floppy.svg | tr -d '\n' | tr -s ' ')
+	download_inline=$(sed 's/ width="[0-9]*"//; s/ height="[0-9]*"//' icons/download.svg | tr -d '\n' | tr -s ' ')
 
 	local data_js
 	data_js=$(_generate_distro_data_js)
@@ -705,7 +705,8 @@ _generate_distros_page() {
 
 	local unsupported_section=""
 	if [ "$type" = "all" ]; then
-		unsupported_section='<script src="distros-data.js"></script>
+		unsupported_section=$(cat <<'UNSUPPORTED_SECTION'
+<script src="distros-data.js"></script>
 	<script>
 	(function(){
   if (!window.distrosData) return;
@@ -729,19 +730,26 @@ _generate_distros_page() {
     card.dataset.supported = "false";
     card.dataset.osname = oid;
     card.dataset.basedof = d.basedof || "";
-    var iconSrc = d.icon_online || "";
-    var largeIconHtml =
-        "<img src=\""+iconSrc+"\" alt=\""+nm+"\" class=\"distro-icon-large\" width=\"128\" height=\"128\" loading=\"lazy\" onerror=\"this.style.display=\x27none\x27;this.nextElementSibling.style.display=\x27flex\x27\">"
-      + "<div class=\"distro-icon-fallback-large\" style=\"width:128px;height:128px;background:"+bg+";display:none\">"+nm.charAt(0).toUpperCase()+"</div>";
-
-    var titleIconHtml = "<img src=\""+iconSrc+"\" alt=\"\" class=\"card-title-icon\" aria-hidden=\"true\" loading=\"lazy\" onerror=\"this.style.display=\x27none\x27\">";
+    var iconSrc = _localDistroIcon(oid, nm);
+    var initial = nm.charAt(0).toUpperCase();
+    var largeIconHtml = iconSrc
+      ? "<img src=\""+iconSrc+"\" alt=\""+nm+"\" class=\"distro-icon-large\" width=\"128\" height=\"128\" loading=\"lazy\" onerror=\"this.style.display='none';this.nextElementSibling.style.display='flex'\">"
+        + "<div class=\"distro-icon-fallback-large\" style=\"width:128px;height:128px;background:"+bg+";display:none\">"+initial+"</div>"
+      : "<div class=\"distro-icon-fallback-large\" style=\"width:128px;height:128px;background:"+bg+"\">"+initial+"</div>";
+    var titleIconHtml = iconSrc
+      ? "<img src=\""+iconSrc+"\" alt=\"\" class=\"card-title-icon\" aria-hidden=\"true\" loading=\"lazy\" onerror=\"this.style.display='none'\">"
+      : "<span class=\"card-title-icon-fallback\" aria-hidden=\"true\">"+initial+"</span>";
 
     card.style.cursor = "pointer";
     card.onclick = function(e) { if (e.target.closest('a')) return; showDownloads(oid); };
+    var distroUrl = d.homepage || d.dw_url || "";
+    var distroName = distroUrl
+      ? "<a href=\""+distroUrl+"\" target=\"_blank\" rel=\"noopener\">"+nm+"</a>"
+      : nm;
     card.innerHTML =
       "<div class=\"distro-card-icon-area\">" + largeIconHtml + "</div>"
       + "<div class=\"distro-card-body\">"
-      + "<h3>" + titleIconHtml + (d.homepage?"<a href=\""+d.homepage+"\" target=\"_blank\" rel=\"noopener\">"+nm+"</a>":nm)+"</h3>"
+      + "<h3>" + titleIconHtml + distroName + "</h3>"
       + "<hr class=\"distro-divider\">"
       + "<div class=\"distro-meta\">"+catBadges+"</div>"
       + "<p class=\"distro-description\">"+(d.description||"")+"</p>"
@@ -754,7 +762,9 @@ _generate_distros_page() {
   _buildCategoryFilters();
   if (typeof filterDistros === "function") filterDistros();
 })();
-</script>'
+</script>
+UNSUPPORTED_SECTION
+		)
 	fi
 
 	cat > "${OUT_DIR}/${type}.html" <<HTML
@@ -821,6 +831,28 @@ var _giscusRepo = '${giscus_repo}';
 var _giscusRepoId = '${giscus_repo_id}';
 var _giscusCategory = '${giscus_category}';
 var _giscusCategoryId = '${giscus_category_id}';
+
+var _iconsByNormalizedName = {};
+Object.keys(window.iconsAvailable || {}).forEach(function(name) {
+  var key = name.toLowerCase().replace(/[^a-z0-9]/g, '');
+  if (!_iconsByNormalizedName[key]) _iconsByNormalizedName[key] = name;
+});
+
+function _localDistroIcon(id, name) {
+  var icons = window.iconsAvailable || {};
+  function findName(candidate) {
+    if (!candidate) return '';
+    if (icons[candidate]) return candidate;
+    var key = candidate.toLowerCase().replace(/[^a-z0-9]/g, '');
+    return _iconsByNormalizedName[key] || '';
+  }
+  var iconName = findName(id) || findName(name);
+  var info = icons[iconName];
+  if (!info) return '';
+  if (info.svg) return 'icons/' + iconName + '.svg';
+  if (info.png) return 'icons/' + iconName + '.png';
+  return '';
+}
 
 function _dwInfoHtml(dw, showSource) {
   if (!dw) return '';
@@ -909,21 +941,11 @@ function showDownloads(osname) {
   var colors = ['#E95420','#3C3B37','#A80030','#41B549','#87CF3E','#2F2F2F','#178CDA','#1d6fa4'];
   var bg = colors[name.charCodeAt(0) % 8];
   var dwBase = 'https://distrowatch.com/images/yvzhuwbpy/';
-  var iconsAvailable = window.iconsAvailable || {};
-
-  // Get icon src based on build-time availability
-  var iconSrc;
-  var info = iconsAvailable[osname];
-  if (info && info.svg) iconSrc = 'icons/'+osname+'.svg';
-  else if (info && info.png) iconSrc = 'icons/'+osname+'.png';
-  else iconSrc = dwBase + osname + '.png';
-
-  var isDwIcon = iconSrc.indexOf(dwBase) === 0;
-  var iconHtml = isDwIcon
-    ? '<img class="modal-distro-icon" src="'+iconSrc+'" alt="'+name+'" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">'
-      + '<div class="modal-distro-icon-fallback" style="background:'+bg+';display:none">'+name.charAt(0).toUpperCase()+'</div>'
-    : '<img class="modal-distro-icon" src="'+iconSrc+'" alt="'+name+'">'
-      + '<div class="modal-distro-icon-fallback" style="background:'+bg+';display:none">'+name.charAt(0).toUpperCase()+'</div>';
+  // Prefer local logos, then the template's custom online logo, and finally
+  // the DistroWatch raster when neither repository source is available.
+  var iconSrc = _localDistroIcon(osname, name) || (d && d.icon_online) || dwBase + osname + '.png';
+  var iconHtml = '<img class="modal-distro-icon" src="'+iconSrc+'" alt="'+name+'" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">'
+    + '<div class="modal-distro-icon-fallback" style="background:'+bg+';display:none">'+name.charAt(0).toUpperCase()+'</div>';
 
   var hp = (dw && dw.homepage) || (d && d.homepage) || '';
   var basedof = (dw && dw.basedof) || (d && d.basedof) || '';
@@ -959,7 +981,7 @@ function showDownloads(osname) {
       function dlCell(key) {
         var url = urlsForArch[key];
         return url
-          ? '<td><a href="'+url+'" target="_blank" rel="noopener" class="dl-link" title="'+key+'">${floppy_inline}</a></td>'
+          ? '<td><a href="'+url+'" target="_blank" rel="noopener" class="dl-link" title="'+key+'">${download_inline}</a></td>'
           : '<td><span class="dl-disabled">&#x2717;</span></td>';
       }
       var t = '';

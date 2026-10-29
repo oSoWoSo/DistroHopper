@@ -2,7 +2,8 @@ id: arch
 name: Arch Linux
 package_manager: pacman
 init: systemd
-icon: arch.svg
+icon: arch-linux.svg
+homepage: https://archlinux.org
 color: "#1793d1"
 
 commands:

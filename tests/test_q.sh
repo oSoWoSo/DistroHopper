@@ -14,12 +14,12 @@ TESTS_FAILED=0
 
 pass() {
     echo -e "${GREEN}✓${NC} $1"
-    ((TESTS_PASSED++))
+    ((TESTS_PASSED++)) || true
 }
 
 fail() {
     echo -e "${RED}✗${NC} $1"
-    ((TESTS_FAILED++))
+    ((TESTS_FAILED++)) || true
 }
 
 info() {
@@ -100,7 +100,7 @@ else
 fi
 
 info "Testing TERMUX comparison fix..."
-if grep -q 'TERMUX.*=.*"1"' /home/z/Projekty/dh/q; then
+if grep -q 'TERMUX=1' /home/z/Projekty/dh/q; then
     pass "TERMUX comparison uses = instead =="
 else
     fail "TERMUX still uses =="
@@ -121,7 +121,7 @@ else
 fi
 
 info "Testing menu items exist..."
-for item in create run delete kill ssh_into; do
+for item in create run delete kill 'ssh into'; do
     if grep -q "'$item'" /home/z/Projekty/dh/q; then
         pass "Menu has $item"
     else
@@ -148,7 +148,7 @@ for adv in test_ISOs_download show_ISOs_urls add_new_distro; do
 done
 
 info "Testing no remaining TODO comments..."
-todo_count=$(grep -c "#TODO" /home/z/Projekty/dh/q || echo "0")
+todo_count=$(grep -c "#TODO" /home/z/Projekty/dh/q 2>/dev/null || true)
 if [ "$todo_count" = "0" ]; then
     pass "No TODO comments remaining"
 else

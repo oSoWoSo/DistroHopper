@@ -1,0 +1,214 @@
+#!/usr/bin/env bash
+#
+# dh-refresh — refresh the parsed release/edition metadata in public/
+#
+# templates/<os> discovers releases and editions by scraping upstream
+# pages. That discovery is slow and needs the network, so it is done at
+# build time and the result is stored in public/<os> as static variables.
+#
+# This script re-runs that discovery, optionally on a schedule (see
+# `dh-refresh --install-cron`). It is safe to run unattended:
+#
+#   * each distro is generated on its own, so one broken upstream mirror
+#     does not stop the others;
+#   * a distro whose discovery fails keeps its previous metadata;
+#   * a distro is only replaced after its new metadata was written
+#     successfully, so an interrupted run never leaves public/ half-written.
+#
+# Usage:
+#   dh-refresh                    Refresh every distro
+#   dh-refresh <os> [...]         Refresh only the given distros
+#   dh-refresh --install-cron     Schedule a refresh with cron
+#   dh-refresh --remove-cron      Remove the scheduled refresh
+#   dh-refresh --show-cron        Show the current schedule
+#   dh-refresh --help             Show this message
+
+set -uo pipefail
+
+SCRIPT_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]:-$0}")")"
+TEMPLATES_DIR="${TEMPLATES_DIR:-${SCRIPT_DIR}/templates}"
+PUBLIC_DIR="${PUBLIC_DIR:-${SCRIPT_DIR}/public}"
+CONFIG_DIR="${DH_CONFIG_DIR:-${HOME}/.config/dh}"
+CRON_MARKER="# distrohopper-refresh"
+CRON_FILE="${CONFIG_DIR}/refresh.cron"
+
+source "${SCRIPT_DIR}/lib.sh"
+
+usage() {
+	# Print the header comment block as the help text.
+	awk 'NR>1 && /^#/ {sub(/^# ?/,""); print; next} NR>1 {exit}' "${BASH_SOURCE[0]}"
+}
+
+# ---------------------------------------------------------------------------
+# Refresh
+# ---------------------------------------------------------------------------
+
+# Refresh one distro. The new metadata is generated into a staging directory;
+# it replaces the live file only when the generation produced a usable file.
+refresh_one() {
+	local os="${1}"
+	local stage=""
+	local template="${TEMPLATES_DIR}/${os}"
+
+	if [ ! -f "${template}" ]; then
+		echo "WARNING: no template for '${os}', skipping" >&2
+		return 1
+	fi
+
+	stage="$(mktemp -d -t "dh-refresh-${os}-XXXXXX")" || return 1
+	mkdir -p "${stage}/public" "${stage}/TODO"
+
+	# generate reads the templates from TEMPLATES_DIR and writes to
+	# PUBLIC_DIR; point PUBLIC_DIR at the staging area for this distro.
+	if ! PUBLIC_DIR="${stage}/public" TEMPLATES_DIR="${TEMPLATES_DIR}" \
+		"${SCRIPT_DIR}/generate" "${os}" >"${stage}/log" 2>&1; then
+		echo "WARNING: '${os}' failed to generate, keeping previous metadata" >&2
+		rm -rf "${stage}"
+		return 1
+	fi
+
+	# The generator writes tmp_<os>*.dat / .rel next to the output. Only the
+	# metadata file itself is of interest here.
+	if [ ! -s "${stage}/public/${os}" ]; then
+		echo "WARNING: '${os}' produced no metadata, keeping previous metadata" >&2
+		rm -rf "${stage}"
+		return 1
+	fi
+
+	mkdir -p "${PUBLIC_DIR}" || { rm -rf "${stage}"; return 1; }
+	if ! cp -f "${stage}/public/${os}" "${PUBLIC_DIR}/${os}.new" 2>/dev/null; then
+		echo "WARNING: cannot write to ${PUBLIC_DIR}, skipping '${os}'" >&2
+		rm -rf "${stage}"
+		return 1
+	fi
+	mv -f "${PUBLIC_DIR}/${os}.new" "${PUBLIC_DIR}/${os}"
+	rm -rf "${stage}"
+	echo "refreshed ${os}"
+	return 0
+}
+
+refresh_all() {
+	local -a targets=()
+	local os
+	if [ "$#" -gt 0 ]; then
+		targets=("$@")
+	else
+		for template in "${TEMPLATES_DIR}"/*; do
+			[ -f "${template}" ] || continue
+			targets+=("$(basename "${template}")")
+		done
+	fi
+	if [ "${#targets[@]}" -eq 0 ]; then
+		echo "ERROR: no templates found in ${TEMPLATES_DIR}" >&2
+		return 1
+	fi
+	local failed=0
+	for os in "${targets[@]}"; do
+		refresh_one "${os}" || failed=$((failed + 1))
+	done
+	if [ "${failed}" -gt 0 ]; then
+		echo "${failed} of ${#targets[@]} distros could not be refreshed" >&2
+		return 1
+	fi
+	return 0
+}
+
+# ---------------------------------------------------------------------------
+# Cron scheduling
+# ---------------------------------------------------------------------------
+
+# The cron command must run from a directory where the repository lives, so
+# that `generate` finds templates/ and public/.
+cron_command() {
+	printf 'cd %s && %s --refresh-cron >/dev/null 2>&1' "${SCRIPT_DIR}" "${SCRIPT_DIR}/dh-refresh"
+}
+
+install_cron() {
+	local schedule="${1:-0 4 * * *}"
+	if ! command -v crontab >/dev/null 2>&1; then
+		echo "ERROR: crontab is not installed; cannot schedule a refresh" >&2
+		return 1
+	fi
+	mkdir -p "${CONFIG_DIR}" || return 1
+
+	# Read the current crontab, drop any previous entry of ours, and add
+	# the new one. Other entries are left untouched.
+	local current=""
+	current="$(crontab -l 2>/dev/null | grep -v "${CRON_MARKER}" | grep -v "dh-refresh" || true)"
+	{
+		[ -n "${current}" ] && printf '%s\n' "${current}"
+		printf '%s %s %s\n' "${schedule}" "$(cron_command)" "${CRON_MARKER}"
+	} | crontab - || {
+		echo "ERROR: could not write the crontab" >&2
+		return 1
+	}
+	echo "Scheduled metadata refresh: '${schedule}'"
+	printf '%s %s\n' "${schedule}" "$(cron_command)" > "${CRON_FILE}"
+	return 0
+}
+
+remove_cron() {
+	if ! command -v crontab >/dev/null 2>&1; then
+		echo "ERROR: crontab is not installed; nothing to remove" >&2
+		return 1
+	fi
+	local current
+	current="$(crontab -l 2>/dev/null | grep -v "${CRON_MARKER}" | grep -v "dh-refresh" || true)"
+	if [ -n "${current}" ]; then
+		printf '%s\n' "${current}" | crontab -
+	else
+		crontab -r 2>/dev/null || true
+	fi
+	rm -f "${CRON_FILE}"
+	echo "Removed the scheduled metadata refresh"
+	return 0
+}
+
+show_cron() {
+	if ! command -v crontab >/dev/null 2>&1; then
+		echo "crontab is not installed; no schedule can be active" >&2
+		return 1
+	fi
+	local entries
+	entries="$(crontab -l 2>/dev/null | grep "${CRON_MARKER}" || true)"
+	if [ -z "${entries}" ]; then
+		echo "No metadata refresh is scheduled."
+		return 1
+	fi
+	echo "Scheduled metadata refresh:"
+	printf '%s\n' "${entries}"
+	return 0
+}
+
+# ---------------------------------------------------------------------------
+
+case "${1:-}" in
+--help|-h)
+	usage
+	exit 0
+	;;
+--install-cron)
+	shift
+	install_cron "${1:-0 4 * * *}"
+	exit $?
+	;;
+--remove-cron)
+	remove_cron
+	exit $?
+	;;
+--show-cron)
+	show_cron
+	exit $?
+	;;
+--refresh-cron)
+	# Internal entry point used by the cron job: refresh quietly.
+	shift
+	refresh_all "$@" >/dev/null 2>&1
+	exit $?
+	;;
+esac
+
+refresh_all "$@"
+exit $?
+
+# vim:tabstop=4:shiftwidth=4:noexpandtab

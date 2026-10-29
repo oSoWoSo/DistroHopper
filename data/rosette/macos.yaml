@@ -3,6 +3,7 @@ name: macOS
 package_manager: brew
 init: launchd
 icon: macos.svg
+homepage: https://www.apple.com/macos
 color: "#999999"
 
 commands:
