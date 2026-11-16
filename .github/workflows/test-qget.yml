@@ -1,4 +1,4 @@
-name: "Test qget and actions"
+name: "Test"
 
 on:
   push:
@@ -18,7 +18,7 @@ jobs:
     outputs:
       distros: ${{ steps.get-distros.outputs.distros }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: "Install dependencies 📦️"
         run: |
@@ -28,33 +28,34 @@ jobs:
       - name: "Extract unique distros 📋"
         id: get-distros
         run: |
-          # Get unique distros, excluding windows variants
-          DISTROS=$(./qget --list | tail -n +2 | cut -d' ' -f1 | sort -u | grep -v '^windows$' | grep -v '^windows-server$')
-          # Convert to JSON array
+          # List distros from templates (offline, no generation needed)
+          DISTROS=$(ls templates | grep -v '^windows' | sort -u)
           JSON=$(echo "$DISTROS" | jq -R -s -c 'split("\n") | map(select(length > 0))')
           echo "distros=${JSON}" >> "$GITHUB_OUTPUT"
           echo "Found $(echo "$DISTROS" | wc -l | tr -d ' ') distros to test"
 
   test-distro:
-    name: "Test ${{ matrix.distro }} 🧪"
+    name: "${{ matrix.distro }}"
     needs: detect-distros
     runs-on: ubuntu-latest
-    continue-on-error: true
     strategy:
       fail-fast: false
       matrix:
         distro: ${{ fromJson(needs.detect-distros.outputs.distros) }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: "Install dependencies 📦️"
         run: |
           sudo apt-get -y update
           sudo apt-get -y install curl jq qemu-utils
+      - name: "Generate public metadata 🏗️"
+        run: ./generate "${{ matrix.distro }}"
+
       - name: "Check ${{ matrix.distro }} downloads 💿️"
         id: check
         run: |
           mkdir -p results
-          ./qget --download "${{ matrix.distro }}" | tee results/check.txt
+          ./qget --check "${{ matrix.distro }}" | tee results/check.txt
 
           # Count results (use wc -l to avoid grep exit code issues)
           PASSED=$(grep '^PASS' results/check.txt | wc -l | tr -d ' ')
@@ -87,7 +88,7 @@ jobs:
 
           cat result/result.json
       - name: "Upload result artifact 📤"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: result-${{ matrix.distro }}
           path: result/
@@ -105,7 +106,7 @@ jobs:
     if: always()
     steps:
       - name: "Download all result artifacts 📥"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: result-*
           path: results
@@ -120,7 +121,7 @@ jobs:
           # Temp file for collecting per-distro table rows
           TEMP_ROWS=$(mktemp)
 
-          for json_file in results/result-*/result.json; do
+          for json_file in $(find results -name 'result.json'); do
             [ -f "$json_file" ] || continue
 
             DISTRO=$(jq -r '.distro' "$json_file")

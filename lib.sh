@@ -1341,7 +1341,10 @@ _web_cache_get_body() {
 
 _web_cache_put_body() {
 	local key="${1}"
-	[ -n "${_WEB_CACHE_DIR}" ] || return 0
+	if [ -z "${_WEB_CACHE_DIR:-}" ]; then
+		cat >/dev/null
+		return 0
+	fi
 	cat >"${_WEB_CACHE_DIR}/${key}.body"
 }
 

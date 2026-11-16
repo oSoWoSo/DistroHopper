@@ -15,7 +15,7 @@ jobs:
         arch: [x86_64, aarch64]
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Download QEMU base AppImage
         run: |
@@ -36,7 +36,7 @@ jobs:
           output: DistroHopper-${{ matrix.arch }}.AppImage
 
       - name: Upload release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v3
         with:
           files: DistroHopper-${{ matrix.arch }}.AppImage
         env:
