@@ -112,8 +112,9 @@ jobs:
     name: Build and deploy website
     needs: test-distro
     # Upstream download failures should not prevent a catalog refresh.
-    # Never publish from another branch or from a cancelled run.
-    if: ${{ !cancelled() && github.ref == 'refs/heads/main' && needs.test-distro.result != 'skipped' }}
+    # Publish only the repository's default branch, even if it is renamed.
+    # A failed matrix is allowed; a cancelled or skipped matrix is not.
+    if: ${{ !cancelled() && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) && needs.test-distro.result != 'skipped' }}
     permissions:
       contents: write
       pages: write
