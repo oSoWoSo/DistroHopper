@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+# Opt-in CI experiment: resolve one English ISO URL per release, then HEAD it.
+# Never invoke the normal ISO download or VM-creation path.
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+OS="${1:-}"
+case "${OS}" in
+	windows|windows-server) ;;
+	*) echo 'Usage: check-windows-ci windows|windows-server' >&2; exit 2 ;;
+esac
+
+source "${ROOT}/lib.sh"
+source "${ROOT}/templates/${OS}"
+PROBE_DIR="$(mktemp -d)" || exit 1
+trap 'rm -rf "${PROBE_DIR}"' EXIT
+VM_PATH="${PROBE_DIR}"
+I18N='English (United States)'
+ARCH=amd64
+OPERATION=test
+
+# The server resolver normally obtains this display helper from qget.
+pretty_name() {
+	echo "${PRETTY}"
+}
+
+# Template HTTP requests still run normally, but with bounded request times.
+# Record explicit HTTP access restrictions without retaining redirect headers
+# (which can contain temporary signed download URLs).
+curl() {
+	local headers status
+	headers="$(mktemp "${PROBE_DIR}/headers.XXXXXX")" || return 1
+	command curl --connect-timeout 15 --max-time 45 --dump-header "${headers}" "$@"
+	status=$?
+	if grep -Eq '^HTTP/[^ ]+ (403|429)([[:space:]]|$)' "${headers}"; then
+		touch "${PROBE_DIR}/restricted"
+	fi
+	rm -f "${headers}"
+	return "${status}"
+}
+
+# This is the only download hook used by the resolver functions. Replacing it
+# prevents ISO downloads; a successful resolver must reach a working HTTPS URL.
+web_get() {
+	[[ "${1:-}" == https://* ]] || return 1
+	if web_check "$1"; then
+		touch "${PROBE_DIR}/reachable"
+	else
+		return 1
+	fi
+}
+
+for RELEASE in $(releases_); do
+	rm -f "${PROBE_DIR}/restricted" "${PROBE_DIR}/reachable"
+	if [ "${OS}" = windows-server ]; then
+		download_windows_server "windows-server-${RELEASE}" > "${PROBE_DIR}/resolver.log" 2>&1
+	else
+		download_windows_workstation "${RELEASE}" > "${PROBE_DIR}/resolver.log" 2>&1
+	fi
+	status=$?
+
+	# Do not publish temporary signed query strings in the CI logs/artifacts.
+	sed -E 's#(https://[^[:space:]?]+)\?[^[:space:]]+#\1?[redacted]#g' "${PROBE_DIR}/resolver.log"
+	if [ "${status}" -eq 0 ] && [ -f "${PROBE_DIR}/reachable" ]; then
+		echo "PASS: ${OS}-${RELEASE}-english URL generated and reachable (HEAD only)"
+	elif [ -f "${PROBE_DIR}/restricted" ] || grep -Fq 'Microsoft blocked the automated download request based on your IP address.' "${PROBE_DIR}/resolver.log"; then
+		echo "SKIP: ${OS}-${RELEASE}-english Microsoft rejected access (explicit rejection or HTTP 403/429; IP blocking is not assumed)"
+	else
+		echo "FAIL: ${OS}-${RELEASE}-english URL resolution or reachability failed; see resolver output above"
+	fi
+done
+# Like qget --check, report results as rows. The workflow counts FAIL rows and
+# fails the matrix job only after uploading the diagnostic/result artifacts.
+exit 0

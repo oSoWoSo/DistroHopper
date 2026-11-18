@@ -19,6 +19,11 @@ on:
   schedule:
     - cron: '0 0 * * *'
   workflow_dispatch:
+    inputs:
+      windows_probe:
+        description: 'Try Windows download URL generation from the CI runner (no ISO downloads)'
+        type: boolean
+        default: false
 
 jobs:
   detect-distros:
@@ -49,6 +54,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DISTRO: ${{ matrix.distro }}
+      WINDOWS_PROBE: ${{ github.event_name == 'workflow_dispatch' && inputs.windows_probe }}
     strategy:
       fail-fast: false
       matrix:
@@ -58,7 +64,7 @@ jobs:
       - name: "Install dependencies 📦️"
         run: |
           sudo apt-get -y update
-          sudo apt-get -y install curl jq qemu-utils
+          sudo apt-get -y install curl jq qemu-utils uuid-runtime
       - name: "Generate public metadata 🏗️"
         if: ${{ !startsWith(matrix.distro, 'windows') }}
         run: |
@@ -71,7 +77,11 @@ jobs:
           mkdir -p results
           case "${DISTRO}" in
             windows*)
-              echo "SKIP: ${DISTRO} (automated Windows download checks are unsupported)" | tee results/check.txt
+              if [ "${WINDOWS_PROBE:-false}" = true ]; then
+                ./scripts/check-windows-ci "${DISTRO}" 2>&1 | tee results/check.txt
+              else
+                echo "SKIP: ${DISTRO} (manual Windows probe not enabled)" | tee results/check.txt
+              fi
               ;;
             *) ./qget --check "${DISTRO}" 2>&1 | tee results/check.txt ;;
           esac

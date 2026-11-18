@@ -27,7 +27,7 @@ teardown() {
 	for distro in windows windows-server; do
 		run bash -c '
 			cd "$1"
-			export DISTRO="$2" GITHUB_OUTPUT="$1/outputs"
+			export DISTRO="$2" GITHUB_OUTPUT="$1/outputs" WINDOWS_PROBE=false
 			bash -e -o pipefail check.sh
 		' _ "$TEST_DIR" "$distro"
 		[ "$status" -eq 0 ]
@@ -38,6 +38,22 @@ teardown() {
 		! grep -q 'qget must not run' "$TEST_DIR/results/check.txt"
 		rm -f "$TEST_DIR/outputs"
 	done
+}
+
+@test "manual Windows probe invokes the probe script and counts its results" {
+	mkdir -p "$TEST_DIR/scripts"
+	printf '#!/usr/bin/env bash\necho "PASS: $1-11-english URL generated and reachable"\n' > "$TEST_DIR/scripts/check-windows-ci"
+	chmod +x "$TEST_DIR/scripts/check-windows-ci"
+	run bash -c '
+		cd "$1"
+		export DISTRO=windows WINDOWS_PROBE=true GITHUB_OUTPUT="$1/outputs"
+		bash -e -o pipefail check.sh
+	' _ "$TEST_DIR"
+	[ "$status" -eq 0 ]
+	grep -qx 'passed=1' "$TEST_DIR/outputs"
+	grep -qx 'failed=0' "$TEST_DIR/outputs"
+	grep -qx 'skipped=0' "$TEST_DIR/outputs"
+	! grep -q 'qget must not run' "$TEST_DIR/results/check.txt"
 }
 
 @test "non-Windows checks still call qget and count zero skipped rows" {
