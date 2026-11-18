@@ -38,7 +38,7 @@ jobs:
         id: get-distros
         run: |
           # List distros from templates (offline, no generation needed)
-          DISTROS=$(ls templates | grep -v '^windows' | sort -u)
+          DISTROS=$(ls templates | sort -u)
           JSON=$(echo "$DISTROS" | jq -R -s -c 'split("\n") | map(select(length > 0))')
           echo "distros=${JSON}" >> "$GITHUB_OUTPUT"
           echo "Found $(echo "$DISTROS" | wc -l | tr -d ' ') distros to test"
@@ -47,6 +47,8 @@ jobs:
     name: "${{ matrix.distro }}"
     needs: detect-distros
     runs-on: ubuntu-latest
+    env:
+      DISTRO: ${{ matrix.distro }}
     strategy:
       fail-fast: false
       matrix:
@@ -58,6 +60,7 @@ jobs:
           sudo apt-get -y update
           sudo apt-get -y install curl jq qemu-utils
       - name: "Generate public metadata 🏗️"
+        if: ${{ !startsWith(matrix.distro, 'windows') }}
         run: |
           mkdir -p results
           ./generate "${{ matrix.distro }}" 2>&1 | tee results/generate.log
@@ -66,12 +69,17 @@ jobs:
         id: check
         run: |
           mkdir -p results
-          ./qget --check "${{ matrix.distro }}" 2>&1 | tee results/check.txt
+          case "${DISTRO}" in
+            windows*)
+              echo "SKIP: ${DISTRO} (automated Windows download checks are unsupported)" | tee results/check.txt
+              ;;
+            *) ./qget --check "${DISTRO}" 2>&1 | tee results/check.txt ;;
+          esac
 
-          # Count results (use wc -l to avoid grep exit code issues)
-          PASSED=$(grep '^PASS' results/check.txt | wc -l | tr -d ' ')
-          FAILED=$(grep '^FAIL' results/check.txt | wc -l | tr -d ' ')
-          SKIPPED=$(grep '^SKIP' results/check.txt | wc -l | tr -d ' ')
+          # awk also succeeds for zero matches when the shell uses pipefail.
+          PASSED=$(awk '/^PASS:/{n++} END {print n+0}' results/check.txt)
+          FAILED=$(awk '/^FAIL:/{n++} END {print n+0}' results/check.txt)
+          SKIPPED=$(awk '/^SKIP:/{n++} END {print n+0}' results/check.txt)
 
           echo "passed=${PASSED}" >> "$GITHUB_OUTPUT"
           echo "failed=${FAILED}" >> "$GITHUB_OUTPUT"
@@ -80,7 +88,7 @@ jobs:
           # Extract failed URLs for reporting
           grep '^FAIL' results/check.txt > results/failed.txt || true
 
-          echo "Results for ${{ matrix.distro }}: PASS=${PASSED} FAIL=${FAILED} SKIP=${SKIPPED}"
+          echo "Results for ${DISTRO}: PASS=${PASSED} FAIL=${FAILED} SKIP=${SKIPPED}"
       - name: "Upload diagnostic logs and metadata"
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v7
