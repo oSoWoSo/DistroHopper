@@ -1,20 +1,6 @@
 name: Build and deploy website
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'website-source/**'
-      - 'templates/**'
-      - 'generate'
-      - 'lib.sh'
-      - 'icons/**'
-      - 'TODO/distrowatch/**'
-      - 'data/rosette/**'
-      - '*.md'
-      - 'web-create'
-      - '.github/workflows/website.yml'
-  schedule:
-    - cron: '0 4 * * *'
+  workflow_call:
   workflow_dispatch:
 
 permissions:

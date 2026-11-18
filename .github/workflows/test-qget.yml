@@ -7,6 +7,15 @@ on:
       - 'qget'
       - 'generate'
       - 'tests/**'
+      - 'website-source/**'
+      - 'lib.sh'
+      - 'icons/**'
+      - 'TODO/distrowatch/**'
+      - 'data/rosette/**'
+      - '*.md'
+      - 'web-create'
+      - '.github/workflows/website.yml'
+      - '.github/workflows/test-qget.yml'
   schedule:
     - cron: '0 0 * * *'
   workflow_dispatch:
@@ -98,6 +107,18 @@ jobs:
         run: |
           echo "::error::${{ matrix.distro }} has ${{ steps.check.outputs.failed }} failed downloads"
           exit 1
+
+  deploy-website:
+    name: Build and deploy website
+    needs: test-distro
+    # Upstream download failures should not prevent a catalog refresh.
+    # Never publish from another branch or from a cancelled run.
+    if: ${{ !cancelled() && github.ref == 'refs/heads/main' && needs.test-distro.result != 'skipped' }}
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/website.yml
 
   report-results:
     name: "Report results 📊"
