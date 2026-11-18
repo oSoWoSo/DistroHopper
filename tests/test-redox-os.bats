@@ -22,7 +22,7 @@ teardown() {
 
 @test "Redox selects the newest exact image from binary and text checksum records" {
 	run bash -c '
-		web_pipe() { cat "$REDOX_SUMS"; }
+		curl() { cat "$REDOX_SUMS"; }
 		source "$1/templates/redox-os"
 		ARCH=amd64 EDITION=desktop RELEASE=livedisk get_
 		ARCH=amd64 EDITION=desktop RELEASE=harddrive get_
@@ -34,8 +34,9 @@ teardown() {
 
 @test "Redox maps every advertised architecture to the upstream manifest" {
 	run bash -c '
-		web_pipe() {
-			local upstream="${1%/SHA256SUM}"
+		curl() {
+			local url="${@: -1}"
+			local upstream="${url%/SHA256SUM}"
 			upstream="${upstream##*/}"
 			printf "%064d *redox_demo_%s_2026-11-18_588_livedisk.iso.zst\n" 0 "$upstream"
 		}
@@ -54,18 +55,19 @@ teardown() {
 
 @test "Redox rejects unavailable images, invalid options and error pages" {
 	run bash -c '
-		web_pipe() { cat "$REDOX_SUMS"; }
+		curl() { cat "$REDOX_SUMS"; }
 		source "$1/templates/redox-os"
 		ARCH=amd64 RELEASE=livedisk EDITION=server
 		if get_; then exit 1; fi
 		if ARCH=i686 get_; then exit 1; fi
 		if EDITION=missing get_; then exit 1; fi
 		if RELEASE=missing get_; then exit 1; fi
-		web_pipe() { printf "<html>404 Not Found</html>\n"; }
+		curl() { printf "<html>404 Not Found</html>\n"; }
 		if EDITION=desktop get_; then exit 1; fi
 	' _ "$REPO_ROOT"
 	[ "$status" -eq 0 ]
-	[ -z "$output" ]
+	[[ "$output" == *'no matching image'* ]]
+	[[ "$output" == *'<html>404 Not Found</html>'* ]]
 }
 
 @test "Redox livedisk extraction preserves the ISO boot medium" {
@@ -111,4 +113,47 @@ teardown() {
 	' _ "$REPO_ROOT" "$TEST_DIR"
 	[ "$status" -eq 0 ]
 	[ -z "$output" ]
+}
+
+@test "Redox reports manifest fetch failures and enables HTTP retries" {
+	run bash -c '
+		curl() {
+			[[ " $* " == *" --fail "* ]] || exit 2
+			[[ " $* " == *" --retry 3 "* ]] || exit 2
+			return 22
+		}
+		source "$1/templates/redox-os"
+		RELEASE=livedisk EDITION=desktop get_
+	' _ "$REPO_ROOT"
+	[ "$status" -eq 1 ]
+	[[ "$output" == *'ERROR: Redox could not fetch https://static.redox-os.org/img/x86_64/SHA256SUM'* ]]
+}
+
+@test "Redox generated metadata passes the actual qget check path" {
+	mkdir -p "$TEST_DIR/bin" "$TEST_DIR/public"
+	cat > "$TEST_DIR/bin/curl" <<'EOF'
+#!/usr/bin/env bash
+url="${@: -1}"
+case "$url" in
+	*/SHA256SUM)
+		arch="${url%/SHA256SUM}"
+		arch="${arch##*/}"
+		for edition in demo desktop server; do
+			printf '%064d *redox_%s_%s_2026-11-18_588_livedisk.iso.zst\n' 0 "$edition" "$arch"
+			printf '%064d *redox_%s_%s_2026-11-18_588_harddrive.img.zst\n' 0 "$edition" "$arch"
+		done
+		;;
+	*.iso.zst|*.img.zst) exit 0 ;;
+	*) exit 22 ;;
+esac
+EOF
+	chmod +x "$TEST_DIR/bin/curl"
+	run env PATH="$TEST_DIR/bin:$PATH" PUBLIC_DIR="$TEST_DIR/public" \
+		"$REPO_ROOT/generate" redox-os
+	[ "$status" -eq 0 ]
+	run env PATH="$TEST_DIR/bin:$PATH" PUBLIC_DIR="$TEST_DIR/public" \
+		"$REPO_ROOT/qget" --arch amd64 --check redox-os
+	[ "$status" -eq 0 ]
+	[ "$(printf '%s\n' "$output" | grep -c '^PASS:')" -eq 6 ]
+	[[ "$output" != *'FAIL:'* ]]
 }

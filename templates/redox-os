@@ -44,8 +44,15 @@ function get_() {
 	esac
 
 	local URL="https://static.redox-os.org/img/${REDOX_ARCH}"
-	local ENTRY ISO HASH
-	ENTRY=$(web_pipe "${URL}/SHA256SUM" | awk \
+	local ENTRY ISO HASH MANIFEST
+	# Do not silently parse an HTTP error page as an empty checksum list.
+	if ! MANIFEST=$(curl --disable --fail --silent --show-error --location \
+		--retry 3 --retry-delay 2 --connect-timeout 15 --max-time 60 \
+		"${URL}/SHA256SUM"); then
+		echo "ERROR: Redox could not fetch ${URL}/SHA256SUM" >&2
+		return 1
+	fi
+	ENTRY=$(printf '%s\n' "${MANIFEST}" | awk \
 		-v prefix="redox_${EDITION}_${REDOX_ARCH}_" \
 		-v suffix="_${RELEASE}.${EXT}" '
 		{
@@ -60,7 +67,11 @@ function get_() {
 			if (tail != suffix && tail != suffix ".zst") next
 			printf "%s\t%s\n", file, hash
 		}' | sort -k1,1V | tail -n1)
-	[ -n "${ENTRY}" ] || return 1
+	if [ -z "${ENTRY}" ]; then
+		echo "ERROR: Redox ${REDOX_ARCH}/${RELEASE}/${EDITION}: no matching image in ${URL}/SHA256SUM" >&2
+		printf 'Manifest response (first 200 characters): %s\n' "${MANIFEST:0:200}" >&2
+		return 1
+	fi
 	IFS=$'\t' read -r ISO HASH <<< "${ENTRY}"
 	echo "${URL}/${ISO} ${HASH}"
 }
