@@ -188,8 +188,11 @@ error_not_supported_image() {
 # ---------------------------------------------------------------------------
 # Web functions
 # ---------------------------------------------------------------------------
+# Usage: web_pipe URL [additional curl options...]
 function web_pipe() {
-	curl --disable --silent --location "${1}"
+	local url="${1}"
+	shift
+	curl --disable --silent --location "$@" "${url}"
 }
 
 function web_pipe_json() {

@@ -22,6 +22,7 @@ teardown() {
 
 @test "Redox selects the newest exact image from binary and text checksum records" {
 	run bash -c '
+		source "$1/lib.sh"
 		curl() { cat "$REDOX_SUMS"; }
 		source "$1/templates/redox-os"
 		ARCH=amd64 EDITION=desktop RELEASE=livedisk get_
@@ -34,6 +35,7 @@ teardown() {
 
 @test "Redox maps every advertised architecture to the upstream manifest" {
 	run bash -c '
+		source "$1/lib.sh"
 		curl() {
 			local url="${@: -1}"
 			local upstream="${url%/SHA256SUM}"
@@ -55,6 +57,7 @@ teardown() {
 
 @test "Redox rejects unavailable images, invalid options and error pages" {
 	run bash -c '
+		source "$1/lib.sh"
 		curl() { cat "$REDOX_SUMS"; }
 		source "$1/templates/redox-os"
 		ARCH=amd64 RELEASE=livedisk EDITION=server
@@ -117,6 +120,7 @@ teardown() {
 
 @test "Redox reports manifest fetch failures and enables HTTP retries" {
 	run bash -c '
+		source "$1/lib.sh"
 		curl() {
 			[[ " $* " == *" --fail "* ]] || exit 2
 			[[ " $* " == *" --retry 3 "* ]] || exit 2

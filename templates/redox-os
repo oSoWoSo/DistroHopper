@@ -46,9 +46,9 @@ function get_() {
 	local URL="https://static.redox-os.org/img/${REDOX_ARCH}"
 	local ENTRY ISO HASH MANIFEST
 	# Do not silently parse an HTTP error page as an empty checksum list.
-	if ! MANIFEST=$(curl --disable --fail --silent --show-error --location \
-		--retry 3 --retry-delay 2 --connect-timeout 15 --max-time 60 \
-		"${URL}/SHA256SUM"); then
+	if ! MANIFEST=$(web_pipe "${URL}/SHA256SUM" \
+		--fail --show-error --retry 3 --retry-delay 2 \
+		--connect-timeout 15 --max-time 60); then
 		echo "ERROR: Redox could not fetch ${URL}/SHA256SUM" >&2
 		return 1
 	fi
