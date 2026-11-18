@@ -372,6 +372,12 @@ _icon_color() {
 	echo "${colors[$((code % 8))]}"
 }
 
+_icon_url() {
+	local digest
+	digest=$(sha256sum "$1")
+	printf '%s?v=%s' "$1" "${digest%% *}"
+}
+
 _icon_html() {
 	local osname="$1" pretty="$2" icon_hint="$3" icon_online="${4:-}"
 	local color initial src
@@ -387,6 +393,7 @@ _icon_html() {
 	elif [ -f "icons/${osname}.png" ]; then src="icons/${osname}.png"
 	fi
 	if [ -n "$src" ]; then
+		src=$(_icon_url "$src")
 		printf '<img src="%s" alt="%s" class="distro-icon-large" width="128" height="128" loading="lazy" onerror="this.style.display='"'"'none'"'"';this.nextElementSibling.style.display='"'"'flex'"'"'"><div class="distro-icon-fallback-large" style="width:128px;height:128px;background:%s;display:none">%s</div>' \
 			"$src" "$pretty" "$color" "$initial"
 	elif [ -n "$icon_online" ]; then
@@ -438,13 +445,13 @@ _card_html() {
 
 	local inline_icon="" icon_hint_base="${icon_hint%.*}"
 	if [ -n "$icon_hint_base" ] && [ -f "icons/${icon_hint_base}.svg" ]; then
-		inline_icon="<img src=\"icons/${icon_hint_base}.svg\" alt=\"\" class=\"card-title-icon\" aria-hidden=\"true\" loading=\"lazy\">"
+		inline_icon="<img src=\"$(_icon_url "icons/${icon_hint_base}.svg")\" alt=\"\" class=\"card-title-icon\" aria-hidden=\"true\" loading=\"lazy\">"
 	elif [ -n "$icon_hint_base" ] && [ -f "icons/${icon_hint_base}.png" ]; then
-		inline_icon="<img src=\"icons/${icon_hint_base}.png\" alt=\"\" class=\"card-title-icon\" aria-hidden=\"true\" loading=\"lazy\">"
+		inline_icon="<img src=\"$(_icon_url "icons/${icon_hint_base}.png")\" alt=\"\" class=\"card-title-icon\" aria-hidden=\"true\" loading=\"lazy\">"
 	elif [ -f "icons/${osname}.svg" ]; then
-		inline_icon="<img src=\"icons/${osname}.svg\" alt=\"\" class=\"card-title-icon\" aria-hidden=\"true\" loading=\"lazy\">"
+		inline_icon="<img src=\"$(_icon_url "icons/${osname}.svg")\" alt=\"\" class=\"card-title-icon\" aria-hidden=\"true\" loading=\"lazy\">"
 	elif [ -f "icons/${osname}.png" ]; then
-		inline_icon="<img src=\"icons/${osname}.png\" alt=\"\" class=\"card-title-icon\" aria-hidden=\"true\" loading=\"lazy\">"
+		inline_icon="<img src=\"$(_icon_url "icons/${osname}.png")\" alt=\"\" class=\"card-title-icon\" aria-hidden=\"true\" loading=\"lazy\">"
 	elif [ -n "$icon_online" ]; then
 		inline_icon="<img src=\"${icon_online}\" alt=\"\" class=\"card-title-icon\" aria-hidden=\"true\" loading=\"lazy\" onerror=\"this.style.display='none'\">"
 	fi
@@ -484,28 +491,62 @@ _read_pub_vars() {
 	done < <(grep -E '^(OSNAME|PRETTY|ICON|ICON_ONLINE|CATEGORY|BASEDOF|DESCRIPTION|HOMEPAGE|RELEASES|EDITIONS|QEMU_ARCH|MAGNET|CHAT|RSS|DW|DW_ARCHITECTURE|DW_DESKTOP|DW_CATEGORY|DW_URL)=' "$file")
 }
 
+# Support is defined by templates, not by whether upstream discovery succeeded.
+# Keep public-only operation available for standalone builds without templates.
+_supported_distro_files() {
+	local file name
+	if [ -d "${TEMPLATES_DIR:-templates}" ]; then
+		for file in "${TEMPLATES_DIR:-templates}"/*; do
+			[ -f "$file" ] || continue
+			name="${file##*/}"
+			if [ -s "${PUBLIC_DIR}/${name}" ]; then
+				printf '%s\n' "${PUBLIC_DIR}/${name}"
+			else
+				printf '%s\n' "$file"
+			fi
+		done
+	else
+		for file in "${PUBLIC_DIR}"/*; do
+			[ -f "$file" ] && [[ "${file##*/}" != tmp_* ]] && printf '%s\n' "$file"
+		done
+	fi
+}
+
+_read_supported_vars() {
+	local file="$1" name="${1##*/}"
+	if [ "$file" = "${TEMPLATES_DIR:-templates}/${name}" ]; then
+		# Shared templates keep metadata in case branches. Select this distro
+		# without executing any template code or upstream requests.
+		_read_pub_vars <(awk -v name="$name" '
+			{ sub(/^[[:space:]]+/, "") }
+			/^OSNAME=/ { selected = ($0 == "OSNAME=\"" name "\"") }
+			/^;;/ { selected = 0 }
+			selected { print }
+		' "$file")
+	else
+		_read_pub_vars "$file"
+	fi
+}
+
 _generate_distro_cards() {
 	local supported="true"
 
-	for pub_file in ${PUBLIC_DIR}/*; do
-		[ -f "$pub_file" ] || continue
-
+	while IFS= read -r pub_file; do
 		local OSNAME="" PRETTY="" ICON="" ICON_ONLINE="" CATEGORY="" BASEDOF="" DESCRIPTION="" HOMEPAGE=""
-		_read_pub_vars "$pub_file"
+		_read_supported_vars "$pub_file"
 
 		[ -z "$OSNAME" ] && continue
 
 		_card_html "$OSNAME" "$PRETTY" "$BASEDOF" "$DESCRIPTION" "$HOMEPAGE" "$CATEGORY" "$supported" "$ICON" "$ICON_ONLINE"
-	done
+	done < <(_supported_distro_files)
 }
 
 _generate_distro_data_js() {
 	echo 'window._distroData = {'
 	local first=1
-	for pub_file in ${PUBLIC_DIR}/*; do
-		[ -f "$pub_file" ] || continue
+	while IFS= read -r pub_file; do
 		local OSNAME="" PRETTY="" ICON="" ICON_ONLINE="" CATEGORY="" BASEDOF="" DESCRIPTION="" HOMEPAGE="" RELEASES="" EDITIONS="" QEMU_ARCH="" MAGNET="" CHAT="" RSS="" DW="" DW_DESKTOP=""
-		_read_pub_vars "$pub_file"
+		_read_supported_vars "$pub_file"
 		[ -z "$OSNAME" ] && continue
 		local hp_esc releases_esc basedof_esc editions_esc archs_esc icon_online_esc magnet_esc chat_esc rss_esc dw_esc desc_esc cat_esc dw_desktop_esc
 		hp_esc="${HOMEPAGE//\"/\\\"}"
@@ -558,7 +599,7 @@ _generate_distro_data_js() {
 		[ -n "$dw_esc" ]         && extra_fields+=",\"dw\":\"${dw_esc}\""
 		printf '  "%s": {"homepage":"%s","releases":"%s","editions":"%s","basedof":"%s","architectures":"%s","icon_online":"%s"%s%s}' \
 			"$OSNAME" "$hp_esc" "$releases_esc" "${editions_esc:-}" "$basedof_esc" "$archs_esc" "$icon_online_esc" "$extra_fields" "$urls_js"
-	done
+	done < <(_supported_distro_files)
 	echo ''
 	echo '};'
 
@@ -602,7 +643,7 @@ _generate_distros_data_js_file() {
 		local DW_ARCHITECTURE="" DW_DESKTOP="" DW_CATEGORY="" DW_URL=""
 		_read_pub_vars "$dw_file"
 		[ -z "$OSNAME" ] && continue
-		[ -f "${PUBLIC_DIR}/${OSNAME}" ] && continue  # skip supported
+		{ [ -f "${PUBLIC_DIR}/${OSNAME}" ] || [ -f "${TEMPLATES_DIR:-templates}/${OSNAME}" ]; } && continue  # skip supported
 
 		[ "$first" = "0" ] && echo ',' >> "$out"
 		first=0
@@ -651,13 +692,15 @@ _generate_icons_list_js() {
 		[ "$first" = "0" ] && echo ',' >> "$out"
 		first=0
 
-		if [ "$has_svg" = 1 ] && [ "$has_png" = 1 ]; then
-			printf '  "%s": {"svg":true,"png":true}' "$name" >> "$out"
-		elif [ "$has_svg" = 1 ]; then
-			printf '  "%s": {"svg":true}' "$name" >> "$out"
-		else
-			printf '  "%s": {"png":true}' "$name" >> "$out"
+		printf '  "%s": {' "$name" >> "$out"
+		if [ "$has_svg" = 1 ]; then
+			printf '"svg":true,"svgUrl":"%s"' "$(_icon_url "icons/${name}.svg")" >> "$out"
 		fi
+		[ "$has_svg" = 1 ] && [ "$has_png" = 1 ] && printf ',' >> "$out"
+		if [ "$has_png" = 1 ]; then
+			printf '"png":true,"pngUrl":"%s"' "$(_icon_url "icons/${name}.png")" >> "$out"
+		fi
+		printf '}' >> "$out"
 	done
 
 	echo '};' >> "$out"
@@ -824,7 +867,7 @@ ${cards}
   </div>
 </div>
 
-<script src="icons-available.js"></script>
+<script src="icons-available.js?v=$(sha256sum "${OUT_DIR}/icons-available.js" | cut -d' ' -f1)"></script>
 <script>
 ${data_js}
 var _giscusRepo = '${giscus_repo}';
@@ -849,8 +892,8 @@ function _localDistroIcon(id, name) {
   var iconName = findName(id) || findName(name);
   var info = icons[iconName];
   if (!info) return '';
-  if (info.svg) return 'icons/' + iconName + '.svg';
-  if (info.png) return 'icons/' + iconName + '.png';
+  if (info.svg) return info.svgUrl || 'icons/' + iconName + '.svg';
+  if (info.png) return info.pngUrl || 'icons/' + iconName + '.png';
   return '';
 }
 
@@ -1485,4 +1528,6 @@ main() {
 	esac
 }
 
-main "$@"
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+	main "$@"
+fi
