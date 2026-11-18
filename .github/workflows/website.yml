@@ -4,9 +4,17 @@ on:
     branches: [main]
     paths:
       - 'website-source/**'
-      - 'public/**'
+      - 'templates/**'
+      - 'generate'
+      - 'lib.sh'
+      - 'icons/**'
+      - 'TODO/distrowatch/**'
+      - 'data/rosette/**'
+      - '*.md'
       - 'web-create'
       - '.github/workflows/website.yml'
+  schedule:
+    - cron: '0 4 * * *'
   workflow_dispatch:
 
 permissions:
@@ -32,10 +40,21 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v6
 
-      - name: Install Pandoc
+      - name: Install dependencies
         run: |
-          #sudo apt-get update && sudo apt-get install -y pandoc
-          apt-get update && apt-get install -y pandoc
+          sudo apt-get update
+          sudo apt-get install -y pandoc curl jq
+
+      - name: Generate distro metadata
+        timeout-minutes: 60
+        run: |
+          mkdir -p public TODO
+          ./generate --parallel
+          # Do not deploy an empty supported-distros page if generation failed.
+          if ! grep -ql '^OSNAME=' public/*; then
+            echo "::error::No supported distro metadata was generated"
+            exit 1
+          fi
 
       - name: Make pages
         run: |
