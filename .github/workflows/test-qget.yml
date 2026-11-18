@@ -58,13 +58,15 @@ jobs:
           sudo apt-get -y update
           sudo apt-get -y install curl jq qemu-utils
       - name: "Generate public metadata 🏗️"
-        run: ./generate "${{ matrix.distro }}"
+        run: |
+          mkdir -p results
+          ./generate "${{ matrix.distro }}" 2>&1 | tee results/generate.log
 
       - name: "Check ${{ matrix.distro }} downloads 💿️"
         id: check
         run: |
           mkdir -p results
-          ./qget --check "${{ matrix.distro }}" | tee results/check.txt
+          ./qget --check "${{ matrix.distro }}" 2>&1 | tee results/check.txt
 
           # Count results (use wc -l to avoid grep exit code issues)
           PASSED=$(grep '^PASS' results/check.txt | wc -l | tr -d ' ')
@@ -79,6 +81,16 @@ jobs:
           grep '^FAIL' results/check.txt > results/failed.txt || true
 
           echo "Results for ${{ matrix.distro }}: PASS=${PASSED} FAIL=${FAILED} SKIP=${SKIPPED}"
+      - name: "Upload diagnostic logs and metadata"
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: diagnostics-${{ matrix.distro }}
+          path: |
+            results/
+            public/
+          retention-days: 7
+
       - name: "Create result JSON 📝"
         run: |
           mkdir -p result
