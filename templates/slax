@@ -12,28 +12,78 @@ GPG=""
 RSS=""
 DW=""
 
+SLAX_MIRROR="https://ftp.fi.muni.cz/pub/linux/slax"
+
+# Discover release directories and their actual 64-bit ISO filenames. This
+# covers the old base-first names and the new version-first names (2026+).
+function _slax_images_() {
+	web_pipe "${SLAX_MIRROR}/" \
+		| grep -oE 'href="Slax-[0-9]+(\.x)?/"' \
+		| cut -d '"' -f2 | sort -u | while IFS= read -r dir; do
+		web_pipe "${SLAX_MIRROR}/${dir}" \
+			| grep -oE 'href="slax-[^"/]+\.iso"' \
+			| cut -d '"' -f2 | awk -v base="${SLAX_MIRROR}/${dir}" '
+				/^slax-64bit-((debian|slackware)-)?[0-9]+(\.[0-9]+)*\.iso$/ {
+					version = $0
+					sub(/^slax-64bit-/, "", version)
+					edition = "slackware"
+					if (version ~ /^debian-/ || version ~ /^(9|1[0-3])\./) edition = "debian"
+					sub(/^(debian|slackware)-/, "", version)
+					sub(/\.iso$/, "", version)
+					printf "%s\t%s\t%s%s\n", version, edition, base, $0
+				}
+				/^slax-[0-9]+(\.[0-9]+)*-64bit(-[0-9]+)?\.iso$/ {
+					version = $0
+					sub(/^slax-/, "", version)
+					sub(/-64bit.*$/, "", version)
+					printf "%s\tdebian\t%s%s\n", version, base, $0
+				}'
+	done
+}
+
 function releases_() {
 	echo latest
+	_slax_images_ | cut -f1 | sort -uVr
 }
 
 function editions_() {
-	echo debian slackware
+	_slax_images_ | awk -F '\t' -v release="${RELEASE:-latest}" '
+		release == "latest" || $1 == release { print $2 }
+	' | sort -u
+}
+
+function arch_() {
+	echo amd64
 }
 
 function get_() {
-	local HASH=""
-	local ISO=""
-	local URL=""
-	case ${EDITION} in
-		debian)
-			URL="https://ftp.fi.muni.cz/pub/linux/slax/Slax-12.x"
-			ISO=$(web_pipe "${URL}/md5.txt" | grep '64bit-' | cut -d' ' -f3 | tail -n1);;
-		slackware)
-			URL="https://ftp.fi.muni.cz/pub/linux/slax/Slax-15.x"
-			ISO=$(web_pipe "${URL}/md5.txt" | grep '64bit-' | cut -d' ' -f3 | tail -n1);;
+	case "${ARCH:-amd64}" in amd64|x86_64) ;; *) return 1 ;; esac
+	case "${EDITION}" in debian|slackware) ;; *) return 1 ;; esac
+	local ENTRY URL ISO HASH SUM_URL HASH_LENGTH
+	ENTRY=$(_slax_images_ | awk -F '\t' \
+		-v release="${RELEASE:-latest}" -v edition="${EDITION}" '
+		$2 == edition && (release == "latest" || $1 == release) {
+			printf "%s\t%s\n", $1, $3
+		}' | sort -k1,1V -k2,2V | tail -n1)
+	[ -n "${ENTRY}" ] || return 1
+	URL="${ENTRY#*$'\t'}"
+	ISO="${URL##*/}"
+	case "${ISO}" in
+		slax-[0-9]*-64bit*) SUM_URL="${URL}.sha256sum.txt"; HASH_LENGTH=64 ;;
+		*) SUM_URL="${URL%/*}/md5.txt"; HASH_LENGTH=32 ;;
 	esac
-	HASH=$(web_pipe "${URL}/md5.txt" | grep '64bit-' | cut -d' ' -f1 | tail -n1)
-	echo "${URL}/${ISO} ${HASH}"
+	HASH=$(web_pipe "${SUM_URL}" | awk -v iso="${ISO}" -v size="${HASH_LENGTH}" '
+		{
+			file = $2
+			sub(/\r$/, "", file)
+			sub(/^\*/, "", file)
+			if (file == iso && length($1) == size && $1 !~ /[^[:xdigit:]]/) {
+				print $1
+				exit
+			}
+		}')
+	[ -n "${HASH}" ] || return 1
+	echo "${URL} ${HASH}"
 }
 
 function config_() {
