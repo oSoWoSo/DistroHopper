@@ -6,24 +6,62 @@ ICON="neko-void.svg"
 CATEGORY="Desktop, Live Medium"
 BASEDOF="Void"
 DESCRIPTION="Designed for users who want Void Linux's stability and minimalism with modern desktop functionality"
-HOMEPAGE="https://neko-void.sourceforge.io"
+HOMEPAGE="https://www.neko-void-linux.online"
 CREDENTIALS=""
 GPG=""
 RSS="https://sourceforge.net/projects/neko-void/rss?path=/"
 DW=""
 
+# The rolling editions have different build dates. Use the official website's
+# current links instead of inventing release/edition filename combinations.
 function releases_() {
-	echo 6.3 5 4 3
+	echo latest
+}
+
+function _neko_images_() {
+	web_pipe "${HOMEPAGE}/" | awk '
+		function emit() {
+			if (url != "") printf "%s\t%s\t%s\n", edition, url, checksum
+			url = edition = checksum = ""
+		}
+		/href=["\047]https:\/\// && /nekovoid-[[:alnum:]-]+-[0-9]+\.iso/ {
+			emit()
+			url = $0
+			sub(/^.*href=["\047]/, "", url)
+			sub(/["\047].*$/, "", url)
+			gsub(/&amp;/, "\\&", url)
+			edition = url
+			sub(/^.*\/nekovoid-/, "", edition)
+			sub(/-[0-9]+\.iso.*$/, "", edition)
+		}
+		/SHA256:/ && url != "" {
+			checksum = $0
+			sub(/^.*SHA256:[[:space:]]*/, "", checksum)
+			sub(/[^[:xdigit:]].*$/, "", checksum)
+			if (length(checksum) != 64) checksum = ""
+			emit()
+		}
+		END { emit() }
+	'
 }
 
 function editions_() {
-	echo xlibre xorg
+	_neko_images_ | cut -f1 | sort -u
 }
 
 function get_() {
-	#local REL=$(echo "${EDITION}" | tr '[:lower:]' '[:upper:]')
-	local ISOS=$(web_pipe "https://sourceforge.net/projects/neko-void/rss?path=/" | grep 'title><!\[CDATA' | cut -d'[' -f3 | cut -d']' -f1 | grep '.iso')
-	local URL="https://sourceforge.net/projects/neko-void/files/isos"
-	local ISO="nekovoid-beta-${RELEASE}-${EDITION}.iso"
-	echo "${URL}/${ISO}"
+	[ "${RELEASE:-latest}" = latest ] || return 1
+	local ENTRY
+	ENTRY=$(_neko_images_ | awk -F '\t' -v edition="${EDITION}" '
+		$1 == edition { url = $2; checksum = $3 }
+		END {
+			if (url != "") {
+				printf "%s", url
+				if (checksum != "") printf " %s", checksum
+				printf "\n"
+			}
+		}
+	')
+	[ -n "${ENTRY}" ] || return 1
+	printf '%s\n' "${ENTRY}"
 }
