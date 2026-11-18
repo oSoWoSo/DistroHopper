@@ -10,15 +10,43 @@ HOMEPAGE="https://d77void.sourceforge.io"
 DESCRIPTION="Respin of Void GNU/Linux, created to demonstrate the capabilities of Void’s tools, such as void-mklive and void-packages"
 CREDENTIALS="anon:voidlinux,root:voidlinux"
 GPG=""
-RSS="https://sourceforge.net/projects/d77void/rss?path=/"
+RSS="https://sourceforge.net/projects/d77void/rss?path=/ISO-x86_64"
 DW=""
 
 function releases_() {
 	echo latest
 }
 
+# Each feed record carries the URL and checksum for the same image. Ignore
+# non-ISO files and other projects/architectures published alongside d77void.
+function _d77_images_() {
+	web_pipe "${RSS}" | awk '
+		/<item>/ { url = checksum = "" }
+		/<link>https:\/\/sourceforge.net\/projects\/d77void\/files\/ISO-x86_64\/d77void-live-x86_64-[0-9]+-[[:alnum:]-]+\.iso\/download<\/link>/ {
+			url = $0
+			sub(/^.*<link>/, "", url)
+			sub(/<\/link>.*$/, "", url)
+		}
+		/<media:hash algo="md5">/ {
+			checksum = $0
+			sub(/^.*<media:hash algo="md5">/, "", checksum)
+			sub(/<\/media:hash>.*$/, "", checksum)
+			if (length(checksum) != 32 || checksum ~ /[^[:xdigit:]]/) checksum = ""
+		}
+		/<\/item>/ && url != "" {
+			name = url
+			sub(/^.*\/d77void-live-x86_64-/, "", name)
+			date = name
+			sub(/-.*/, "", date)
+			sub(/^[0-9]+-/, "", name)
+			sub(/\.iso\/download$/, "", name)
+			printf "%s\t%s\t%s\t%s\n", name, date, url, checksum
+		}
+	'
+}
+
 function editions_() {
-	echo awesome bspwm dank dms dwm fluxbox gnome herbstluftwm hyprland i3wm jwm labwc leftwm lxqt mango mango-dms mango-noctalia niri niri-noctalia noctalia openbox plasma qtile river sway wayfire wmd77 xfce
+	_d77_images_ | cut -f1 | sort -u
 }
 
 function arch_() {
@@ -26,39 +54,27 @@ function arch_() {
 }
 
 function get_() {
-	local HASH=""
-	local ISO=""
-	local DATE=""
-	local URL=""
-	local DIR=""
-
-	if [ "$QEMU_ARCH" = amd64 ]; then
-		QEMU_ARCH="x86_64"
-	fi
-
-	case "${EDITION}" in
-		jwm) DIR="JWM" ;;
-		lxqt) DIR="LXQt" ;;
-		niri|niri-noctalia|dms) DIR="niri" ;;
-		hyprland|dank|noctalia) DIR="hyprland" ;;
-		mango|mango-dms|mango-noctalia) DIR="mango" ;;
-		*) DIR="${EDITION}" ;;
+	[ "${RELEASE:-latest}" = latest ] || return 1
+	case "${ARCH:-${QEMU_ARCH:-amd64}}" in
+		amd64|x86_64) ;;
+		*) return 1 ;;
 	esac
 
-	URL="https://sourceforge.net/projects/d77void/files/d77void-${DIR}"
-	ISO=$(web_pipe "https://sourceforge.net/projects/d77void/rss?path=/d77void-${DIR}" \
-		| grep -oE "d77void-live-${QEMU_ARCH}-[0-9]+-${EDITION}\.iso" \
-		| sort -u | sort -r | head -1)
-
-	DATE=$(echo "$ISO" | grep -oP '[0-9]{8}')
-	# herbsluftwm don't have sha file'
-	if [ "${EDITION}" = herbsluftwm ]; then
-		HASH=""
-	else
-		HASH=$(web_pipe "${URL}/SHA1-MD5.txt" 2>/dev/null | grep "${ISO}" | awk '{print $1}')
-	fi
-
-	echo "${URL}/${ISO} ${HASH}"
+	local ENTRY
+	ENTRY=$(_d77_images_ | awk -F '\t' -v edition="${EDITION}" '
+		$1 == edition && $2 >= newest {
+			newest = $2; url = $3; checksum = $4
+		}
+		END {
+			if (url != "") {
+				printf "%s", url
+				if (checksum != "") printf " %s", checksum
+				printf "\n"
+			}
+		}
+	')
+	[ -n "${ENTRY}" ] || return 1
+	printf '%s\n' "${ENTRY}"
 }
 
 function config_() {
