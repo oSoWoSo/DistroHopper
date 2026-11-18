@@ -1,0 +1,6 @@
+amd64	bios	Bookworm	https://dietpi.com/downloads/images/DietPi_VM-x86_64-Bookworm_Installer.iso	OK
+amd64	bios	Forky	https://dietpi.com/downloads/images/DietPi_VM-x86_64-Forky_Installer.iso	OK
+amd64	bios	Trixie	https://dietpi.com/downloads/images/DietPi_VM-x86_64-Trixie_Installer.iso	OK
+amd64	uefi	Bookworm	https://dietpi.com/downloads/images/DietPi_VM-UEFI-x86_64-Bookworm_Installer.iso	OK
+amd64	uefi	Forky	https://dietpi.com/downloads/images/DietPi_VM-UEFI-x86_64-Forky_Installer.iso	OK
+amd64	uefi	Trixie	https://dietpi.com/downloads/images/DietPi_VM-UEFI-x86_64-Trixie_Installer.iso	OK

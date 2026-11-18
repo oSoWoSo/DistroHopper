@@ -1,0 +1,8 @@
+amd64	latest	debian
+amd64	latest	slackware
+amd64	2026.11	debian
+amd64	15.0.4	slackware
+amd64	15.0.3	slackware
+amd64	15.0.1	slackware
+amd64	15.0.0	slackware
+amd64	12.2.0	debian

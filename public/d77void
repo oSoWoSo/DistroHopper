@@ -1,0 +1,118 @@
+# Template file for 'd77void'
+OSNAME="d77void"
+PRETTY="d77void"
+LOGO=""
+ICON="d77void.svg"
+ICON_ONLINE=""
+CATEGORY="Desktop, Server"
+BASEDOF="void"
+DESCRIPTION="Respin of Void GNU/Linux, created to demonstrate the capabilities of Void’s tools, such as void-mklive and void-packages"
+HOMEPAGE="https://d77void.sourceforge.io"
+CREDENTIALS="anon:voidlinux,root:voidlinux"
+GPG=""
+RSS="https://sourceforge.net/projects/d77void/rss?path=/ISO-x86_64"
+DW=""
+MAGNET=""
+MAGNET_PREFERRED=""
+TORRENT=""
+CHAT=""
+
+RELEASES="latest"
+EDITIONS="fabric fluxbox gnome hypr-dms mango-dms niri-noctalia pwm wasp"
+EDITIONS_LIST="fabric
+fluxbox
+gnome
+hypr-dms
+mango-dms
+niri-noctalia
+pwm
+wasp"
+QEMU_ARCH="amd64"
+
+releases_() {
+	echo latest
+}
+
+_d77_images_() {
+	web_pipe "${RSS}" | awk '
+		/<item>/ { url = checksum = "" }
+		/<link>https:\/\/sourceforge.net\/projects\/d77void\/files\/ISO-x86_64\/d77void-live-x86_64-[0-9]+-[[:alnum:]-]+\.iso\/download<\/link>/ {
+			url = $0
+			sub(/^.*<link>/, "", url)
+			sub(/<\/link>.*$/, "", url)
+		}
+		/<media:hash algo="md5">/ {
+			checksum = $0
+			sub(/^.*<media:hash algo="md5">/, "", checksum)
+			sub(/<\/media:hash>.*$/, "", checksum)
+			if (length(checksum) != 32 || checksum ~ /[^[:xdigit:]]/) checksum = ""
+		}
+		/<\/item>/ && url != "" {
+			name = url
+			sub(/^.*\/d77void-live-x86_64-/, "", name)
+			date = name
+			sub(/-.*/, "", date)
+			sub(/^[0-9]+-/, "", name)
+			sub(/\.iso\/download$/, "", name)
+			printf "%s\t%s\t%s\t%s\n", name, date, url, checksum
+		}
+	'
+}
+
+editions_() {
+	_d77_images_ | cut -f1 | sort -u
+}
+
+arch_() {
+	echo amd64
+}
+
+get_() {
+	[ "${RELEASE:-latest}" = latest ] || return 1
+	case "${ARCH:-${QEMU_ARCH:-amd64}}" in
+		amd64|x86_64) ;;
+		*) return 1 ;;
+	esac
+
+	local ENTRY
+	ENTRY=$(_d77_images_ | awk -F '\t' -v edition="${EDITION}" '
+		$1 == edition && $2 >= newest {
+			newest = $2; url = $3; checksum = $4
+		}
+		END {
+			if (url != "") {
+				printf "%s", url
+				if (checksum != "") printf " %s", checksum
+				printf "\n"
+			}
+		}
+	')
+	[ -n "${ENTRY}" ] || return 1
+	printf '%s\n' "${ENTRY}"
+}
+
+config_() {
+	echo "boot=\"legacy\"" >> "${CONF_FILE}"
+}
+
+releases_() {
+	# Releases parsed at generation time — no network access needed.
+	echo "${RELEASES}"
+}
+editions_() {
+	# Editions parsed at generation time — no network access needed.
+	local _scoped=""
+	if [ -n "${RELEASE:-}" ] && declare -F _release_editions_ >/dev/null; then
+		_scoped=$(_release_editions_ "${ARCH:-}|${RELEASE}")
+	fi
+	if [ -n "${_scoped}" ]; then
+		echo "${_scoped}"
+		return 0
+	fi
+	local _per_arch="EDITIONS_${ARCH:-}"
+	if [ -n "${!_per_arch:-}" ]; then
+		echo "${!_per_arch}"
+		return 0
+	fi
+	echo "${EDITIONS:-}"
+}

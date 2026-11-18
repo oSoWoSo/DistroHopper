@@ -1,0 +1,134 @@
+# Template file for 'fedora-linux'
+OSNAME="fedora-linux"
+PRETTY="Fedora"
+LOGO=" "
+ICON="fedora-linux.svg"
+ICON_ONLINE=""
+CATEGORY="Beginner"
+BASEDOF="-"
+DESCRIPTION="Innovative platform for hardware, clouds, and containers, built with love by you"
+HOMEPAGE="https://www.fedoraproject.org"
+CREDENTIALS="-"
+GPG=""
+RSS=""
+DW=""
+MAGNET=""
+MAGNET_PREFERRED=""
+TORRENT=""
+CHAT=""
+
+RELEASES="45_Beta 45 44 43"
+EDITIONS="Budgie Budgie-Atomic COSMIC COSMIC-Atomic Cinnamon KDE KDE_Mobile Kinoite LXDE LXQt Mate Minimal MiracleWM Onyx Sericea Server Silverblue Sway Sway-Atomic Workstation Xfce i3"
+EDITIONS_LIST="Budgie
+Budgie-Atomic
+COSMIC
+COSMIC-Atomic
+Cinnamon
+KDE
+KDE_Mobile
+Kinoite
+LXDE
+LXQt
+Mate
+Minimal
+MiracleWM
+Onyx
+Sericea
+Server
+Silverblue
+Sway
+Sway-Atomic
+Workstation
+Xfce
+i3"
+QEMU_ARCH="amd64 arm64 ppc64el s390x"
+
+EDITIONS_amd64="Budgie Budgie-Atomic COSMIC COSMIC-Atomic Cinnamon KDE KDE_Mobile Kinoite LXDE LXQt Mate MiracleWM Onyx Sericea Server Silverblue Sway Sway-Atomic Workstation Xfce i3"
+EDITIONS_arm64="COSMIC COSMIC-Atomic KDE KDE_Mobile Kinoite LXQt Minimal MiracleWM Sericea Server Silverblue Sway-Atomic Workstation Xfce i3"
+EDITIONS_ppc64el="KDE Server Workstation"
+EDITIONS_s390x="Server"
+
+_release_editions_() {
+	case "${1:-}" in
+		"arm64|45_Beta")	 echo "COSMIC COSMIC-Atomic KDE KDE_Mobile Kinoite LXQt Minimal MiracleWM Server Silverblue Sway-Atomic Workstation Xfce i3" ;;
+		"ppc64el|45")	 echo "KDE Server" ;;
+		"ppc64el|44")	 echo "KDE Server Workstation" ;;
+		"ppc64el|43")	 echo "KDE Server Workstation" ;;
+		"amd64|43")	 echo "Budgie COSMIC COSMIC-Atomic Cinnamon KDE KDE_Mobile Kinoite LXDE LXQt Mate MiracleWM Onyx Sericea Server Silverblue Sway Workstation Xfce i3" ;;
+		"amd64|45")	 echo "Budgie Budgie-Atomic COSMIC COSMIC-Atomic Cinnamon KDE KDE_Mobile Kinoite LXDE LXQt Mate MiracleWM Server Silverblue Sway Sway-Atomic Workstation Xfce i3" ;;
+		"amd64|44")	 echo "Budgie COSMIC COSMIC-Atomic Cinnamon KDE KDE_Mobile Kinoite LXDE LXQt Mate MiracleWM Onyx Sericea Server Silverblue Sway Workstation Xfce i3" ;;
+		"ppc64el|45_Beta")	 echo "KDE Server" ;;
+		"amd64|45_Beta")	 echo "Budgie Budgie-Atomic COSMIC COSMIC-Atomic Cinnamon KDE KDE_Mobile Kinoite LXDE LXQt Mate MiracleWM Server Silverblue Sway Sway-Atomic Workstation Xfce i3" ;;
+		"arm64|45")	 echo "COSMIC COSMIC-Atomic KDE KDE_Mobile Kinoite LXQt Minimal MiracleWM Server Silverblue Sway-Atomic Workstation Xfce i3" ;;
+		"arm64|44")	 echo "COSMIC COSMIC-Atomic KDE KDE_Mobile Kinoite LXQt Minimal MiracleWM Sericea Server Silverblue Workstation Xfce i3" ;;
+		"arm64|43")	 echo "COSMIC COSMIC-Atomic KDE KDE_Mobile Kinoite LXQt Minimal MiracleWM Sericea Server Silverblue Workstation Xfce i3" ;;
+		"s390x|45_Beta")	 echo "Server" ;;
+		"s390x|44")	 echo "Server" ;;
+		"s390x|45")	 echo "Server" ;;
+		"s390x|43")	 echo "Server" ;;
+		*) return 1 ;;
+	esac
+}
+
+releases_() {
+	#shellcheck disable=SC2046,SC2005
+	echo $(web_pipe "https://getfedora.org/releases.json" | jq -r 'map(.version) | unique | .[]' | sed 's/ /_/g' | sort -r)
+}
+
+editions_() {
+	local QEMU_ARCH
+	QEMU_ARCH=$(_qarch_to_upstream "${ARCH:-amd64}")
+	#shellcheck disable=SC2046,SC2005
+	if [[ -z ${RELEASE} ]]; then
+		echo $(web_pipe "https://getfedora.org/releases.json" | jq -r "map(select(.arch==\"${QEMU_ARCH}\" and .variant!=\"Labs\" and .variant!=\"IoT\" and .variant!=\"Container\" and .variant!=\"Cloud\" and .variant!=\"Everything\"  and .subvariant!=\"Security\" and .subvariant!=\"Server_KVM\" and .subvariant!=\"SoaS\")) | map(.subvariant) | unique | .[]")
+	else
+		echo $(web_pipe "https://getfedora.org/releases.json" | jq -r "map(select(.arch==\"${QEMU_ARCH}\" and .version==\"${RELEASE/_/ }\" and .variant!=\"Labs\" and .variant!=\"IoT\" and .variant!=\"Container\" and .variant!=\"Cloud\" and .variant!=\"Everything\"  and .subvariant!=\"Security\" and .subvariant!=\"Server_KVM\" and .subvariant!=\"SoaS\")) | map(.subvariant) | unique | .[]")
+	fi
+}
+
+arch_() {
+	echo amd64 arm64 ppc64el s390x
+}
+
+get_() {
+	local HASH=""
+	local ISO=""
+	local JSON=""
+	local URL=""
+	local VARIANT=""
+	local QEMU_ARCH
+	QEMU_ARCH=$(_qarch_to_upstream "${ARCH:-amd64}")
+	case ${EDITION} in
+		Server|Kinoite|Onyx|Silverblue|Sericea|Workstation) VARIANT="${EDITION}";;
+		*) VARIANT="Spins";;
+	esac
+	if [[ "${RELEASE}" == *"_"* ]]; then
+		RELEASE="${RELEASE/_/ }"
+	fi
+	JSON=$(web_pipe "https://getfedora.org/releases.json" | jq '.[] | select(.variant=="'${VARIANT}'" and .subvariant=="'"${EDITION}"'" and .arch=="'"${QEMU_ARCH}"'" and .version=="'"${RELEASE}"'" and (.link | endswith(".iso")))')
+	URL=$(echo "${JSON}" | jq -r '.link' | head -n1)
+	HASH=$(echo "${JSON}" | jq -r '.sha256' | head -n1)
+	echo "${URL} ${HASH}"
+}
+
+releases_() {
+	# Releases parsed at generation time — no network access needed.
+	echo "${RELEASES}"
+}
+editions_() {
+	# Editions parsed at generation time — no network access needed.
+	local _scoped=""
+	if [ -n "${RELEASE:-}" ] && declare -F _release_editions_ >/dev/null; then
+		_scoped=$(_release_editions_ "${ARCH:-}|${RELEASE}")
+	fi
+	if [ -n "${_scoped}" ]; then
+		echo "${_scoped}"
+		return 0
+	fi
+	local _per_arch="EDITIONS_${ARCH:-}"
+	if [ -n "${!_per_arch:-}" ]; then
+		echo "${!_per_arch}"
+		return 0
+	fi
+	echo "${EDITIONS:-}"
+}

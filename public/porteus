@@ -1,0 +1,72 @@
+# Template file for 'porteus'
+OSNAME="porteus"
+PRETTY="Porteus"
+LOGO=""
+ICON="porteus.svg"
+ICON_ONLINE=""
+CATEGORY="Lightweight"
+BASEDOF="Slackware"
+DESCRIPTION="Complete linux operating system that is optimized to run from CD, USB flash drive, hard drive, or other bootable storage media"
+HOMEPAGE="http://www.porteus.org"
+CREDENTIALS="-"
+GPG=""
+RSS=""
+DW=""
+MAGNET=""
+MAGNET_PREFERRED=""
+TORRENT=""
+CHAT=""
+
+RELEASES="5.1 5.01 5.0 4.0"
+EDITIONS="cinnamon kde lxde lxqt mate openbox xfce"
+EDITIONS_LIST="cinnamon
+kde
+lxde
+lxqt
+mate
+openbox
+xfce"
+QEMU_ARCH="amd64"
+
+releases_() {
+	echo 5.1 5.01 5.0 4.0
+}
+
+editions_() {
+	echo cinnamon kde lxde lxqt mate openbox xfce
+}
+
+get_() {
+	local HASH=""
+	local ISO=""
+	local URL=""
+	edition="${EDITION~~}"
+	local suffix=""
+	[ "${RELEASE}" = "5.1" ] && suffix="-alpha4"
+	ISO="Porteus-${edition}-v${RELEASE}${suffix}-x86_64.iso"
+	URL="https://ftp.nluug.nl/os/Linux/distr/porteus/x86_64/Porteus-v${RELEASE}"
+	HASH=$(web_pipe "${URL}/sha256sums.txt" | grep "${ISO}" | cut -d' ' -f1)
+	echo "${URL}/${ISO} ${HASH}"
+}
+
+releases_() {
+	# Releases parsed at generation time — no network access needed.
+	echo "${RELEASES}"
+}
+editions_() {
+	# Editions parsed at generation time — no network access needed.
+	local _scoped=""
+	if [ -n "${RELEASE:-}" ] && declare -F _release_editions_ >/dev/null; then
+		_scoped=$(_release_editions_ "${ARCH:-}|${RELEASE}")
+	fi
+	if [ -n "${_scoped}" ]; then
+		echo "${_scoped}"
+		return 0
+	fi
+	local _per_arch="EDITIONS_${ARCH:-}"
+	if [ -n "${!_per_arch:-}" ]; then
+		echo "${!_per_arch}"
+		return 0
+	fi
+	echo "${EDITIONS:-}"
+}

@@ -1,0 +1,68 @@
+# Template file for 'spirallinux'
+OSNAME="spirallinux"
+PRETTY="Spiral Linux"
+LOGO=""
+ICON="spirallinux.svg"
+ICON_ONLINE=""
+CATEGORY="Beginner"
+BASEDOF="Debian"
+DESCRIPTION="Selection of Linux spins built from Debian GNU/Linux, with a focus on simplicity and out-of-the-box usability across all the major desktop environments"
+HOMEPAGE="https://spirallinux.github.io"
+CREDENTIALS="-"
+GPG=""
+RSS=""
+DW=""
+MAGNET=""
+MAGNET_PREFERRED=""
+TORRENT=""
+CHAT=""
+
+RELEASES="latest"
+EDITIONS="Budgie Builder Cinnamon Gnome LXQt Mate Plasma XFCE"
+EDITIONS_LIST="Budgie
+Builder
+Cinnamon
+Gnome
+LXQt
+Mate
+Plasma
+XFCE"
+QEMU_ARCH="amd64"
+
+releases_() {
+	echo latest
+}
+
+editions_() {
+	echo Plasma XFCE Mate LXQt Gnome Budgie Cinnamon Builder
+}
+
+get_() {
+	local HASH=""
+	local ISO="SpiralLinux_${EDITION}_12.231005_x86-64.iso"
+	local URL="https://sourceforge.net/projects/spirallinux/files/12.231005"
+	HASH=$(web_pipe 'https://sourceforge.net/projects/spirallinux/rss?path=/' | grep "${ISO}" | grep 'md5' | cut -d'<' -f3 | cut -d'>' -f2)
+	echo "${URL}/${ISO}" "${HASH}"
+}
+
+releases_() {
+	# Releases parsed at generation time — no network access needed.
+	echo "${RELEASES}"
+}
+editions_() {
+	# Editions parsed at generation time — no network access needed.
+	local _scoped=""
+	if [ -n "${RELEASE:-}" ] && declare -F _release_editions_ >/dev/null; then
+		_scoped=$(_release_editions_ "${ARCH:-}|${RELEASE}")
+	fi
+	if [ -n "${_scoped}" ]; then
+		echo "${_scoped}"
+		return 0
+	fi
+	local _per_arch="EDITIONS_${ARCH:-}"
+	if [ -n "${!_per_arch:-}" ]; then
+		echo "${!_per_arch}"
+		return 0
+	fi
+	echo "${EDITIONS:-}"
+}

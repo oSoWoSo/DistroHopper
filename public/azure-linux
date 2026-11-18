@@ -1,0 +1,47 @@
+# Template file for 'azure-linux'
+OSNAME="azure-linux"
+PRETTY="Azure Linux"
+LOGO=""
+ICON="azure-linux.svg"
+ICON_ONLINE=""
+CATEGORY="Desktop, Server"
+BASEDOF="-"
+DESCRIPTION="Microsoft's internal Linux distribution for cloud infrastructure and edge"
+HOMEPAGE="https://github.com/microsoft/azurelinux"
+CREDENTIALS="-"
+GPG=""
+RSS=""
+DW=""
+MAGNET=""
+MAGNET_PREFERRED=""
+TORRENT=""
+CHAT=""
+
+RELEASES="3.0"
+QEMU_ARCH="amd64 arm64"
+
+arch_() {
+	echo amd64 arm64
+}
+
+releases_() {
+	echo 3.0
+}
+
+get_() {
+	local UPSTREAM_ARCH="x86_64"
+	[ "${ARCH}" == "arm64" ] && UPSTREAM_ARCH="aarch64"
+	local URL="https://aka.ms/azurelinux-${RELEASE}-${UPSTREAM_ARCH}.iso"
+	local ISO
+	ISO="$(web_redirect "${URL}")"
+	echo "${ISO}"
+}
+
+config_() {
+	echo "disk_size=\"32G\"" >> "${CONF_FILE}"
+}
+
+releases_() {
+	# Releases parsed at generation time — no network access needed.
+	echo "${RELEASES}"
+}

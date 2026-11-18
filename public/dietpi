@@ -1,0 +1,74 @@
+# Template file for 'dietpi'
+OSNAME="dietpi"
+PRETTY="DietPi"
+LOGO=""
+ICON="dietpi.svg"
+ICON_ONLINE=""
+CATEGORY="Lightweight"
+BASEDOF="Debian"
+DESCRIPTION="Highly optimised minimal Debian OS"
+HOMEPAGE="https://dietpi.com"
+CREDENTIALS="-"
+GPG=""
+RSS=""
+DW=""
+MAGNET=""
+MAGNET_PREFERRED=""
+TORRENT=""
+CHAT=""
+
+RELEASES="uefi bios"
+EDITIONS="Bookworm Forky Trixie"
+EDITIONS_LIST="Bookworm
+Forky
+Trixie"
+QEMU_ARCH="amd64"
+
+releases_() {
+	echo bios uefi
+}
+
+editions_() {
+	web_pipe "https://dietpi.com/downloads/images/" | grep '\.iso"' | cut -d'"' -f2 | grep '_VM-UEFI' | cut -d'-' -f4 | cut -d'_' -f1
+}
+
+get_() {
+	local HASH=""
+	local ISO=""
+	local URL="https://dietpi.com/downloads/images"
+	if [ "${RELEASE}" == 'bios' ]; then
+		local ISO="DietPi_VM-x86_64-${EDITION}_Installer.iso"
+	elif [ "${RELEASE}" == 'uefi' ]; then
+		local ISO="DietPi_VM-UEFI-x86_64-${EDITION}_Installer.iso"
+	fi
+	HASH=$(wget -q -O- "${URL}/SHASUMS.txt" | grep "${ISO}" | cut -d' ' -f1)
+	echo "${URL}/${ISO} ${HASH}"
+}
+
+config_() {
+	if [[ "${RELEASE}" == 'bios' ]]; then
+		echo "boot=\"legacy\"" >> "${CONF_FILE}"
+	fi
+}
+
+releases_() {
+	# Releases parsed at generation time — no network access needed.
+	echo "${RELEASES}"
+}
+editions_() {
+	# Editions parsed at generation time — no network access needed.
+	local _scoped=""
+	if [ -n "${RELEASE:-}" ] && declare -F _release_editions_ >/dev/null; then
+		_scoped=$(_release_editions_ "${ARCH:-}|${RELEASE}")
+	fi
+	if [ -n "${_scoped}" ]; then
+		echo "${_scoped}"
+		return 0
+	fi
+	local _per_arch="EDITIONS_${ARCH:-}"
+	if [ -n "${!_per_arch:-}" ]; then
+		echo "${!_per_arch}"
+		return 0
+	fi
+	echo "${EDITIONS:-}"
+}

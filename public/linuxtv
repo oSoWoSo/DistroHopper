@@ -1,0 +1,38 @@
+# Template file for 'linuxtv'
+OSNAME="linuxtv"
+PRETTY="LinuxTV"
+LOGO=""
+ICON="linuxtv.svg"
+ICON_ONLINE=""
+CATEGORY="Desktop, Live Medium"
+BASEDOF="Debian"
+DESCRIPTION="Debian-based live Linux distribution that turns a computer into a TV box with a remote-friendly launcher"
+HOMEPAGE="https://github.com/guruswarupa/LinuxTV"
+CREDENTIALS=""
+GPG=""
+RSS="https://github.com/guruswarupa/LinuxTV/releases.atom"
+DW="https://distrowatch.com/linuxtv"
+MAGNET=""
+MAGNET_PREFERRED=""
+TORRENT=""
+CHAT=""
+
+RELEASES="latest"
+QEMU_ARCH="amd64"
+
+arch_() {
+	echo amd64
+}
+
+releases_() {
+	echo latest
+}
+
+get_() {
+	echo "https://github.com/guruswarupa/LinuxTV/releases/download/${RELEASE}/LinuxTV.iso"
+}
+
+releases_() {
+	# Releases parsed at generation time — no network access needed.
+	echo "${RELEASES}"
+}

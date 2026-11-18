@@ -1,0 +1,65 @@
+# Template file for 'agarimos'
+OSNAME="agarimos"
+PRETTY="AgarimOS"
+LOGO=""
+ICON="agarimos.svg"
+ICON_ONLINE=""
+CATEGORY="Lightweight"
+BASEDOF="Void"
+DESCRIPTION="Includes a minimum set of applications so you can build your system on your own."
+HOMEPAGE="https://sourceforge.net/projects/agarimos"
+CREDENTIALS="anon:voidlinux,root:voidlinux"
+GPG=""
+RSS=""
+DW=""
+MAGNET=""
+MAGNET_PREFERRED=""
+TORRENT=""
+CHAT=""
+
+RELEASES="latest"
+EDITIONS="cinnamon gnome lxqt-kwin plasma xfce4"
+EDITIONS_LIST="cinnamon
+gnome
+lxqt-kwin
+plasma
+xfce4"
+QEMU_ARCH="amd64"
+
+releases_() {
+	echo latest
+}
+
+editions_() {
+	echo cinnamon gnome lxqt-kwin plasma xfce4
+}
+
+get_() {
+	local REL=$(echo "${EDITION}" | tr '[:lower:]' '[:upper:]')
+	local ISOS=$(web_pipe "https://sourceforge.net/projects/agarimos/rss?path=/" | grep 'title><!\[CDATA' | cut -d'[' -f3 | cut -d']' -f1 | grep '.iso')
+	local URL="https://sourceforge.net/projects/agarimos/files/${REL}"
+	local ISO=$(echo "${ISOS}" | grep "${REL}" | cut -d'/' -f3)
+	echo "${URL}/${ISO}"
+}
+
+releases_() {
+	# Releases parsed at generation time — no network access needed.
+	echo "${RELEASES}"
+}
+editions_() {
+	# Editions parsed at generation time — no network access needed.
+	local _scoped=""
+	if [ -n "${RELEASE:-}" ] && declare -F _release_editions_ >/dev/null; then
+		_scoped=$(_release_editions_ "${ARCH:-}|${RELEASE}")
+	fi
+	if [ -n "${_scoped}" ]; then
+		echo "${_scoped}"
+		return 0
+	fi
+	local _per_arch="EDITIONS_${ARCH:-}"
+	if [ -n "${!_per_arch:-}" ]; then
+		echo "${!_per_arch}"
+		return 0
+	fi
+	echo "${EDITIONS:-}"
+}

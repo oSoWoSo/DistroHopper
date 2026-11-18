@@ -1,0 +1,68 @@
+# Template file for 'mageia'
+OSNAME="mageia"
+PRETTY="Mageia"
+LOGO=" "
+ICON="mageia.svg"
+ICON_ONLINE=""
+CATEGORY="Beginner"
+BASEDOF="-"
+DESCRIPTION="Stable, secure operating system for desktop & server"
+HOMEPAGE="https://www.mageia.org"
+CREDENTIALS="-"
+GPG=""
+RSS=""
+DW=""
+MAGNET=""
+MAGNET_PREFERRED=""
+TORRENT=""
+CHAT=""
+
+RELEASES="10"
+EDITIONS="gnome plasma xfce"
+EDITIONS_LIST="gnome
+plasma
+xfce"
+QEMU_ARCH="amd64"
+
+releases_() {
+	echo 10
+}
+
+editions_() {
+	echo plasma gnome xfce
+}
+
+get_() {
+	local HASH=""
+	local ISO=""
+	case "$EDITION" in
+		plasma) EDITION="Plasma" ;;
+		gnome) EDITION="GNOME" ;;
+		xfce) EDITION="Xfce" ;;
+	esac
+	ISO=$(web_pipe https://www.mageia.org/en/downloads/get/?q="Mageia-${RELEASE}-Live-${EDITION}-x86_64.iso" | grep 'click here'| grep -o 'href=.*\.iso'|cut -d\" -f2)
+	HASH=$(web_pipe "${ISO}.sha512" | cut -d' ' -f1)
+	echo "${ISO} ${HASH}"
+}
+
+releases_() {
+	# Releases parsed at generation time — no network access needed.
+	echo "${RELEASES}"
+}
+editions_() {
+	# Editions parsed at generation time — no network access needed.
+	local _scoped=""
+	if [ -n "${RELEASE:-}" ] && declare -F _release_editions_ >/dev/null; then
+		_scoped=$(_release_editions_ "${ARCH:-}|${RELEASE}")
+	fi
+	if [ -n "${_scoped}" ]; then
+		echo "${_scoped}"
+		return 0
+	fi
+	local _per_arch="EDITIONS_${ARCH:-}"
+	if [ -n "${!_per_arch:-}" ]; then
+		echo "${!_per_arch}"
+		return 0
+	fi
+	echo "${EDITIONS:-}"
+}

@@ -1,0 +1,8 @@
+amd64	latest	debian	https://ftp.fi.muni.cz/pub/linux/slax/Slax-2026/slax-2026.11-64bit-6.iso	OK
+amd64	latest	slackware	https://ftp.fi.muni.cz/pub/linux/slax/Slax-15.x/slax-64bit-slackware-15.0.4.iso	OK
+amd64	2026.11	debian	https://ftp.fi.muni.cz/pub/linux/slax/Slax-2026/slax-2026.11-64bit-6.iso	OK
+amd64	15.0.4	slackware	https://ftp.fi.muni.cz/pub/linux/slax/Slax-15.x/slax-64bit-slackware-15.0.4.iso	OK
+amd64	15.0.3	slackware	https://ftp.fi.muni.cz/pub/linux/slax/Slax-15.x/slax-64bit-slackware-15.0.3.iso	OK
+amd64	15.0.1	slackware	https://ftp.fi.muni.cz/pub/linux/slax/Slax-15.x/slax-64bit-15.0.1.iso	OK
+amd64	15.0.0	slackware	https://ftp.fi.muni.cz/pub/linux/slax/Slax-15.x/slax-64bit-15.0.0.iso	OK
+amd64	12.2.0	debian	https://ftp.fi.muni.cz/pub/linux/slax/Slax-12.x/slax-64bit-debian-12.2.0.iso	OK

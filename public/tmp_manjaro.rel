@@ -1,0 +1,11 @@
+amd64	xfce	full
+amd64	xfce	minimal
+amd64	gnome	full
+amd64	gnome	minimal
+amd64	plasma	full
+amd64	plasma	minimal
+amd64	cinnamon	full
+amd64	cinnamon	minimal
+amd64	i3	full
+amd64	i3	minimal
+amd64	sway	full

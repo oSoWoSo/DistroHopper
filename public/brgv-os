@@ -1,0 +1,67 @@
+# Template file for 'brgv-os'
+OSNAME="brgv-os"
+PRETTY="PRGV-OS"
+LOGO=""
+ICON="brgv-os.svg"
+ICON_ONLINE=""
+CATEGORY="Lightweight"
+BASEDOF="Void"
+DESCRIPTION="Rolling-release distribution featuring customised GNOME desktop with variety of unique themes, offers out-of-the-box support for English and Romanian languages"
+HOMEPAGE="https://github.com/florintanasa/brgvos-void/"
+CREDENTIALS="anon:voidlinux,root:voidlinux"
+GPG=""
+RSS="https://sourceforge.net/projects/brgv-os/rss?path=/"
+DW=""
+MAGNET=""
+MAGNET_PREFERRED=""
+TORRENT=""
+CHAT=""
+
+RELEASES="latest"
+EDITIONS="en_US ro_RO"
+EDITIONS_LIST="en_US
+ro_RO"
+QEMU_ARCH="amd64"
+
+releases_() {
+	echo latest
+}
+
+editions_() {
+	echo en_US ro_RO
+}
+
+get_() {
+	local URL="https://sourceforge.net/projects/brgv-os/files/brgv-os/${EDITION}"
+	local ISOname
+	ISOname=$(web_pipe "https://sourceforge.net/projects/brgv-os/rss?path=/brgv-os/${EDITION}" \
+		| grep 'title><!\[CDATA' | cut -d'[' -f3 | cut -d']' -f1 \
+		| grep "/${EDITION}/" | grep '\.iso' \
+		| cut -d'/' -f4 | sed 's/\.iso$//' | head -1)
+	local ISO="${ISOname}.iso"
+	local HASH
+	HASH=$(web_pipe "${URL}/${ISOname}.sha256")
+	echo "${URL}/${ISO} ${HASH}"
+}
+
+releases_() {
+	# Releases parsed at generation time — no network access needed.
+	echo "${RELEASES}"
+}
+editions_() {
+	# Editions parsed at generation time — no network access needed.
+	local _scoped=""
+	if [ -n "${RELEASE:-}" ] && declare -F _release_editions_ >/dev/null; then
+		_scoped=$(_release_editions_ "${ARCH:-}|${RELEASE}")
+	fi
+	if [ -n "${_scoped}" ]; then
+		echo "${_scoped}"
+		return 0
+	fi
+	local _per_arch="EDITIONS_${ARCH:-}"
+	if [ -n "${!_per_arch:-}" ]; then
+		echo "${!_per_arch}"
+		return 0
+	fi
+	echo "${EDITIONS:-}"
+}

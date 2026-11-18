@@ -1,0 +1,53 @@
+# Template file for 'odyssey-linux'
+OSNAME="odyssey-linux"
+PRETTY="Odyssey Linux"
+LOGO=" "
+ICON="odyssey-linux.svg"
+ICON_ONLINE=""
+CATEGORY="Desktop, Live Medium"
+BASEDOF="Void"
+DESCRIPTION="Void-based, runit, no systemd — independent, self-hosted, rolling releases every ~40 days"
+HOMEPAGE="https://odysseylinux.org"
+CREDENTIALS="user:live,root:void"
+GPG=""
+RSS=""
+DW=""
+MAGNET=""
+MAGNET_PREFERRED="true"
+TORRENT=""
+CHAT=""
+
+RELEASES="shipwreck launch"
+QEMU_ARCH="amd64"
+
+releases_() {
+	echo launch shipwreck
+}
+
+get_() {
+	local ARCH="x86"
+	local HASH=""
+	local ISO=""
+	local URL="https://dl.odysseylinux.org"
+	case "$RELEASE" in
+		launch)
+			ISO="odyssey-launch-edition-chapter-II-x86_64.iso.torrent"
+			HASH="0194121c9ae4f911101d4c73b2e78a60efb1ebfb449e1dae202c875a66d7e89b"
+			;;
+		shipwreck)
+			ISO="odyssey-shipwreck-x86_64.iso.torrent"
+			HASH="a3fddc198a30f8345eb8682ae0ad09aacbf64b3fc7a31db38dfdc0c1c65d099d"
+			;;
+	esac
+	TORRENT="${URL}/${ISO} ${HASH}"
+	echo "$TORRENT"
+}
+
+config_() {
+	echo "disk_size=\"32G\"" >> "${CONF_FILE}"
+}
+
+releases_() {
+	# Releases parsed at generation time — no network access needed.
+	echo "${RELEASES}"
+}

@@ -1,0 +1,68 @@
+# Template file for 'ghostbsd'
+OSNAME="ghostbsd"
+PRETTY="GhostBSD"
+LOGO=""
+ICON="ghostbsd.svg"
+ICON_ONLINE=""
+CATEGORY="Beginner"
+BASEDOF="FreeBSD"
+DESCRIPTION="Simple, elegant desktop BSD Operating System"
+HOMEPAGE="https://www.ghostbsd.org"
+CREDENTIALS="-"
+GPG=""
+RSS=""
+DW=""
+MAGNET=""
+MAGNET_PREFERRED=""
+TORRENT=""
+CHAT=""
+GUEST="freebsd"
+
+RELEASES="26.3.R15.1p6 26.2-R15.1p6 26.1-R15.0p2"
+EDITIONS="mate xfce"
+EDITIONS_LIST="mate
+xfce"
+QEMU_ARCH="amd64"
+
+releases_() {
+	#shellcheck disable=SC2046,SC2005
+	echo $(web_pipe "https://download.ghostbsd.org/releases/amd64/" | grep "href" | cut -d'"' -f2 | cut -d'/' -f1 | sort -r | tail -n +3 | head -n 3)
+}
+
+editions_() {
+	echo mate xfce
+}
+
+get_() {
+	local ISO=""
+	local URL="https://download.ghostbsd.org/releases/amd64/${RELEASE}"
+	local HASH=""
+	case ${EDITION} in
+		mate) ISO="GhostBSD-${RELEASE}.iso";;
+		xfce) ISO="GhostBSD-${RELEASE}-XFCE.iso";;
+	esac
+	HASH=$(web_pipe "${URL}/${ISO}.sha256" | grep "${ISO}" | cut -d' ' -f4)
+	echo "${URL}/${ISO} ${HASH}"
+}
+
+releases_() {
+	# Releases parsed at generation time — no network access needed.
+	echo "${RELEASES}"
+}
+editions_() {
+	# Editions parsed at generation time — no network access needed.
+	local _scoped=""
+	if [ -n "${RELEASE:-}" ] && declare -F _release_editions_ >/dev/null; then
+		_scoped=$(_release_editions_ "${ARCH:-}|${RELEASE}")
+	fi
+	if [ -n "${_scoped}" ]; then
+		echo "${_scoped}"
+		return 0
+	fi
+	local _per_arch="EDITIONS_${ARCH:-}"
+	if [ -n "${!_per_arch:-}" ]; then
+		echo "${!_per_arch}"
+		return 0
+	fi
+	echo "${EDITIONS:-}"
+}

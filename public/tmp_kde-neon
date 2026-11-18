@@ -1,0 +1,13 @@
+WARN  kde-neon      amd64      user       bigscreen                                      
+WARN  kde-neon      amd64      user       desktop                                        
+OK    kde-neon      amd64      user       ko               https://files.kde.org/neon/images/ko/user/current/neon-user-ko-20261025-1123.iso
+OK    kde-neon      amd64      user       mobile           https://files.kde.org/neon/images/mobile/user/current/neon-user-mobile-20261025-0728.iso
+WARN  kde-neon      amd64      testing    bigscreen                                      
+WARN  kde-neon      amd64      testing    desktop                                        
+OK    kde-neon      amd64      testing    ko               https://files.kde.org/neon/images/ko/testing/current/neon-testing-ko-20261025-1208.iso
+OK    kde-neon      amd64      testing    mobile           https://files.kde.org/neon/images/mobile/testing/current/neon-testing-mobile-20261025-1543.iso
+WARN  kde-neon      amd64      unstable   bigscreen                                      
+WARN  kde-neon      amd64      unstable   desktop                                        
+OK    kde-neon      amd64      unstable   dev              https://files.kde.org/neon/images/dev/unstable/current/neon-unstable-dev-20260831-1139.iso
+OK    kde-neon      amd64      unstable   ko               https://files.kde.org/neon/images/ko/unstable/current/neon-unstable-ko-20261024-0354.iso
+OK    kde-neon      amd64      unstable   mobile           https://files.kde.org/neon/images/mobile/unstable/current/neon-unstable-mobile-20261024-1248.iso

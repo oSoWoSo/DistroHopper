@@ -1,0 +1,73 @@
+# Template file for 'lazylinux'
+OSNAME="lazylinux"
+PRETTY="LazyLinux"
+LOGO=""
+ICON="lazylinux.svg"
+ICON_ONLINE=""
+CATEGORY="Lightweight"
+BASEDOF="Void"
+DESCRIPTION="Designed specifically for developers, tinkerers, and power users"
+HOMEPAGE="https://lazylinuxos.github.io"
+CREDENTIALS="anon:voidlinux,root:voidlinux"
+GPG="https://sourceforge.net/projects/lazylinux/files/iso/sha256sum.txt.asc"
+RSS="https://sourceforge.net/projects/lazylinux/rss?path=/iso"
+DW=""
+MAGNET="magnet:?xt=urn:btih:QRWQ6SFARQBGXLPE4RUDCMTQFEFZ6BMM&dn=lazylinux-live-x86_64-6.19.10_1-20260326.iso&xl=5728149504&tr.1=udp%3A%2F%2Ffosstorrents.com%3A6969%2Fannounce&tr.2=udp%3A%2F%2Ffosstorrents.com%3A6969%2Fannounce&tr.3=http%3A%2F%2Ffosstorrents.com%3A6969%2Fannounce&tr.4=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr.5=http%3A%2F%2Fthetracker.org%3A80%2Fannounce"
+MAGNET_PREFERRED=""
+TORRENT=""
+CHAT="https://matrix.to/#/#lazylinux-support:matrix.org"
+
+RELEASES="latest"
+EDITIONS="mango-dms oxwm-xlibre skarwm-xlibre sonicde-xlibre xfce"
+EDITIONS_LIST="mango-dms
+oxwm-xlibre
+skarwm-xlibre
+sonicde-xlibre
+xfce"
+QEMU_ARCH="amd64"
+
+releases_() {
+	echo latest
+}
+
+editions_() {
+	web_pipe "${RSS}" \
+		| grep -oP 'lazylinux-live-x86_64-[0-9]{8}-\K[^/]+(?=\.iso)' \
+		| sort -u
+}
+
+get_() {
+	local RSS_ISO
+	RSS_ISO=$(web_pipe "${RSS}" \
+		| grep -oP "iso/[^<]*lazylinux-live-x86_64-[0-9]{8}-${EDITION}\\.iso" \
+		| head -1)
+	[ -n "${RSS_ISO}" ] || return 1
+
+	local ISO="${RSS_ISO##*/}"
+	local URL="https://sourceforge.net/projects/lazylinux/files/${RSS_ISO%/*}"
+	local HASH
+	HASH=$(web_pipe "${URL}/sha256sum.txt" | grep -F "${ISO}" | awk 'NR==1 {print $1}')
+	echo "${URL}/${ISO} ${HASH}"
+}
+
+releases_() {
+	# Releases parsed at generation time — no network access needed.
+	echo "${RELEASES}"
+}
+editions_() {
+	# Editions parsed at generation time — no network access needed.
+	local _scoped=""
+	if [ -n "${RELEASE:-}" ] && declare -F _release_editions_ >/dev/null; then
+		_scoped=$(_release_editions_ "${ARCH:-}|${RELEASE}")
+	fi
+	if [ -n "${_scoped}" ]; then
+		echo "${_scoped}"
+		return 0
+	fi
+	local _per_arch="EDITIONS_${ARCH:-}"
+	if [ -n "${!_per_arch:-}" ]; then
+		echo "${!_per_arch}"
+		return 0
+	fi
+	echo "${EDITIONS:-}"
+}

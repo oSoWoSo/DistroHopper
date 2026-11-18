@@ -1,0 +1,16 @@
+amd64	2026.09	small
+amd64	2026.09	full
+amd64	2026.04	small
+amd64	2026.04	full
+amd64	testing	small
+amd64	testing	full
+amd64	unstable	small
+amd64	unstable	full
+arm64	2026.09	small
+arm64	2026.09	full
+arm64	2026.04	small
+arm64	2026.04	full
+arm64	testing	small
+arm64	testing	full
+arm64	unstable	small
+arm64	unstable	full

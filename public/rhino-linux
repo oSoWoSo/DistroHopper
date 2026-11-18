@@ -1,0 +1,97 @@
+# Template file for 'rhino-linux'
+OSNAME="rhino-linux"
+PRETTY="Rhino Linux"
+LOGO=""
+ICON="rhino-linux.svg"
+ICON_ONLINE=""
+CATEGORY="Beginner"
+BASEDOF="Ubuntu"
+DESCRIPTION="Re-invents the Ubuntu experience as a rolling-release distribution built on a stable desktop environment. With Pacstall & XFCE"
+HOMEPAGE="https://rhinolinux.org/"
+CREDENTIALS="-"
+GPG=""
+RSS="https://sourceforge.net/projects/rhino-linux-builder/rss?path=/"
+DW=""
+MAGNET=""
+MAGNET_PREFERRED=""
+TORRENT=""
+CHAT=""
+
+RELEASES="2026.1 2025.4 2025.3 2025.2 2025.1 2024.2 2024.1 2023.4 2023.3 2023.2 2023.1"
+EDITIONS="lomiri unicorn"
+EDITIONS_LIST="lomiri
+unicorn"
+QEMU_ARCH="amd64"
+
+_release_editions_() {
+	case "${1:-}" in
+		"amd64|2025.2")	 echo "unicorn" ;;
+		"amd64|2025.3")	 echo "unicorn" ;;
+		"amd64|2025.1")	 echo "unicorn" ;;
+		"amd64|2025.4")	 echo "unicorn" ;;
+		"amd64|2024.2")	 echo "unicorn" ;;
+		"amd64|2024.1")	 echo "unicorn" ;;
+		"amd64|2026.1")	 echo "lomiri unicorn" ;;
+		"amd64|2023.4")	 echo "unicorn" ;;
+		"amd64|2023.1")	 echo "unicorn" ;;
+		"amd64|2023.2")	 echo "unicorn" ;;
+		"amd64|2023.3")	 echo "unicorn" ;;
+		*) return 1 ;;
+	esac
+}
+
+releases_() {
+	echo 2026.1 2025.4 2025.3 2025.2 2025.1 2024.2 2024.1 2023.4 2023.3 2023.2 2023.1
+}
+
+editions_() {
+	case "${RELEASE:-}" in
+		2026.1|"") echo unicorn lomiri;;
+		*) echo unicorn;;
+	esac
+}
+
+archs_() {
+	echo amd64 arm64
+}
+
+get_() {
+	local HASH=""
+	local ISO=""
+	local URL=""
+	if [ "${EDITION}" = lomiri ]; then
+		[ "${RELEASE}" = 2026.1 ] || return 1
+		ISO="Rhino-Linux-${RELEASE}-${ARCH}-lomiri.iso"
+	else
+		ISO="Rhino-Linux-${RELEASE}-${ARCH}.iso"
+	fi
+	URL="https://sourceforge.net/projects/rhino-linux-builder/files/${RELEASE}"
+	HASH="$(web_pipe "${URL}/${ISO}.sha256" | grep "${ISO}" | cut -d' ' -f1)"
+	echo "${URL}/${ISO} ${HASH}"
+}
+
+config_() {
+	echo "disk_size=\"32G\"" >> "${CONF_FILE}"
+}
+
+releases_() {
+	# Releases parsed at generation time — no network access needed.
+	echo "${RELEASES}"
+}
+editions_() {
+	# Editions parsed at generation time — no network access needed.
+	local _scoped=""
+	if [ -n "${RELEASE:-}" ] && declare -F _release_editions_ >/dev/null; then
+		_scoped=$(_release_editions_ "${ARCH:-}|${RELEASE}")
+	fi
+	if [ -n "${_scoped}" ]; then
+		echo "${_scoped}"
+		return 0
+	fi
+	local _per_arch="EDITIONS_${ARCH:-}"
+	if [ -n "${!_per_arch:-}" ]; then
+		echo "${!_per_arch}"
+		return 0
+	fi
+	echo "${EDITIONS:-}"
+}

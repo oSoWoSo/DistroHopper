@@ -1,0 +1,42 @@
+# Template file for 'pantherx-os'
+OSNAME="pantherx-os"
+PRETTY="PantherX"
+LOGO=""
+ICON="pantherx-os.svg"
+ICON_ONLINE=""
+CATEGORY="advanced"
+BASEDOF="guix"
+DESCRIPTION="PantherX is designed to enable everyone without a PHD in computer science to enjoy a fast, flexible and private work & entertainment platform that runs for years, with little intervention"
+HOMEPAGE="https://www.pantherx.org"
+CREDENTIALS="-"
+GPG=""
+RSS=""
+DW=""
+MAGNET=""
+MAGNET_PREFERRED=""
+TORRENT=""
+CHAT=""
+
+RELEASES="latest"
+QEMU_ARCH="amd64"
+
+releases_() {
+	echo latest
+}
+
+get_() {
+	local HASH=""
+	local ISO=""
+	local URL=""
+	local TEMP=""
+	URL="https://temp.pantherx.org"
+	TEMP="$(web_pipe "https://wiki.pantherx.org/" | grep -o 'href="https://temp.pantherx.org/[^"]*\.iso"')"
+	ISO="$(basename $(echo ${TEMP} | cut -d'"' -f2))"
+	HASH="$(web_pipe "https://wiki.pantherx.org/" | grep -A2 'download-iso-x86_64' | grep -o '<code>[^<]*</code>' | sed 's/<[^>]*>//g' | head -1)"
+	echo "${URL}/${ISO} ${HASH}"
+}
+
+releases_() {
+	# Releases parsed at generation time — no network access needed.
+	echo "${RELEASES}"
+}

@@ -1,0 +1,128 @@
+# Template file for 'redox-os'
+OSNAME="redox-os"
+PRETTY="Redox OS"
+LOGO=""
+ICON="redox-os.svg"
+ICON_ONLINE=""
+CATEGORY="Desktop, Live Medium, Server"
+BASEDOF="-"
+DESCRIPTION="Microkernel-based operating system, with a large number of supported programs and components, to create a full-featured user and application environment"
+HOMEPAGE="https://www.redox-os.org"
+CREDENTIALS="-"
+GPG=""
+RSS=""
+DW=""
+MAGNET=""
+MAGNET_PREFERRED=""
+TORRENT=""
+CHAT=""
+
+RELEASES="livedisk harddrive"
+EDITIONS="demo desktop server"
+EDITIONS_LIST="demo
+desktop
+server"
+QEMU_ARCH="amd64 arm64 i586 riscv64"
+
+releases_() {
+	echo livedisk harddrive
+}
+
+editions_() {
+	echo demo desktop server
+}
+
+arch_() {
+	echo amd64 arm64 i586 riscv64
+}
+
+get_() {
+	local REDOX_ARCH EXT
+	case "${ARCH:-amd64}" in
+		amd64|x86_64) REDOX_ARCH=x86_64 ;;
+		arm64|aarch64) REDOX_ARCH=aarch64 ;;
+		i586) REDOX_ARCH=i586 ;;
+		riscv64|riscv64gc) REDOX_ARCH=riscv64gc ;;
+		*) return 1 ;;
+	esac
+	case "${RELEASE}" in
+		livedisk) EXT=iso ;;
+		harddrive) EXT=img ;;
+		*) return 1 ;;
+	esac
+	case "${EDITION}" in
+		demo|desktop|server) ;;
+		*) return 1 ;;
+	esac
+
+	local URL="https://static.redox-os.org/img/${REDOX_ARCH}"
+	local ENTRY ISO HASH MANIFEST
+	# Do not silently parse an HTTP error page as an empty checksum list.
+	if ! MANIFEST=$(web_pipe "${URL}/SHA256SUM" \
+		--fail --show-error --retry 3 --retry-delay 2 \
+		--connect-timeout 15 --max-time 60); then
+		echo "ERROR: Redox could not fetch ${URL}/SHA256SUM" >&2
+		return 1
+	fi
+	ENTRY=$(printf '%s\n' "${MANIFEST}" | awk \
+		-v prefix="redox_${EDITION}_${REDOX_ARCH}_" \
+		-v suffix="_${RELEASE}.${EXT}" '
+		{
+			hash = $1; file = $2
+			sub(/^\*/, "", file)
+			if (length(hash) != 64 || hash ~ /[^[:xdigit:]]/) next
+			if (index(file, prefix) != 1) next
+			tail = substr(file, length(prefix) + 1)
+			# Accept only dated build filenames, never paths or error pages.
+			if (tail !~ /^[0-9]+-[0-9]+-[0-9]+_[0-9]+_/) next
+			sub(/^[0-9]+-[0-9]+-[0-9]+_[0-9]+/, "", tail)
+			if (tail != suffix && tail != suffix ".zst") next
+			printf "%s\t%s\n", file, hash
+		}' | sort -k1,1V | tail -n1)
+	if [ -z "${ENTRY}" ]; then
+		echo "ERROR: Redox ${REDOX_ARCH}/${RELEASE}/${EDITION}: no matching image in ${URL}/SHA256SUM" >&2
+		printf 'Manifest response (first 200 characters): %s\n' "${MANIFEST:0:200}" >&2
+		return 1
+	fi
+	IFS=$'\t' read -r ISO HASH <<< "${ENTRY}"
+	echo "${URL}/${ISO} ${HASH}"
+}
+
+extract_() {
+	if [[ "${ISO}" == *.zst ]]; then
+		zstd -d "${VM_PATH}/${ISO}" || return 1
+		ISO="${ISO%.zst}"
+	fi
+	if [[ "${ISO}" == *.img ]]; then
+		if ! command -v qemu-img >/dev/null 2>&1; then
+			echo 'ERROR! qemu-img is required to convert the Redox harddrive image.' >&2
+			return 1
+		fi
+		qemu-img convert -f raw -O qcow2 "${VM_PATH}/${ISO}" "${VM_PATH}/disk.qcow2" || return 1
+		ISO="disk.qcow2"
+		# Boot the converted system disk, not a nonexistent installer ISO.
+		IMAGE_TYPE="none"
+	fi
+}
+
+releases_() {
+	# Releases parsed at generation time — no network access needed.
+	echo "${RELEASES}"
+}
+editions_() {
+	# Editions parsed at generation time — no network access needed.
+	local _scoped=""
+	if [ -n "${RELEASE:-}" ] && declare -F _release_editions_ >/dev/null; then
+		_scoped=$(_release_editions_ "${ARCH:-}|${RELEASE}")
+	fi
+	if [ -n "${_scoped}" ]; then
+		echo "${_scoped}"
+		return 0
+	fi
+	local _per_arch="EDITIONS_${ARCH:-}"
+	if [ -n "${!_per_arch:-}" ]; then
+		echo "${!_per_arch}"
+		return 0
+	fi
+	echo "${EDITIONS:-}"
+}

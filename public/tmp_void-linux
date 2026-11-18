@@ -1,0 +1,12 @@
+OK    void-linux    amd64      current    glibc            https://repo-default.voidlinux.org/live/current/void-live-x86_64-20250202-base.iso
+OK    void-linux    amd64      current    musl             https://repo-default.voidlinux.org/live/current/void-live-x86_64-musl-20250202-base.iso
+OK    void-linux    amd64      current    xfce-glibc       https://repo-default.voidlinux.org/live/current/void-live-x86_64-20250202-xfce.iso
+OK    void-linux    amd64      current    xfce-musl        https://repo-default.voidlinux.org/live/current/void-live-x86_64-musl-20250202-xfce.iso
+OK    void-linux    arm64      current    glibc            https://repo-default.voidlinux.org/live/current/void-live-aarch64-20250202-base.iso
+OK    void-linux    arm64      current    musl             https://repo-default.voidlinux.org/live/current/void-live-aarch64-musl-20250202-base.iso
+OK    void-linux    arm64      current    xfce-glibc       https://repo-default.voidlinux.org/live/current/void-live-aarch64-20250202-xfce.iso
+OK    void-linux    arm64      current    xfce-musl        https://repo-default.voidlinux.org/live/current/void-live-aarch64-musl-20250202-xfce.iso
+OK    void-linux    i686       current    glibc            https://repo-default.voidlinux.org/live/current/void-live-i686-20250202-base.iso
+OK    void-linux    i686       current    musl             https://repo-default.voidlinux.org/live/current/void-live-i686-musl-20250202-base.iso
+OK    void-linux    i686       current    xfce-glibc       https://repo-default.voidlinux.org/live/current/void-live-i686-20250202-xfce.iso
+OK    void-linux    i686       current    xfce-musl        https://repo-default.voidlinux.org/live/current/void-live-i686-musl-20250202-xfce.iso

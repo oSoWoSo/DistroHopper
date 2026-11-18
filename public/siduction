@@ -1,0 +1,89 @@
+# Template file for 'siduction'
+OSNAME="siduction"
+PRETTY="siduction"
+LOGO=""
+ICON="siduction.svg"
+ICON_ONLINE=""
+CATEGORY="advanced"
+BASEDOF="Debian"
+DESCRIPTION="Operating system based on the Linux kernel and the GNU project. In addition, there are applications and libraries from Debian"
+HOMEPAGE="https://siduction.org"
+CREDENTIALS="-"
+GPG=""
+RSS=""
+DW=""
+MAGNET=""
+MAGNET_PREFERRED=""
+TORRENT=""
+CHAT=""
+
+RELEASES="Big_Crime"
+EDITIONS="kde nox xfce xorg"
+EDITIONS_LIST="kde
+nox
+xfce
+xorg"
+QEMU_ARCH="amd64"
+
+releases_() {
+	web_pipe "https://mirror.math.princeton.edu/pub/siduction/iso/" \
+		| grep -oE 'href="[^"]+/"' \
+		| cut -d'"' -f2 \
+		| sed 's#/$##' \
+		| grep -E '^[[:alnum:]_.-]+$' \
+		| sort -Vr
+}
+
+editions_() {
+	local SELECTED_RELEASE="${RELEASE:-$(releases_ | head -n 1)}"
+	local URL="https://mirror.math.princeton.edu/pub/siduction/iso/${SELECTED_RELEASE}"
+	for EDITION_NAME in $(web_pipe "${URL}/" \
+		| grep -oE 'href="[^"]+/"' \
+		| cut -d'"' -f2 \
+		| sed 's#/$##' \
+		| grep -E '^[[:alnum:]_.-]+$' \
+		| sort -u); do
+		if web_pipe "${URL}/${EDITION_NAME}/" \
+			| grep -oE 'siduction-[^"/ ]+\.iso' \
+			| grep -Fq -- "-${SELECTED_RELEASE}-${EDITION_NAME}-amd64-"; then
+			echo "${EDITION_NAME}"
+		fi
+	done
+}
+
+get_() {
+	local HASH=""
+	local ISO=""
+	local URL="https://mirror.math.princeton.edu/pub/siduction/iso/${RELEASE}/${EDITION}"
+	ISO=$(web_pipe "${URL}/" \
+		| grep -oE 'siduction-[^"/ ]+\.iso' \
+		| grep -F -- "-${RELEASE}-${EDITION}-amd64-" \
+		| sort -Vr \
+		| head -n 1)
+	[ -n "${ISO}" ] || return 1
+	HASH=$(web_pipe "${URL}/${ISO}.sha256" \
+		| awk -v iso="${ISO}" '$2 == iso && length($1) == 64 {print $1; exit}')
+	echo "${URL}/${ISO} ${HASH}"
+}
+
+releases_() {
+	# Releases parsed at generation time — no network access needed.
+	echo "${RELEASES}"
+}
+editions_() {
+	# Editions parsed at generation time — no network access needed.
+	local _scoped=""
+	if [ -n "${RELEASE:-}" ] && declare -F _release_editions_ >/dev/null; then
+		_scoped=$(_release_editions_ "${ARCH:-}|${RELEASE}")
+	fi
+	if [ -n "${_scoped}" ]; then
+		echo "${_scoped}"
+		return 0
+	fi
+	local _per_arch="EDITIONS_${ARCH:-}"
+	if [ -n "${!_per_arch:-}" ]; then
+		echo "${!_per_arch}"
+		return 0
+	fi
+	echo "${EDITIONS:-}"
+}

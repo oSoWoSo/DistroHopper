@@ -1,0 +1,47 @@
+# Template file for 'tails'
+OSNAME="tails"
+PRETTY="Tails"
+LOGO=""
+ICON="tails.svg"
+ICON_ONLINE=""
+CATEGORY="advanced"
+BASEDOF="Debian"
+DESCRIPTION="Portable operating system that protects against surveillance and censorship"
+HOMEPAGE="https://tails.net"
+CREDENTIALS="-"
+GPG=""
+RSS=""
+DW=""
+MAGNET=""
+MAGNET_PREFERRED=""
+TORRENT=""
+CHAT=""
+
+RELEASES="stable"
+QEMU_ARCH="amd64"
+
+releases_() {
+	echo stable
+}
+
+get_() {
+	local JSON=""
+	local HASH=""
+	local URL=""
+	JSON="$(web_pipe "https://tails.net/install/v2/Tails/amd64/${RELEASE}/latest.json")"
+	printf '%s' "${JSON}" | jq -e 'type == "object"' >/dev/null 2>&1 || return 0
+	URL=$(printf '%s' "${JSON}" | jq -r '.installations[0]."installation-paths"[]|select(.type=="iso")|."target-files"[0].url' 2>/dev/null)
+	HASH=$(printf '%s' "${JSON}" | jq -r '.installations[0]."installation-paths"[]|select(.type=="iso")|."target-files"[0].sha256' 2>/dev/null)
+	[[ "${URL}" == null ]] && URL=""
+	[ -n "${URL}" ] || return 0
+	echo "${URL} ${HASH}"
+}
+
+config_() {
+	echo "boot=\"legacy\"" >> "${CONF_FILE}"
+}
+
+releases_() {
+	# Releases parsed at generation time — no network access needed.
+	echo "${RELEASES}"
+}

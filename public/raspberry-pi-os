@@ -1,0 +1,93 @@
+# Template file for 'raspberry-pi-os'
+OSNAME="raspberry-pi-os"
+PRETTY="Raspberry Pi OS"
+LOGO=""
+ICON="raspberry-pi-os.svg"
+ICON_ONLINE=""
+CATEGORY="advanced"
+BASEDOF="Debian"
+DESCRIPTION="Raspberry Pi OS (formerly Raspbian) is Debian tailored for Raspberry Pi hardware. The image is a raw disk image, not an ISO"
+HOMEPAGE="https://www.raspberrypi.com/software/operating-systems/"
+CREDENTIALS="pi:raspberry"
+GPG=""
+RSS=""
+DW=""
+MAGNET=""
+MAGNET_PREFERRED=""
+TORRENT=""
+CHAT=""
+IMAGE_TYPE="img"
+BASE_URL="https://downloads.raspberrypi.com/raspios_lite_arm64/images"
+
+RELEASES="2026-10-06 2026-09-15 2026-06-19 2026-04-21 2026-04-14"
+QEMU_ARCH="arm64"
+
+releases_() {
+	# The image directories are named raspios_lite_arm64-<date>. The index
+	# lists every directory twice (once as a link, once as its label), so
+	# the dates have to be deduplicated.
+	#shellcheck disable=SC2046,SC2005
+	echo $(web_pipe "${BASE_URL}/" \
+		| grep -oE 'raspios_lite_arm64-[0-9]{4}-[0-9]{2}-[0-9]{2}' \
+		| sed 's/^raspios_lite_arm64-//' \
+		| sort -ru \
+		| head -n 5)
+}
+
+arch_() {
+	# The published images are 64-bit ARM only.
+	echo arm64
+}
+
+get_() {
+	local HASH=""
+	local ISO=""
+	local URL="${BASE_URL}/raspios_lite_arm64-${RELEASE}"
+	ISO=$(web_pipe "${URL}/" | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}-raspios-[a-z]+-arm64-lite\.img\.xz' | head -n 1)
+	if [ -z "${ISO}" ]; then
+		echo "ERROR: No Raspberry Pi OS image found for ${RELEASE}." >&2
+		return 1
+	fi
+	HASH=$(web_pipe "${URL}/${ISO}.sha256" | head -n 1 | cut -d' ' -f1)
+	echo "${URL}/${ISO} ${HASH}"
+}
+
+extract_() {
+	# The published artifact is a compressed raw disk image, not an ISO.
+	# Decompress it and turn it into the disk the VM boots from.
+	if [[ "${ISO}" == *.img.xz ]]; then
+		echo "Decompressing ${ISO}..."
+		xz -dkf "${VM_PATH}/${ISO}" || {
+			echo "ERROR! Could not decompress ${ISO}." >&2
+			return 1
+		}
+		local RAW="${ISO%.xz}"
+		rm -f "${VM_PATH}/${ISO}"
+		QEMU_IMG=$(command -v qemu-img)
+		if [ ! -x "${QEMU_IMG}" ]; then
+			echo "ERROR! qemu-img not found. Please make sure qemu-img is installed." >&2
+			return 1
+		fi
+		echo "Converting ${RAW} to qcow2..."
+		qemu-img convert -f raw -O qcow2 "${VM_PATH}/${RAW}" "${VM_PATH}/disk.qcow2" || {
+			echo "ERROR! Could not convert ${RAW}." >&2
+			return 1
+		}
+		rm -f "${VM_PATH}/${RAW}"
+		# The converted image is the system disk itself, so it is not
+		# attached as a separate boot medium.
+		ISO=""
+		IMAGE_TYPE="none"
+	fi
+}
+
+config_() {
+	# The Raspberry Pi image is a complete system; it does not need a
+	# separate boot medium.
+	echo 'disk_size="4G"' >> "${CONF_FILE}"
+}
+
+releases_() {
+	# Releases parsed at generation time — no network access needed.
+	echo "${RELEASES}"
+}

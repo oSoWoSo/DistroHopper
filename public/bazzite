@@ -1,0 +1,70 @@
+# Template file for 'bazzite'
+OSNAME="bazzite"
+PRETTY="bazzite"
+LOGO=""
+ICON="bazzite.svg"
+ICON_ONLINE=""
+CATEGORY="Gaming"
+BASEDOF="Fedora SteamOS"
+DESCRIPTION="Container native gaming and a ready-to-game SteamOS like"
+HOMEPAGE="https://bazzite.gg"
+CREDENTIALS="-"
+GPG=""
+RSS=""
+DW=""
+MAGNET=""
+MAGNET_PREFERRED=""
+TORRENT=""
+CHAT=""
+
+RELEASES="latest"
+EDITIONS="gnome kde"
+EDITIONS_LIST="gnome
+kde"
+QEMU_ARCH="amd64"
+
+releases_() {
+	echo latest
+}
+
+editions_() {
+	echo gnome kde
+}
+
+get_() {
+	local HASH=""
+	local ISO=""
+	local URL="https://download.bazzite.gg"
+	case ${EDITION} in
+		gnome) ISO="bazzite-gnome-stable-amd64.iso";;
+		kde)  ISO="bazzite-stable-amd64.iso";;
+	esac
+	HASH=$(web_pipe "${URL}/${ISO}-CHECKSUM" | cut -d' ' -f1)
+	echo "${URL}/${ISO} ${HASH}"
+}
+
+config_() {
+	echo "disk_size=\"64G\"" >> "${CONF_FILE}"
+}
+
+releases_() {
+	# Releases parsed at generation time — no network access needed.
+	echo "${RELEASES}"
+}
+editions_() {
+	# Editions parsed at generation time — no network access needed.
+	local _scoped=""
+	if [ -n "${RELEASE:-}" ] && declare -F _release_editions_ >/dev/null; then
+		_scoped=$(_release_editions_ "${ARCH:-}|${RELEASE}")
+	fi
+	if [ -n "${_scoped}" ]; then
+		echo "${_scoped}"
+		return 0
+	fi
+	local _per_arch="EDITIONS_${ARCH:-}"
+	if [ -n "${!_per_arch:-}" ]; then
+		echo "${!_per_arch}"
+		return 0
+	fi
+	echo "${EDITIONS:-}"
+}

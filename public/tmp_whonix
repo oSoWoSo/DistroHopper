@@ -1,0 +1,9 @@
+OK    whonix        amd64      18.2.4.1   mixed            https://download.whonix.org/libvirt/18.2.4.1/Whonix-CLI-18.2.4.1.Intel_AMD64.qcow2.libvirt.xz
+OK    whonix        amd64      18.2.4.1   CLI              https://download.whonix.org/libvirt/18.2.4.1/Whonix-CLI-18.2.4.1.Intel_AMD64.qcow2.libvirt.xz
+OK    whonix        amd64      18.2.4.1   LXQt             https://download.whonix.org/libvirt/18.2.4.1/Whonix-LXQt-18.2.4.1.Intel_AMD64.qcow2.libvirt.xz
+OK    whonix        amd64      18.2.4.2   mixed            https://download.whonix.org/libvirt/18.2.4.2/Whonix-CLI-18.2.4.2.Intel_AMD64.qcow2.libvirt.xz
+OK    whonix        amd64      18.2.4.2   CLI              https://download.whonix.org/libvirt/18.2.4.2/Whonix-CLI-18.2.4.2.Intel_AMD64.qcow2.libvirt.xz
+OK    whonix        amd64      18.2.4.2   LXQt             https://download.whonix.org/libvirt/18.2.4.2/Whonix-LXQt-18.2.4.2.Intel_AMD64.qcow2.libvirt.xz
+OK    whonix        amd64      18.2.4.3   mixed            https://download.whonix.org/libvirt/18.2.4.3/Whonix-CLI-18.2.4.3.Intel_AMD64.qcow2.libvirt.xz
+OK    whonix        amd64      18.2.4.3   CLI              https://download.whonix.org/libvirt/18.2.4.3/Whonix-CLI-18.2.4.3.Intel_AMD64.qcow2.libvirt.xz
+OK    whonix        amd64      18.2.4.3   LXQt             https://download.whonix.org/libvirt/18.2.4.3/Whonix-LXQt-18.2.4.3.Intel_AMD64.qcow2.libvirt.xz

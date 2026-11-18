@@ -1,0 +1,85 @@
+# Template file for 'kde-neon'
+OSNAME="kde-neon"
+PRETTY="KDE Neon"
+LOGO=""
+ICON="kde-neon.svg"
+ICON_ONLINE=""
+CATEGORY="Beginner"
+BASEDOF="Debian Ubuntu"
+DESCRIPTION="Latest and greatest of KDE community software packaged on a rock-solid base"
+HOMEPAGE="https://neon.kde.org"
+CREDENTIALS="-"
+GPG=""
+RSS=""
+DW=""
+MAGNET=""
+MAGNET_PREFERRED=""
+TORRENT=""
+CHAT=""
+
+RELEASES="user unstable testing"
+EDITIONS="bigscreen desktop dev ko mobile"
+EDITIONS_LIST="bigscreen
+desktop
+dev
+ko
+mobile"
+QEMU_ARCH="amd64"
+
+_release_editions_() {
+	case "${1:-}" in
+		"amd64|user")	 echo "bigscreen desktop ko mobile" ;;
+		"amd64|testing")	 echo "bigscreen desktop ko mobile" ;;
+		"amd64|unstable")	 echo "bigscreen desktop dev ko mobile" ;;
+		*) return 1 ;;
+	esac
+}
+
+releases_() {
+	echo user testing unstable
+}
+
+editions_() {
+	case "${RELEASE}" in
+		user|testing) echo bigscreen desktop ko mobile;;
+		unstable) echo bigscreen desktop dev ko mobile;;
+	esac
+}
+
+get_() {
+	local HASH=""
+	local ISO=""
+	local URL="https://files.kde.org/neon/images/${EDITION}/${RELEASE}/current"
+	local CHECKSUM_LINE=""
+	CHECKSUM_LINE=$(web_pipe "${URL}/neon-${RELEASE}-${EDITION}-current.sha256sum")
+	read -r HASH ISO <<< "${CHECKSUM_LINE}"
+	if [[ ! "${HASH}" =~ ^[[:xdigit:]]{64}$ ]] || [ -z "${ISO}" ]; then
+		if [[ "${OPERATION:-}" != show && "${OPERATION:-}" != test ]]; then
+			echo "ERROR: No valid KDE Neon checksum for ${RELEASE}/${EDITION}." >&2
+		fi
+		return 1
+	fi
+	echo "${URL}/${ISO} ${HASH}"
+}
+
+releases_() {
+	# Releases parsed at generation time — no network access needed.
+	echo "${RELEASES}"
+}
+editions_() {
+	# Editions parsed at generation time — no network access needed.
+	local _scoped=""
+	if [ -n "${RELEASE:-}" ] && declare -F _release_editions_ >/dev/null; then
+		_scoped=$(_release_editions_ "${ARCH:-}|${RELEASE}")
+	fi
+	if [ -n "${_scoped}" ]; then
+		echo "${_scoped}"
+		return 0
+	fi
+	local _per_arch="EDITIONS_${ARCH:-}"
+	if [ -n "${!_per_arch:-}" ]; then
+		echo "${!_per_arch}"
+		return 0
+	fi
+	echo "${EDITIONS:-}"
+}

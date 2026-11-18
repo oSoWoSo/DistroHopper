@@ -1,0 +1,84 @@
+# Template file for 'centos-stream'
+OSNAME="centos-stream"
+PRETTY="CentOS Stream"
+LOGO=" "
+ICON="centos-stream.svg"
+ICON_ONLINE=""
+CATEGORY="advanced"
+BASEDOF="Fedora RHEL"
+DESCRIPTION="Continuously delivered distro that tracks just ahead of Red Hat Enterprise Linux (RHEL) development, positioned as a midstream between Fedora Linux and RHEL"
+HOMEPAGE="https://www.centos.org/centos-stream"
+CREDENTIALS="-"
+GPG=""
+RSS=""
+DW=""
+MAGNET=""
+MAGNET_PREFERRED=""
+TORRENT=""
+CHAT=""
+BASE_URL="https://mirror.stream.centos.org"
+
+RELEASES="9 10"
+EDITIONS="boot dvd1"
+EDITIONS_LIST="boot
+dvd1"
+QEMU_ARCH="amd64 arm64"
+
+releases_() {
+	# The mirror root lists the available stream releases. Each release is
+	# listed more than once, so the versions have to be deduplicated.
+	#shellcheck disable=SC2046,SC2005
+	echo $(web_pipe "${BASE_URL}/" \
+		| grep -oE '[0-9]+-stream/' \
+		| cut -d'-' -f1 \
+		| sort -Vr \
+		| uniq)
+}
+
+editions_() {
+	echo boot dvd1
+}
+
+arch_() {
+	echo amd64 arm64
+}
+
+get_() {
+	local HASH=""
+	local ISO=""
+	local URL=""
+	local UPSTREAM_ARCH=""
+	UPSTREAM_ARCH=$(_qarch_to_upstream "${ARCH:-amd64}")
+	URL="${BASE_URL}/${RELEASE}-stream/BaseOS/${UPSTREAM_ARCH}/iso"
+	ISO="CentOS-Stream-${RELEASE}-latest-${UPSTREAM_ARCH}-${EDITION}.iso"
+	HASH=$(web_pipe "${URL}/${ISO}.SHA256SUM" \
+		| grep "SHA256 (${ISO}" \
+		| cut -d' ' -f4)
+	echo "${URL}/${ISO} ${HASH}"
+}
+
+config_() {
+	echo "disk_size=\"32G\"" >> "${CONF_FILE}"
+}
+
+releases_() {
+	# Releases parsed at generation time — no network access needed.
+	echo "${RELEASES}"
+}
+editions_() {
+	# Editions parsed at generation time — no network access needed.
+	local _scoped=""
+	if [ -n "${RELEASE:-}" ] && declare -F _release_editions_ >/dev/null; then
+		_scoped=$(_release_editions_ "${ARCH:-}|${RELEASE}")
+	fi
+	if [ -n "${_scoped}" ]; then
+		echo "${_scoped}"
+		return 0
+	fi
+	local _per_arch="EDITIONS_${ARCH:-}"
+	if [ -n "${!_per_arch:-}" ]; then
+		echo "${!_per_arch}"
+		return 0
+	fi
+	echo "${EDITIONS:-}"
+}

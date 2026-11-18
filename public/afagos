@@ -1,0 +1,37 @@
+# Template file for 'afagos'
+OSNAME="afagos"
+PRETTY="AfagOS"
+LOGO=""
+ICON="afagos.svg"
+ICON_ONLINE=""
+CATEGORY="Desktop, Live Medium"
+BASEDOF="Void"
+DESCRIPTION="Sister project of AgarimOS featuring a vanilla KDE Plasma desktop"
+HOMEPAGE="https://sourceforge.net/projects/afagos"
+CREDENTIALS="anon:voidlinux,root:voidlinux"
+GPG=""
+RSS="https://sourceforge.net/projects/afagos/rss?path=/"
+DW=""
+MAGNET=""
+MAGNET_PREFERRED=""
+TORRENT=""
+CHAT=""
+
+RELEASES="latest"
+QEMU_ARCH="amd64"
+
+releases_() {
+	echo latest
+}
+
+get_() {
+	local ISO
+	ISO=$(web_pipe "https://sourceforge.net/projects/afagos/rss?path=/" \
+		| grep 'title><!\[CDATA' | cut -d'[' -f3 | cut -d']' -f1 | grep '\.iso' | head -1)
+	echo "https://sourceforge.net/projects/afagos/files${ISO}"
+}
+
+releases_() {
+	# Releases parsed at generation time — no network access needed.
+	echo "${RELEASES}"
+}

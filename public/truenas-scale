@@ -1,0 +1,47 @@
+# Template file for 'truenas-scale'
+OSNAME="truenas-scale"
+PRETTY="TrueNAS Scale"
+LOGO=""
+ICON="truenas-scale.svg"
+ICON_ONLINE=""
+CATEGORY="advanced"
+BASEDOF="Debian"
+DESCRIPTION="Open Source Hyperconverged Infrastructure (HCI) solution. In addition to powerful scale-out storage capabilities, SCALE adds Linux Containers and VMs (KVM) so apps run closer to data"
+HOMEPAGE="https://www.truenas.com/truenas-scale"
+CREDENTIALS="-"
+GPG=""
+RSS=""
+DW=""
+MAGNET=""
+MAGNET_PREFERRED=""
+TORRENT=""
+CHAT=""
+GUEST="truenas"
+
+RELEASES="ElectricEel Dragonfish"
+QEMU_ARCH="amd64"
+
+releases_() {
+	echo ElectricEel Dragonfish
+}
+
+get_() {
+	local HASH=""
+	local URL=""
+	local BASE="https://download.sys.truenas.net/TrueNAS-SCALE-${RELEASE}"
+	local VERSION
+	VERSION=$(web_pipe "${BASE}/" | grep -oE '[0-9]+\.[0-9]+\.[0-9.]+/' | tr -d '/' | sort -Vr | head -1)
+	[ -n "${VERSION}" ] || return 0
+	URL="${BASE}/${VERSION}/TrueNAS-SCALE-${VERSION}.iso"
+	HASH=$(web_pipe "${URL}.sha256" | grep -oE '[[:xdigit:]]{64}' | head -1)
+	echo "${URL} ${HASH}"
+}
+
+config_() {
+	echo "boot=\"legacy\"" >> "${CONF_FILE}"
+}
+
+releases_() {
+	# Releases parsed at generation time — no network access needed.
+	echo "${RELEASES}"
+}

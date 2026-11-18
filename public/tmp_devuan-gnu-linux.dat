@@ -1,0 +1,13 @@
+amd64	excalibur	desktop	https://files.devuan.org/devuan_excalibur/installer-iso/devuan_excalibur_6.1.1_amd64_desktop.iso	OK
+amd64	excalibur	desktop-live	https://files.devuan.org/devuan_excalibur/desktop-live/devuan_excalibur_6.1.1_amd64_desktop-live.iso	OK
+amd64	excalibur	netinstall	https://files.devuan.org/devuan_excalibur/installer-iso/devuan_excalibur_6.1.1_amd64_netinstall.iso	OK
+amd64	excalibur	server	https://files.devuan.org/devuan_excalibur/installer-iso/devuan_excalibur_6.1.1_amd64_server.iso	OK
+amd64	chimaera	desktop	https://files.devuan.org/devuan_chimaera/installer-iso/devuan_chimaera_4.0.0_amd64_desktop.iso	OK
+amd64	chimaera	desktop-live	https://files.devuan.org/devuan_chimaera/desktop-live/devuan_chimaera_4.0.3_amd64_desktop-live.iso	OK
+amd64	chimaera	netinstall	https://files.devuan.org/devuan_chimaera/installer-iso/devuan_chimaera_4.0.0_amd64_netinstall.iso	OK
+amd64	chimaera	server	https://files.devuan.org/devuan_chimaera/installer-iso/devuan_chimaera_4.0.0_amd64_server.iso	OK
+amd64	daedalus	desktop	https://files.devuan.org/devuan_daedalus/installer-iso/devuan_daedalus_5.0.1_amd64_desktop.iso	OK
+amd64	daedalus	desktop-live	https://files.devuan.org/devuan_daedalus/desktop-live/devuan_daedalus_5.0.0_amd64_desktop-live.iso	OK
+amd64	daedalus	netinstall	https://files.devuan.org/devuan_daedalus/installer-iso/devuan_daedalus_5.0.1_amd64_netinstall.iso	OK
+amd64	daedalus	server	https://files.devuan.org/devuan_daedalus/installer-iso/devuan_daedalus_5.0.1_amd64_server.iso	OK
+amd64	jessie	desktop-live	https://files.devuan.org/devuan_jessie/desktop-live/devuan_jessie_1.0.0_amd64_desktop-live.iso	OK

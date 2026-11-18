@@ -1,0 +1,63 @@
+# Template file for 'primtux'
+OSNAME="primtux"
+PRETTY="PrimTux"
+LOGO=""
+ICON="primtux.svg"
+ICON_ONLINE=""
+CATEGORY="Beginner"
+BASEDOF="Ubuntu"
+DESCRIPTION="Complete and customizable GNU/Linux operating system intended for primary school students and suitable even for older hardware"
+HOMEPAGE="https://primtux.fr"
+CREDENTIALS="-"
+GPG=""
+RSS=""
+DW=""
+MAGNET=""
+MAGNET_PREFERRED=""
+TORRENT=""
+CHAT=""
+
+RELEASES="7"
+EDITIONS="2022-10"
+EDITIONS_LIST="2022-10"
+QEMU_ARCH="amd64"
+
+releases_() {
+	echo 7
+}
+
+editions_() {
+	echo 2022-10
+}
+
+get_() {
+	local HASH=""
+	local URL=""
+	local ISO=""
+	ISO="PrimTux${RELEASE}-amd64-${EDITION}.iso"
+	URL="https://sourceforge.net/projects/primtux/files/Distribution"
+	HASH=$(web_pipe "${URL}/${ISO}.md5" | grep "${ISO}" | cut -d' ' -f1)
+	echo "${URL}/${ISO} ${HASH}"
+}
+
+releases_() {
+	# Releases parsed at generation time — no network access needed.
+	echo "${RELEASES}"
+}
+editions_() {
+	# Editions parsed at generation time — no network access needed.
+	local _scoped=""
+	if [ -n "${RELEASE:-}" ] && declare -F _release_editions_ >/dev/null; then
+		_scoped=$(_release_editions_ "${ARCH:-}|${RELEASE}")
+	fi
+	if [ -n "${_scoped}" ]; then
+		echo "${_scoped}"
+		return 0
+	fi
+	local _per_arch="EDITIONS_${ARCH:-}"
+	if [ -n "${!_per_arch:-}" ]; then
+		echo "${!_per_arch}"
+		return 0
+	fi
+	echo "${EDITIONS:-}"
+}

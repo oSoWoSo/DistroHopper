@@ -1,0 +1,8 @@
+OK    ubuntu        amd64      14.04                       https://releases.ubuntu.com/14.04/ubuntu-14.04.6-desktop-amd64.iso
+OK    ubuntu        amd64      16.04                       https://releases.ubuntu.com/16.04/ubuntu-16.04.7-desktop-amd64.iso
+OK    ubuntu        amd64      18.04                       https://releases.ubuntu.com/18.04/ubuntu-18.04.6-desktop-amd64.iso
+OK    ubuntu        amd64      20.04                       https://releases.ubuntu.com/20.04/ubuntu-20.04.6-desktop-amd64.iso
+OK    ubuntu        amd64      22.04                       https://releases.ubuntu.com/22.04/ubuntu-22.04.5-desktop-amd64.iso
+OK    ubuntu        amd64      24.04                       https://releases.ubuntu.com/24.04/ubuntu-24.04.3-desktop-amd64.iso
+OK    ubuntu        amd64      26.04                       https://releases.ubuntu.com/26.04/ubuntu-26.04-desktop-amd64.iso
+OK    ubuntu        amd64      26.10                       https://releases.ubuntu.com/26.10/ubuntu-26.10-beta-desktop-amd64.iso

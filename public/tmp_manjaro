@@ -1,0 +1,11 @@
+OK    manjaro       amd64      xfce       full             https://sourceforge.net/projects/manjarolinux/files/xfce/26.1.3/manjaro-xfce-26.1.3-261028-linux72.iso/download
+OK    manjaro       amd64      xfce       minimal          https://sourceforge.net/projects/manjarolinux/files/xfce/26.1.3/manjaro-xfce-26.1.3-minimal-261028-linux618.iso/download
+OK    manjaro       amd64      gnome      full             https://sourceforge.net/projects/manjarolinux/files/gnome/26.1.3/manjaro-gnome-26.1.3-261028-linux618.iso/download
+OK    manjaro       amd64      gnome      minimal          https://sourceforge.net/projects/manjarolinux/files/gnome/26.1.3/manjaro-gnome-26.1.3-minimal-261028-linux618.iso/download
+OK    manjaro       amd64      plasma     full             https://sourceforge.net/projects/manjarolinux/files/kde/26.1.3/manjaro-kde-26.1.3-261028-linux72.iso/download
+OK    manjaro       amd64      plasma     minimal          https://sourceforge.net/projects/manjarolinux/files/kde/26.1.3/manjaro-kde-26.1.3-minimal-261028-linux72.iso/download
+WARN  manjaro       amd64      cinnamon   full                                           
+WARN  manjaro       amd64      cinnamon   minimal                                        
+WARN  manjaro       amd64      i3         full                                           
+WARN  manjaro       amd64      i3         minimal                                        
+OK    manjaro       amd64      sway       full             https://manjaro-sway.download/iso/latest/manjaro-sway.iso
