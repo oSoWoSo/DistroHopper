@@ -136,12 +136,15 @@ teardown() {
 	[ ! -e "$SURFER_ARGS" ]
 }
 
-@test "web-deploy requires an explicit site and complete credential overrides" {
+@test "web-deploy uses the default site when no site name is supplied" {
 	unset SURFER_SITE_NAME
 	run "$PROJECT/web-deploy" --surfer
-	[ "$status" -ne 0 ]
-	[ ! -e "$SURFER_ARGS" ]
-	export SURFER_SITE_NAME=dh SURFER_USER='CI user'
+	[ "$status" -eq 0 ]
+	[ "$(< "$SURFER_ARGS")" = "$(printf 'deploy\n%s/website' "$PROJECT")" ]
+}
+
+@test "web-deploy requires complete credential overrides" {
+	export SURFER_USER='CI user'
 	run "$PROJECT/web-deploy" --surfer
 	[ "$status" -ne 0 ]
 	[ ! -e "$SURFER_ARGS" ]

@@ -13,20 +13,25 @@ pushes a `website` branch or uses GitHub Pages configuration.
 
 ## GitHub Actions configuration
 
-Under **Settings → Secrets and variables → Actions**, configure:
+The repository-specific deployment target is fixed in
+`.github/workflows/website.yml`:
+
+```yaml
+SURFER_SERVER: https://dh.osowoso.org
+```
+
+These values are not secrets and require no repository variables. Under
+**Settings → Secrets and variables → Actions**, configure only these secrets:
 
 | Kind | Name | Value |
 | --- | --- | --- |
-| Variable | `SURFER_SERVER` | HTTPS URL of the Surfer app's authenticated admin/API endpoint, e.g. `https://surfer.example.com` |
-| Variable | `SURFER_SITE_NAME` | Existing Surfer site name that serves `dh.osowoso.org`; use `default` only if this is the app's default site |
 | Secret | `SURFER_USER` | Cloudron username allowed to deploy this site |
 | Secret | `SURFER_TOKEN` | Cloudron **app password** for Surfer, not the account's main password |
 
-**Deployment replaces the contents of the selected site.** Check the server and
-site name in Surfer's administration interface before enabling it. If this
-Surfer app hosts multiple sites, do not choose `default` unless that is actually
-the DistroHopper site. This workflow does not create sites, aliases, or DNS
-records.
+**Deployment replaces the contents of the server's default site.** The workflow
+does not pass `--site-name` or create sites, aliases, or DNS records.
+`SURFER_SITE_NAME` remains an optional local override for explicitly selecting
+an existing named site; it is not required for this deployment.
 
 The credential names match OCO's Surfer workflows. `SURFER_TOKEN` is used as
 the password for Basic authentication (the CLI's `--password` option), not as a
@@ -47,13 +52,13 @@ An already-configured Surfer CLI can use its saved server and credentials:
 
 ```bash
 ./web-deploy --build
-SURFER_SITE_NAME=dh ./web-deploy --surfer
+SURFER_SERVER=https://dh.osowoso.org ./web-deploy --surfer
 ```
 
-Replace `dh` with the existing site name from your Surfer instance. Alternatively:
+Alternatively:
 
 ```bash
-SURFER_SITE_NAME=dh ./web-deploy --build-and-deploy
+SURFER_SERVER=https://dh.osowoso.org ./web-deploy --build-and-deploy
 ```
 
 Optional `SURFER_SERVER`, `SURFER_USER`, `SURFER_TOKEN`, and

@@ -20,8 +20,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      SURFER_SERVER: ${{ vars.SURFER_SERVER }}
-      SURFER_SITE_NAME: ${{ vars.SURFER_SITE_NAME }}
+      SURFER_SERVER: https://dh.osowoso.org
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -31,9 +30,9 @@ jobs:
           SURFER_USER: ${{ secrets.SURFER_USER }}
           SURFER_TOKEN: ${{ secrets.SURFER_TOKEN }}
         run: |
-          for name in SURFER_SERVER SURFER_SITE_NAME SURFER_USER SURFER_TOKEN; do
+          for name in SURFER_SERVER SURFER_USER SURFER_TOKEN; do
             if [ -z "${!name}" ]; then
-              echo "::error::Missing ${name}. See docs/website-deployment.md for repository variables and secrets."
+              echo "::error::Missing ${name}. See docs/website-deployment.md for deployment settings and secrets."
               exit 1
             fi
           done

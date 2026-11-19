@@ -19,7 +19,7 @@ if [[ "${1:-}" == --help || "${1:-}" == -h ]]; then
 		'--build: build this repository with web-create (no publishing).' \
 		'--surfer: replace a Surfer site with the already-built OUT_DIR (default: website/).' \
 		'--build-and-deploy: build this repository, then deploy to Surfer.' \
-		'Set SURFER_SITE_NAME explicitly (use default for the default site).' \
+		'SURFER_SITE_NAME optionally selects a named site; omit for the default site.' \
 		'SURFER_SERVER, SURFER_USER and SURFER_TOKEN override saved surfer config.' \
 		'Without arguments: show the single-repository or LIST-based menu.' \
 		'LIST is optional; define it in .env only to manage multiple repositories.'
@@ -160,7 +160,6 @@ _deploy_surfer() {
 	[[ "$site_dir" == /* ]] || site_dir="${SCRIPT_DIR}/${site_dir}"
 	[ -s "${site_dir}/index.html" ] || _re "No built index.html in ${site_dir}. Run web-deploy --build first."
 	command -v surfer >/dev/null 2>&1 || _re 'Surfer CLI is required. Install @cloudron/surfer (with the deploy command).'
-	[ -n "${SURFER_SITE_NAME:-}" ] || _re 'Set SURFER_SITE_NAME to the existing site name, or default. Deployment replaces that entire site.'
 	if [[ -n "${SURFER_USER:-}" || -n "${SURFER_TOKEN:-}" ]]; then
 		[[ -n "${SURFER_USER:-}" && -n "${SURFER_TOKEN:-}" ]] || _re 'Set both SURFER_USER and SURFER_TOKEN, or use saved surfer credentials.'
 	fi
@@ -169,7 +168,8 @@ _deploy_surfer() {
 	private_file=$(find "$site_dir" \( -name .git -o -name .env -o -name '.env.*' \) -print -quit) || return 1
 	[ -z "$private_file" ] || _re "Refusing to publish private configuration: ${private_file}"
 
-	local args=(deploy "$site_dir" --site-name "$SURFER_SITE_NAME")
+	local args=(deploy "$site_dir")
+	[ -z "${SURFER_SITE_NAME:-}" ] || args+=(--site-name "$SURFER_SITE_NAME")
 	[ -z "${SURFER_SERVER:-}" ] || args+=(--server "$SURFER_SERVER")
 	if [ -n "${SURFER_USER:-}" ]; then
 		args+=(--username "$SURFER_USER" --password "$SURFER_TOKEN")
