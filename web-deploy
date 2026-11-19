@@ -13,16 +13,38 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=lib.sh
 source "${SCRIPT_DIR}/lib.sh"
 
-# Load .env
-if [ -f "${SCRIPT_DIR}/.env" ]; then
-	source "${SCRIPT_DIR}/.env"
-	export GITHUB_TOKEN
-	echo 'Using .env'
-else
-	_re '.env not found! Create it from src/.env'
+if [[ "${1:-}" == --help || "${1:-}" == -h ]]; then
+	printf '%s\n' \
+		'Usage: web-deploy [--build | --surfer | --build-and-deploy | --help]' \
+		'--build: build this repository with web-create (no publishing).' \
+		'--surfer: replace a Surfer site with the already-built OUT_DIR (default: website/).' \
+		'--build-and-deploy: build this repository, then deploy to Surfer.' \
+		'Set SURFER_SITE_NAME explicitly (use default for the default site).' \
+		'SURFER_SERVER, SURFER_USER and SURFER_TOKEN override saved surfer config.' \
+		'Without arguments: show the single-repository or LIST-based menu.' \
+		'LIST is optional; define it in .env only to manage multiple repositories.'
+	exit 0
 fi
+case "${1:-}" in
+	''|--build|--surfer|--build-and-deploy) ;;
+	*) _re "Unknown argument: ${1}. Run web-deploy --help." ;;
+esac
 
-[ ${#LIST[@]} -eq 0 ] && _re 'LIST is empty — define it in .env'
+# Load .env
+if [ -f ".env" ]; then
+	source ".env"
+	_g 'Using .env'
+elif [ -f "${SCRIPT_DIR}/.env" ]; then
+	source "${SCRIPT_DIR}/.env"
+	_g "Using ${SCRIPT_DIR}/.env"
+elif [ -f "${SCRIPT_DIR}/website-source/.env" ]; then
+	source "${SCRIPT_DIR}/website-source/.env"
+	export GITHUB_TOKEN
+	echo "Using ${SCRIPT_DIR}/website-source/.env"
+else
+	_re 'No .env found. Configure .env or website-source/.env before building.'
+	exit 1
+fi
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -129,6 +151,34 @@ EOF
 	done
 }
 
+_build_current() {
+	(cd "${SCRIPT_DIR}" && ./web-create -b)
+}
+
+_deploy_surfer() {
+	local site_dir="${OUT_DIR:-website}"
+	[[ "$site_dir" == /* ]] || site_dir="${SCRIPT_DIR}/${site_dir}"
+	[ -s "${site_dir}/index.html" ] || _re "No built index.html in ${site_dir}. Run web-deploy --build first."
+	command -v surfer >/dev/null 2>&1 || _re 'Surfer CLI is required. Install @cloudron/surfer (with the deploy command).'
+	[ -n "${SURFER_SITE_NAME:-}" ] || _re 'Set SURFER_SITE_NAME to the existing site name, or default. Deployment replaces that entire site.'
+	if [[ -n "${SURFER_USER:-}" || -n "${SURFER_TOKEN:-}" ]]; then
+		[[ -n "${SURFER_USER:-}" && -n "${SURFER_TOKEN:-}" ]] || _re 'Set both SURFER_USER and SURFER_TOKEN, or use saved surfer credentials.'
+	fi
+	# Never accidentally package repository metadata or local environment secrets.
+	local private_file
+	private_file=$(find "$site_dir" \( -name .git -o -name .env -o -name '.env.*' \) -print -quit) || return 1
+	[ -z "$private_file" ] || _re "Refusing to publish private configuration: ${private_file}"
+
+	local args=(deploy "$site_dir" --site-name "$SURFER_SITE_NAME")
+	[ -z "${SURFER_SERVER:-}" ] || args+=(--server "$SURFER_SERVER")
+	if [ -n "${SURFER_USER:-}" ]; then
+		args+=(--username "$SURFER_USER" --password "$SURFER_TOKEN")
+	fi
+	[ -z "${SURFER_MESSAGE:-}" ] || args+=(--message "$SURFER_MESSAGE")
+	# Do not print this command: its arguments may contain an app password.
+	surfer "${args[@]}"
+}
+
 _build_repos() {
 	for entry in "${LIST[@]}"; do
 		local d
@@ -182,6 +232,28 @@ _release_template() {
 # ---------------------------------------------------------------------------
 # Menu
 # ---------------------------------------------------------------------------
+
+case "${1:-}" in
+	--build) _build_current; exit $? ;;
+	--surfer) _deploy_surfer; exit $? ;;
+	--build-and-deploy) _build_current && _deploy_surfer; exit $? ;;
+esac
+
+if [ ${#LIST[@]} -eq 0 ]; then
+	_b "Website Deploy System — this repository"
+	_y 'Single-repository mode. Surfer deployment uses SURFER_* settings and/or saved surfer credentials.'
+	ACTION=$(_choose "Build this website" "Deploy built website to Surfer" "Build and deploy to Surfer" "Exit")
+	case "$ACTION" in
+		"Build this website") _build_current; exit $? ;;
+		"Deploy built website to Surfer")
+			_confirm 'Replace the configured Surfer site with the built website?' && _deploy_surfer
+			exit $? ;;
+		"Build and deploy to Surfer")
+			_confirm 'Build and replace the configured Surfer site?' && _build_current && _deploy_surfer
+			exit $? ;;
+		*) exit 0 ;;
+	esac
+fi
 
 	_b "Website Deploy System
                v$DEPLOY_VERSION

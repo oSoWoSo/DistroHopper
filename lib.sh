@@ -132,10 +132,10 @@ _choose() {
 	if command -v gum &>/dev/null; then
 		gum choose "$@"
 	else
-		echo -e "${YELLOW}Choose action:${NC}"
+		echo -e "${YELLOW}Choose action:${NC}" >&2
 		local i=1
 		for opt in "$@"; do
-			echo "  $i) $opt"
+			echo "  $i) $opt" >&2
 			((i++))
 		done
 		read -r choice

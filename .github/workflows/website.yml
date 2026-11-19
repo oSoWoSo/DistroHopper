@@ -1,74 +1,73 @@
 name: Build and deploy website
 on:
   workflow_call:
+    secrets:
+      SURFER_USER:
+        required: true
+      SURFER_TOKEN:
+        required: true
   workflow_dispatch:
 
 permissions:
-  contents: write
-  pages: write
-  id-token: write
+  contents: read
 
+# Do not interrupt an upload or allow two runs to publish concurrently.
 concurrency:
-  group: "pages"
-  cancel-in-progress: true
+  group: "website-surfer"
+  cancel-in-progress: false
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    outputs:
-      docs_changed: ${{ steps.diff.outputs.changed }}
+    env:
+      SURFER_SERVER: ${{ vars.SURFER_SERVER }}
+      SURFER_SITE_NAME: ${{ vars.SURFER_SITE_NAME }}
     steps:
-      - name: 🛎️ Checkout
+      - name: Checkout
         uses: actions/checkout@v7
-        with:
-          fetch-depth: 2
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v6
+      - name: Validate Surfer deployment settings
+        env:
+          SURFER_USER: ${{ secrets.SURFER_USER }}
+          SURFER_TOKEN: ${{ secrets.SURFER_TOKEN }}
+        run: |
+          for name in SURFER_SERVER SURFER_SITE_NAME SURFER_USER SURFER_TOKEN; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Missing ${name}. See docs/website-deployment.md for repository variables and secrets."
+              exit 1
+            fi
+          done
 
-      - name: Install dependencies
+      - name: Install build dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y pandoc curl jq
+
+      - name: Set up Node for Surfer CLI
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      - name: Install Surfer CLI
+        run: npm install --global @cloudron/surfer@7.2.0
 
       - name: Generate distro metadata
         timeout-minutes: 60
         run: |
           mkdir -p public TODO
           ./generate --parallel
-          # Do not deploy an empty supported-distros page if generation failed.
           if ! grep -ql '^OSNAME=' public/*; then
             echo "::error::No supported distro metadata was generated"
             exit 1
           fi
 
-      - name: Make pages
-        run: |
-          mkdir -p website
-          ./web-create -b
+      - name: Build website
+        run: ./web-deploy --build
 
-      - name: Check if docs changed
-        id: diff
-        run: |
-          if git diff --quiet HEAD~1 HEAD -- website/; then
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Deploy to website branch
-        run: |
-          git config --global user.name "oSoWoSo-bot"
-          git config --global user.email "mail@osowoso.org"
-
-          TMPDIR=$(mktemp -d)
-          cp -r website/. "$TMPDIR/"
-
-          git checkout --orphan website-tmp
-          git rm -rf . --quiet
-
-          cp -r "$TMPDIR/." .
-
-          git add -A
-          git commit -m "Deploy website from ${GITHUB_SHA::8}"
-          git push origin HEAD:website --force
+      - name: Deploy website to Cloudron Surfer
+        timeout-minutes: 20
+        env:
+          SURFER_USER: ${{ secrets.SURFER_USER }}
+          SURFER_TOKEN: ${{ secrets.SURFER_TOKEN }}
+          SURFER_MESSAGE: DistroHopper ${{ github.sha }}
+        run: ./web-deploy --surfer

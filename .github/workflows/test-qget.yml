@@ -14,6 +14,8 @@ on:
       - 'data/rosette/**'
       - '*.md'
       - 'web-create'
+      - 'web-deploy'
+      - 'docs/website-deployment.md'
       - '.github/workflows/website.yml'
       - '.github/workflows/test-qget.yml'
   schedule:
@@ -146,10 +148,11 @@ jobs:
     # A failed matrix is allowed; a cancelled or skipped matrix is not.
     if: ${{ !cancelled() && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) && needs.test-distro.result != 'skipped' }}
     permissions:
-      contents: write
-      pages: write
-      id-token: write
+      contents: read
     uses: ./.github/workflows/website.yml
+    secrets:
+      SURFER_USER: ${{ secrets.SURFER_USER }}
+      SURFER_TOKEN: ${{ secrets.SURFER_TOKEN }}
 
   report-results:
     name: "Report results 📊"
