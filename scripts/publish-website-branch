@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+# Mirror a built website to the website branch without changing the source checkout.
+set -euo pipefail
+
+site_dir=$(realpath "${1:-website}")
+remote=${2:-origin}
+[ -s "$site_dir/index.html" ] || { echo 'ERROR: Refusing to publish a website without index.html' >&2; exit 1; }
+private_file=$(find "$site_dir" \( -name .git -o -name .env -o -name '.env.*' \) -print -quit)
+[ -z "$private_file" ] || { echo "ERROR: Refusing to publish private configuration: $private_file" >&2; exit 1; }
+
+repo=$(git rev-parse --show-toplevel)
+source_sha=$(git rev-parse --short=8 HEAD)
+tmp=$(mktemp -d)
+worktree="$tmp/site"
+scratch_branch="website-publish-$$"
+cleanup() {
+	git -C "$repo" worktree remove --force "$worktree" >/dev/null 2>&1 || true
+	git -C "$repo" branch -D "$scratch_branch" >/dev/null 2>&1 || true
+	rm -rf "$tmp"
+}
+trap cleanup EXIT
+
+if git ls-remote --exit-code --heads "$remote" refs/heads/website > "$tmp/ref"; then
+	git fetch --no-tags "$remote" refs/heads/website
+	git worktree add --detach "$worktree" FETCH_HEAD
+else
+	status=$?
+	# ls-remote returns 2 for an absent branch; network/auth errors must fail.
+	[ "$status" -eq 2 ] || exit "$status"
+	git worktree add --detach "$worktree" HEAD
+	git -C "$worktree" checkout --orphan "$scratch_branch"
+	git -C "$worktree" rm -rf --ignore-unmatch . >/dev/null
+fi
+
+# Keep only built files, removing obsolete pages but preserving worktree metadata.
+rsync -a --delete --exclude='/.git' "$site_dir/" "$worktree/"
+git -C "$worktree" add --all --force .
+if git -C "$worktree" diff --cached --quiet; then
+	echo 'Website branch already matches the build.'
+	exit 0
+fi
+git -C "$worktree" -c user.name='github-actions[bot]' \
+	-c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
+	commit -m "Deploy website from $source_sha"
+# Deliberately no --force: concurrent/out-of-date writes must not discard history.
+git -C "$worktree" push "$remote" HEAD:refs/heads/website

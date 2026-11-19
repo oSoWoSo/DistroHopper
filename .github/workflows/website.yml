@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 # Do not interrupt an upload or allow two runs to publish concurrently.
 concurrency:
@@ -88,6 +88,9 @@ jobs:
 
       - name: Build website
         run: ./web-deploy --build
+
+      - name: Update website branch from the built site
+        run: bash scripts/publish-website-branch website
 
       - name: Deploy website to Cloudron Surfer
         timeout-minutes: 20

@@ -15,9 +15,18 @@ outputs are tolerated, but an entirely empty catalog stops deployment rather
 than triggering a second generation pass. Standalone manual website runs generate
 metadata once because they have no preceding matrix.
 
-The workflow builds `website/` through `web-deploy --build`, then publishes it
-with `web-deploy --surfer`. Surfer serves the uploaded files, not a GitHub branch.
-The workflow currently does not push a `website` branch or use GitHub Pages.
+The workflow builds `website/` once through `web-deploy --build`, commits that
+built tree to the `website` branch, then uploads the same tree with
+`web-deploy --surfer`. Surfer serves the uploaded files, not the branch directly;
+the branch is an inspectable copy of the build, not GitHub Pages hosting.
+
+`scripts/publish-website-branch` preserves existing branch history, removes stale
+files, skips unchanged commits, and creates the branch if absent. It uses a
+temporary Git worktree so the source checkout and built directory stay intact.
+Pushes are never forced. The workflow and its caller grant `contents: write` for
+this branch update; repository rules must permit GitHub Actions to push to
+`website`. A branch-push failure stops the subsequent upload. If the Surfer upload
+fails, the branch can be ahead of the live server until a successful retry.
 
 ## GitHub Actions configuration
 
