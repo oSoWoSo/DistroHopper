@@ -1,6 +1,0 @@
-OK    haiku         amd64      r1beta5    x86_64           http://mirror.rit.edu/haiku/r1beta5/haiku-r1beta5-x86_64-anyboot.iso
-OK    haiku         amd64      r1beta5    x86_gcc2h        http://mirror.rit.edu/haiku/r1beta5/haiku-r1beta5-x86_gcc2h-anyboot.iso
-OK    haiku         amd64      r1beta4    x86_64           http://mirror.rit.edu/haiku/r1beta4/haiku-r1beta4-x86_64-anyboot.iso
-OK    haiku         amd64      r1beta4    x86_gcc2h        http://mirror.rit.edu/haiku/r1beta4/haiku-r1beta4-x86_gcc2h-anyboot.iso
-OK    haiku         amd64      r1beta3    x86_64           http://mirror.rit.edu/haiku/r1beta3/haiku-r1beta3-x86_64-anyboot.iso
-OK    haiku         amd64      r1beta3    x86_gcc2h        http://mirror.rit.edu/haiku/r1beta3/haiku-r1beta3-x86_gcc2h-anyboot.iso

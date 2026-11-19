@@ -1,9 +1,0 @@
-amd64	latest	i3	https://huggingface.co/buckets/arepaconcafe/neko-base-bucket/resolve/nekovoid-i3-20260830.iso	OK
-amd64	latest	kde	https://huggingface.co/buckets/arepaconcafe/neko-base-bucket/resolve/nekovoid-kde-20260921.iso	OK
-amd64	latest	labwc	https://huggingface.co/buckets/arepaconcafe/neko-base-bucket/resolve/nekovoid-labwc-20261011.iso?download=true	OK
-amd64	latest	lts-icewm	https://huggingface.co/buckets/arepaconcafe/neko-base-bucket/resolve/nekovoid-lts-icewm-20260921.iso	OK
-amd64	latest	lxqt	https://huggingface.co/buckets/arepaconcafe/neko-base-bucket/resolve/nekovoid-lxqt-20260921.iso	OK
-amd64	latest	mate	https://huggingface.co/arepaconcafe/neko-base/resolve/main/nekovoid-mate-20261016.iso	OK
-amd64	latest	matelibre	https://huggingface.co/arepaconcafe/neko-base/resolve/main/nekovoid-matelibre-20261016.iso	OK
-amd64	latest	niri	https://huggingface.co/buckets/arepaconcafe/neko-base-bucket/resolve/nekovoid-niri-20261011.iso	OK
-amd64	latest	xfce	https://huggingface.co/buckets/arepaconcafe/neko-base-bucket/resolve/nekovoid-xfce-20260921.iso	OK

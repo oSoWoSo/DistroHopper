@@ -1,6 +1,0 @@
-amd64	rolling	-	https://mirror.slitaz.org/iso/rolling/slitaz-rolling.iso	OK
-amd64	rolling-core	-	https://mirror.slitaz.org/iso/rolling/slitaz-rolling-core.iso	OK
-amd64	rolling-core-5in1	-	https://mirror.slitaz.org/iso/rolling/slitaz-rolling-core-5in1.iso	OK
-amd64	rolling-core64	-	https://mirror.slitaz.org/iso/rolling/slitaz-rolling-core64.iso	OK
-amd64	rolling-loram	-	https://mirror.slitaz.org/iso/rolling/slitaz-rolling-loram.iso	OK
-amd64	rolling-preinit	-	https://mirror.slitaz.org/iso/rolling/slitaz-rolling-preinit.iso	OK
