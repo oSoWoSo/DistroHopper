@@ -1,6 +1,11 @@
 name: Build and deploy website
 on:
   workflow_call:
+    inputs:
+      reuse_matrix_metadata:
+        description: Reuse public metadata from this run's distro diagnostic artifacts
+        type: boolean
+        default: false
     secrets:
       SURFER_USER:
         required: true
@@ -50,11 +55,32 @@ jobs:
       - name: Install Surfer CLI
         run: npm install --global @cloudron/surfer@7.2.0
 
-      - name: Generate distro metadata
+      - name: Download matrix metadata
+        if: inputs.reuse_matrix_metadata
+        uses: actions/download-artifact@v8
+        with:
+          pattern: diagnostics-*
+          path: ${{ runner.temp }}/distro-diagnostics
+
+      - name: Reuse matrix metadata
+        if: inputs.reuse_matrix_metadata
+        env:
+          METADATA_ARTIFACT_DIR: ${{ runner.temp }}/distro-diagnostics
+        run: |
+          mkdir -p public
+          for metadata in "$METADATA_ARTIFACT_DIR"/diagnostics-*/public; do
+            [ ! -d "$metadata" ] || cp -a "$metadata/." public/
+          done
+
+      - name: Generate distro metadata for standalone runs
+        if: ${{ !inputs.reuse_matrix_metadata }}
         timeout-minutes: 60
         run: |
           mkdir -p public TODO
           ./generate --parallel
+
+      - name: Validate distro metadata
+        run: |
           if ! grep -ql '^OSNAME=' public/*; then
             echo "::error::No supported distro metadata was generated"
             exit 1

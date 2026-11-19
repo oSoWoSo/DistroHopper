@@ -150,6 +150,8 @@ jobs:
     permissions:
       contents: read
     uses: ./.github/workflows/website.yml
+    with:
+      reuse_matrix_metadata: true
     secrets:
       SURFER_USER: ${{ secrets.SURFER_USER }}
       SURFER_TOKEN: ${{ secrets.SURFER_TOKEN }}

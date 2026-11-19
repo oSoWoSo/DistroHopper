@@ -7,9 +7,17 @@ The `Test` workflow calls the reusable website workflow after the distro test
 matrix finishes on the repository's default branch. Individual download-test
 failures do not prevent deployment; cancelled or skipped matrices do.
 
-The website workflow generates distro metadata, builds `website/` through
-`web-deploy --build`, then publishes it with `web-deploy --surfer`. It no longer
-pushes a `website` branch or uses GitHub Pages configuration.
+When called by `Test`, the website workflow downloads the same run's
+`diagnostics-*` artifacts and merges their `public/` metadata, including the
+URL/status data used by the catalog. It does not regenerate metadata. Failed
+download checks still leave their metadata available; individual missing distro
+outputs are tolerated, but an entirely empty catalog stops deployment rather
+than triggering a second generation pass. Standalone manual website runs generate
+metadata once because they have no preceding matrix.
+
+The workflow builds `website/` through `web-deploy --build`, then publishes it
+with `web-deploy --surfer`. Surfer serves the uploaded files, not a GitHub branch.
+The workflow currently does not push a `website` branch or use GitHub Pages.
 
 ## GitHub Actions configuration
 
