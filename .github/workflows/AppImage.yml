@@ -1,4 +1,4 @@
-name: Build AppImage
+name: DH AppImage
 
 on:
   push:
@@ -26,7 +26,12 @@ jobs:
         run: |
           mkdir -p AppDir
           ./QEMU-${{ matrix.arch }}.AppImage --appimage-extract --prefix AppDir
-          cp quickemu quickget quickfzf dh AppDir/bin/
+          # Copy DistroHopper files
+          cp -r dh dh.conf dh.desktop generate lib.sh qget AppDir/bin/
+          # Copy DistroHopper dirs
+          cp -r icons locale templates AppDir/bin/
+          # Copy quickemu files
+          cp quickemu chunkcheck AppDir/bin/
           sed -i 's/MAIN_BIN=qemu-system-x86_64/MAIN_BIN=dh/' AppDir/AppRun
 
       - name: Build AppImage
