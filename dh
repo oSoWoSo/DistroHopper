@@ -455,61 +455,46 @@ function renew_supported_vms() {
 		DESKTOP_FILE="${DH_CONFIG_DIR}/supported/${VMname}.desktop"
 		type="Application"
 		name="${get_name}"
-		arch_opts="${architectures:-x86_64}"
-		arch_opts_fmt=$(echo "$arch_opts" | tr ' ' '!')
+		# Build valid tuples for every architecture and release, not a Cartesian
+		# product of the default architecture's releases and editions.
+		local selected_arch selected_release selected_edition arch_info release_info arch_releases
+		local release_editions_list launcher quoted_vms quoted_qget quoted_os
 		release_edition_options=""
-		if [ "$(echo "$arch_opts" | wc -w)" -gt 1 ]; then
-			local selected_arch selected_release selected_edition arch_info release_info arch_releases arch_editions
-			for selected_arch in ${arch_opts}; do
-				arch_info=$("$qget_cmd" --show --plain --arch "${selected_arch}" "${VMname}" 2>$DH_NULL)
-				arch_releases=$(printf '%s\n' "${arch_info}" | sed -n 's/^Releases:[[:space:]]*//p')
-				[ -z "$arch_releases" ] && arch_releases="${releases}"
-				arch_editions=$(printf '%s\n' "${arch_info}" | sed -n 's/^Editions:[[:space:]]*//p')
-				arch_editions_list=$(printf '%s\n' "${arch_info}" | sed -n '/^EditionsList:$/,$p' | sed '1d; /^$/d; /^Description:/,$d; /^RSS:/,$d; /^DistroWatch:/,$d')
-				for selected_release in ${arch_releases}; do
-					release_info=$("$qget_cmd" --show --plain --arch "${selected_arch}" --release "${selected_release}" "${VMname}" 2>$DH_NULL)
-					release_editions=$(printf '%s\n' "${release_info}" | sed -n 's/^Editions:[[:space:]]*//p')
-					release_editions_list=$(printf '%s\n' "${release_info}" | sed -n '/^EditionsList:$/,$p' | sed '1d; /^$/d; /^Description:/,$d; /^RSS:/,$d; /^DistroWatch:/,$d')
-					[ -z "$release_editions_list" ] && release_editions_list="${arch_editions_list:-$editions_list}"
-					# The editions are read line by line, so an edition that
-					# contains a space stays one entry.
-					if [ -z "${release_editions_list}" ]; then
-						# Distro has no editions for this release/arch: still
-						# offer the (arch, release) combination.
-						release_edition_options+="${selected_arch};${selected_release}; "
-					else
-						for selected_edition in ${release_editions_list}; do
-							[ -n "$selected_edition" ] || continue
-							release_edition_options+="${selected_arch};${selected_release};${selected_edition} "
-						done
-					fi
-				done
+		for selected_arch in ${architectures:-x86_64}; do
+			arch_info=$("$qget_cmd" --show --plain --arch "${selected_arch}" "${VMname}" 2>$DH_NULL) || continue
+			arch_releases=$(printf '%s\n' "${arch_info}" | sed -n 's/^Releases:[[:space:]]*//p')
+			for selected_release in ${arch_releases}; do
+				release_info=$("$qget_cmd" --show --plain --arch "${selected_arch}" --release "${selected_release}" "${VMname}" 2>$DH_NULL) || continue
+				release_editions_list=$(printf '%s\n' "${release_info}" | sed -n '/^EditionsList:$/,$p' | sed '1d; /^$/d; /^Description:/,$d; /^RSS:/,$d; /^DistroWatch:/,$d')
+				if [ -z "${release_editions_list}" ]; then
+					release_edition_options+="${selected_arch};${selected_release};!"
+				else
+					while IFS= read -r selected_edition; do
+						[ -n "$selected_edition" ] || continue
+						release_edition_options+="${selected_arch};${selected_release};${selected_edition}!"
+					done <<< "$release_editions_list"
+				fi
 			done
-		elif [ "${VMname}" == "kde-neon" ] && [ -f "${SCRIPT_DIR}/public/${VMname}" ]; then
-			local selected_release selected_edition release_editions
-			for selected_release in ${releases}; do
-				release_editions=$(RELEASE="${selected_release}" ARCH="${arch_opts%% *}" bash -c '. "$1"; editions_' _ "${SCRIPT_DIR}/public/${VMname}")
-				for selected_edition in ${release_editions}; do
-					release_edition_options+="${selected_release}-${selected_edition} "
-				done
-			done
-		fi
-		release_edition_opts_fmt=$(echo "${release_edition_options}" | tr ' ' '!')
-		if [ -z "$editions" ] && [ "$(echo "$arch_opts" | wc -w)" -le 1 ]; then
-			execmd="bash -c 'mkdir -p \"${VMS_DIR}\"; cd \"${VMS_DIR}\" || exit; choice=\$(GDK_BACKEND=x11 yad --form --separator=\"|\" --item-separator="!" --field=\"Architecture:CB\" \"${arch_opts_fmt}\" --field=\"Release:CB\" \"${releases// /$replace}\"); [ -n \"\$choice\" ] || exit 0; IFS=\"|\" read -r arch release <<< \"\$choice\"; ${qget_cmd} --arch \"\$arch\" \"${get_name}\" \"\$release\"'"
-		elif [ "$interminal" = "yes" ]; then
-			terminal="false"
-		elif [ "$(echo "$arch_opts" | wc -w)" -gt 1 ]; then
-			execmd="bash -c 'mkdir -p \"${VMS_DIR}\"; cd \"${VMS_DIR}\" || exit; choice=\$(GDK_BACKEND=x11 yad --form --item-separator="!" --field=\"Architecture / Release / Edition:CB\" \"${release_edition_opts_fmt}\"); [ -n \"\$choice\" ] || exit 0; IFS=\";\" read -r arch release edition <<< \"\$choice\"; ${qget_cmd} --arch \"\$arch\" \"${get_name}\" \"\$release\" \"\$edition\"'"
-		elif [ "${VMname}" == "kde-neon" ]; then
-			execmd="bash -c 'mkdir -p \"${VMS_DIR}\"; cd \"${VMS_DIR}\" || exit; choice=\$(GDK_BACKEND=x11 yad --form --separator=\"|\" --item-separator="!" --field=\"Architecture:CB\" \"${arch_opts_fmt}\" --field=\"Release / edition:CB\" \"${release_edition_opts_fmt}\"); [ -n \"\$choice\" ] || exit 0; arch=\${choice%%|*}; release_edition=\${choice#*|}; release=\${release_edition%%-*}; edition=\${release_edition#*-}; ${qget_cmd} --arch \"\$arch\" \"${get_name}\" \"\$release\" \"\$edition\"'"
-		else
-			# The editions are joined with the "!" separator of the yad
-			# combobox, so an edition that contains a space stays one entry.
-			local editions_fmt
-			editions_fmt=$(printf '%s\n' "${editions_list}" | tr '\n' ' ' | tr ' ' '!')
-			execmd="bash -c 'mkdir -p \"${VMS_DIR}\"; cd \"${VMS_DIR}\" || exit; choice=\$(GDK_BACKEND=x11 yad --form --separator=\"|\" --item-separator="!" --field=\"Architecture:CB\" \"${arch_opts_fmt}\" --field=\"Release:CB\" \"${releases// /$replace}\" --field=\"Edition:CB\" \"${editions_fmt}\"); [ -n \"\$choice\" ] || exit 0; IFS=\"|\" read -r arch release edition <<< \"\$choice\"; ${qget_cmd} --arch \"\$arch\" \"${get_name}\" \"\$release\" \"\$edition\"'"
-		fi
+		done
+		release_edition_opts_fmt="${release_edition_options%!}"
+		printf -v quoted_vms '%q' "${VMS_DIR}"
+		printf -v quoted_qget '%q' "${qget_cmd}"
+		printf -v quoted_os '%q' "${get_name}"
+		printf -v launcher 'mkdir -p %s; cd %s || exit; ' "$quoted_vms" "$quoted_vms"
+		printf -v launcher '%schoice=$(GDK_BACKEND=x11 yad --form --separator="|" --item-separator="!" --field="Architecture / Release / Edition:CB" %q); ' "$launcher" "$release_edition_opts_fmt"
+		launcher+='[ -n "$choice" ] || exit 0; choice=${choice%|}; IFS=";" read -r arch release edition <<< "$choice"; '
+		launcher+="$quoted_qget --arch \"\$arch\" $quoted_os \"\$release\""
+		launcher+=' ${edition:+"$edition"}'
+		# Exec is a desktop-entry command line, not a shell command line.
+		# Quote its single bash argument according to the desktop-entry spec.
+		launcher="${launcher//\\/\\\\\\\\}"
+		launcher="${launcher//\"/\\\\\"}"
+		launcher="${launcher//\$/\\\\$}"
+		launcher="${launcher//\`/\\\\\`}"
+		launcher="${launcher//%/%%}"
+		execmd="bash -c \"${launcher}\""
+		terminal="false"
+
 		icon="${icon_file}"
 		# Try quickget for a more accurate description (old version approach)
 		comment=$("${SCRIPT_DIR}/qget" --show --plain "${get_name}" 2>$DH_NULL | grep 'Description' | sed 's/^Description:[[:space:]]*//')

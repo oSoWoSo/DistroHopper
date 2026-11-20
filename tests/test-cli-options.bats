@@ -38,6 +38,7 @@ teardown() {
 	[[ "${output}" == *"Archs:       amd64 arm64 ppc64el s390x"* ]]
 	[[ "${output}" == *"Releases:    45 44 43"* ]]
 	[[ "${output}" == *"Editions:    KDE Server Workstation"* ]]
+	[[ "${output}" == *$'EditionsList:\nKDE\nServer\nWorkstation'* ]]
 }
 
 @test "show rejects missing architecture and release values promptly" {

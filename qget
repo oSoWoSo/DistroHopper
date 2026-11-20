@@ -84,10 +84,13 @@ function show_os_info() {
 	# be split apart again — this list can.
 	local _editions_list=""
 	if [ "${QGET_PLAIN:-}" == "1" ]; then
-		if [ -n "${EDITIONS_LIST:-}" ]; then
+		if [ -z "${requested_arch}${requested_release}" ] && [ -n "${EDITIONS_LIST:-}" ]; then
 			_editions_list="${EDITIONS_LIST}"
-		else
+		elif [[ "${EDITIONS}" == *$'\n'* ]] || { [ -n "${EDITIONS}" ] && printf '%s\n' "${EDITIONS_LIST:-}" | grep -Fxq "${EDITIONS}"; }; then
 			_editions_list="${EDITIONS}"
+		else
+			# Template edition functions commonly return a space-separated list.
+			_editions_list=$(printf '%s\n' "${EDITIONS}" | tr ' ' '\n' | awk 'NF')
 		fi
 	else
 		_editions_list="${EDITIONS}"
@@ -139,6 +142,9 @@ function show_os_info() {
 		fi
 	fi
 	if [ "${QGET_PLAIN:-}" == "1" ]; then
+		if [ -n "${requested_arch}" ]; then
+			[ -n "${_editions_list}" ] && printf 'EditionsList:\n%s\n' "${_editions_list}"
+		fi
 		[ -n "${RSS}" ] && echo $"RSS:         ${RSS}"
 		[ -n "${DW}" ]  && echo $"DistroWatch: ${DW}"
 		echo $"Description: ${DESCRIPTION}"
