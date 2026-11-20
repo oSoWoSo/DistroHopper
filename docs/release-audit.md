@@ -31,6 +31,12 @@ Windows Server require the separate opt-in probe and were not live-tested here.
 | Ubuntu / Server | Select the newest point ISO; resolve server dailies under the development codename; reject empty manifests | `d3f4c97` |
 | Talos | Fall back to official GitHub release assets when the third-party feed is empty | `669ea67` |
 | SparkyLinux | Remove a dangling ShellCheck directive | `816e2fb` |
+| blendOS (follow-up) | Use the official German master ISO and its build checksum instead of obsolete GitHub tags; preserve clean local filenames for artifact URLs | `a035118`, `3c91451` |
+
+Follow-up blendOS verification: the live master ISO URL check passed, and all
+131 Bats tests passed. A mocked end-to-end download verified checksum handling
+and the generated ISO configuration; the full upstream ISO was not downloaded.
+The aggregate URL totals above describe the original audit, before this follow-up.
 
 Test maintenance also removed the CLI suite's dependency on generated local
 metadata, corrected stale icon/Mageia expectations, and made `tests/test-all.sh`
@@ -43,7 +49,6 @@ legacy checks passed on a clean checkout.
 
 | Template / area | Observed result | Next step |
 | --- | --- | --- |
-| blendOS | One failed URL: obsolete `23.06` GNOME image on `images.blendos.co` | Replace the obsolete GitHub-tag resolver with the current official download source, verifying the mirror and its matching checksum. The documented new mirrors could not be reached locally during this pass. |
 | HoloISO | One failed URL: release notes point at a 2024 image on `cd2.holoiso.ru.eu.org` | Establish a current official installer source before replacing the URL. |
 | Manjaro | Seven passes, four empty-URL failures for i3/Cinnamon full/minimal | Community metadata endpoint returns a GitLab startup HTML page instead of JSON. Confirm a supported replacement or explicitly report temporary unavailability; do not silently mark these downloads as passing. |
 | Neko-Void | Four passes, five failed Hugging Face bucket links | Official website advertises bucket URLs returning 404. A repository copy exists for at least i3, but a fallback must verify each image/checksum rather than assume all bucket images have equivalent copies. |
