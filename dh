@@ -285,7 +285,14 @@ function install_dh() {
 
 # shellcheck disable=SC2154
 function create_desktop_entry() {
-	cat <<EOF > "${DESKTOP_FILE}"
+	# YAD reloads on CREATED/DELETED, not CHANGED. Publishing an empty
+	# .desktop file before writing it races the monitor, especially when
+	# there is only one ready VM and no later creation triggers a rescan.
+	# Stage in the same directory (without a .desktop suffix), then rename
+	# the complete, executable entry into place atomically.
+	local desktop_tmp
+	desktop_tmp=$(mktemp "${DESKTOP_FILE%/*}/.dh-entry.XXXXXX") || return 1
+	if ! cat <<EOF > "${desktop_tmp}"
 [Desktop Entry]
 Version=${version}
 Type=${type}
@@ -303,7 +310,14 @@ MimeType=${mime}
 Keywords=${keyword}
 
 EOF
-	chmod +x "${DESKTOP_FILE}"
+	then
+		rm -f "${desktop_tmp}"
+		return 1
+	fi
+	if ! chmod +x "${desktop_tmp}" || ! mv -f "${desktop_tmp}" "${DESKTOP_FILE}"; then
+		rm -f "${desktop_tmp}"
+		return 1
+	fi
 }
 
 # shellcheck disable=SC2269
