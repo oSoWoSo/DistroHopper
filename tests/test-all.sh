@@ -77,7 +77,7 @@ echo ""
 TESTS_DIR="$(dirname "${BASH_SOURCE[0]}")"
 if command -v bats >/dev/null 2>&1; then
 	echo "[NEW] Testing Bats behavior suites..."
-	bats "${TESTS_DIR}/test-icons.bats" "${TESTS_DIR}/test-cli-options.bats" "${TESTS_DIR}/test-generate-output.bats" "${TESTS_DIR}/test-web-create.bats"
+	bats "${TESTS_DIR}"/*.bats
 else
 	echo "[NEW] Skipping Bats behavior tests (bats not installed)"
 fi
