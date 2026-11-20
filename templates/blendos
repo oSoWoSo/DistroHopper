@@ -12,29 +12,41 @@ GPG=""
 RSS=""
 DW=""
 
+# German master build server linked at https://blendos.co/download/.
+BLENDOS_BUILD_URL="https://git.blendos.co/api/v4/projects/32/jobs/artifacts/main/raw"
+
 function releases_() {
-	# Get latest release tag from GitHub, strip 'v' prefix
-	local latest_tag
-	latest_tag=$(web_pipe "https://api.github.com/repos/blend-os/blendOS/releases/latest" | grep -o '"tag_name": "[^"]*"' | cut -d'"' -f4)
-	if [[ -n "$latest_tag" ]]; then
-		# Remove leading 'v' if present (e.g., v23.06 -> 23.06)
-		echo "${latest_tag#v}"
-	else
-		# Fallback to latest
-		echo "latest"
-	fi
+	# The master server publishes a rolling build, not the obsolete GitHub tags.
+	echo latest
+}
+
+function arch_() {
+	echo amd64
 }
 
 function get_() {
-	local version="${RELEASE}"
-	local ISO="blendOS-${version}-x86_64-gnome.iso"
-	local URL="https://images.blendos.co/track/gnome/${ISO}"
-	local HASH=""
-	# Get SHA256 hash from the SHA256SUMS file
-	HASH=$(web_pipe "${URL}.sha256" 2>/dev/null | grep "${ISO}" | cut -d' ' -f1)
-	# If hash not found, try without .sha256 extension (some hosts use SHA256SUMS file)
-	if [[ -z "$HASH" ]]; then
-		HASH=$(web_pipe "https://images.blendos.co/track/gnome/SHA256SUMS" 2>/dev/null | grep "${ISO}" | cut -d' ' -f1)
+	[ "${RELEASE:-latest}" = latest ] || return 1
+	[ "${ARCH:-amd64}" = amd64 ] || return 1
+	local SUMS HASH
+	# The build job hashes blendOS.iso before publishing both artifacts. Do not
+	# mix this ISO with mirror/torrent checksums: their compression may differ.
+	if ! SUMS=$(web_pipe "${BLENDOS_BUILD_URL}/checksum?job=build-job" \
+		--fail --show-error --retry 3 --connect-timeout 15 --max-time 60); then
+		echo 'ERROR: Could not fetch the blendOS master build checksum.' >&2
+		return 1
 	fi
-	echo "${URL} ${HASH}"
+	HASH=$(printf '%s\n' "${SUMS}" | awk '
+		{
+			file = $2
+			sub(/^\*/, "", file)
+			if (file == "blendOS.iso" && length($1) == 64 && $1 !~ /[^[:xdigit:]]/) {
+				print $1
+				exit
+			}
+		}')
+	if [ -z "${HASH}" ]; then
+		echo 'ERROR: No valid SHA256 checksum for the blendOS master ISO.' >&2
+		return 1
+	fi
+	printf '%s %s\n' "${BLENDOS_BUILD_URL}/blendOS.iso?job=build-job" "${HASH}"
 }
