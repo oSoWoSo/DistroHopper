@@ -38,9 +38,9 @@ echo "---------------------------------------------------------------"
 mkdir -p /usr/share/distrohopper
 cp -a dh generate qget q quickemu quickreport chunkcheck lib.sh dh-refresh templates icons \
 	/usr/share/distrohopper/
-# Provide an application icon (hop.svg is not shipped; use the bundled logo).
+# Provide an application icon (hop.svg is not shipped; use an existing icon).
 mkdir -p /usr/share/distrohopper/icons
-cp docs/hop-big.svg /usr/share/distrohopper/icons/hop.svg 2>/dev/null || cp docs/logo.svg /usr/share/distrohopper/icons/hop.svg 2>/dev/null || true
+cp icons/absolute.svg /usr/share/distrohopper/icons/hop.svg 2>/dev/null || true
 mkdir -p /usr/share/applications
 cp dh.desktop /usr/share/applications/dh.desktop
 mkdir -p /usr/share/icons/hicolor/scalable/apps
