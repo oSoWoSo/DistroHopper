@@ -13,19 +13,25 @@ RSS=""
 DW=""
 
 function releases_() {
-	#shellcheck disable=SC2046,SC2005
-	echo $(web_pipe "https://getfedora.org/releases.json" | jq -r 'map(.version) | unique | .[]' | sed 's/ /_/g' | sort -r)
+	# The feed retains beta entries after the corresponding final release.
+	web_pipe "https://getfedora.org/releases.json" | jq -r '
+		map(select(.link | endswith(".iso"))) | map(.version) | unique as $versions
+		| $versions[] | select((split(" ")[0]) as $major
+			| (contains(" ") | not) or ($versions | index($major) | not))
+		| gsub(" "; "_")' | sort -Vr
 }
 
 function editions_() {
 	local QEMU_ARCH
 	QEMU_ARCH=$(_qarch_to_upstream "${ARCH:-amd64}")
-	#shellcheck disable=SC2046,SC2005
-	if [[ -z ${RELEASE} ]]; then
-		echo $(web_pipe "https://getfedora.org/releases.json" | jq -r "map(select(.arch==\"${QEMU_ARCH}\" and .variant!=\"Labs\" and .variant!=\"IoT\" and .variant!=\"Container\" and .variant!=\"Cloud\" and .variant!=\"Everything\"  and .subvariant!=\"Security\" and .subvariant!=\"Server_KVM\" and .subvariant!=\"SoaS\")) | map(.subvariant) | unique | .[]")
-	else
-		echo $(web_pipe "https://getfedora.org/releases.json" | jq -r "map(select(.arch==\"${QEMU_ARCH}\" and .version==\"${RELEASE/_/ }\" and .variant!=\"Labs\" and .variant!=\"IoT\" and .variant!=\"Container\" and .variant!=\"Cloud\" and .variant!=\"Everything\"  and .subvariant!=\"Security\" and .subvariant!=\"Server_KVM\" and .subvariant!=\"SoaS\")) | map(.subvariant) | unique | .[]")
-	fi
+	web_pipe "https://getfedora.org/releases.json" | jq -r \
+		--arg arch "${QEMU_ARCH}" --arg release "${RELEASE/_/ }" '
+		map(select(.arch == $arch and ($release == "" or .version == $release)
+			and (.link | endswith(".iso"))
+			and .variant != "Labs" and .variant != "IoT" and .variant != "Container"
+			and .variant != "Cloud" and .variant != "Everything"
+			and .subvariant != "Security" and .subvariant != "Server_KVM"
+			and .subvariant != "SoaS")) | map(.subvariant) | unique | .[]'
 }
 
 function arch_() {
@@ -37,17 +43,14 @@ function get_() {
 	local ISO=""
 	local JSON=""
 	local URL=""
-	local VARIANT=""
 	local QEMU_ARCH
 	QEMU_ARCH=$(_qarch_to_upstream "${ARCH:-amd64}")
-	case ${EDITION} in
-		Server|Kinoite|Onyx|Silverblue|Sericea|Workstation) VARIANT="${EDITION}";;
-		*) VARIANT="Spins";;
-	esac
-	if [[ "${RELEASE}" == *"_"* ]]; then
-		RELEASE="${RELEASE/_/ }"
-	fi
-	JSON=$(web_pipe "https://getfedora.org/releases.json" | jq '.[] | select(.variant=="'${VARIANT}'" and .subvariant=="'"${EDITION}"'" and .arch=="'"${QEMU_ARCH}"'" and .version=="'"${RELEASE}"'" and (.link | endswith(".iso")))')
+	# Subvariants can move out of Spins (KDE and Atomic desktops did).
+	# Select the published ISO directly instead of guessing its variant.
+	JSON=$(web_pipe "https://getfedora.org/releases.json" | jq \
+		--arg edition "${EDITION}" --arg arch "${QEMU_ARCH}" --arg release "${RELEASE/_/ }" \
+		'.[] | select(.subvariant == $edition and .arch == $arch
+			and .version == $release and (.link | endswith(".iso")))')
 	URL=$(echo "${JSON}" | jq -r '.link' | head -n1)
 	HASH=$(echo "${JSON}" | jq -r '.sha256' | head -n1)
 	echo "${URL} ${HASH}"
