@@ -19,10 +19,10 @@ jobs:
     container: ghcr.io/pkgforge-dev/archlinux:latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Prepare container
-        uses: pkgforge-dev/anylinux-setup-action@v1
+        uses: pkgforge-dev/anylinux-setup-action@v6
 
       - name: Install dependencies
         run: /bin/sh ./get-dependencies.sh
@@ -31,7 +31,7 @@ jobs:
         run: /bin/sh ./make-appimage.sh
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: DistroHopper-${{ matrix.arch }}
           path: dist
@@ -43,13 +43,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: DistroHopper-*
           merge-multiple: true
 
       - name: Upload release assets
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v3
         with:
           files: dist/*.AppImage
         env:
