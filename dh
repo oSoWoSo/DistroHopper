@@ -642,18 +642,31 @@ function renew_supported_vm() {
 		quoted="'${selected_tuple//\'/\'\\\'\'}'"
 		patterns+="${patterns:+|}$quoted"
 	done <<< "$release_edition_options"
-	# Single-quote literal values instead of backslash-escaping every space,
-	# semicolon and exclamation mark. Only embedded apostrophes need escaping.
-	arch_items="'${arch_items//\'/\'\\\'\'}'"
-	release_items="'${release_items//\'/\'\\\'\'}'"
-	if [ "$edition_items" = '(none)' ]; then
-		printf -v launcher "choice=\$(GDK_BACKEND=x11 yad --form --separator='|' --item-separator='!' --field='Architecture:CB' %s --field='Release:CB' %s) || exit 0; " "$arch_items" "$release_items"
-		launcher+="[ -n \"\$choice\" ] || exit 0; IFS='|' read -r arch release <<< \"\$choice\"; edition=''; "
-	else
-		edition_items="'${edition_items//\'/\'\\\'\'}'"
-		printf -v launcher "choice=\$(GDK_BACKEND=x11 yad --form --separator='|' --item-separator='!' --field='Architecture:CB' %s --field='Release:CB' %s --field='Edition:CB' %s) || exit 0; " "$arch_items" "$release_items" "$edition_items"
-		launcher+="[ -n \"\$choice\" ] || exit 0; IFS='|' read -r arch release edition <<< \"\$choice\"; [ \"\$edition\" != '(none)' ] || edition=''; "
+	# Only actual choices get a picker field. Fixed values stay inline in
+	# Exec, so e.g. AgarimOS asks for edition, not its sole arch/release.
+	local variable label items picker="" read_fields=""
+	launcher=""
+	for variable in arch release edition; do
+		case "$variable" in
+			arch) label=Architecture; items="$arch_items" ;;
+			release) label=Release; items="$release_items" ;;
+			edition) label=Edition; items="$edition_items" ;;
+		esac
+		if [[ "$items" == *'!'* ]]; then
+			quoted="'${items//\'/\'\\\'\'}'"
+			picker+=" --field='$label:CB' $quoted"
+			read_fields+="${read_fields:+ }$variable"
+		else
+			[ "$variable" != edition ] || [ "$items" != '(none)' ] || items=""
+			quoted="'${items//\'/\'\\\'\'}'"
+			launcher+="$variable=$quoted; "
+		fi
+	done
+	if [ -n "$picker" ]; then
+		launcher+="choice=\$(GDK_BACKEND=x11 yad --form --separator='|' --item-separator='!'$picker) || exit 0; "
+		launcher+="[ -n \"\$choice\" ] || exit 0; IFS='|' read -r $read_fields <<< \"\$choice\"; "
 	fi
+	launcher+="[ \"\$edition\" != '(none)' ] || edition=''; "
 	# Lists contain all choices, but reject mismatched combinations instead
 	# of silently passing an invalid architecture/release/edition to qget.
 	launcher+="case \"\$arch;\$release;\$edition\" in $patterns) ;; *) yad --error --text='This combination is not supported.'; exit 1;; esac; "

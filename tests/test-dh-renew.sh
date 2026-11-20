@@ -83,7 +83,11 @@ for path in pathlib.Path(sys.argv[1]).glob('*.desktop'):
     assert '--desktop-picker' not in script, script
     assert 'base64' not in script, script
     assert 'Brazilian' in script and 'Portuguese' in script, script
-    assert "--field='Architecture:CB'" in script, script
+    if path.stem == 'multi':
+        assert "--field='Architecture:CB'" in script, script
+    else:
+        assert "--field='Architecture:CB'" not in script, script
+        assert "arch='x86_64'" in script, script
     assert "--field='Release:CB'" in script, script
     assert "--field='Edition:CB'" in script, script
     # Literal spaces and delimiters need quoting, not layered backslashes.

@@ -29,6 +29,17 @@ while (($#)); do
  case $1 in --arch) arch=$2; shift;; --release) release=$2; shift;; esac
  shift
 done
+if [[ $os == agarimos || $os == fixed ]]; then
+ echo 'Archs: x86_64'
+ echo 'Releases: latest'
+ if [[ $os == agarimos ]]; then
+  printf 'EditionsList:\ncinnamon\nplasma\nxfce4\n'
+ else
+  printf 'EditionsList:\ncinnamon\n'
+ fi
+ echo 'Description: fixed values fixture'
+ exit
+fi
 echo 'Archs: amd64 arm64'
 if [[ $arch == amd64 ]]; then echo 'Releases: old new-lts'; else echo 'Releases: arm-only'; fi
 if [[ $os != no-editions && $release == new-lts ]]; then
@@ -45,9 +56,8 @@ import json, os, sys
 args = sys.argv[1:]
 if '--error' in args:
  sys.exit(0)
-labels = ['Architecture', 'Release']
-if '--field=Edition:CB' in args:
- labels.append('Edition')
+labels = [label for label in ['Architecture', 'Release', 'Edition']
+          if '--field=' + label + ':CB' in args]
 options = {}
 for label in labels:
  field = '--field=' + label + ':CB'
@@ -57,15 +67,18 @@ with open(os.environ['YAD_LOG'], 'a') as f:
  f.write(json.dumps({'args': args, 'options': options}) + '\n')
 if os.environ.get('CANCEL_FIELD'):
  sys.exit(1)
-values = [os.environ.get('PICK_' + label.upper(), '') for label in labels]
-if len(values) == 3:
- values[2] = values[2] or '(none)'
+values = [os.environ.get('PICK_' + label.upper(), '') or
+          ('(none)' if label == 'Edition' else '') for label in labels]
 sys.stdout.write('|'.join(values) + '|')
 EOF
 chmod +x "$SCRIPT_DIR/qget" "$WORK/bin/yad"
 set +u
 renew_supported_vm fixture "$SCRIPT_DIR/qget"
 renew_supported_vm no-editions "$SCRIPT_DIR/qget"
+for os in agarimos fixed; do
+ renew_supported_vm "$os" "$SCRIPT_DIR/qget"
+ cp "$DH_CONFIG_DIR/supported/$os.desktop" "$WORK/$os.desktop"
+done
 cp "$DH_CONFIG_DIR/supported/no-editions.desktop" "$WORK/no-editions.desktop"
 cp "$SCRIPT_DIR/qget" "$WORK/bin/qget"
 cp "$DH_CONFIG_DIR/supported/fixture.desktop" "$WORK/fixture.desktop"
@@ -114,13 +127,12 @@ def run(arch, release, edition='', desktop=False, cancel='', status=0):
     else:
         result = subprocess.run(argv, timeout=10)
         assert result.returncode == status, result
-    dialogs = [json.loads(line) for line in yad_log.read_text().splitlines()]
-    assert len(dialogs) == 1, dialogs
+    dialogs = [json.loads(line) for line in yad_log.read_text().splitlines()] if yad_log.exists() else []
+    assert len(dialogs) == (1 if 'yad --form' in argv[2] else 0), dialogs
     for dialog in dialogs:
         args = dialog['args']
-        labels = ['Architecture', 'Release']
-        if "--field='Edition:CB'" in argv[2]:
-            labels.append('Edition')
+        labels = [label for label in ['Architecture', 'Release', 'Edition']
+                  if "--field='" + label + ":CB'" in argv[2]]
         for label in labels:
             field = '--field=' + label + ':CB'
             assert field in args, args
@@ -159,9 +171,26 @@ key.load_from_file(str(path), GLib.KeyFileFlags.NONE)
 command = key.get_string('Desktop Entry', 'Exec')
 _, argv = GLib.shell_parse_argv(command)
 assert "--field='Edition:CB'" not in argv[2], argv
-assert '(none)' not in argv[2], argv
+assert "edition='';" in argv[2], argv
 dialogs = run('amd64', 'old')
 assert '--field=Edition:CB' not in dialogs[0]['args'], dialogs
 downloaded('amd64', 'old', os_name='no-editions')
-print('OK: inline desktop pickers pass normal qget arguments and omit nonexistent editions')
+# AgarimOS: fixed x86_64/latest, pick only an edition.
+path = path.with_name('agarimos.desktop')
+key.load_from_file(str(path), GLib.KeyFileFlags.NONE)
+_, argv = GLib.shell_parse_argv(key.get_string('Desktop Entry', 'Exec'))
+assert "--field='Architecture:CB'" not in argv[2], argv
+assert "--field='Release:CB'" not in argv[2], argv
+assert "--field='Edition:CB'" in argv[2], argv
+dialogs = run('ignored', 'ignored', 'plasma')
+assert list(dialogs[0]['options']) == ['Edition'], dialogs
+downloaded('x86_64', 'latest', 'plasma', os_name='agarimos')
+# When all three values are fixed, call qget directly without opening YAD.
+path = path.with_name('fixed.desktop')
+key.load_from_file(str(path), GLib.KeyFileFlags.NONE)
+_, argv = GLib.shell_parse_argv(key.get_string('Desktop Entry', 'Exec'))
+assert 'yad --form' not in argv[2], argv
+assert run('ignored', 'ignored', 'ignored') == []
+downloaded('x86_64', 'latest', 'cinnamon', os_name='fixed')
+print('OK: inline pickers show only real choices and pass fixed values directly to qget')
 PY
