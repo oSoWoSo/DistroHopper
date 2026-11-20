@@ -13,9 +13,16 @@ PRETTY="Fedora"
 QEMU_ARCH="amd64 arm64 ppc64el s390x"
 RELEASES="45 44 43"
 EDITIONS="KDE Server Workstation Xfce"
+EDITIONS_LIST="KDE
+Server
+Workstation
+Xfce
+Brazilian Portuguese
+English International"
 _release_editions_() {
 	case "$1" in
 		"ppc64el|43") echo "KDE Server Workstation";;
+		"amd64|45") echo "Brazilian Portuguese English International";;
 	esac
 }
 EOF
@@ -39,6 +46,13 @@ teardown() {
 	[[ "${output}" == *"Releases:    45 44 43"* ]]
 	[[ "${output}" == *"Editions:    KDE Server Workstation"* ]]
 	[[ "${output}" == *$'EditionsList:\nKDE\nServer\nWorkstation'* ]]
+}
+
+@test "plain architecture output preserves scoped multiword edition names" {
+	run "${REPO_ROOT}/qget" --show --plain --arch amd64 --release 45 fedora-linux
+	[ "${status}" -eq 0 ]
+	[[ "${output}" == *$'EditionsList:\nBrazilian Portuguese\nEnglish International'* ]]
+	[[ "${output}" != *$'EditionsList:\nKDE'* ]]
 }
 
 @test "show rejects missing architecture and release values promptly" {

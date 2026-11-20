@@ -88,6 +88,24 @@ function show_os_info() {
 			_editions_list="${EDITIONS_LIST}"
 		elif [[ "${EDITIONS}" == *$'\n'* ]] || { [ -n "${EDITIONS}" ] && printf '%s\n' "${EDITIONS_LIST:-}" | grep -Fxq "${EDITIONS}"; }; then
 			_editions_list="${EDITIONS}"
+		elif [ -n "${EDITIONS_LIST:-}" ]; then
+			# Scoped static metadata is space-joined. Recover its entries using
+			# the lossless global list, preferring the longest matching name.
+			local remaining="${EDITIONS}" candidate best
+			while [ -n "$remaining" ]; do
+				best=""
+				while IFS= read -r candidate; do
+					[ -n "$candidate" ] || continue
+					if [[ "$remaining" == "$candidate" || "$remaining" == "$candidate "* ]]; then
+						((${#candidate} > ${#best})) && best="$candidate"
+					fi
+				done <<< "$EDITIONS_LIST"
+				# Compatibility with old metadata missing a global-list entry.
+				[ -n "$best" ] || best="${remaining%% *}"
+				_editions_list+="${_editions_list:+$'\n'}${best}"
+				remaining="${remaining#"$best"}"
+				remaining="${remaining# }"
+			done
 		else
 			# Template edition functions commonly return a space-separated list.
 			_editions_list=$(printf '%s\n' "${EDITIONS}" | tr ' ' '\n' | awk 'NF')
