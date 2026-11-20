@@ -263,11 +263,11 @@ function get_() {
 		URL="https://cdimage.ubuntu.com/${CDIMAGE_OS}/releases/${RELEASE}/release"
 	fi
 	if web_check "${URL}/SHA256SUMS"; then
-		DATA=$(web_pipe "${URL}/SHA256SUMS" | grep 'desktop\|dvd\|install' | grep "${QEMU_ARCH}" | grep iso | grep -v "+mac")
+		DATA=$(web_pipe "${URL}/SHA256SUMS" | grep 'desktop\|dvd\|install' | grep "${QEMU_ARCH}" | grep '\.iso$' | grep -v "+mac" | sort -k2,2V | tail -n 1)
 		ISO=$(cut -d'*' -f2 <<<"${DATA}" | sed '1q;d')
 		HASH=$(cut -d' ' -f1 <<<"${DATA}" | sed '1q;d')
 	else
-		DATA=$(web_pipe "${URL}/MD5SUMS" | grep 'desktop\|dvd\|install' | grep "${QEMU_ARCH}" | grep iso | grep -v "+mac")
+		DATA=$(web_pipe "${URL}/MD5SUMS" | grep 'desktop\|dvd\|install' | grep "${QEMU_ARCH}" | grep '\.iso$' | grep -v "+mac" | sort -k2,2V | tail -n 1)
 		ISO=$(cut -d'*' -f2 <<<"${DATA}")
 		HASH=$(cut -d' ' -f1 <<<"${DATA}")
 	fi

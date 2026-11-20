@@ -14,7 +14,7 @@ DW=""
 function releases_() {
 	local ALL_VERSIONS=()
 	# shellcheck disable=SC2207
-	ALL_VERSIONS=($(IFS=$'\n' web_pipe http://releases.ubuntu.com/streams/v1/com.ubuntu.releases:ubuntu-server.json | jq -r '.products[] | select(.arch=="amd64") | .version' | sort -rV))
+	ALL_VERSIONS=($(IFS=$'\n' web_pipe https://releases.ubuntu.com/streams/v1/com.ubuntu.releases:ubuntu-server.json | jq -r '.products[] | select(.arch=="amd64") | .version' | sort -rV))
 	echo daily-live "${ALL_VERSIONS[@]}"
 }
 
@@ -22,10 +22,13 @@ function get_() {
 	local HASH=""
 	local ISO=""
 	local NAME="live-server"
-	local URL=""
+	local URL="" DATA="" CODENAME=""
 
 	if [[ "${RELEASE}" == "daily"* ]]; then
-		URL="https://cdimage.ubuntu.com/${OS}/${RELEASE}/current"
+		CODENAME=$(web_pipe "https://api.launchpad.net/devel/ubuntu/series" \
+			| jq -r '[.entries[] | select(.status == "Active Development")][0].name // empty')
+		[ -n "${CODENAME}" ] || return 1
+		URL="https://cdimage.ubuntu.com/${OS}/${CODENAME}/${RELEASE}/current"
 	else
 		URL="https://releases.ubuntu.com/${RELEASE}"
 	fi
@@ -35,14 +38,15 @@ function get_() {
 	esac
 
 	if web_check "${URL}/SHA256SUMS"; then
-		DATA=$(web_pipe "${URL}/SHA256SUMS" | grep "${NAME}" | grep amd64 | grep iso)
+		DATA=$(web_pipe "${URL}/SHA256SUMS" | grep "${NAME}" | grep amd64 | grep '\.iso$' | sort -k2,2V | tail -n 1)
 		ISO=$(cut -d'*' -f2 <<<"${DATA}")
 		HASH=$(cut -d' ' -f1 <<<"${DATA}")
 	else
-		DATA=$(web_pipe "${URL}/MD5SUMS" | grep "${NAME}" | grep amd64 | grep iso)
-		ISO=$(cut -d' ' -f3 <<<"${DATA}")
+		DATA=$(web_pipe "${URL}/MD5SUMS" | grep "${NAME}" | grep amd64 | grep '\.iso$' | sort -k2,2V | tail -n 1)
+		ISO=$(awk '{sub(/^\*/, "", $2); print $2}' <<<"${DATA}")
 		HASH=$(cut -d' ' -f1 <<<"${DATA}")
 	fi
+	[ -n "${ISO}" ] && [ -n "${HASH}" ] || return 1
 	if [[ "${RELEASE}" == "daily"* ]] || [ "${RELEASE}" == "dvd" ]; then
 		zsync_get "${URL}/${ISO}" "${VM_PATH}" "${OS}-devel.iso" || return $?
 		make_vm_config "${OS}-devel.iso"
