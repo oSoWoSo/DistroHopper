@@ -106,8 +106,10 @@ function set_variables() {
 	[ -n "${USE_TEMPLATES}" ] || USE_TEMPLATES="no"
 	# Fall back to templates when the (generated) public/ metadata is absent,
 	# e.g. in a source/AppImage checkout that only ships templates/.
-	if [ "${USE_TEMPLATES}" != "yes" ] && [ ! -d "${SCRIPT_DIR}/public" ] && [ -d "${SCRIPT_DIR}/templates" ]; then
-		USE_TEMPLATES="yes"
+	if [ "${USE_TEMPLATES}" != "yes" ] && [ -d "${SCRIPT_DIR}/templates" ]; then
+		if [ ! -d "${SCRIPT_DIR}/public" ] || [ "$(find "${SCRIPT_DIR}/public" -maxdepth 1 -type f 2>/dev/null | wc -l)" -lt 10 ]; then
+			USE_TEMPLATES="yes"
+		fi
 	fi
 	[ -n "${terminal}" ] || terminal="true"
 	if [ "${USE_TEMPLATES}" == "yes" ]; then
