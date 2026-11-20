@@ -12,7 +12,7 @@ pacman -Syu --noconfirm \
 	bash coreutils grep sed util-linux procps-ng unzip zsync \
 	qemu-full fzf jq wget socat swtpm spice-gtk python3 \
 	xdg-user-dirs \
-	base-devel git autogen autoconf automake libtool pkgconf \
+	base-devel git autogen autoconf automake libtool pkgconf patchelf \
 	gtk3 glib2 intltool gettext
 
 echo "Installing debloated packages..."
