@@ -22,7 +22,7 @@ function releases_() {
 function get_() {
 	local HASH=""
 	local ISO="NetBSD-${RELEASE}-amd64.iso"
-	local URL="https://cdn.netbsd.org/pub/NetBSD/NetBSD-${RELEASE}/images"
+	local URL="https://cdn.netbsd.org/pub/NetBSD/images/${RELEASE}"
 	HASH=$(web_pipe "${URL}/MD5" | grep "${ISO}" | cut -d' ' -f4)
 	echo "${URL}/${ISO} ${HASH}"
 }
