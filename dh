@@ -609,7 +609,7 @@ function renew_supported_vm() {
 	# Build valid tuples for every architecture and release, not a Cartesian
 	# product of the default architecture's releases and editions.
 	local selected_arch selected_release selected_edition arch_info release_info arch_releases
-	local release_editions_list tuple payload argument
+	local release_editions_list tuple launcher quoted
 	release_edition_options=""
 	for selected_arch in ${architectures:-x86_64}; do
 		arch_info=$("$qget_cmd" --show --plain --arch "${selected_arch}" "${VMname}" 2>$DH_NULL) || continue
@@ -629,13 +629,30 @@ function renew_supported_vm() {
 			fi
 		done
 	done
-	# The desktop entry carries all choices; qget owns the picker and final
-	# download. Encoding data avoids YAD treating percent signs as field codes.
-	payload=$(printf '%s' "$release_edition_options" | base64 | tr -d '\n')
-	execmd="qget --desktop-picker"
-	for argument in "$get_name" "$payload" "$VMS_DIR"; do
-		execmd+=" $(desktop_quote_argument "$argument")"
-	done
+	[ -n "$release_edition_options" ] || return 1
+	# Keep the original self-contained inline YAD -> qget launcher. All
+	# architectures, releases and editions are literal values in Exec.
+	local arch_items release_items edition_items patterns="" selected_tuple
+	arch_items=$(printf '%s' "$release_edition_options" | cut -f1 | awk '!seen[$0]++' | paste -sd '!')
+	release_items=$(printf '%s' "$release_edition_options" | cut -f2 | awk '!seen[$0]++' | paste -sd '!')
+	edition_items=$(printf '%s' "$release_edition_options" | awk -F '\t' '{v=($3 == "" ? "(none)" : $3); if (!seen[v]++) print v}' | paste -sd '!')
+	while IFS= read -r selected_tuple; do
+		[ -n "$selected_tuple" ] || continue
+		selected_tuple="${selected_tuple//$'\t'/;}"
+		printf -v quoted '%q' "$selected_tuple"
+		patterns+="${patterns:+|}$quoted"
+	done <<< "$release_edition_options"
+	printf -v launcher 'choice=$(GDK_BACKEND=x11 yad --form --separator="|" --item-separator="!" --field="Architecture:CB" %q --field="Release:CB" %q --field="Edition:CB" %q) || exit 0; ' "$arch_items" "$release_items" "$edition_items"
+	launcher+='[ -n "$choice" ] || exit 0; IFS="|" read -r arch release edition <<< "$choice"; [ "$edition" != "(none)" ] || edition=""; '
+	# Lists contain all choices, but reject mismatched combinations instead
+	# of silently passing an invalid architecture/release/edition to qget.
+	launcher+="case \"\$arch;\$release;\$edition\" in $patterns) ;; *) yad --error --text=\"This combination is not supported.\"; exit 1;; esac; "
+	printf -v quoted '%q' "$VMS_DIR"
+	launcher+="mkdir -p $quoted; cd $quoted || exit; "
+	printf -v quoted '%q' "$get_name"
+	launcher+="qget --arch \"\$arch\" $quoted \"\$release\" "
+	launcher+='${edition:+"$edition"}'
+	execmd="bash -c $(desktop_quote_argument "$launcher")"
 	terminal="false"
 
 	icon="${icon_file}"
@@ -645,6 +662,7 @@ function renew_supported_vm() {
 	categories='System;X-Virtualization;'
 	create_desktop_entry
 }
+
 
 
 function distrohopper_about() {

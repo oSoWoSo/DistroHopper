@@ -87,17 +87,17 @@ Desktop regeneration uses four distro workers by default, refilling each slot
 as soon as any worker finishes (without waiting for an older slow worker). Set
 `DH_RENEW_JOBS=8 ./dh` to change the limit, or `DH_RENEW_JOBS=1 ./dh` for serial
 regeneration. Opening a supported system shows Architecture, Release and
-Edition together in one form. Changing architecture updates the release and
-edition lists; changing release updates editions. The same picker works from
+Edition together in one form, with all values embedded in the entry. The same picker works from
 YAD and directly from a `.desktop` file.
 
-Supported entries use `Exec=qget --desktop-picker ...`; all valid choices are
-embedded in the entry as a base64-encoded TSV argument, not stored in a
-DistroHopper cache. The picker is handled by `qget`, which then downloads with
-`--arch <arch> <distro> <release> [edition]`. Ready entries use
-`Exec=quickemu --vm ...` with the absolute VM config path. Neither entry type
-invokes `dh` or needs DistroHopper running. The corresponding programs (`qget`
-and YAD for supported entries, `quickemu` for ready entries) must be installed.
+Supported entries contain the inline YAD command and all architecture, release
+and edition values directly in `.desktop`. The selection calls normal
+`qget --arch <arch> <distro> <release> [edition]`. There is no picker script,
+custom qget mode, DistroHopper helper or external choice cache. Ready entries
+use `Exec=quickemu --vm ...` with the absolute VM config path. Neither entry
+type needs DistroHopper running. `qget` and YAD (supported entries) or `quickemu`
+(ready entries) must be installed. Invalid combinations are rejected before
+starting a download.
 
 A top-right percentage bar shows the completed/total distro
 count, updating as parallel workers finish, followed by the ready-VM refresh.

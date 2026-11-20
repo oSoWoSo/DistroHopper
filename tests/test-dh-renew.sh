@@ -58,29 +58,28 @@ renew_supported_vms
 test ! -e "$DH_CONFIG_DIR/ready/single-new.desktop"
 for os in multi single; do
  test -x "$DH_CONFIG_DIR/supported/$os.desktop"
- grep -q -- '^Exec=qget --desktop-picker' "$DH_CONFIG_DIR/supported/$os.desktop"
+ grep -q -- '^Exec=bash -c' "$DH_CONFIG_DIR/supported/$os.desktop"
 done
 test ! -e "$DH_CONFIG_DIR/choices"
 # Parse the actual desktop Exec using GLib, then validate the helper arguments.
 /usr/bin/python3 - "$DH_CONFIG_DIR/supported" <<'PY'
-import base64, pathlib, sys
+import pathlib, sys
 from gi.repository import GLib
 for path in pathlib.Path(sys.argv[1]).glob('*.desktop'):
     entry = GLib.KeyFile()
     entry.load_from_file(str(path), GLib.KeyFileFlags.NONE)
     command = entry.get_string('Desktop Entry', 'Exec')
     _, argv = GLib.shell_parse_argv(command)
-    assert argv[:2] == ['qget', '--desktop-picker'], argv
+    assert argv[:2] == ['bash', '-c'], argv
     assert '%' not in command, command  # YAD truncates at percent signs.
-    assert argv[2] == path.stem, argv
-    choices = base64.b64decode(argv[3]).decode()
-    assert 'Brazilian Portuguese' in choices, choices
-    assert 'x86_64\told\t\n' in choices, choices
-    assert 'x86_64\tarm-only' not in choices, choices
-    if path.stem == 'multi':
-        assert 'aarch64\tarm-only\t' in choices, choices
-    else:
-        assert 'aarch64' not in choices, choices
+    script = argv[2]
+    assert 'qget --arch' in script, script
+    assert '--desktop-picker' not in script, script
+    assert 'base64' not in script, script
+    assert 'Brazilian' in script and 'Portuguese' in script, script
+    assert '--field="Architecture:CB"' in script, script
+    assert '--field="Release:CB"' in script, script
+    assert '--field="Edition:CB"' in script, script
 PY
 # A bounded worker pool overlaps distros and waits for every worker.
 renew_supported_vm() {
