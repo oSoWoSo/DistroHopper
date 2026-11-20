@@ -2,7 +2,7 @@
 OSNAME="gentoo-linux"
 PRETTY="Gentoo Linux"
 LOGO=""
-ICON=""
+ICON="gentoo-linux.svg"
 CATEGORY="Advanced"
 BASEDOF="Independent"
 HOMEPAGE="https://www.gentoo.org/"

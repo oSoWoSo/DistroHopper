@@ -2,7 +2,7 @@
 OSNAME="devuan-gnu-linux"
 PRETTY="Devuan GNU+Linux"
 LOGO=""
-ICON=""
+ICON="devuan-gnu-linux.svg"
 CATEGORY="Beginner"
 BASEDOF="Debian"
 HOMEPAGE="https://www.devuan.org/"

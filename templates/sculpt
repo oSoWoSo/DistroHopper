@@ -2,7 +2,7 @@
 OSNAME="sculpt"
 PRETTY="Sculpt OS"
 LOGO=""
-ICON=""
+ICON="sculpt.png"
 CATEGORY="advanced"
 BASEDOF="Independent"
 HOMEPAGE="https://genode.org"

@@ -2,7 +2,7 @@
 OSNAME="alpine-linux"
 PRETTY="Alpine Linux"
 LOGO=""
-ICON=""
+ICON="alpine-linux.svg"
 CATEGORY="Lightweight"
 BASEDOF="Independent"
 HOMEPAGE="https://alpinelinux.org/"
