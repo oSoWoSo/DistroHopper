@@ -30,6 +30,10 @@ quick-sharun \
 	/usr/bin/jq \
 	/usr/bin/wget \
 	/usr/bin/socat \
+	/usr/bin/spicy \
+	/usr/bin/remote-viewer \
+	/usr/bin/nc \
+	/usr/bin/glxinfo \
 	/usr/bin/qemu-system-x86_64 \
 	/usr/bin/qemu-img
 

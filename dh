@@ -370,6 +370,7 @@ function renew_ready_vms() {
 		create_desktop_entry
 	done
 	cd "${_old_dir}" || true
+	find "${DH_CONFIG_DIR}/ready" -type f -name '*.desktop' -exec chmod +x {} + 2>/dev/null || true
 	echo "[dh] Renew ready complete"
 }
 function renew_supported_vms() {
@@ -502,6 +503,7 @@ function renew_supported_vms() {
 		categories='System;X-Virtualization;'
 		create_desktop_entry
 	done < "${DH_CONFIG_DIR}/supported.md"
+	find "${DH_CONFIG_DIR}/supported" -type f -name '*.desktop' -exec chmod +x {} + 2>/dev/null || true
 	echo "[dh] Renew supported complete"
 }
 
