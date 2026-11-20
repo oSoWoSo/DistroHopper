@@ -13,10 +13,16 @@ RSS=""
 DW=""
 
 function releases_() {
-	web_pipe "https://dl-cdn.alpinelinux.org/alpine/" \
-		| grep -oE 'v[0-9]+\.[0-9]+/' \
-		| tr -d '/' \
-		| sort -Vr
+	local UPSTREAM_ARCH="x86_64" VERSION
+	[ "${ARCH:-amd64}" == arm64 ] && UPSTREAM_ARCH=aarch64
+	# A branch directory can exist before any installation images are built.
+	while IFS= read -r VERSION; do
+		if web_pipe "https://dl-cdn.alpinelinux.org/alpine/${VERSION}/releases/${UPSTREAM_ARCH}/" \
+			| grep -E "alpine-(standard-)?[0-9]+\.[0-9]+\.[0-9]+-${UPSTREAM_ARCH}\.iso" >/dev/null; then
+			printf '%s\n' "${VERSION}"
+		fi
+	done < <(web_pipe "https://dl-cdn.alpinelinux.org/alpine/" \
+		| grep -oE 'v[0-9]+\.[0-9]+/' | tr -d '/' | sort -Vu -r)
 }
 
 function editions_() {
@@ -33,7 +39,7 @@ function get_() {
 	local URL="https://dl-cdn.alpinelinux.org/alpine/${RELEASE}/releases/${UPSTREAM_ARCH}"
 	local ISO=""
 	ISO=$(web_pipe "${URL}/" \
-		| grep -oE "alpine-standard-[0-9]+\.[0-9]+\.[0-9]+-${UPSTREAM_ARCH}\.iso" \
+		| grep -oE "alpine-(standard-)?[0-9]+\.[0-9]+\.[0-9]+-${UPSTREAM_ARCH}\.iso" \
 		| sort -V \
 		| tail -n 1)
 	[ -n "${ISO}" ] || return 1

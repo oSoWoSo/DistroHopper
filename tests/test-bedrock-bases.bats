@@ -26,6 +26,7 @@ CASES
 		web_pipe() {
 			case "$1" in
 				https://dl-cdn.alpinelinux.org/alpine/) echo v3.24/;;
+				*/v3.24/releases/x86_64/) echo alpine-standard-3.24.3-x86_64.iso;;
 				https://files.devuan.org/) printf "%s\n" "devuan_excalibur/" "LATEST_STABLE_IS_EXCALIBUR";;
 				*/installer-iso/) echo devuan_excalibur_6.1.1_amd64_netinstall.iso;;
 				*/desktop-live/) echo devuan_excalibur_6.1.1_amd64_desktop-live.iso;;
