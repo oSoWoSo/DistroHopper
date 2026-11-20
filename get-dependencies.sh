@@ -36,6 +36,7 @@ cd "$REPO_DIR"
 echo "Installing DistroHopper resources..."
 echo "---------------------------------------------------------------"
 mkdir -p /usr/share/distrohopper
+rm -rf /usr/share/distrohopper/public
 cp -a dh generate qget q quickemu quickreport chunkcheck lib.sh dh-refresh templates icons \
 	/usr/share/distrohopper/
 # Provide an application icon from website-source (SVG is not reliably shown).

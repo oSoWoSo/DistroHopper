@@ -706,10 +706,8 @@ export PUBLIC_DIR
 TEMPLATES_DIR="${TEMPLATES_DIR:-${RESOURCE_DIR}/templates}"
 export TEMPLATES_DIR
 # Fall back to templates when generated public/ metadata is unavailable.
-if [ "${DH_USE_TEMPLATES:-no}" != "yes" ] && [ -d "${TEMPLATES_DIR}" ]; then
-	if [ ! -d "${PUBLIC_DIR}" ] || [ "$(find "${PUBLIC_DIR}" -maxdepth 1 -type f 2>/dev/null | wc -l)" -lt 10 ]; then
-		export DH_USE_TEMPLATES="yes"
-	fi
+if [ "${DH_USE_TEMPLATES:-no}" != "yes" ] && [ ! -d "${PUBLIC_DIR}" ] && [ -d "${TEMPLATES_DIR}" ]; then
+	export DH_USE_TEMPLATES="yes"
 fi
 
 # ---------------------------------------------------------------------------
