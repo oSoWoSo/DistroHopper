@@ -33,6 +33,7 @@ echo 'Archs: amd64 arm64'
 if [[ $arch == amd64 ]]; then echo 'Releases: old new-lts'; else echo 'Releases: arm-only'; fi
 if [[ $os != no-editions && $release == new-lts ]]; then
  printf 'Editions: Brazilian Portuguese desktop-pro\nEditionsList:\nBrazilian Portuguese\ndesktop-pro\n'
+ echo "Developer's Edition"
 elif [[ $os != no-editions && $release == arm-only ]]; then
  printf 'Editions: console\nEditionsList:\nconsole\n'
 fi
@@ -118,7 +119,7 @@ def run(arch, release, edition='', desktop=False, cancel='', status=0):
     for dialog in dialogs:
         args = dialog['args']
         labels = ['Architecture', 'Release']
-        if '--field="Edition:CB"' in argv[2]:
+        if "--field='Edition:CB'" in argv[2]:
             labels.append('Edition')
         for label in labels:
             field = '--field=' + label + ':CB'
@@ -142,6 +143,8 @@ run('amd64', 'old')
 downloaded('amd64', 'old')
 run('amd64', 'new-lts', 'desktop-pro')
 downloaded('amd64', 'new-lts', 'desktop-pro')
+run('amd64', 'new-lts', "Developer's Edition")
+downloaded('amd64', 'new-lts', "Developer's Edition")
 for cancel in ['Architecture', 'Release', 'Edition']:
     run('amd64', 'new-lts', 'desktop-pro', cancel=cancel)
     assert not log.exists(), cancel
@@ -155,7 +158,7 @@ path = path.with_name('no-editions.desktop')
 key.load_from_file(str(path), GLib.KeyFileFlags.NONE)
 command = key.get_string('Desktop Entry', 'Exec')
 _, argv = GLib.shell_parse_argv(command)
-assert '--field="Edition:CB"' not in argv[2], argv
+assert "--field='Edition:CB'" not in argv[2], argv
 assert '(none)' not in argv[2], argv
 dialogs = run('amd64', 'old')
 assert '--field=Edition:CB' not in dialogs[0]['args'], dialogs

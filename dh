@@ -639,22 +639,27 @@ function renew_supported_vm() {
 	while IFS= read -r selected_tuple; do
 		[ -n "$selected_tuple" ] || continue
 		selected_tuple="${selected_tuple//$'\t'/;}"
-		printf -v quoted '%q' "$selected_tuple"
+		quoted="'${selected_tuple//\'/\'\\\'\'}'"
 		patterns+="${patterns:+|}$quoted"
 	done <<< "$release_edition_options"
+	# Single-quote literal values instead of backslash-escaping every space,
+	# semicolon and exclamation mark. Only embedded apostrophes need escaping.
+	arch_items="'${arch_items//\'/\'\\\'\'}'"
+	release_items="'${release_items//\'/\'\\\'\'}'"
 	if [ "$edition_items" = '(none)' ]; then
-		printf -v launcher 'choice=$(GDK_BACKEND=x11 yad --form --separator="|" --item-separator="!" --field="Architecture:CB" %q --field="Release:CB" %q) || exit 0; ' "$arch_items" "$release_items"
-		launcher+='[ -n "$choice" ] || exit 0; IFS="|" read -r arch release <<< "$choice"; edition=""; '
+		printf -v launcher "choice=\$(GDK_BACKEND=x11 yad --form --separator='|' --item-separator='!' --field='Architecture:CB' %s --field='Release:CB' %s) || exit 0; " "$arch_items" "$release_items"
+		launcher+="[ -n \"\$choice\" ] || exit 0; IFS='|' read -r arch release <<< \"\$choice\"; edition=''; "
 	else
-		printf -v launcher 'choice=$(GDK_BACKEND=x11 yad --form --separator="|" --item-separator="!" --field="Architecture:CB" %q --field="Release:CB" %q --field="Edition:CB" %q) || exit 0; ' "$arch_items" "$release_items" "$edition_items"
-		launcher+='[ -n "$choice" ] || exit 0; IFS="|" read -r arch release edition <<< "$choice"; [ "$edition" != "(none)" ] || edition=""; '
+		edition_items="'${edition_items//\'/\'\\\'\'}'"
+		printf -v launcher "choice=\$(GDK_BACKEND=x11 yad --form --separator='|' --item-separator='!' --field='Architecture:CB' %s --field='Release:CB' %s --field='Edition:CB' %s) || exit 0; " "$arch_items" "$release_items" "$edition_items"
+		launcher+="[ -n \"\$choice\" ] || exit 0; IFS='|' read -r arch release edition <<< \"\$choice\"; [ \"\$edition\" != '(none)' ] || edition=''; "
 	fi
 	# Lists contain all choices, but reject mismatched combinations instead
 	# of silently passing an invalid architecture/release/edition to qget.
-	launcher+="case \"\$arch;\$release;\$edition\" in $patterns) ;; *) yad --error --text=\"This combination is not supported.\"; exit 1;; esac; "
-	printf -v quoted '%q' "$VMS_DIR"
+	launcher+="case \"\$arch;\$release;\$edition\" in $patterns) ;; *) yad --error --text='This combination is not supported.'; exit 1;; esac; "
+	quoted="'${VMS_DIR//\'/\'\\\'\'}'"
 	launcher+="mkdir -p $quoted; cd $quoted || exit; "
-	printf -v quoted '%q' "$get_name"
+	quoted="'${get_name//\'/\'\\\'\'}'"
 	launcher+="qget --arch \"\$arch\" $quoted \"\$release\" "
 	launcher+='${edition:+"$edition"}'
 	execmd="bash -c $(desktop_quote_argument "$launcher")"

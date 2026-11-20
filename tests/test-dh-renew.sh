@@ -77,9 +77,12 @@ for path in pathlib.Path(sys.argv[1]).glob('*.desktop'):
     assert '--desktop-picker' not in script, script
     assert 'base64' not in script, script
     assert 'Brazilian' in script and 'Portuguese' in script, script
-    assert '--field="Architecture:CB"' in script, script
-    assert '--field="Release:CB"' in script, script
-    assert '--field="Edition:CB"' in script, script
+    assert "--field='Architecture:CB'" in script, script
+    assert "--field='Release:CB'" in script, script
+    assert "--field='Edition:CB'" in script, script
+    # Literal spaces and delimiters need quoting, not layered backslashes.
+    assert '\\' * 4 not in command, command
+    assert not any('\\' + char in script for char in ';! '), script
 PY
 # A bounded worker pool overlaps distros and waits for every worker.
 renew_supported_vm() {
