@@ -1312,6 +1312,7 @@ Arguments:
   --create-config <os> [path/url] [flags]  : Create VM config for an OS image
   --open-homepage <os>                     : Open homepage for the OS
   --show          [--arch <arch>] [--release <release>] [os] : Show OS information
+  --desktop-picker <os> <base64-tsv> <vm-dir> : Open a GUI with embedded desktop choices
   --templates                               : Read metadata from templates/ (live) instead of public/ (static)
   --version                                : Show version
   --help                                   : Show this help message
@@ -1331,6 +1332,96 @@ Arguments:
 Supported Operating Systems:\n\n' "$qgetVersion" "${CURL_VERSION}"
 	os_support | fmt -w 80
 }
+
+# The form and its changed-action callback share the same tuple filters.
+# Keep template order (usually newest releases first), deduplicating values.
+function download_picker_options() {
+	case "$#" in
+		1) awk -F '\t' '!seen[$1]++ {print $1}' "$1" ;;
+		2) awk -F '\t' -v arch="$2" '$1 == arch && !seen[$2]++ {print $2}' "$1" ;;
+		3) awk -F '\t' -v arch="$2" -v release="$3" '
+			$1 == arch && $2 == release {
+				value = ($3 == "" ? "(none)" : $3)
+				if (!seen[value]++) print value
+			}' "$1" ;;
+	esac
+}
+
+# YAD appends the changed field number and its value to --changed-action.
+# Returned N:value lines update fields without recursively firing callbacks.
+function download_picker_update() {
+	local choices_file="$1" arch="$2" release="$3" field="$4" value="$5" options
+	case "$field" in
+		1)
+			arch="$value"
+			options=$(download_picker_options "$choices_file" "$arch")
+			release="${options%%$'\n'*}"
+			printf '2:%s\n' "$(printf '%s\n' "$options" | paste -sd '!')"
+			;;
+		2) release="$value" ;;
+		*) return 0 ;;
+	esac
+	options=$(download_picker_options "$choices_file" "$arch" "$release")
+	printf '3:%s\n' "$(printf '%s\n' "$options" | paste -sd '!')"
+}
+
+function download_supported_vm() {
+	local os="$1" choices_file="$2" vm_dir="$3"
+	local arches releases editions arch release edition choice action
+	if [ ! -s "$choices_file" ]; then
+		yad --error --text="No available choices for ${os}."
+		return 1
+	fi
+	arches=$(download_picker_options "$choices_file")
+	arch="${arches%%$'\n'*}"
+	releases=$(download_picker_options "$choices_file" "$arch")
+	release="${releases%%$'\n'*}"
+	editions=$(download_picker_options "$choices_file" "$arch" "$release")
+	# This is YAD's form callback, not a desktop Exec command: %1 and %2
+	# are expanded and shell-quoted by YAD as the current field values.
+	printf -v action 'qget --desktop-picker-update %q %%1 %%2' "$choices_file"
+	choice=$(GDK_BACKEND=x11 yad --form --title="$os — Create VM" \
+		--separator=$'\t' --item-separator='!' --changed-action="$action" \
+		--field='Architecture:CB' "$(printf '%s\n' "$arches" | paste -sd '!')" \
+		--field='Release:CB' "$(printf '%s\n' "$releases" | paste -sd '!')" \
+		--field='Edition:CB' "$(printf '%s\n' "$editions" | paste -sd '!')" \
+		--button='Cancel:1' --button='Create VM:0') || return 0
+	IFS=$'\t' read -r arch release edition <<< "$choice"
+	[ "$edition" != '(none)' ] || edition=""
+	# Validate the entire tuple even if a callback failed or the form returned
+	# stale values. Never silently download the wrong architecture or edition.
+	awk -F '\t' -v arch="$arch" -v release="$release" -v edition="$edition" '
+		$1 == arch && $2 == release && $3 == edition {found=1}
+		END {exit !found}' "$choices_file" || return 1
+	mkdir -p "$vm_dir" && cd "$vm_dir" || return 1
+	local -a args=(--arch "$arch" "$os" "$release")
+	[ -z "$edition" ] || args+=("$edition")
+	command qget "${args[@]}"
+}
+
+# Desktop entries pass their complete choice table as a base64 argument; no
+# DistroHopper executable, templates or per-user choice cache is consulted.
+function run_desktop_picker() (
+	local os="$1" payload="$2" vm_dir="$3" work
+	work=$(mktemp -d) || return 1
+	trap 'rm -rf "$work"' EXIT
+	printf '%s' "$payload" | base64 --decode > "$work/choices.tsv" || return 1
+	download_supported_vm "$os" "$work/choices.tsv" "$vm_dir"
+)
+
+# Callback mode must print only field updates, without metadata discovery.
+if [ "${1:-}" = --desktop-picker-update ]; then
+	shift
+	[ "$#" -eq 5 ] || exit 1
+	download_picker_update "$@"
+	exit $?
+fi
+if [ "${1:-}" = --desktop-picker ]; then
+	shift
+	[ "$#" -eq 3 ] || exit 1
+	run_desktop_picker "$@"
+	exit $?
+fi
 
 trap cleanup EXIT
 

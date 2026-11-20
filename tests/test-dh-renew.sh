@@ -38,42 +38,49 @@ fi
 echo 'Description: fixture'
 EOF
 chmod +x "$SCRIPT_DIR/qget"
-# The generated Exec invokes dh's headless download-picker entry point.
-cp "$REPO/dh" "$SCRIPT_DIR/dh"
 # Launcher functions also use optional, unset desktop-entry fields.
 set +u
 # A VM created after opening the GUI must appear during regeneration.
 touch "$VMS_DIR/single-new.conf"
 renew_supported_vms
 test -x "$DH_CONFIG_DIR/ready/single-new.desktop"
+/usr/bin/python3 - "$DH_CONFIG_DIR/ready/single-new.desktop" "$VMS_DIR/single-new.conf" <<'PY'
+import sys
+from gi.repository import GLib
+entry = GLib.KeyFile()
+entry.load_from_file(sys.argv[1], GLib.KeyFileFlags.NONE)
+_, argv = GLib.shell_parse_argv(entry.get_string('Desktop Entry', 'Exec'))
+assert argv == ['quickemu', '--vm', sys.argv[2]], argv
+PY
 # Refresh must also remove entries for configs which no longer exist.
 rm "$VMS_DIR/single-new.conf"
 renew_supported_vms
 test ! -e "$DH_CONFIG_DIR/ready/single-new.desktop"
 for os in multi single; do
  test -x "$DH_CONFIG_DIR/supported/$os.desktop"
- grep -q -- '--download-picker' "$DH_CONFIG_DIR/supported/$os.desktop"
- grep -q 'Brazilian Portuguese' "$DH_CONFIG_DIR/choices/$os.tsv"
- # No cross-product combination of an ARM release with x86_64.
- ! grep -q $'x86_64\tarm-only' "$DH_CONFIG_DIR/choices/$os.tsv"
+ grep -q -- '^Exec=qget --desktop-picker' "$DH_CONFIG_DIR/supported/$os.desktop"
 done
-! grep -q 'aarch64' "$DH_CONFIG_DIR/choices/single.tsv"
+test ! -e "$DH_CONFIG_DIR/choices"
 # Parse the actual desktop Exec using GLib, then validate the helper arguments.
 /usr/bin/python3 - "$DH_CONFIG_DIR/supported" <<'PY'
-import pathlib, sys
+import base64, pathlib, sys
 from gi.repository import GLib
 for path in pathlib.Path(sys.argv[1]).glob('*.desktop'):
     entry = GLib.KeyFile()
     entry.load_from_file(str(path), GLib.KeyFileFlags.NONE)
     command = entry.get_string('Desktop Entry', 'Exec')
     _, argv = GLib.shell_parse_argv(command)
-    assert argv[0] == 'bash' and argv[2] == '--download-picker', argv
+    assert argv[:2] == ['qget', '--desktop-picker'], argv
     assert '%' not in command, command  # YAD truncates at percent signs.
-    assert argv[3] == path.stem, argv
-    choices = pathlib.Path(argv[4]).read_text()
+    assert argv[2] == path.stem, argv
+    choices = base64.b64decode(argv[3]).decode()
+    assert 'Brazilian Portuguese' in choices, choices
     assert 'x86_64\told\t\n' in choices, choices
+    assert 'x86_64\tarm-only' not in choices, choices
     if path.stem == 'multi':
         assert 'aarch64\tarm-only\t' in choices, choices
+    else:
+        assert 'aarch64' not in choices, choices
 PY
 # A bounded worker pool overlaps distros and waits for every worker.
 renew_supported_vm() {

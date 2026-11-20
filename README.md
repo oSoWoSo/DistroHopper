@@ -70,7 +70,7 @@ The same switch is in the GUI under *Options → Metadata source*.
 ### What does “Renew supported” refresh?
 
 * **Options → Renew supported** rebuilds the supported `.desktop` launchers
-  and their cached architecture/release/edition choices from the selected
+  and their embedded architecture/release/edition choices from the selected
   metadata source and refreshes the ready-VM launchers from
   the `.conf` files in your VM directory. It does **not** run `generate`,
   download ISO images, or upgrade existing VMs.
@@ -85,9 +85,18 @@ The same switch is in the GUI under *Options → Metadata source*.
 
 Desktop regeneration uses four distro workers by default. Set
 `DH_RENEW_JOBS=8 ./dh` to change the limit, or `DH_RENEW_JOBS=1 ./dh` for serial
-regeneration. Opening a supported system uses separate architecture (when
-needed), release, and edition pickers; each step is filtered by the previous
-selection. The same picker works from YAD and directly from a `.desktop` file.
+regeneration. Opening a supported system shows Architecture, Release and
+Edition together in one form. Changing architecture updates the release and
+edition lists; changing release updates editions. The same picker works from
+YAD and directly from a `.desktop` file.
+
+Supported entries use `Exec=qget --desktop-picker ...`; all valid choices are
+embedded in the entry as a base64-encoded TSV argument, not stored in a
+DistroHopper cache. The picker is handled by `qget`, which then downloads with
+`--arch <arch> <distro> <release> [edition]`. Ready entries use
+`Exec=quickemu --vm ...` with the absolute VM config path. Neither entry type
+invokes `dh` or needs DistroHopper running. The corresponding programs (`qget`
+and YAD for supported entries, `quickemu` for ready entries) must be installed.
 
 A top-right percentage bar shows the completed/total distro
 count, updating as parallel workers finish, followed by the ready-VM refresh.
