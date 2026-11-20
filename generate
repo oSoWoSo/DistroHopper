@@ -446,13 +446,16 @@ function verify_gpg() {
 # Download a file from the web and pipe it to stdout
 function web_pipe() {
 	local URL="${1}"
-	local key body
-	key=$(_web_cache_key GET "${URL}")
+	shift
+	local key body method=GET
+	# Request options (headers, --fail, etc.) change the cached response contract.
+	[ "$#" -eq 0 ] || method+=" $(printf '%q ' "$@")"
+	key=$(_web_cache_key "${method}" "${URL}")
 	if body=$(_web_cache_get_body "${key}"); then
 		printf '%s' "${body}"
 		return 0
 	fi
-	body=$(curl --disable --silent --location "${URL}")
+	body=$(curl --disable --silent --location "$@" "${URL}") || return $?
 	printf '%s' "${body}" | _web_cache_put_body "${key}"
 	printf '%s' "${body}"
 }
@@ -466,7 +469,7 @@ function web_pipe_json() {
 		printf '%s' "${body}"
 		return 0
 	fi
-	body=$(curl --disable --silent --location --header "Accept: application/json" "${URL}")
+	body=$(curl --disable --silent --location --header "Accept: application/json" "${URL}") || return $?
 	printf '%s' "${body}" | _web_cache_put_body "${key}"
 	printf '%s' "${body}"
 }
