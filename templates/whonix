@@ -18,7 +18,7 @@ function arch_() {
 
 function releases_() {
 	local VERSIONS=""
-	VERSIONS=$(curl --disable --silent --location "https://download.whonix.org/libvirt" | grep -oP 'title="\K[0-9.]+' | sort -V | tail -n 3)
+	VERSIONS=$(curl --disable --silent --location "https://download.whonix.org/libvirt" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' | sort -V | uniq | tail -n 3)
 	echo "${VERSIONS}"
 }
 
