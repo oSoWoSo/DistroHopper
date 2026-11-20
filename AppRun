@@ -5,4 +5,12 @@ export APPDIR="$HERE"
 export APPIMAGE="${APPIMAGE:-$HERE}"
 export PATH="$HERE/bin:$HERE:$PATH"
 cd "$HERE" || exit 1
-exec "$HERE/dh" "$@"
+# Source quick-sharun hooks (self-updater, etc.) when present.
+if [ -f "$HERE/AppRun.lib" ]; then
+	. "$HERE/AppRun.lib"
+	for hook in "$HERE"/bin/*.hook; do
+		[ -e "$hook" ] || continue
+		. "$hook"
+	done
+fi
+exec "$HERE/bin/dh" "$@"
