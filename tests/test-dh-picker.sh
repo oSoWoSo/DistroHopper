@@ -22,6 +22,7 @@ with open(os.environ['QGET_LOG'], 'w') as f:
 PY
  exit
 fi
+os=${!#}
 arch=amd64
 release=''
 while (($#)); do
@@ -30,9 +31,9 @@ while (($#)); do
 done
 echo 'Archs: amd64 arm64'
 if [[ $arch == amd64 ]]; then echo 'Releases: old new-lts'; else echo 'Releases: arm-only'; fi
-if [[ $release == new-lts ]]; then
+if [[ $os != no-editions && $release == new-lts ]]; then
  printf 'Editions: Brazilian Portuguese desktop-pro\nEditionsList:\nBrazilian Portuguese\ndesktop-pro\n'
-elif [[ $release == arm-only ]]; then
+elif [[ $os != no-editions && $release == arm-only ]]; then
  printf 'Editions: console\nEditionsList:\nconsole\n'
 fi
 echo 'Description: picker fixture'
@@ -43,7 +44,9 @@ import json, os, sys
 args = sys.argv[1:]
 if '--error' in args:
  sys.exit(0)
-labels = ['Architecture', 'Release', 'Edition']
+labels = ['Architecture', 'Release']
+if '--field=Edition:CB' in args:
+ labels.append('Edition')
 options = {}
 for label in labels:
  field = '--field=' + label + ':CB'
@@ -54,12 +57,15 @@ with open(os.environ['YAD_LOG'], 'a') as f:
 if os.environ.get('CANCEL_FIELD'):
  sys.exit(1)
 values = [os.environ.get('PICK_' + label.upper(), '') for label in labels]
-values[2] = values[2] or '(none)'
+if len(values) == 3:
+ values[2] = values[2] or '(none)'
 sys.stdout.write('|'.join(values) + '|')
 EOF
 chmod +x "$SCRIPT_DIR/qget" "$WORK/bin/yad"
 set +u
 renew_supported_vm fixture "$SCRIPT_DIR/qget"
+renew_supported_vm no-editions "$SCRIPT_DIR/qget"
+cp "$DH_CONFIG_DIR/supported/no-editions.desktop" "$WORK/no-editions.desktop"
 cp "$SCRIPT_DIR/qget" "$WORK/bin/qget"
 cp "$DH_CONFIG_DIR/supported/fixture.desktop" "$WORK/fixture.desktop"
 # Prove this is standalone: remove the generator, source metadata and config.
@@ -111,15 +117,18 @@ def run(arch, release, edition='', desktop=False, cancel='', status=0):
     assert len(dialogs) == 1, dialogs
     for dialog in dialogs:
         args = dialog['args']
-        for label in ['Architecture', 'Release', 'Edition']:
+        labels = ['Architecture', 'Release']
+        if '--field="Edition:CB"' in argv[2]:
+            labels.append('Edition')
+        for label in labels:
             field = '--field=' + label + ':CB'
             assert field in args, args
             assert ';' not in args[args.index(field) + 1], args
     return dialogs
 
-def downloaded(arch, release, edition=''):
+def downloaded(arch, release, edition='', os_name='fixture'):
     data = json.loads(log.read_text())
-    expected = ['--arch', arch, 'fixture', release] + ([edition] if edition else [])
+    expected = ['--arch', arch, os_name, release] + ([edition] if edition else [])
     assert data['args'] == expected, data
     assert data['cwd'] == str(vm_dir), data
 
@@ -141,5 +150,15 @@ run('arm64', 'new-lts', 'desktop-pro', status=1)
 assert not log.exists()
 run('amd64', 'new-lts', 'missing-edition', status=1)
 assert not log.exists()
-print('OK: generated desktop entries launch through YAD and Gio with filtered, readable pickers')
+# Systems without any editions must not display an Edition field at all.
+path = path.with_name('no-editions.desktop')
+key.load_from_file(str(path), GLib.KeyFileFlags.NONE)
+command = key.get_string('Desktop Entry', 'Exec')
+_, argv = GLib.shell_parse_argv(command)
+assert '--field="Edition:CB"' not in argv[2], argv
+assert '(none)' not in argv[2], argv
+dialogs = run('amd64', 'old')
+assert '--field=Edition:CB' not in dialogs[0]['args'], dialogs
+downloaded('amd64', 'old', os_name='no-editions')
+print('OK: inline desktop pickers pass normal qget arguments and omit nonexistent editions')
 PY

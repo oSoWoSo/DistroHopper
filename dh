@@ -642,8 +642,13 @@ function renew_supported_vm() {
 		printf -v quoted '%q' "$selected_tuple"
 		patterns+="${patterns:+|}$quoted"
 	done <<< "$release_edition_options"
-	printf -v launcher 'choice=$(GDK_BACKEND=x11 yad --form --separator="|" --item-separator="!" --field="Architecture:CB" %q --field="Release:CB" %q --field="Edition:CB" %q) || exit 0; ' "$arch_items" "$release_items" "$edition_items"
-	launcher+='[ -n "$choice" ] || exit 0; IFS="|" read -r arch release edition <<< "$choice"; [ "$edition" != "(none)" ] || edition=""; '
+	if [ "$edition_items" = '(none)' ]; then
+		printf -v launcher 'choice=$(GDK_BACKEND=x11 yad --form --separator="|" --item-separator="!" --field="Architecture:CB" %q --field="Release:CB" %q) || exit 0; ' "$arch_items" "$release_items"
+		launcher+='[ -n "$choice" ] || exit 0; IFS="|" read -r arch release <<< "$choice"; edition=""; '
+	else
+		printf -v launcher 'choice=$(GDK_BACKEND=x11 yad --form --separator="|" --item-separator="!" --field="Architecture:CB" %q --field="Release:CB" %q --field="Edition:CB" %q) || exit 0; ' "$arch_items" "$release_items" "$edition_items"
+		launcher+='[ -n "$choice" ] || exit 0; IFS="|" read -r arch release edition <<< "$choice"; [ "$edition" != "(none)" ] || edition=""; '
+	fi
 	# Lists contain all choices, but reject mismatched combinations instead
 	# of silently passing an invalid architecture/release/edition to qget.
 	launcher+="case \"\$arch;\$release;\$edition\" in $patterns) ;; *) yad --error --text=\"This combination is not supported.\"; exit 1;; esac; "
