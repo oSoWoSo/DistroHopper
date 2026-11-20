@@ -1,48 +1,56 @@
-name: DH AppImage
+name: Build AppImage
 
 on:
   push:
-    branches: [appimage]
+    branches: [all]
   release:
     types: [published]
-  workflow_dispatch:
+  workflow_dispatch: {}
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    name: "Build AppImage (${{ matrix.arch }})"
+    runs-on: ${{ matrix.runs-on }}
     strategy:
       matrix:
-        arch: [x86_64, aarch64]
+        include:
+          - runs-on: ubuntu-latest
+            arch: x86_64
+    container: ghcr.io/pkgforge-dev/archlinux:latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
 
-      - name: Download QEMU base AppImage
-        run: |
-          curl -sL "${{ secrets.QEMU_URL }}" -o QEMU-${{ matrix.arch }}.AppImage
-          chmod +x QEMU-${{ matrix.arch }}.AppImage
+      - name: Prepare container
+        uses: pkgforge-dev/anylinux-setup-action@v1
 
-      - name: Extract and prepare
-        run: |
-          mkdir -p AppDir
-          ./QEMU-${{ matrix.arch }}.AppImage --appimage-extract --prefix AppDir
-          # Copy DistroHopper files
-          cp -r dh dh.conf dh.desktop generate lib.sh qget AppDir/bin/
-          # Copy DistroHopper dirs
-          cp -r icons locale templates AppDir/bin/
-          # Copy quickemu files
-          cp quickemu chunkcheck AppDir/bin/
-          sed -i 's/MAIN_BIN=qemu-system-x86_64/MAIN_BIN=dh/' AppDir/AppRun
+      - name: Install dependencies
+        run: /bin/sh ./get-dependencies.sh
 
       - name: Build AppImage
-        uses: docker://github.com/marketplace/actions/appimage-builder
-        with:
-          options: --input AppDir
-          output: DistroHopper-${{ matrix.arch }}.AppImage
+        run: /bin/sh ./make-appimage.sh
 
-      - name: Upload release
-        uses: softprops/action-gh-release@v3
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
         with:
-          files: DistroHopper-${{ matrix.arch }}.AppImage
+          name: DistroHopper-${{ matrix.arch }}
+          path: dist
+
+  release:
+    if: github.event_name == 'release'
+    needs: [build]
+    permissions: write-all
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: DistroHopper-*
+          merge-multiple: true
+
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v1
+        with:
+          files: dist/*.AppImage
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

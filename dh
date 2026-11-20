@@ -23,7 +23,7 @@ function wayland_check() {
 	esac
 }
 
-SCRIPT_DIR="$(dirname "$(realpath "$0")")"
+SCRIPT_DIR="${APPDIR:-$(dirname "$(realpath "$0")")}"
 
 # Get OS description from template files
 # For ready VMs (e.g. "ubuntu-24.04"), progressively strips release suffix
@@ -79,7 +79,11 @@ function set_variables() {
 	DH_CONFIG="${DH_CONFIG_DIR}/config"
 	DH_ICON_DIR="${DH_CONFIG_DIR}/icons"
 
-	PATH_PREFIX="/usr/bin/"
+	if [[ -n "${APPDIR:-}" ]]; then
+		PATH_PREFIX="${APPDIR}/bin/"
+	else
+		PATH_PREFIX="/usr/bin/"
+	fi
 	TMP_DIR="/tmp"
 	# The terminal emulator the desktop entry opens. "true" means no
 	# terminal, which is the safe default: an entry naming a terminal that
@@ -224,6 +228,10 @@ function set_ramdisk() {
 
 DH_VERSION_FILE=""
 function install_dh() {
+	if [[ -n "${APPDIR:-}" ]]; then
+		echo "Running from AppImage: installation is not required."
+		return 0
+	fi
 	DH_VERSION_FILE="${DH_CONFIG_DIR}/version"
 	local install_type="fresh"
 
