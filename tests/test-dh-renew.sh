@@ -75,7 +75,8 @@ PY
 # A bounded worker pool overlaps distros and waits for every worker.
 renew_supported_vm() {
  printf 'start %s\n' "$1" >> "$WORK/workers.log"
- sleep 0.15
+ # Finish out of launch order to exercise completion-based progress.
+ if [[ $1 == multi ]]; then sleep 0.3; else sleep 0.05; fi
  printf 'end %s\n' "$1" >> "$WORK/workers.log"
  [[ $1 != single ]]
 }
@@ -102,14 +103,37 @@ mkdir -p "$WORK/bin"
 cat > "$WORK/bin/yad" <<'EOF'
 #!/usr/bin/env bash
 printf '%s\n' "$*" >> "$GUI_LOG"
-while IFS= read -r line; do [[ $line == 100 ]] && exit 0; done
+while IFS= read -r line; do
+ printf '%s\n' "$line" >> "$GUI_PROGRESS_LOG"
+ [[ $line == 100 ]] && exit 0
+done
 EOF
 cat > "$WORK/bin/notify-send" <<'EOF'
 #!/usr/bin/env bash
 printf '%s\n' "$*" >> "$GUI_LOG"
 EOF
 chmod +x "$WORK/bin/yad" "$WORK/bin/notify-send"
-export PATH="$WORK/bin:$PATH" GUI_LOG="$WORK/gui.log"
+export PATH="$WORK/bin:$PATH" GUI_LOG="$WORK/gui.log" GUI_PROGRESS_LOG="$WORK/progress.log"
+# Use the real parallel regeneration and event relay, not just a UI mock.
+export DH_RENEW_JOBS=2
+if renew_supported_vms_gui; then exit 1; fi
+/usr/bin/python3 - "$GUI_PROGRESS_LOG" <<'PY'
+import sys
+lines = open(sys.argv[1]).read().splitlines()
+percentages = [int(line) for line in lines if line.isdecimal()]
+assert percentages == [0, 33, 66, 66, 100], percentages
+assert any('1/2 completed — single' in line for line in lines), lines
+assert any('2/2 completed — multi' in line for line in lines), lines
+ready = next(i for i, line in enumerate(lines) if 'Refreshing ready VMs' in line)
+assert lines.index('100') > ready
+assert any('finished with errors' in line for line in lines)
+PY
+! grep -q -- '--pulsate' "$GUI_LOG"
+grep -q -- '--percentage=0' "$GUI_LOG"
+# Empty distro lists still show the ready phase and reach 100 without dividing by zero.
+printf 'total 0\nready\nfinished 0\n' | renew_progress_reader > "$WORK/empty-progress"
+grep -q '0/0 completed' "$WORK/empty-progress"
+grep -qx '100' "$WORK/empty-progress"
 renew_supported_vms() { return "${RENEW_STATUS:-0}"; }
 renew_supported_vms_gui
 test ! -e "$DH_CONFIG_DIR/renew.lock"

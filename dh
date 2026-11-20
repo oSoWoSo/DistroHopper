@@ -426,6 +426,7 @@ function renew_supported_vms() {
 	if [ ! -s "${DH_CONFIG_DIR}/supported.md" ]; then
 		echo "WARNING: qget --list-os produced no entries" >&2
 	fi
+	renew_progress "total $(awk 'NF {n++} END {print n+0}' "${DH_CONFIG_DIR}/supported.md")"
 	# Each worker runs in its own subshell: metadata and desktop fields must
 	# never leak between distros. Bound network traffic and process count.
 	local jobs="${DH_RENEW_JOBS:-4}" pid status=0
@@ -436,7 +437,12 @@ function renew_supported_vms() {
 	fi
 	while IFS= read -r get_name; do
 		[ -n "$get_name" ] || continue
-		(renew_supported_vm "$get_name" "$qget_cmd") &
+		(
+			worker_status=0
+			renew_supported_vm "$get_name" "$qget_cmd" || worker_status=$?
+			renew_progress "done $get_name"
+			exit "$worker_status"
+		) &
 		workers+=("$!")
 		if ((${#workers[@]} >= jobs)); then
 			wait "${workers[0]}" || status=1
@@ -449,39 +455,83 @@ function renew_supported_vms() {
 	find "${DH_CONFIG_DIR}/supported" -type f -name '*.desktop' -exec chmod +x {} + 2>/dev/null || true
 	# Update both monitored views in the same action. Existing VM configs
 	# may have appeared since the GUI was opened.
+	renew_progress ready
 	renew_ready_vms || status=1
 	echo "[dh] Renew supported complete"
 	return "$status"
 }
 
+# Optional event sink: command-line regeneration works without a progress UI.
+function renew_progress() {
+	if [ -n "${progress_fd:-}" ]; then
+		printf '%s\n' "$1" >&"$progress_fd" || true
+	fi
+	return 0
+}
+
+# One reader serializes completion events from parallel workers. Count actual
+# completions (not launch order), reserving one work unit for the ready refresh.
+function renew_progress_reader() {
+	local event total=0 completed=0 percent=0
+	while IFS= read -r event; do
+		case "$event" in
+			'total '*)
+				total=${event#total }
+				printf '0\n#Regenerating distros: 0/%s completed\n' "$total"
+				;;
+			'done '*)
+				completed=$((completed + 1))
+				percent=$((100 * completed / (total + 1)))
+				printf '%s\n#Regenerating distros: %s/%s completed — %s\n' "$percent" "$completed" "$total" "${event#done }"
+				;;
+			ready)
+				printf '%s\n#Distros: %s/%s completed. Refreshing ready VMs…\n' "$percent" "$completed" "$total"
+				;;
+			'finished '*)
+				if [ "${event#finished }" -eq 0 ]; then
+					printf '#Regeneration complete: %s/%s distros; ready VMs refreshed.\n100\n' "$completed" "$total"
+				else
+					printf '#Regeneration finished with errors: %s/%s distros processed.\n100\n' "$completed" "$total"
+				fi
+				;;
+		esac
+	done
+}
+
 # GUI callbacks run in separate shells. Keep progress and cleanup scoped to
 # that action, including failure, interruption and repeated button clicks.
 function renew_supported_vms_gui() (
-	local lock="${DH_CONFIG_DIR}/renew.lock" progress_pid progress_fd status=0
+	local lock="${DH_CONFIG_DIR}/renew.lock" progress_pid progress_reader_pid progress_fd status=0
 	if ! mkdir "$lock" 2>/dev/null; then
 		command -v notify-send >/dev/null && notify-send DistroHopper 'Regeneration is already running.'
 		return 1
 	fi
-	trap '[[ -n "${progress_pid:-}" ]] && { kill "$progress_pid" 2>/dev/null || true; wait "$progress_pid" 2>/dev/null || true; }; rm -rf "$lock"' EXIT
+	trap 'for pid in "${progress_reader_pid:-}" "${progress_pid:-}"; do [ -n "$pid" ] && { kill "$pid" 2>/dev/null || true; wait "$pid" 2>/dev/null || true; }; done; rm -rf "$lock"' EXIT
 	trap 'exit 130' INT
 	trap 'exit 143' TERM
 	# Closing the indicator must not abort an in-flight regeneration.
 	trap '' PIPE
-	mkfifo "$lock/progress" || return 1
+	mkfifo "$lock/progress" "$lock/events" || return 1
 	# A small, non-modal indicator in the top-right corner stays visible even
 	# when regeneration was started without a terminal.
-	yad --progress --pulsate --auto-close --no-buttons --on-top \
+	yad --progress --percentage=0 --auto-close --no-buttons --on-top \
 		--geometry=300x70-0+0 --title='DistroHopper — regenerating' \
 		--text='Regenerating supported and ready VMs…' \
 		--window-icon="${DH_ICON_DIR}/hop.png" < "$lock/progress" &
 	progress_pid=$!
-	exec {progress_fd}> "$lock/progress"
+	renew_progress_reader < "$lock/events" > "$lock/progress" &
+	progress_reader_pid=$!
+	exec {progress_fd}> "$lock/events"
 	if command -v notify-send >/dev/null; then
 		notify-send -i "${DH_ICON_DIR}/hop.png" DistroHopper 'Regenerating supported and ready VMs…' || true
 	fi
 	renew_supported_vms || status=$?
-	printf '100\n' >&"$progress_fd" || true
+	renew_progress "finished $status"
 	exec {progress_fd}>&-
+	wait "$progress_reader_pid" || true
+	progress_reader_pid=""
+	wait "$progress_pid" || true
+	progress_pid=""
 	if command -v notify-send >/dev/null; then
 		if [ "$status" -eq 0 ]; then
 			notify-send DistroHopper 'VM regeneration complete.' || true
@@ -711,6 +761,7 @@ function distrohopper_gui() {
 	export -f distrohopper_about first_run get_os_description help_show
 	export -f install_dh install_dependencies install_needed_apt install_needed_dnf install_needed_pacman install_needed_xbps
 	export -f installation_process renew_ready_vms renew_supported_vms renew_supported_vms_gui renew_supported_vm root_check save_config
+	export -f renew_progress renew_progress_reader
 	export -f set_iso_dir set_ramdisk set_vms_directory set_use_templates
 
 	# YAD can only monitor directories that already exist when it starts.

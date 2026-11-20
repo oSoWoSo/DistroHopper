@@ -84,8 +84,12 @@ The same switch is in the GUI under *Options → Metadata source*.
 
 Desktop regeneration uses four distro workers by default. Set
 `DH_RENEW_JOBS=8 ./dh` to change the limit, or `DH_RENEW_JOBS=1 ./dh` for serial
-regeneration. A top-right progress window and desktop notifications indicate
-when regeneration is running and when it finishes. Notifications are optional
+regeneration. A top-right percentage bar shows the completed/total distro
+count, updating as parallel workers finish, followed by the ready-VM refresh.
+The ready refresh counts as one final work unit, so the bar reaches 100% only
+after it finishes. Failed workers count as processed; failures are reported
+separately rather than silently treated as successful regeneration.
+Desktop notifications indicate when regeneration starts and finishes. Notifications are optional
 and require `notify-send` and a running desktop notification service.
 
 and
