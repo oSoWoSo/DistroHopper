@@ -18,8 +18,9 @@ function releases_() {
 }
 
 function editions_() {
-	#shellcheck disable=SC2046,SC2005
-	web_pipe_json "https://downloads.getsol.us/isos/$(IFS=' '; releases_ | tail -n1)/" | jq -r '.[].name | select(endswith("iso")) | sub("Solus-(?<e>.*)-Release-.*"; "\(.e)")' | sort -u
+	# Editions vary between releases (older images use XFCE-Beta, not Xfce).
+	local VERSION="${RELEASE:-$(releases_ | tail -n1)}"
+	web_pipe_json "https://downloads.getsol.us/isos/${VERSION}/" | jq -r '.[].name | select(endswith(".iso")) | sub("Solus-(?<e>.*)-Release-.*"; "\(.e)")' | sort -u
 }
 
 function get_() {
