@@ -168,13 +168,13 @@ setup() {
 	[[ "${lines[1]}" == *"0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef" ]]
 }
 
-@test "Mageia no longer advertises its broken Mageia 8 download" {
+@test "Mageia advertises its current release rather than obsolete images" {
 	run bash -c '
 		. "$1/templates/mageia"
 		releases_
 	' _ "${REPO_ROOT}"
 	[ "${status}" -eq 0 ]
-	[ "${output}" = "9" ]
+	[ "${output}" = "10" ]
 }
 
 @test "Manjaro ignores an unavailable community manifest cleanly" {
