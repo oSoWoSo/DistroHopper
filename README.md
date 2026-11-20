@@ -83,7 +83,8 @@ The same switch is in the GUI under *Options → Metadata source*.
 * Metadata generation discovers releases and image URLs; it is not an ISO
   download/update operation.
 
-Desktop regeneration uses four distro workers by default. Set
+Desktop regeneration uses four distro workers by default, refilling each slot
+as soon as any worker finishes (without waiting for an older slow worker). Set
 `DH_RENEW_JOBS=8 ./dh` to change the limit, or `DH_RENEW_JOBS=1 ./dh` for serial
 regeneration. Opening a supported system shows Architecture, Release and
 Edition together in one form. Changing architecture updates the release and

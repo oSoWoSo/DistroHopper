@@ -440,29 +440,47 @@ function renew_supported_vms() {
 	renew_progress "total $(awk 'NF {n++} END {print n+0}' "${DH_CONFIG_DIR}/supported.md")"
 	# Each worker runs in its own subshell: metadata and desktop fields must
 	# never leak between distros. Bound network traffic and process count.
-	local jobs="${DH_RENEW_JOBS:-4}" pid status=0
-	local -a workers=()
+	local jobs="${DH_RENEW_JOBS:-4}" pid status=0 active=0 completed_dir completed_fd
 	if [[ ! "$jobs" =~ ^[1-9][0-9]*$ ]]; then
 		echo "ERROR: DH_RENEW_JOBS must be a positive integer" >&2
 		return 1
 	fi
+	# A completion queue lets ANY finished worker free a slot. Waiting in
+	# launch order leaves slots idle behind a slow upstream. Use a FIFO so
+	# this also works on Bash versions without wait -n -p.
+	completed_dir=$(mktemp -d) || return 1
+	if ! mkfifo "$completed_dir/done"; then
+		rmdir "$completed_dir"
+		return 1
+	fi
+	if ! exec {completed_fd}<> "$completed_dir/done"; then
+		rm -rf "$completed_dir"
+		return 1
+	fi
+	rm -f "$completed_dir/done"
+	rmdir "$completed_dir"
 	while IFS= read -r get_name; do
 		[ -n "$get_name" ] || continue
 		(
 			worker_status=0
 			renew_supported_vm "$get_name" "$qget_cmd" || worker_status=$?
 			renew_progress "done $get_name"
+			printf '%s\n' "$BASHPID" >&"$completed_fd"
 			exit "$worker_status"
 		) &
-		workers+=("$!")
-		if ((${#workers[@]} >= jobs)); then
-			wait "${workers[0]}" || status=1
-			workers=("${workers[@]:1}")
+		active=$((active + 1))
+		if ((active >= jobs)); then
+			read -r pid <&"$completed_fd"
+			wait "$pid" || status=1
+			active=$((active - 1))
 		fi
 	done < "${DH_CONFIG_DIR}/supported.md"
-	for pid in "${workers[@]}"; do
+	while ((active > 0)); do
+		read -r pid <&"$completed_fd"
 		wait "$pid" || status=1
+		active=$((active - 1))
 	done
+	exec {completed_fd}>&-
 	find "${DH_CONFIG_DIR}/supported" -type f -name '*.desktop' -exec chmod +x {} + 2>/dev/null || true
 	# Update both monitored views in the same action. Existing VM configs
 	# may have appeared since the GUI was opened.
