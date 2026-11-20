@@ -97,4 +97,29 @@ export DH_RENEW_JOBS=1
 : > "$WORK/workers.log"
 renew_supported_vms && exit 1
 [ "$(head -n 2 "$WORK/workers.log" | cut -d' ' -f1 | tr '\n' ' ')" = 'start end ' ]
+# GUI progress is cleaned up on success/failure and overlapping clicks are rejected.
+mkdir -p "$WORK/bin"
+cat > "$WORK/bin/yad" <<'EOF'
+#!/usr/bin/env bash
+printf '%s\n' "$*" >> "$GUI_LOG"
+while IFS= read -r line; do [[ $line == 100 ]] && exit 0; done
+EOF
+cat > "$WORK/bin/notify-send" <<'EOF'
+#!/usr/bin/env bash
+printf '%s\n' "$*" >> "$GUI_LOG"
+EOF
+chmod +x "$WORK/bin/yad" "$WORK/bin/notify-send"
+export PATH="$WORK/bin:$PATH" GUI_LOG="$WORK/gui.log"
+renew_supported_vms() { return "${RENEW_STATUS:-0}"; }
+renew_supported_vms_gui
+test ! -e "$DH_CONFIG_DIR/renew.lock"
+grep -q 'regeneration complete' "$GUI_LOG"
+export RENEW_STATUS=1
+if renew_supported_vms_gui; then exit 1; fi
+test ! -e "$DH_CONFIG_DIR/renew.lock"
+grep -q 'regeneration failed' "$GUI_LOG"
+mkdir "$DH_CONFIG_DIR/renew.lock"
+if renew_supported_vms_gui; then exit 1; fi
+rmdir "$DH_CONFIG_DIR/renew.lock"
+grep -q 'already running' "$GUI_LOG"
 echo 'OK: desktop regeneration regression tests'

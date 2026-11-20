@@ -440,6 +440,44 @@ function renew_supported_vms() {
 	return "$status"
 }
 
+# GUI callbacks run in separate shells. Keep progress and cleanup scoped to
+# that action, including failure, interruption and repeated button clicks.
+function renew_supported_vms_gui() (
+	local lock="${DH_CONFIG_DIR}/renew.lock" progress_pid progress_fd status=0
+	if ! mkdir "$lock" 2>/dev/null; then
+		command -v notify-send >/dev/null && notify-send DistroHopper 'Regeneration is already running.'
+		return 1
+	fi
+	trap '[[ -n "${progress_pid:-}" ]] && { kill "$progress_pid" 2>/dev/null || true; wait "$progress_pid" 2>/dev/null || true; }; rm -rf "$lock"' EXIT
+	trap 'exit 130' INT
+	trap 'exit 143' TERM
+	# Closing the indicator must not abort an in-flight regeneration.
+	trap '' PIPE
+	mkfifo "$lock/progress" || return 1
+	# A small, non-modal indicator in the top-right corner stays visible even
+	# when regeneration was started without a terminal.
+	yad --progress --pulsate --auto-close --no-buttons --on-top \
+		--geometry=300x70-0+0 --title='DistroHopper — regenerating' \
+		--text='Regenerating supported and ready VMs…' \
+		--window-icon="${DH_ICON_DIR}/hop.png" < "$lock/progress" &
+	progress_pid=$!
+	exec {progress_fd}> "$lock/progress"
+	if command -v notify-send >/dev/null; then
+		notify-send -i "${DH_ICON_DIR}/hop.png" DistroHopper 'Regenerating supported and ready VMs…' || true
+	fi
+	renew_supported_vms || status=$?
+	printf '100\n' >&"$progress_fd" || true
+	exec {progress_fd}>&-
+	if command -v notify-send >/dev/null; then
+		if [ "$status" -eq 0 ]; then
+			notify-send DistroHopper 'VM regeneration complete.' || true
+		else
+			notify-send -u critical DistroHopper 'VM regeneration failed. See terminal output for details.' || true
+		fi
+	fi
+	return "$status"
+)
+
 # Called only in an isolated worker process.
 function renew_supported_vm() {
 	local get_name="$1" qget_cmd="$2"
@@ -649,7 +687,7 @@ function distrohopper_gui() {
 	export -f create_desktop_entry create_dirs dependencies_check_gui desktop_entry_dh
 	export -f distrohopper_about first_run get_os_description help_show
 	export -f install_dh install_dependencies install_needed_apt install_needed_dnf install_needed_pacman install_needed_xbps
-	export -f installation_process renew_ready_vms renew_supported_vms renew_supported_vm root_check save_config
+	export -f installation_process renew_ready_vms renew_supported_vms renew_supported_vms_gui renew_supported_vm root_check save_config
 	export -f set_iso_dir set_ramdisk set_vms_directory set_use_templates
 
 	# YAD can only monitor directories that already exist when it starts.
@@ -668,7 +706,7 @@ function distrohopper_gui() {
 		--field="ISO dir!!Set shared ISO directory (or keep in each VM)":FBTN "bash -c 'set_iso_dir'" \
 		--field="Metadata source!!Use templates (live) or public (offline) for releases and editions":FBTN "bash -c 'set_use_templates'" \
 		--field="Install dh!!Install DistroHopper":FBTN "bash -c 'first_run'" \
-		--field="Renew supported!!Update supported VMs":FBTN "bash -c 'renew_supported_vms'" \
+		--field="Renew supported!!Update supported VMs":FBTN "bash -c 'renew_supported_vms_gui'" \
 		--field="Renew ready!!Update ready to run VMs":FBTN "bash -c 'renew_ready_vms'" \
 		--field="Help!!Show this help":FBTN "bash -c 'help_show'" \
 		--field="About!!Show info about DistroHopper":FBTN "bash -c 'distrohopper_about'" \
