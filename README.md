@@ -67,6 +67,27 @@ right after a new release was announced — use `--templates`:
 
 The same switch is in the GUI under *Options → Metadata source*.
 
+### What does “Renew supported” refresh?
+
+* **Options → Renew supported** rebuilds the supported `.desktop` launchers
+  from the selected metadata source and refreshes the ready-VM launchers from
+  the `.conf` files in your VM directory. It does **not** run `generate`,
+  download ISO images, or upgrade existing VMs.
+* With the default **public/** source, the available releases are only as new
+  as the last metadata generation. Run `./dh-refresh` (or `./generate --parallel`)
+  first, then click **Renew supported** to show newly discovered releases.
+* With the **templates/** source, renewal queries upstream live. It still
+  does not download installation images; those are downloaded by `qget` when
+  you select a supported system and confirm a release/edition.
+* Metadata generation discovers releases and image URLs; it is not an ISO
+  download/update operation.
+
+Desktop regeneration uses four distro workers by default. Set
+`DH_RENEW_JOBS=8 ./dh` to change the limit, or `DH_RENEW_JOBS=1 ./dh` for serial
+regeneration. A top-right progress window and desktop notifications indicate
+when regeneration is running and when it finishes. Notifications are optional
+and require `notify-send` and a running desktop notification service.
+
 and
 
 ### open source version without removed proprietary OSes (Mac,Windows)

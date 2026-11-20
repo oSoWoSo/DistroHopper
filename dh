@@ -607,6 +607,15 @@ Metadata source:
   switch to the live templates in the Options tab when you need the
   current upstream state right away.
 
+Regeneration:
+  'Renew supported' rebuilds desktop launchers and refreshes ready VMs.
+  It does not run generate, download ISOs, or upgrade existing VMs.
+  To discover new releases in public/ mode, run ./dh-refresh (or
+  ./generate --parallel), then click 'Renew supported'. In templates/
+  mode, releases are queried live. qget downloads an image only after
+  you select a system and confirm its release/edition.
+  DH_RENEW_JOBS controls parallel desktop workers (default: 4).
+
 Homepage: dh.osowoso.org
 Source:   github.com/oSoWoSo/distrohopper
 EOF
@@ -706,7 +715,7 @@ function distrohopper_gui() {
 		--field="ISO dir!!Set shared ISO directory (or keep in each VM)":FBTN "bash -c 'set_iso_dir'" \
 		--field="Metadata source!!Use templates (live) or public (offline) for releases and editions":FBTN "bash -c 'set_use_templates'" \
 		--field="Install dh!!Install DistroHopper":FBTN "bash -c 'first_run'" \
-		--field="Renew supported!!Update supported VMs":FBTN "bash -c 'renew_supported_vms_gui'" \
+		--field="Renew supported!!Rebuild desktop launchers and refresh ready VMs; does not generate metadata or download ISOs":FBTN "bash -c 'renew_supported_vms_gui'" \
 		--field="Renew ready!!Update ready to run VMs":FBTN "bash -c 'renew_ready_vms'" \
 		--field="Help!!Show this help":FBTN "bash -c 'help_show'" \
 		--field="About!!Show info about DistroHopper":FBTN "bash -c 'distrohopper_about'" \
