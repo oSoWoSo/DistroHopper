@@ -4,6 +4,8 @@
 
 set -eu
 
+REPO_DIR="$(pwd)"
+
 echo "Installing package dependencies..."
 echo "---------------------------------------------------------------"
 pacman -Syu --noconfirm \
@@ -30,10 +32,11 @@ make -j"$(nproc)"
 make install
 
 # Install DistroHopper itself into a predictable prefix.
+cd "$REPO_DIR"
 echo "Installing DistroHopper resources..."
 echo "---------------------------------------------------------------"
 mkdir -p /usr/share/distrohopper
-cp -a dh generate qget quickemu quickreport chunkcheck lib.sh public templates icons \
+cp -a dh generate qget q quickemu quickreport chunkcheck lib.sh dh-refresh public templates icons \
 	/usr/share/distrohopper/
 mkdir -p /usr/share/applications
 cp dh.desktop /usr/share/applications/dh.desktop
