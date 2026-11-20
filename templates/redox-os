@@ -47,9 +47,16 @@ function get_() {
 	local ENTRY ISO HASH MANIFEST
 	# Do not silently parse an HTTP error page as an empty checksum list.
 	if ! MANIFEST=$(web_pipe "${URL}/SHA256SUM" \
-		--fail --show-error --retry 3 --retry-delay 2 \
+		--fail --show-error --retry 3 --retry-delay 2 --retry-all-errors \
 		--connect-timeout 15 --max-time 60); then
-		echo "ERROR: Redox could not fetch ${URL}/SHA256SUM" >&2
+		echo "ERROR: Redox could not fetch ${URL}/SHA256SUM (HTTP/network failure; the host may restrict CI runners)." >&2
+		return 1
+	fi
+	# Cloudflare can return a browser challenge with HTTP 200, which --fail
+	# cannot detect. This is an access failure, not a missing Redox image.
+	if [[ "${MANIFEST}" == *'Just a moment...'* || "${MANIFEST}" == *'/cdn-cgi/challenge-platform/'* ]]; then
+		echo "ERROR: Redox download host returned a Cloudflare browser challenge for ${URL}/SHA256SUM." >&2
+		echo 'Automated access is blocked on this network; no image checksum can be verified. Retry later or ask Redox to allow automated downloads.' >&2
 		return 1
 	fi
 	ENTRY=$(printf '%s\n' "${MANIFEST}" | awk \

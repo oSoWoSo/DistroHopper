@@ -124,6 +124,7 @@ teardown() {
 		curl() {
 			[[ " $* " == *" --fail "* ]] || exit 2
 			[[ " $* " == *" --retry 3 "* ]] || exit 2
+			[[ " $* " == *" --retry-all-errors "* ]] || exit 2
 			return 22
 		}
 		source "$1/templates/redox-os"
@@ -133,6 +134,19 @@ teardown() {
 	[[ "$output" == *'ERROR: Redox could not fetch https://static.redox-os.org/img/x86_64/SHA256SUM'* ]]
 }
 
+@test "Redox identifies HTTP 200 Cloudflare challenges as blocked access, not missing images" {
+	run bash -c '
+		source "$1/lib.sh"
+		curl() { echo "<!DOCTYPE html><title>Just a moment...</title>"; }
+		source "$1/templates/redox-os"
+		ARCH=amd64 RELEASE=livedisk EDITION=desktop get_
+	' _ "$REPO_ROOT"
+	[ "$status" -eq 1 ]
+	[[ "$output" == *"Cloudflare browser challenge"* ]]
+	[[ "$output" == *"no image checksum can be verified"* ]]
+	[[ "$output" != *"no matching image"* ]]
+}
+
 @test "Redox generated metadata passes the actual qget check path" {
 	mkdir -p "$TEST_DIR/bin" "$TEST_DIR/public"
 	cat > "$TEST_DIR/bin/curl" <<'EOF'
@@ -140,6 +154,8 @@ teardown() {
 url="${@: -1}"
 case "$url" in
 	*/SHA256SUM)
+		# Generation must retain the template HTTP options, not just the URL.
+		[[ " $* " == *" --fail "* && " $* " == *" --retry-all-errors "* ]] || exit 2
 		arch="${url%/SHA256SUM}"
 		arch="${arch##*/}"
 		for edition in demo desktop server; do
