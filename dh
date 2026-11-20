@@ -412,98 +412,122 @@ function renew_supported_vms() {
 	if [ ! -s "${DH_CONFIG_DIR}/supported.md" ]; then
 		echo "WARNING: qget --list-os produced no entries" >&2
 	fi
-	while read -r get_name; do
-		VMname=$(echo "${get_name}" | tr ' ' '_')
-		os_info=$("$qget_cmd" --show --plain "${VMname}" 2>$DH_NULL)
-		releases=$(printf '%s\n' "${os_info}" | awk -F: '$1 ~ /^[[:space:]]*Releases[[:space:]]*$/ {sub(/^[^:]*:[[:space:]]*/, ""); sub(/[[:space:]]*$/, ""); print; exit}')
-		editions=$(printf '%s\n' "${os_info}" | awk -F: '$1 ~ /^[[:space:]]*Editions[[:space:]]*$/ {sub(/^[^:]*:[[:space:]]*/, ""); sub(/[[:space:]]*$/, ""); print; exit}')
-		# The editions one per line. An edition can contain a space (e.g.
-		# "Brazilian Portuguese"), so the space separated value above cannot
-		# be split apart again — this list can.
-		editions_list=$(printf '%s\n' "${os_info}" | sed -n '/^EditionsList:$/,$p' | sed '1d; /^$/d; /^Description:/,$d; /^RSS:/,$d; /^DistroWatch:/,$d')
-		architectures=$(printf '%s\n' "${os_info}" | awk -F: '$1 ~ /^[[:space:]]*(Archs|Architectures)[[:space:]]*$/ {sub(/^[^:]*:[[:space:]]*/, ""); sub(/[[:space:]]*$/, ""); print; exit}')
-		# Resolve the icon from the template's ICON field (not the OS name),
-		# since icon filenames do not always match OS names (e.g. lmde).
-		template_file="${SCRIPT_DIR}/templates/${VMname}"
-		if [ ! -f "${template_file}" ]; then
-			candidate="${VMname}"
-			while [ -n "${candidate}" ]; do
-				next="${candidate%-*}"
-				[ "${next}" = "${candidate}" ] && break
-				candidate="${next}"
-				if [ -f "${SCRIPT_DIR}/templates/${candidate}" ]; then
-					template_file="${SCRIPT_DIR}/templates/${candidate}"
-					break
-				fi
-			done
+	# Each worker runs in its own subshell: metadata and desktop fields must
+	# never leak between distros. Bound network traffic and process count.
+	local jobs="${DH_RENEW_JOBS:-4}" pid status=0
+	local -a workers=()
+	if [[ ! "$jobs" =~ ^[1-9][0-9]*$ ]]; then
+		echo "ERROR: DH_RENEW_JOBS must be a positive integer" >&2
+		return 1
+	fi
+	while IFS= read -r get_name; do
+		[ -n "$get_name" ] || continue
+		(renew_supported_vm "$get_name" "$qget_cmd") &
+		workers+=("$!")
+		if ((${#workers[@]} >= jobs)); then
+			wait "${workers[0]}" || status=1
+			workers=("${workers[@]:1}")
 		fi
-		tmpl_icon=""
-		if [ -f "${template_file}" ]; then
-			tmpl_icon=$(OS="${VMname}" bash -c "source '${template_file}' >/dev/null 2>&1; printf '%s' \"\${ICON:-}\"" 2>/dev/null)
-		fi
-		if [ -n "${tmpl_icon}" ] && [ -f "${DH_ICON_DIR}/${tmpl_icon}" ]; then
-			icon_file="${DH_ICON_DIR}/${tmpl_icon}"
-		elif [ -f "${DH_ICON_DIR}/${VMname}.svg" ]; then
-			icon_file="${DH_ICON_DIR}/${VMname}.svg"
-		elif [ -f "${DH_ICON_DIR}/${VMname}.png" ]; then
-			icon_file="${DH_ICON_DIR}/${VMname}.png"
-		else
-			icon_file="${DH_ICON_DIR}/tux.svg"
-		fi
-		echo "${VMname}.desktop"
-		# Check if there are editions
-		DESKTOP_FILE="${DH_CONFIG_DIR}/supported/${VMname}.desktop"
-		type="Application"
-		name="${get_name}"
-		# Build valid tuples for every architecture and release, not a Cartesian
-		# product of the default architecture's releases and editions.
-		local selected_arch selected_release selected_edition arch_info release_info arch_releases
-		local release_editions_list launcher quoted_vms quoted_qget quoted_os
-		release_edition_options=""
-		for selected_arch in ${architectures:-x86_64}; do
-			arch_info=$("$qget_cmd" --show --plain --arch "${selected_arch}" "${VMname}" 2>$DH_NULL) || continue
-			arch_releases=$(printf '%s\n' "${arch_info}" | sed -n 's/^Releases:[[:space:]]*//p')
-			for selected_release in ${arch_releases}; do
-				release_info=$("$qget_cmd" --show --plain --arch "${selected_arch}" --release "${selected_release}" "${VMname}" 2>$DH_NULL) || continue
-				release_editions_list=$(printf '%s\n' "${release_info}" | sed -n '/^EditionsList:$/,$p' | sed '1d; /^$/d; /^Description:/,$d; /^RSS:/,$d; /^DistroWatch:/,$d')
-				if [ -z "${release_editions_list}" ]; then
-					release_edition_options+="${selected_arch};${selected_release};!"
-				else
-					while IFS= read -r selected_edition; do
-						[ -n "$selected_edition" ] || continue
-						release_edition_options+="${selected_arch};${selected_release};${selected_edition}!"
-					done <<< "$release_editions_list"
-				fi
-			done
-		done
-		release_edition_opts_fmt="${release_edition_options%!}"
-		printf -v quoted_vms '%q' "${VMS_DIR}"
-		printf -v quoted_qget '%q' "${qget_cmd}"
-		printf -v quoted_os '%q' "${get_name}"
-		printf -v launcher 'mkdir -p %s; cd %s || exit; ' "$quoted_vms" "$quoted_vms"
-		printf -v launcher '%schoice=$(GDK_BACKEND=x11 yad --form --separator="|" --item-separator="!" --field="Architecture / Release / Edition:CB" %q); ' "$launcher" "$release_edition_opts_fmt"
-		launcher+='[ -n "$choice" ] || exit 0; choice=${choice%|}; IFS=";" read -r arch release edition <<< "$choice"; '
-		launcher+="$quoted_qget --arch \"\$arch\" $quoted_os \"\$release\""
-		launcher+=' ${edition:+"$edition"}'
-		# Exec is a desktop-entry command line, not a shell command line.
-		# Quote its single bash argument according to the desktop-entry spec.
-		launcher="${launcher//\\/\\\\\\\\}"
-		launcher="${launcher//\"/\\\\\"}"
-		launcher="${launcher//\$/\\\\$}"
-		launcher="${launcher//\`/\\\\\`}"
-		launcher="${launcher//%/%%}"
-		execmd="bash -c \"${launcher}\""
-		terminal="false"
-
-		icon="${icon_file}"
-		# Try quickget for a more accurate description (old version approach)
-		comment=$("${SCRIPT_DIR}/qget" --show --plain "${get_name}" 2>$DH_NULL | grep 'Description' | sed 's/^Description:[[:space:]]*//')
-		[ -z "${comment}" ] && comment=$(get_os_description "${get_name}")
-		categories='System;X-Virtualization;'
-		create_desktop_entry
 	done < "${DH_CONFIG_DIR}/supported.md"
+	for pid in "${workers[@]}"; do
+		wait "$pid" || status=1
+	done
 	find "${DH_CONFIG_DIR}/supported" -type f -name '*.desktop' -exec chmod +x {} + 2>/dev/null || true
 	echo "[dh] Renew supported complete"
+	return "$status"
+}
+
+# Called only in an isolated worker process.
+function renew_supported_vm() {
+	local get_name="$1" qget_cmd="$2"
+	VMname=$(echo "${get_name}" | tr ' ' '_')
+	os_info=$("$qget_cmd" --show --plain "${VMname}" 2>$DH_NULL)
+	releases=$(printf '%s\n' "${os_info}" | awk -F: '$1 ~ /^[[:space:]]*Releases[[:space:]]*$/ {sub(/^[^:]*:[[:space:]]*/, ""); sub(/[[:space:]]*$/, ""); print; exit}')
+	editions=$(printf '%s\n' "${os_info}" | awk -F: '$1 ~ /^[[:space:]]*Editions[[:space:]]*$/ {sub(/^[^:]*:[[:space:]]*/, ""); sub(/[[:space:]]*$/, ""); print; exit}')
+	# The editions one per line. An edition can contain a space (e.g.
+	# "Brazilian Portuguese"), so the space separated value above cannot
+	# be split apart again — this list can.
+	editions_list=$(printf '%s\n' "${os_info}" | sed -n '/^EditionsList:$/,$p' | sed '1d; /^$/d; /^Description:/,$d; /^RSS:/,$d; /^DistroWatch:/,$d')
+	architectures=$(printf '%s\n' "${os_info}" | awk -F: '$1 ~ /^[[:space:]]*(Archs|Architectures)[[:space:]]*$/ {sub(/^[^:]*:[[:space:]]*/, ""); sub(/[[:space:]]*$/, ""); print; exit}')
+	# Resolve the icon from the template's ICON field (not the OS name),
+	# since icon filenames do not always match OS names (e.g. lmde).
+	template_file="${SCRIPT_DIR}/templates/${VMname}"
+	if [ ! -f "${template_file}" ]; then
+		candidate="${VMname}"
+		while [ -n "${candidate}" ]; do
+			next="${candidate%-*}"
+			[ "${next}" = "${candidate}" ] && break
+			candidate="${next}"
+			if [ -f "${SCRIPT_DIR}/templates/${candidate}" ]; then
+				template_file="${SCRIPT_DIR}/templates/${candidate}"
+				break
+			fi
+		done
+	fi
+	tmpl_icon=""
+	if [ -f "${template_file}" ]; then
+		tmpl_icon=$(OS="${VMname}" bash -c "source '${template_file}' >/dev/null 2>&1; printf '%s' \"\${ICON:-}\"" 2>/dev/null)
+	fi
+	if [ -n "${tmpl_icon}" ] && [ -f "${DH_ICON_DIR}/${tmpl_icon}" ]; then
+		icon_file="${DH_ICON_DIR}/${tmpl_icon}"
+	elif [ -f "${DH_ICON_DIR}/${VMname}.svg" ]; then
+		icon_file="${DH_ICON_DIR}/${VMname}.svg"
+	elif [ -f "${DH_ICON_DIR}/${VMname}.png" ]; then
+		icon_file="${DH_ICON_DIR}/${VMname}.png"
+	else
+		icon_file="${DH_ICON_DIR}/tux.svg"
+	fi
+	echo "${VMname}.desktop"
+	# Check if there are editions
+	DESKTOP_FILE="${DH_CONFIG_DIR}/supported/${VMname}.desktop"
+	type="Application"
+	name="${get_name}"
+	# Build valid tuples for every architecture and release, not a Cartesian
+	# product of the default architecture's releases and editions.
+	local selected_arch selected_release selected_edition arch_info release_info arch_releases
+	local release_editions_list launcher quoted_vms quoted_qget quoted_os
+	release_edition_options=""
+	for selected_arch in ${architectures:-x86_64}; do
+		arch_info=$("$qget_cmd" --show --plain --arch "${selected_arch}" "${VMname}" 2>$DH_NULL) || continue
+		arch_releases=$(printf '%s\n' "${arch_info}" | sed -n 's/^Releases:[[:space:]]*//p')
+		for selected_release in ${arch_releases}; do
+			release_info=$("$qget_cmd" --show --plain --arch "${selected_arch}" --release "${selected_release}" "${VMname}" 2>$DH_NULL) || continue
+			release_editions_list=$(printf '%s\n' "${release_info}" | sed -n '/^EditionsList:$/,$p' | sed '1d; /^$/d; /^Description:/,$d; /^RSS:/,$d; /^DistroWatch:/,$d')
+			if [ -z "${release_editions_list}" ]; then
+				release_edition_options+="${selected_arch};${selected_release};!"
+			else
+				while IFS= read -r selected_edition; do
+					[ -n "$selected_edition" ] || continue
+					release_edition_options+="${selected_arch};${selected_release};${selected_edition}!"
+				done <<< "$release_editions_list"
+			fi
+		done
+	done
+	release_edition_opts_fmt="${release_edition_options%!}"
+	printf -v quoted_vms '%q' "${VMS_DIR}"
+	printf -v quoted_qget '%q' "${qget_cmd}"
+	printf -v quoted_os '%q' "${get_name}"
+	printf -v launcher 'mkdir -p %s; cd %s || exit; ' "$quoted_vms" "$quoted_vms"
+	printf -v launcher '%schoice=$(GDK_BACKEND=x11 yad --form --separator="|" --item-separator="!" --field="Architecture / Release / Edition:CB" %q); ' "$launcher" "$release_edition_opts_fmt"
+	launcher+='[ -n "$choice" ] || exit 0; choice=${choice%|}; IFS=";" read -r arch release edition <<< "$choice"; '
+	launcher+="$quoted_qget --arch \"\$arch\" $quoted_os \"\$release\""
+	launcher+=' ${edition:+"$edition"}'
+	# Exec is a desktop-entry command line, not a shell command line.
+	# Quote its single bash argument according to the desktop-entry spec.
+	launcher="${launcher//\\/\\\\\\\\}"
+	launcher="${launcher//\"/\\\\\"}"
+	launcher="${launcher//\$/\\\\$}"
+	launcher="${launcher//\`/\\\\\`}"
+	launcher="${launcher//%/%%}"
+	execmd="bash -c \"${launcher}\""
+	terminal="false"
+
+	icon="${icon_file}"
+	# Try quickget for a more accurate description (old version approach)
+	comment=$("${SCRIPT_DIR}/qget" --show --plain "${get_name}" 2>$DH_NULL | grep 'Description' | sed 's/^Description:[[:space:]]*//')
+	[ -z "${comment}" ] && comment=$(get_os_description "${get_name}")
+	categories='System;X-Virtualization;'
+	create_desktop_entry
 }
 
 function distrohopper_about() {
@@ -622,7 +646,7 @@ function distrohopper_gui() {
 	export -f create_desktop_entry create_dirs dependencies_check_gui desktop_entry_dh
 	export -f distrohopper_about first_run get_os_description help_show
 	export -f install_dh install_dependencies install_needed_apt install_needed_dnf install_needed_pacman install_needed_xbps
-	export -f installation_process renew_ready_vms renew_supported_vms root_check save_config
+	export -f installation_process renew_ready_vms renew_supported_vms renew_supported_vm root_check save_config
 	export -f set_iso_dir set_ramdisk set_vms_directory set_use_templates
 
 	local key=$((RANDOM % 9000 + 1000))

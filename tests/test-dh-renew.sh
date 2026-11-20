@@ -65,4 +65,29 @@ for path in pathlib.Path(sys.argv[1]).glob('*.desktop'):
     if path.stem == 'multi':
         assert 'aarch64\\;arm-only\\;' in argv[2], argv[2]
 PY
+# A bounded worker pool overlaps distros and waits for every worker.
+renew_supported_vm() {
+ printf 'start %s\n' "$1" >> "$WORK/workers.log"
+ sleep 0.15
+ printf 'end %s\n' "$1" >> "$WORK/workers.log"
+ [[ $1 != single ]]
+}
+export DH_RENEW_JOBS=2
+if renew_supported_vms; then
+ echo 'ERROR: worker failure was not propagated' >&2
+ exit 1
+fi
+/usr/bin/python3 - "$WORK/workers.log" <<'PY'
+import sys
+active = peak = 0
+for line in open(sys.argv[1]):
+    active += 1 if line.startswith('start ') else -1
+    peak = max(peak, active)
+assert active == 0
+assert peak == 2, peak
+PY
+export DH_RENEW_JOBS=1
+: > "$WORK/workers.log"
+renew_supported_vms && exit 1
+[ "$(head -n 2 "$WORK/workers.log" | cut -d' ' -f1 | tr '\n' ' ')" = 'start end ' ]
 echo 'OK: desktop regeneration regression tests'
