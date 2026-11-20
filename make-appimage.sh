@@ -8,7 +8,7 @@ ARCH=$(uname -m)
 VERSION=0.93
 export ARCH VERSION
 export OUTPATH=./dist
-export ICON=/usr/share/distrohopper/icons/hop.svg
+export ICON=/usr/share/distrohopper/icons/hop.png
 export DESKTOP=/usr/share/applications/dh.desktop
 export ADD_HOOKS="self-updater.hook"
 export UPINFO="gh-releases-zsync|${GITHUB_REPOSITORY%/*}|${GITHUB_REPOSITORY#*/}|latest|*$ARCH.AppImage.zsync"

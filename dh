@@ -300,7 +300,7 @@ function desktop_entry_dh() {
 	comment='Quickly download, create and run VM of any operating system.'
 	version="${version}"
 	execmd="sh -c 'cd ${VMS_DIR} && dh'"
-	icon="${DH_ICON_DIR}/hop.svg"
+	icon="${DH_ICON_DIR}/hop.png"
 	categories='System;X-Virtualization;'
 	export -f create_desktop_entry
 	create_desktop_entry
@@ -407,11 +407,31 @@ function renew_supported_vms() {
 		# be split apart again — this list can.
 		editions_list=$(printf '%s\n' "${os_info}" | sed -n '/^EditionsList:$/,$p' | sed '1d; /^$/d; /^Description:/,$d; /^RSS:/,$d; /^DistroWatch:/,$d')
 		architectures=$(printf '%s\n' "${os_info}" | awk -F: '$1 ~ /^[[:space:]]*(Archs|Architectures)[[:space:]]*$/ {sub(/^[^:]*:[[:space:]]*/, ""); sub(/[[:space:]]*$/, ""); print; exit}')
-		icon_name="${DH_ICON_DIR}/${get_name}"
-		if [ -f "${icon_name}.svg" ]; then
-			icon_file="${icon_name}.svg"
-		elif [ -f "${icon_name}.png" ]; then
-			icon_file="${icon_name}.png"
+		# Resolve the icon from the template's ICON field (not the OS name),
+		# since icon filenames do not always match OS names (e.g. lmde).
+		template_file="${SCRIPT_DIR}/templates/${VMname}"
+		if [ ! -f "${template_file}" ]; then
+			candidate="${VMname}"
+			while [ -n "${candidate}" ]; do
+				next="${candidate%-*}"
+				[ "${next}" = "${candidate}" ] && break
+				candidate="${next}"
+				if [ -f "${SCRIPT_DIR}/templates/${candidate}" ]; then
+					template_file="${SCRIPT_DIR}/templates/${candidate}"
+					break
+				fi
+			done
+		fi
+		tmpl_icon=""
+		if [ -f "${template_file}" ]; then
+			tmpl_icon=$(OS="${VMname}" bash -c "source '${template_file}' >/dev/null 2>&1; printf '%s' \"\${ICON:-}\"" 2>/dev/null)
+		fi
+		if [ -n "${tmpl_icon}" ] && [ -f "${DH_ICON_DIR}/${tmpl_icon}" ]; then
+			icon_file="${DH_ICON_DIR}/${tmpl_icon}"
+		elif [ -f "${DH_ICON_DIR}/${VMname}.svg" ]; then
+			icon_file="${DH_ICON_DIR}/${VMname}.svg"
+		elif [ -f "${DH_ICON_DIR}/${VMname}.png" ]; then
+			icon_file="${DH_ICON_DIR}/${VMname}.png"
 		else
 			icon_file="${DH_ICON_DIR}/tux.svg"
 		fi
@@ -487,7 +507,7 @@ function renew_supported_vms() {
 
 function distrohopper_about() {
 	echo "[dh] About..."
-		yad --about --pname=DistroHopper --image="${DH_ICON_DIR}/hop.svg" --pversion="${version}" \
+		yad --about --pname=DistroHopper --image="${DH_ICON_DIR}/hop.png" --pversion="${version}" \
 		 --copyright=AGPL3 --comments="random comment" --license=ALGPL3 --authors=zenobit --website=dh.osowoso.org \
 		 --website-label="oSoWoSo"
 	}
@@ -525,7 +545,7 @@ Homepage: dh.osowoso.org
 Source:   github.com/oSoWoSo/distrohopper
 EOF
 )"
-	yad --text-info --title="DistroHopper Help" --window-icon="${DH_ICON_DIR}/hop.svg" \
+	yad --text-info --title="DistroHopper Help" --window-icon="${DH_ICON_DIR}/hop.png" \
 		--width=600 --height=500 --center --button="Close":0 \
 		--fontname="Monospace" --editable=false <<<"$help_text"
 }
@@ -624,7 +644,7 @@ function distrohopper_gui() {
 		--field="Set VMs directory!!Set default directory where VMs are stored":FBTN "bash -c 'set_vms_directory'" &
 	yad --notebook --key="${key}" --monitor --listen \
 		--mouse --selectable-labels --no-buttons \
-		--window-icon="${DH_ICON_DIR}/hop.svg" --width=900 --height=900 \
+		--window-icon="${DH_ICON_DIR}/hop.png" --width=900 --height=900 \
 		--title="${progname}" --tab="run VM" --tab="download VM" --tab="Options"
 }
 
