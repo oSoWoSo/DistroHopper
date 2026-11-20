@@ -119,6 +119,15 @@ function set_variables() {
 	if [ -d "${SCRIPT_DIR}/icons" ]; then
 		cp -f "${SCRIPT_DIR}/icons"/* "${DH_ICON_DIR}/" 2>/dev/null || true
 	fi
+	# App icon lives in website-source in the repo; ensure it is cached too.
+	if [ ! -f "${DH_ICON_DIR}/hop.png" ]; then
+		for _hop in "${SCRIPT_DIR}/website-source/hop220.png" "${SCRIPT_DIR}/icons/hop.png" /usr/share/distrohopper/icons/hop.png; do
+			if [ -f "${_hop}" ]; then
+				cp -f "${_hop}" "${DH_ICON_DIR}/hop.png" 2>/dev/null || true
+				break
+			fi
+		done
+	fi
 	export DH_CONFIG_DIR DH_CONFIG replace DH_ICON_DIR PATH_PREFIX TMP_DIR terminal VMS_DIR RAMDISK RAMDISK_DIR ISO_DIR USE_TEMPLATES
 	#check_and_set_mode
 	# Set traps to catch the signals and exit gracefully
