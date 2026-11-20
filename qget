@@ -899,7 +899,9 @@ function create_vm() {
 	local URL="${URL_HASH[0]}"
 	local HASH="${URL_HASH[1]}"
 	local TORRENT_URL=""
-	local ISO="${URL##*/}"
+	# GitLab artifact URLs include a query string, which is not a filename.
+	local IMAGE_URL="${URL%%[?#]*}"
+	local ISO="${IMAGE_URL##*/}"
 	if [[ "${URL}" == *.torrent ]]; then
 		TORRENT_URL="${URL}"
 		URL="${URL%.torrent}"
@@ -980,7 +982,7 @@ function create_vm() {
 
 	# --- 3. HTTP download path (final fallback) ---
 	check_download_url "${URL}" || true
-	web_get "${URL}" "${TARGET_DIR}" || return $?
+	web_get "${URL}" "${TARGET_DIR}" "${ISO}" || return $?
 	if [ -n "${HASH}" ]; then
 		check_hash "${ISO}" "${HASH}"
 	fi
