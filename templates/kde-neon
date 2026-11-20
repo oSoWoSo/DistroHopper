@@ -27,8 +27,14 @@ function get_() {
 	local HASH=""
 	local ISO=""
 	local URL="https://files.kde.org/neon/images/${EDITION}/${RELEASE}/current"
+	# Directory names are long-form, but these two image stems are abbreviated.
+	local IMAGE_EDITION="${EDITION}"
+	case "${EDITION}" in
+		desktop) IMAGE_EDITION=desk;;
+		bigscreen) IMAGE_EDITION=big;;
+	esac
 	local CHECKSUM_LINE=""
-	CHECKSUM_LINE=$(web_pipe "${URL}/neon-${RELEASE}-${EDITION}-current.sha256sum")
+	CHECKSUM_LINE=$(web_pipe "${URL}/neon-${RELEASE}-${IMAGE_EDITION}-current.sha256sum")
 	read -r HASH ISO <<< "${CHECKSUM_LINE}"
 	if [[ ! "${HASH}" =~ ^[[:xdigit:]]{64}$ ]] || [ -z "${ISO}" ]; then
 		if [[ "${OPERATION:-}" != show && "${OPERATION:-}" != test ]]; then
