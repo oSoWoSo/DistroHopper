@@ -496,19 +496,19 @@ function renew_supported_vms() {
 		fi
 		release_edition_opts_fmt=$(echo "${release_edition_options}" | tr ' ' '!')
 		if [ -z "$editions" ] && [ "$(echo "$arch_opts" | wc -w)" -le 1 ]; then
-			execmd="bash -c 'mkdir -p \"${VMS_DIR}\"; cd \"${VMS_DIR}\" || exit; choice=\$(GDK_BACKEND=x11 yad --form --separator=\"|\" --item-separator='!' --field=\"Architecture:CB\" \"${arch_opts_fmt}\" --field=\"Release:CB\" \"${releases// /$replace}\"); [ -n \"\$choice\" ] || exit 0; IFS=\"|\" read -r arch release <<< \"\$choice\"; ${qget_cmd} --arch \"\$arch\" \"${get_name}\" \"\$release\"'"
+			execmd="bash -c 'mkdir -p \"${VMS_DIR}\"; cd \"${VMS_DIR}\" || exit; choice=\$(GDK_BACKEND=x11 yad --form --separator=\"|\" --item-separator="!" --field=\"Architecture:CB\" \"${arch_opts_fmt}\" --field=\"Release:CB\" \"${releases// /$replace}\"); [ -n \"\$choice\" ] || exit 0; IFS=\"|\" read -r arch release <<< \"\$choice\"; ${qget_cmd} --arch \"\$arch\" \"${get_name}\" \"\$release\"'"
 		elif [ "$interminal" = "yes" ]; then
 			terminal="false"
 		elif [ "$(echo "$arch_opts" | wc -w)" -gt 1 ]; then
-			execmd="bash -c 'mkdir -p \"${VMS_DIR}\"; cd \"${VMS_DIR}\" || exit; choice=\$(GDK_BACKEND=x11 yad --form --item-separator='!' --field=\"Architecture / Release / Edition:CB\" \"${release_edition_opts_fmt}\"); [ -n \"\$choice\" ] || exit 0; IFS=\";\" read -r arch release edition <<< \"\$choice\"; ${qget_cmd} --arch \"\$arch\" \"${get_name}\" \"\$release\" \"\$edition\"'"
+			execmd="bash -c 'mkdir -p \"${VMS_DIR}\"; cd \"${VMS_DIR}\" || exit; choice=\$(GDK_BACKEND=x11 yad --form --item-separator="!" --field=\"Architecture / Release / Edition:CB\" \"${release_edition_opts_fmt}\"); [ -n \"\$choice\" ] || exit 0; IFS=\";\" read -r arch release edition <<< \"\$choice\"; ${qget_cmd} --arch \"\$arch\" \"${get_name}\" \"\$release\" \"\$edition\"'"
 		elif [ "${VMname}" == "kde-neon" ]; then
-			execmd="bash -c 'mkdir -p \"${VMS_DIR}\"; cd \"${VMS_DIR}\" || exit; choice=\$(GDK_BACKEND=x11 yad --form --separator=\"|\" --item-separator='!' --field=\"Architecture:CB\" \"${arch_opts_fmt}\" --field=\"Release / edition:CB\" \"${release_edition_opts_fmt}\"); [ -n \"\$choice\" ] || exit 0; arch=\${choice%%|*}; release_edition=\${choice#*|}; release=\${release_edition%%-*}; edition=\${release_edition#*-}; ${qget_cmd} --arch \"\$arch\" \"${get_name}\" \"\$release\" \"\$edition\"'"
+			execmd="bash -c 'mkdir -p \"${VMS_DIR}\"; cd \"${VMS_DIR}\" || exit; choice=\$(GDK_BACKEND=x11 yad --form --separator=\"|\" --item-separator="!" --field=\"Architecture:CB\" \"${arch_opts_fmt}\" --field=\"Release / edition:CB\" \"${release_edition_opts_fmt}\"); [ -n \"\$choice\" ] || exit 0; arch=\${choice%%|*}; release_edition=\${choice#*|}; release=\${release_edition%%-*}; edition=\${release_edition#*-}; ${qget_cmd} --arch \"\$arch\" \"${get_name}\" \"\$release\" \"\$edition\"'"
 		else
 			# The editions are joined with the "!" separator of the yad
 			# combobox, so an edition that contains a space stays one entry.
 			local editions_fmt
 			editions_fmt=$(printf '%s\n' "${editions_list}" | tr '\n' ' ' | tr ' ' '!')
-			execmd="bash -c 'mkdir -p \"${VMS_DIR}\"; cd \"${VMS_DIR}\" || exit; choice=\$(GDK_BACKEND=x11 yad --form --separator=\"|\" --item-separator='!' --field=\"Architecture:CB\" \"${arch_opts_fmt}\" --field=\"Release:CB\" \"${releases// /$replace}\" --field=\"Edition:CB\" \"${editions_fmt}\"); [ -n \"\$choice\" ] || exit 0; IFS=\"|\" read -r arch release edition <<< \"\$choice\"; ${qget_cmd} --arch \"\$arch\" \"${get_name}\" \"\$release\" \"\$edition\"'"
+			execmd="bash -c 'mkdir -p \"${VMS_DIR}\"; cd \"${VMS_DIR}\" || exit; choice=\$(GDK_BACKEND=x11 yad --form --separator=\"|\" --item-separator="!" --field=\"Architecture:CB\" \"${arch_opts_fmt}\" --field=\"Release:CB\" \"${releases// /$replace}\" --field=\"Edition:CB\" \"${editions_fmt}\"); [ -n \"\$choice\" ] || exit 0; IFS=\"|\" read -r arch release edition <<< \"\$choice\"; ${qget_cmd} --arch \"\$arch\" \"${get_name}\" \"\$release\" \"\$edition\"'"
 		fi
 		icon="${icon_file}"
 		# Try quickget for a more accurate description (old version approach)
