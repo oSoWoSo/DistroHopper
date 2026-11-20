@@ -19,12 +19,6 @@ function releases_() {
 
 function editions_() {
 	echo minimalcli minimalgui mate lxqt kde xfce
-	#shellcheck disable=SC2046,SC2005
-#    if [ -z "${RELEASE}" ]; then
-#        web_pipe "https://sparkylinux.org/download/stable/" | grep "iso/download" | cut -d'-' -f5 | cut -d'.' -f1 | sort -u
-#    else
-#        web_pipe "https://sparkylinux.org/download/stable/" | grep "sparkylinux-${RELEASE}-" | cut -d'-' -f5 | cut -d'.' -f1 | sort -u
-#    fi
 }
 
 function get_() {
