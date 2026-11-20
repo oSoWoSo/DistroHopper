@@ -464,7 +464,7 @@ function renew_supported_vms() {
 # Optional event sink: command-line regeneration works without a progress UI.
 function renew_progress() {
 	if [ -n "${progress_fd:-}" ]; then
-		printf '%s\n' "$1" >&"$progress_fd" || true
+		printf '%s\n' "$1" 1>&"$progress_fd" 2>/dev/null || true
 	fi
 	return 0
 }
@@ -514,12 +514,12 @@ function renew_supported_vms_gui() (
 	mkfifo "$lock/progress" "$lock/events" || return 1
 	# A small, non-modal indicator in the top-right corner stays visible even
 	# when regeneration was started without a terminal.
-	yad --progress --percentage=0 --auto-close --no-buttons --on-top \
+	yad --progress --auto-close --no-buttons --on-top \
 		--geometry=300x70-0+0 --title='DistroHopper — regenerating' \
 		--text='Regenerating supported and ready VMs…' \
 		--window-icon="${DH_ICON_DIR}/hop.png" < "$lock/progress" &
 	progress_pid=$!
-	renew_progress_reader < "$lock/events" > "$lock/progress" &
+	renew_progress_reader < "$lock/events" > "$lock/progress" 2>/dev/null &
 	progress_reader_pid=$!
 	exec {progress_fd}> "$lock/events"
 	renew_supported_vms || status=$?

@@ -129,7 +129,8 @@ assert lines.index('100') > ready
 assert any('finished with errors' in line for line in lines)
 PY
 ! grep -q -- '--pulsate' "$GUI_LOG"
-grep -q -- '--percentage=0' "$GUI_LOG"
+! grep -q -- '--percentage' "$GUI_LOG"
+grep -q -- '--progress' "$GUI_LOG"
 # Empty distro lists still show the ready phase and reach 100 without dividing by zero.
 printf 'total 0\nready\nfinished 0\n' | renew_progress_reader > "$WORK/empty-progress"
 grep -q '0/0 completed' "$WORK/empty-progress"
