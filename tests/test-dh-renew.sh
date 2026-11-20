@@ -20,6 +20,7 @@ cat > "$SCRIPT_DIR/qget" <<'EOF'
 #!/usr/bin/env bash
 if [[ $1 == --list-os ]]; then printf 'multi\nsingle\n'; exit; fi
 os=${!#}
+printf '%s\n' "$*" >> "$QGET_QUERY_LOG"
 arch=x86_64
 release=''
 while (($#)); do
@@ -40,6 +41,7 @@ EOF
 chmod +x "$SCRIPT_DIR/qget"
 # Launcher functions also use optional, unset desktop-entry fields.
 set +u
+export QGET_QUERY_LOG="$WORK/queries.log"
 # A VM created after opening the GUI must appear during regeneration.
 touch "$VMS_DIR/single-new.conf"
 renew_supported_vms
@@ -56,6 +58,10 @@ PY
 rm "$VMS_DIR/single-new.conf"
 renew_supported_vms
 test ! -e "$DH_CONFIG_DIR/ready/single-new.desktop"
+# Each of the two renewals needs one initial query per OS, not another
+# complete live release scan merely to retrieve the description.
+[ "$(grep -c '^--show --plain multi$' "$QGET_QUERY_LOG")" -eq 2 ]
+[ "$(grep -c '^--show --plain single$' "$QGET_QUERY_LOG")" -eq 2 ]
 for os in multi single; do
  test -x "$DH_CONFIG_DIR/supported/$os.desktop"
  grep -q -- '^Exec=bash -c' "$DH_CONFIG_DIR/supported/$os.desktop"

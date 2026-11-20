@@ -64,14 +64,24 @@ function show_os_info() {
 			return 1
 		fi
 		# The releases and editions of the selected architecture.
-		RELEASES="$(dh_releases "${ARCH}")"
+		# Edition queries already name a discovered release. In live mode,
+		# do not rescan/probe the entire upstream archive for every query.
+		if [ -n "${requested_release}" ] && [ "${DH_USE_TEMPLATES:-no}" == yes ]; then
+			RELEASES="${requested_release}"
+		else
+			RELEASES="$(dh_releases "${ARCH}")"
+		fi
 		if [ -n "${requested_release}" ]; then
 			EDITIONS="$(dh_editions "${requested_release}" "${ARCH}")"
 		else
 			EDITIONS="$(dh_editions "" "${ARCH}")"
 		fi
 	else
-		RELEASES="$(dh_releases "")"
+		if [ -n "${requested_release}" ] && [ "${DH_USE_TEMPLATES:-no}" == yes ]; then
+			RELEASES="${requested_release}"
+		else
+			RELEASES="$(dh_releases "")"
+		fi
 		EDITIONS="$(dh_editions "${requested_release}")"
 	fi
 	[ "${os}" == "bedrock-linux" ] && EDITIONS="${EDITIONS} prepared"

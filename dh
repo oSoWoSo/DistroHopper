@@ -666,8 +666,9 @@ function renew_supported_vm() {
 	terminal="false"
 
 	icon="${icon_file}"
-	# Try quickget for a more accurate description (old version approach)
-	comment=$("${SCRIPT_DIR}/qget" --show --plain "${get_name}" 2>$DH_NULL | grep 'Description' | sed 's/^Description:[[:space:]]*//')
+	# The initial query already includes the description. Re-querying it in
+	# template mode repeats potentially expensive upstream release discovery.
+	comment=$(printf '%s\n' "$os_info" | sed -n 's/^Description:[[:space:]]*//p')
 	[ -z "${comment}" ] && comment=$(get_os_description "${get_name}")
 	categories='System;X-Virtualization;'
 	create_desktop_entry

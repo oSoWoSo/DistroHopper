@@ -55,6 +55,33 @@ teardown() {
 	[[ "${output}" != *$'EditionsList:\nKDE'* ]]
 }
 
+@test "live edition queries do not rediscover an already selected release" {
+	mkdir -p "${TEST_DIR}/templates"
+	export DISCOVERY_LOG="${TEST_DIR}/discovery.log"
+	cat >"${TEST_DIR}/templates/scoped" <<'EOF'
+PRETTY="Scoped"
+QEMU_ARCH="amd64"
+arch_() { echo amd64; }
+releases_() { echo rediscovered >> "$DISCOVERY_LOG"; echo latest; }
+editions_() { echo desktop; }
+EOF
+	for arch in '' amd64; do
+		args=(--show --plain)
+		[ -z "$arch" ] || args+=(--arch "$arch")
+		run env DH_USE_TEMPLATES=yes TEMPLATES_DIR="${TEST_DIR}/templates" \
+			"${REPO_ROOT}/qget" "${args[@]}" --release latest scoped
+		[ "$status" -eq 0 ]
+		[[ "$output" == *"Releases:    latest"* ]]
+		[[ "$output" == *$'EditionsList:\ndesktop'* ]]
+		[ ! -e "$DISCOVERY_LOG" ]
+	done
+	# The unscoped listing still performs discovery normally.
+	run env DH_USE_TEMPLATES=yes TEMPLATES_DIR="${TEST_DIR}/templates" \
+		"${REPO_ROOT}/qget" --show --plain scoped
+	[ "$status" -eq 0 ]
+	[ "$(wc -l < "$DISCOVERY_LOG")" -eq 1 ]
+}
+
 @test "show rejects missing architecture and release values promptly" {
 	run timeout 2 "${REPO_ROOT}/qget" --show --arch
 	[ "${status}" -eq 1 ]
