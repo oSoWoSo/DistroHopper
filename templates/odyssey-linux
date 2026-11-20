@@ -14,25 +14,22 @@ DW=""
 CHAT=""
 MAGNET_PREFERRED="true"
 
+# The download page always advertises the current release, so expose a
+# single rolling "latest" entry and resolve its ISO/torrent dynamically.
 function releases_() {
-	echo launch shipwreck
+	echo latest
 }
 
 function get_() {
-	local ARCH="x86"
-	local HASH=""
-	local ISO=""
 	local URL="https://dl.odysseylinux.org"
-	case "$RELEASE" in
-		launch)
-			ISO="odyssey-launch-edition-chapter-II-x86_64.iso.torrent"
-			HASH="0194121c9ae4f911101d4c73b2e78a60efb1ebfb449e1dae202c875a66d7e89b"
-			;;
-		shipwreck)
-			ISO="odyssey-shipwreck-x86_64.iso.torrent"
-			HASH="a3fddc198a30f8345eb8682ae0ad09aacbf64b3fc7a31db38dfdc0c1c65d099d"
-			;;
-	esac
+	local PAGE ISO HASH
+	PAGE=$(curl -sL "${URL}/download.html")
+	ISO=$(echo "$PAGE" | grep -oP 'odyssey-[a-zA-Z0-9-]+-x86_64\.iso\.torrent' | head -1)
+	HASH=$(echo "$PAGE" | grep -oP 'echo "\K[a-f0-9]{64}(?=  [^"]*\.torrent")' | head -1)
+	if [ -z "$ISO" ] || [ -z "$HASH" ]; then
+		echo "Failed to parse Odyssey Linux download page" >&2
+		return 1
+	fi
 	TORRENT="${URL}/${ISO} ${HASH}"
 	echo "$TORRENT"
 }
