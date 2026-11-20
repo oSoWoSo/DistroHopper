@@ -49,7 +49,7 @@ gobolinux|gobolinux.svg
 athena-os|athena-os.svg
 bedrock|bedrock-linux.svg
 bedrock-linux|bedrock-linux.svg
-klv-airedale|klv-airdale.svg
+klv-airedale|klv-airedale.svg
 kodachi-os|kodachi.svg
 mabox|mabox-linux.svg
 miyolinux|miyo-linux.svg
@@ -60,7 +60,7 @@ trisquel-gnu-linux|trisquel.svg
 ventoy|ventoy.svg
 truenas-scale|truenas-scale.svg
 vx-linux|vx-linux.svg
-redox-os|redox.svg
+redox-os|redox-os.svg
 whonix|whonix.svg
 CASES
 }
