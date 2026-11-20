@@ -14,12 +14,15 @@ DW=""
 GUEST="solaris"
 
 function releases_() {
-	local dir
+	local dir count=0 releases=""
 	for dir in $(web_pipe "https://dlc.openindiana.org/isos/hipster/" | grep 'href="./2' | cut -d'/' -f 2 | sort -r); do
 		if web_check "https://dlc.openindiana.org/isos/hipster/${dir}/OI-hipster-gui-${dir}.iso" >/dev/null 2>&1; then
-			echo "${dir}"
+			releases+="${releases:+ }${dir}"
+			count=$((count + 1))
+			[ "$count" -lt 5 ] || break
 		fi
-	done | head -n 5 | paste -sd ' '
+	done
+	printf '%s\n' "$releases"
 }
 
 function editions_() {
