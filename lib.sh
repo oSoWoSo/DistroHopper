@@ -698,12 +698,17 @@ append_default_vm_config() {
 }
 
 # Public directory for OS info files
-PUBLIC_DIR="${PUBLIC_DIR:-${SCRIPT_DIR:-.}/public}"
+RESOURCE_DIR="${APPDIR:-${SCRIPT_DIR:-.}}"
+PUBLIC_DIR="${PUBLIC_DIR:-${RESOURCE_DIR}/public}"
 export PUBLIC_DIR
 
 # Directory holding the dynamic per-distro templates
-TEMPLATES_DIR="${TEMPLATES_DIR:-${SCRIPT_DIR:-.}/templates}"
+TEMPLATES_DIR="${TEMPLATES_DIR:-${RESOURCE_DIR}/templates}"
 export TEMPLATES_DIR
+# Fall back to templates when generated public/ metadata is unavailable.
+if [ "${DH_USE_TEMPLATES:-no}" != "yes" ] && [ ! -d "${PUBLIC_DIR}" ] && [ -d "${TEMPLATES_DIR}" ]; then
+	export DH_USE_TEMPLATES="yes"
+fi
 
 # ---------------------------------------------------------------------------
 # Static release/edition metadata

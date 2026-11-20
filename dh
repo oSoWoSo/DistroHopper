@@ -104,6 +104,11 @@ function set_variables() {
 	[ -n "${RAMDISK}" ] || RAMDISK="no"
 	[ -n "${RAMDISK_DIR}" ] || RAMDISK_DIR="/dev/shm/quickemu"
 	[ -n "${USE_TEMPLATES}" ] || USE_TEMPLATES="no"
+	# Fall back to templates when the (generated) public/ metadata is absent,
+	# e.g. in a source/AppImage checkout that only ships templates/.
+	if [ "${USE_TEMPLATES}" != "yes" ] && [ ! -d "${SCRIPT_DIR}/public" ] && [ -d "${SCRIPT_DIR}/templates" ]; then
+		USE_TEMPLATES="yes"
+	fi
 	[ -n "${terminal}" ] || terminal="true"
 	if [ "${USE_TEMPLATES}" == "yes" ]; then
 		export DH_USE_TEMPLATES="yes"

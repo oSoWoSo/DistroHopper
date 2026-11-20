@@ -17,8 +17,13 @@ fi
 # https://github.com/quickemu-project/quickemu/tree/3da9edc9953340622db23be4661aefa4cd0632f2
 
 export TEXTDOMAIN=qget
-export PUBLIC_DIR="${PUBLIC_DIR:-${SCRIPT_DIR}/public}"
-TEMPLATES_DIR="${TEMPLATES_DIR:-${SCRIPT_DIR}/templates}"
+RESOURCE_DIR="${APPDIR:-${SCRIPT_DIR}}"
+export PUBLIC_DIR="${PUBLIC_DIR:-${RESOURCE_DIR}/public}"
+TEMPLATES_DIR="${TEMPLATES_DIR:-${RESOURCE_DIR}/templates}"
+# Fall back to templates when generated public/ metadata is unavailable.
+if [ "${DH_USE_TEMPLATES:-no}" != "yes" ] && [ ! -d "${PUBLIC_DIR}" ] && [ -d "${TEMPLATES_DIR}" ]; then
+	export DH_USE_TEMPLATES="yes"
+fi
 if [[ -n $Q_DEBUG ]]; then
 	export TEXTDOMAINDIR="${PWD}/locale"
 else

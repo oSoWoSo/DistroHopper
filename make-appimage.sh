@@ -38,6 +38,11 @@ if [ -d ./AppDir ]; then
 	for d in public templates icons; do
 		[ -d "/usr/share/distrohopper/$d" ] && cp -a "/usr/share/distrohopper/$d" "./AppDir/" 2>/dev/null || true
 	done
+	# Bundle shared shell library (not auto-deployed by quick-sharun).
+	if [ -f /usr/share/distrohopper/lib.sh ]; then
+		cp -a /usr/share/distrohopper/lib.sh ./AppDir/bin/lib.sh
+		chmod +x ./AppDir/bin/lib.sh
+	fi
 	# Use our own AppRun so PATH/APPDIR are set up for the bundled tools.
 	cp ./AppRun ./AppDir/AppRun
 	chmod +x ./AppDir/AppRun
