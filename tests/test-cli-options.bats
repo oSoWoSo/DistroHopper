@@ -82,6 +82,29 @@ EOF
 	[ "$(wc -l < "$DISCOVERY_LOG")" -eq 1 ]
 }
 
+@test "plain output keeps every multiline discovery value on its field line" {
+	mkdir -p "${TEST_DIR}/templates"
+	cat >"${TEST_DIR}/templates/multiline" <<'EOF'
+PRETTY="Multiline"
+arch_() { printf 'amd64\narm64\n'; }
+releases_() { printf 'new\nold\n'; }
+editions_() { printf 'desktop\nserver\n'; }
+EOF
+	run env DH_USE_TEMPLATES=yes TEMPLATES_DIR="${TEST_DIR}/templates" \
+		"${REPO_ROOT}/qget" --show --plain multiline
+	[ "$status" -eq 0 ]
+	[[ "$output" == *"Archs:       amd64 arm64"* ]]
+	[[ "$output" == *"Releases:    new old"* ]]
+	[[ "$output" == *"Editions:    desktop server"* ]]
+	[[ "$output" == *$'EditionsList:\ndesktop\nserver'* ]]
+	# Architecture-specific discovery must use the same single-line format.
+	run env DH_USE_TEMPLATES=yes TEMPLATES_DIR="${TEST_DIR}/templates" \
+		"${REPO_ROOT}/qget" --show --plain --arch arm64 multiline
+	[ "$status" -eq 0 ]
+	[[ "$output" == *"Archs:       amd64 arm64"* ]]
+	[[ "$output" == *"Releases:    new old"* ]]
+}
+
 @test "show rejects missing architecture and release values promptly" {
 	run timeout 2 "${REPO_ROOT}/qget" --show --arch
 	[ "${status}" -eq 1 ]

@@ -135,7 +135,15 @@ function show_os_info() {
 	# stays on a single line, so a long release or edition list is never
 	# wrapped and truncated. The default output is wrapped for humans.
 	local _wrap=1
-	[ "${QGET_PLAIN:-}" == "1" ] && _wrap=0
+	if [ "${QGET_PLAIN:-}" == "1" ]; then
+		_wrap=0
+		# Discovery functions may return one value per line. Plain scalar
+		# fields must really be single-line or front-ends lose all but the
+		# first value. The lossless edition list was captured above.
+		RELEASES=$(printf '%s\n' "$RELEASES" | awk '{$1=$1; if (NF) {printf "%s%s", sep, $0; sep=" "}}')
+		QEMU_ARCH=$(printf '%s\n' "$QEMU_ARCH" | awk '{$1=$1; if (NF) {printf "%s%s", sep, $0; sep=" "}}')
+		EDITIONS=$(printf '%s\n' "$EDITIONS" | awk '{$1=$1; if (NF) {printf "%s%s", sep, $0; sep=" "}}')
+	fi
 	if [ -n "${requested_arch}" ]; then
 		echo $"Category:    ${CATEGORY}"
 		echo $"Based of:    ${BASEDOF}"
