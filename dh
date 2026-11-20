@@ -642,9 +642,9 @@ function renew_supported_vm() {
 		quoted="'${selected_tuple//\'/\'\\\'\'}'"
 		patterns+="${patterns:+|}$quoted"
 	done <<< "$release_edition_options"
-	# Only actual choices get a picker field. Fixed values stay inline in
-	# Exec, so e.g. AgarimOS asks for edition, not its sole arch/release.
-	local variable label items picker="" read_fields=""
+	# Always confirm before downloading. Fixed values are visible read-only;
+	# only multiple values get a dropdown. Omit editions entirely if absent.
+	local variable label items field_type picker="" read_fields=""
 	launcher=""
 	for variable in arch release edition; do
 		case "$variable" in
@@ -652,20 +652,18 @@ function renew_supported_vm() {
 			release) label=Release; items="$release_items" ;;
 			edition) label=Edition; items="$edition_items" ;;
 		esac
-		if [[ "$items" == *'!'* ]]; then
-			quoted="'${items//\'/\'\\\'\'}'"
-			picker+=" --field='$label:CB' $quoted"
-			read_fields+="${read_fields:+ }$variable"
-		else
-			[ "$variable" != edition ] || [ "$items" != '(none)' ] || items=""
-			quoted="'${items//\'/\'\\\'\'}'"
-			launcher+="$variable=$quoted; "
+		if [ "$variable" = edition ] && [ "$items" = '(none)' ]; then
+			launcher+="edition=''; "
+			continue
 		fi
+		field_type=RO
+		[[ "$items" != *'!'* ]] || field_type=CB
+		quoted="'${items//\'/\'\\\'\'}'"
+		picker+=" --field='$label:$field_type' $quoted"
+		read_fields+="${read_fields:+ }$variable"
 	done
-	if [ -n "$picker" ]; then
-		launcher+="choice=\$(GDK_BACKEND=x11 yad --form --separator='|' --item-separator='!'$picker) || exit 0; "
-		launcher+="[ -n \"\$choice\" ] || exit 0; IFS='|' read -r $read_fields <<< \"\$choice\"; "
-	fi
+	launcher+="choice=\$(GDK_BACKEND=x11 yad --form --separator='|' --item-separator='!'$picker --button='Cancel:1' --button='OK:0') || exit 0; "
+	launcher+="[ -n \"\$choice\" ] || exit 0; IFS='|' read -r $read_fields <<< \"\$choice\"; "
 	launcher+="[ \"\$edition\" != '(none)' ] || edition=''; "
 	# Lists contain all choices, but reject mismatched combinations instead
 	# of silently passing an invalid architecture/release/edition to qget.

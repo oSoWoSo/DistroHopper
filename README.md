@@ -86,10 +86,12 @@ The same switch is in the GUI under *Options → Metadata source*.
 Desktop regeneration uses four distro workers by default, refilling each slot
 as soon as any worker finishes (without waiting for an older slow worker). Set
 `DH_RENEW_JOBS=8 ./dh` to change the limit, or `DH_RENEW_JOBS=1 ./dh` for serial
-regeneration. Opening a supported system shows only fields with multiple
-options, with all values embedded in the entry. For example, AgarimOS uses its
-fixed architecture/release and asks only for an edition. If every value is fixed,
-no picker opens. The same entry works from YAD and directly as a `.desktop` file.
+regeneration. Opening a supported system always shows a confirmation form.
+Single available values appear read-only; multiple values use dropdowns.
+The Edition field is omitted when there are no editions. For example, AgarimOS
+shows its fixed architecture/release read-only and an edition dropdown. Even
+when every value is fixed, Cancel/OK is required before downloading. All values
+remain embedded in the entry, which works from YAD or directly as a `.desktop` file.
 
 Supported entries contain the inline YAD command and all architecture, release
 and edition values directly in `.desktop`. The selection calls normal

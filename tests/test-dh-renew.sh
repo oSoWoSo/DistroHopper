@@ -87,9 +87,10 @@ for path in pathlib.Path(sys.argv[1]).glob('*.desktop'):
         assert "--field='Architecture:CB'" in script, script
     else:
         assert "--field='Architecture:CB'" not in script, script
-        assert "arch='x86_64'" in script, script
+        assert "--field='Architecture:RO' 'x86_64'" in script, script
     assert "--field='Release:CB'" in script, script
     assert "--field='Edition:CB'" in script, script
+    assert "--button='Cancel:1'" in script and "--button='OK:0'" in script, script
     # Literal spaces and delimiters need quoting, not layered backslashes.
     assert '\\' * 4 not in command, command
     assert not any('\\' + char in script for char in ';! '), script

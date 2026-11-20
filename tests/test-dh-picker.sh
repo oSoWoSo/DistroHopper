@@ -29,12 +29,12 @@ while (($#)); do
  case $1 in --arch) arch=$2; shift;; --release) release=$2; shift;; esac
  shift
 done
-if [[ $os == agarimos || $os == fixed ]]; then
+if [[ $os == agarimos || $os == fixed || $os == fixed-no-editions ]]; then
  echo 'Archs: x86_64'
  echo 'Releases: latest'
  if [[ $os == agarimos ]]; then
   printf 'EditionsList:\ncinnamon\nplasma\nxfce4\n'
- else
+ elif [[ $os == fixed ]]; then
   printf 'EditionsList:\ncinnamon\n'
  fi
  echo 'Description: fixed values fixture'
@@ -57,25 +57,28 @@ args = sys.argv[1:]
 if '--error' in args:
  sys.exit(0)
 labels = [label for label in ['Architecture', 'Release', 'Edition']
-          if '--field=' + label + ':CB' in args]
-options = {}
+          if any('--field=' + label + ':' + kind in args for kind in ['CB', 'RO'])]
+options, types = {}, {}
 for label in labels:
- field = '--field=' + label + ':CB'
- assert field in args, args
+ field = next(arg for arg in args if arg.startswith('--field=' + label + ':'))
+ types[label] = field.rsplit(':', 1)[1]
  options[label] = args[args.index(field) + 1].split('!')
+ assert types[label] == ('CB' if len(options[label]) > 1 else 'RO'), args
+assert '--button=Cancel:1' in args and '--button=OK:0' in args, args
 with open(os.environ['YAD_LOG'], 'a') as f:
- f.write(json.dumps({'args': args, 'options': options}) + '\n')
+ f.write(json.dumps({'args': args, 'options': options, 'types': types}) + '\n')
 if os.environ.get('CANCEL_FIELD'):
  sys.exit(1)
-values = [os.environ.get('PICK_' + label.upper(), '') or
-          ('(none)' if label == 'Edition' else '') for label in labels]
+values = [options[label][0] if types[label] == 'RO' else
+          (os.environ.get('PICK_' + label.upper(), '') or
+           ('(none)' if label == 'Edition' else '')) for label in labels]
 sys.stdout.write('|'.join(values) + '|')
 EOF
 chmod +x "$SCRIPT_DIR/qget" "$WORK/bin/yad"
 set +u
 renew_supported_vm fixture "$SCRIPT_DIR/qget"
 renew_supported_vm no-editions "$SCRIPT_DIR/qget"
-for os in agarimos fixed; do
+for os in agarimos fixed fixed-no-editions; do
  renew_supported_vm "$os" "$SCRIPT_DIR/qget"
  cp "$DH_CONFIG_DIR/supported/$os.desktop" "$WORK/$os.desktop"
 done
@@ -128,13 +131,13 @@ def run(arch, release, edition='', desktop=False, cancel='', status=0):
         result = subprocess.run(argv, timeout=10)
         assert result.returncode == status, result
     dialogs = [json.loads(line) for line in yad_log.read_text().splitlines()] if yad_log.exists() else []
-    assert len(dialogs) == (1 if 'yad --form' in argv[2] else 0), dialogs
+    assert len(dialogs) == 1, dialogs
     for dialog in dialogs:
         args = dialog['args']
         labels = [label for label in ['Architecture', 'Release', 'Edition']
-                  if "--field='" + label + ":CB'" in argv[2]]
+                  if "--field='" + label + ":" in argv[2]]
         for label in labels:
-            field = '--field=' + label + ':CB'
+            field = '--field=' + label + ':' + dialog['types'][label]
             assert field in args, args
             assert ';' not in args[args.index(field) + 1], args
     return dialogs
@@ -175,22 +178,33 @@ assert "edition='';" in argv[2], argv
 dialogs = run('amd64', 'old')
 assert '--field=Edition:CB' not in dialogs[0]['args'], dialogs
 downloaded('amd64', 'old', os_name='no-editions')
-# AgarimOS: fixed x86_64/latest, pick only an edition.
+# AgarimOS: show fixed x86_64/latest read-only and pick only an edition.
 path = path.with_name('agarimos.desktop')
 key.load_from_file(str(path), GLib.KeyFileFlags.NONE)
 _, argv = GLib.shell_parse_argv(key.get_string('Desktop Entry', 'Exec'))
-assert "--field='Architecture:CB'" not in argv[2], argv
-assert "--field='Release:CB'" not in argv[2], argv
+assert "--field='Architecture:RO'" in argv[2], argv
+assert "--field='Release:RO'" in argv[2], argv
 assert "--field='Edition:CB'" in argv[2], argv
 dialogs = run('ignored', 'ignored', 'plasma')
-assert list(dialogs[0]['options']) == ['Edition'], dialogs
+assert dialogs[0]['types'] == {'Architecture': 'RO', 'Release': 'RO', 'Edition': 'CB'}, dialogs
 downloaded('x86_64', 'latest', 'plasma', os_name='agarimos')
-# When all three values are fixed, call qget directly without opening YAD.
+# Even when all values are fixed, require confirmation and allow cancellation.
 path = path.with_name('fixed.desktop')
 key.load_from_file(str(path), GLib.KeyFileFlags.NONE)
 _, argv = GLib.shell_parse_argv(key.get_string('Desktop Entry', 'Exec'))
-assert 'yad --form' not in argv[2], argv
-assert run('ignored', 'ignored', 'ignored') == []
+dialogs = run('ignored', 'ignored', 'ignored')
+assert dialogs[0]['types'] == {'Architecture': 'RO', 'Release': 'RO', 'Edition': 'RO'}, dialogs
 downloaded('x86_64', 'latest', 'cinnamon', os_name='fixed')
-print('OK: inline pickers show only real choices and pass fixed values directly to qget')
+run('ignored', 'ignored', 'ignored', cancel='Cancel')
+assert not log.exists(), 'fixed values downloaded without confirmation'
+# No editions: show just the two read-only values, still requiring OK.
+path = path.with_name('fixed-no-editions.desktop')
+key.load_from_file(str(path), GLib.KeyFileFlags.NONE)
+_, argv = GLib.shell_parse_argv(key.get_string('Desktop Entry', 'Exec'))
+dialogs = run('ignored', 'ignored')
+assert dialogs[0]['types'] == {'Architecture': 'RO', 'Release': 'RO'}, dialogs
+downloaded('x86_64', 'latest', os_name='fixed-no-editions')
+run('ignored', 'ignored', cancel='Cancel')
+assert not log.exists()
+print('OK: fixed values stay visible, only real choices use dropdowns, and all downloads require OK')
 PY
