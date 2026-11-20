@@ -18,7 +18,8 @@ function arch_() {
 }
 
 function releases_() {
-	atom_feed_iso_entries "${RSS}" "${DW##*/}" \
+	local VERSIONS
+	VERSIONS=$(atom_feed_iso_entries "${RSS}" "${DW##*/}" \
 		| awk -F '\t' '
 			{
 				release = $1
@@ -26,7 +27,16 @@ function releases_() {
 				print release
 			}
 		' \
-		| sort -Vr
+		| sort -Vr)
+	if [ -n "${VERSIONS}" ]; then
+		printf '%s\n' "${VERSIONS}"
+	else
+		# The third-party feed may not contain Talos. Use published release assets.
+		web_pipe_json "https://api.github.com/repos/siderolabs/talos/releases" \
+			| jq -r --arg asset "metal-${ARCH:-amd64}.iso" '
+				.[] | select(.draft != true and any(.assets[]?; .name == $asset))
+				| .tag_name | ltrimstr("v")' | sort -Vr
+	fi
 }
 
 function get_() {
