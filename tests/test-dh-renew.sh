@@ -38,6 +38,8 @@ fi
 echo 'Description: fixture'
 EOF
 chmod +x "$SCRIPT_DIR/qget"
+# The generated Exec invokes dh's headless download-picker entry point.
+cp "$REPO/dh" "$SCRIPT_DIR/dh"
 # Launcher functions also use optional, unset desktop-entry fields.
 set +u
 # A VM created after opening the GUI must appear during regeneration.
@@ -50,27 +52,28 @@ renew_supported_vms
 test ! -e "$DH_CONFIG_DIR/ready/single-new.desktop"
 for os in multi single; do
  test -x "$DH_CONFIG_DIR/supported/$os.desktop"
- grep -q 'Brazilian' "$DH_CONFIG_DIR/supported/$os.desktop"
- grep -q " $os " "$DH_CONFIG_DIR/supported/$os.desktop"
+ grep -q -- '--download-picker' "$DH_CONFIG_DIR/supported/$os.desktop"
+ grep -q 'Brazilian Portuguese' "$DH_CONFIG_DIR/choices/$os.tsv"
  # No cross-product combination of an ARM release with x86_64.
- ! grep -q 'x86_64;arm-only' "$DH_CONFIG_DIR/supported/$os.desktop"
+ ! grep -q $'x86_64\tarm-only' "$DH_CONFIG_DIR/choices/$os.tsv"
 done
-! grep -q 'aarch64;' "$DH_CONFIG_DIR/supported/single.desktop"
-# Parse the actual desktop Exec using GLib, then validate the embedded shell.
+! grep -q 'aarch64' "$DH_CONFIG_DIR/choices/single.tsv"
+# Parse the actual desktop Exec using GLib, then validate the helper arguments.
 /usr/bin/python3 - "$DH_CONFIG_DIR/supported" <<'PY'
-import pathlib, subprocess, sys
+import pathlib, sys
 from gi.repository import GLib
 for path in pathlib.Path(sys.argv[1]).glob('*.desktop'):
     entry = GLib.KeyFile()
     entry.load_from_file(str(path), GLib.KeyFileFlags.NONE)
     command = entry.get_string('Desktop Entry', 'Exec')
     _, argv = GLib.shell_parse_argv(command)
-    assert argv[:2] == ['bash', '-c'], argv
-    subprocess.run(['bash', '-n', '-c', argv[2]], check=True)
-    assert 'Brazilian\\ Portuguese' in argv[2], argv[2]
-    assert 'x86_64\\;old\\;' in argv[2], argv[2]
+    assert argv[0] == 'bash' and argv[2] == '--download-picker', argv
+    assert '%' not in command, command  # YAD truncates at percent signs.
+    assert argv[3] == path.stem, argv
+    choices = pathlib.Path(argv[4]).read_text()
+    assert 'x86_64\told\t\n' in choices, choices
     if path.stem == 'multi':
-        assert 'aarch64\\;arm-only\\;' in argv[2], argv[2]
+        assert 'aarch64\tarm-only\t' in choices, choices
 PY
 # A bounded worker pool overlaps distros and waits for every worker.
 renew_supported_vm() {

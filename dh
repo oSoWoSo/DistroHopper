@@ -403,7 +403,7 @@ function renew_ready_vms() {
 }
 function renew_supported_vms() {
 	echo "[dh] Renew supported..."
-	local qget_cmd os_info release_edition_options release_edition_opts_fmt icon_source
+	local qget_cmd os_info release_edition_options icon_source
 	# Refresh the user icon cache before rebuilding supported desktop entries.
 	# New icons added to the repository are otherwise missed until reinstall.
 	icon_source="${SCRIPT_DIR}/icons"
@@ -580,7 +580,7 @@ function renew_supported_vm() {
 	# Build valid tuples for every architecture and release, not a Cartesian
 	# product of the default architecture's releases and editions.
 	local selected_arch selected_release selected_edition arch_info release_info arch_releases
-	local release_editions_list launcher quoted_vms quoted_qget quoted_os
+	local release_editions_list tuple choices_file choices_tmp argument quoted
 	release_edition_options=""
 	for selected_arch in ${architectures:-x86_64}; do
 		arch_info=$("$qget_cmd" --show --plain --arch "${selected_arch}" "${VMname}" 2>$DH_NULL) || continue
@@ -589,32 +589,35 @@ function renew_supported_vm() {
 			release_info=$("$qget_cmd" --show --plain --arch "${selected_arch}" --release "${selected_release}" "${VMname}" 2>$DH_NULL) || continue
 			release_editions_list=$(printf '%s\n' "${release_info}" | sed -n '/^EditionsList:$/,$p' | sed '1d; /^$/d; /^Description:/,$d; /^RSS:/,$d; /^DistroWatch:/,$d')
 			if [ -z "${release_editions_list}" ]; then
-				release_edition_options+="${selected_arch};${selected_release};!"
+				printf -v tuple '%s\t%s\t\n' "$selected_arch" "$selected_release"
+				release_edition_options+="$tuple"
 			else
 				while IFS= read -r selected_edition; do
 					[ -n "$selected_edition" ] || continue
-					release_edition_options+="${selected_arch};${selected_release};${selected_edition}!"
+					printf -v tuple '%s\t%s\t%s\n' "$selected_arch" "$selected_release" "$selected_edition"
+					release_edition_options+="$tuple"
 				done <<< "$release_editions_list"
 			fi
 		done
 	done
-	release_edition_opts_fmt="${release_edition_options%!}"
-	printf -v quoted_vms '%q' "${VMS_DIR}"
-	printf -v quoted_qget '%q' "${qget_cmd}"
-	printf -v quoted_os '%q' "${get_name}"
-	printf -v launcher 'mkdir -p %s; cd %s || exit; ' "$quoted_vms" "$quoted_vms"
-	printf -v launcher '%schoice=$(GDK_BACKEND=x11 yad --form --separator="|" --item-separator="!" --field="Architecture / Release / Edition:CB" %q); ' "$launcher" "$release_edition_opts_fmt"
-	launcher+='[ -n "$choice" ] || exit 0; choice=${choice%|}; IFS=";" read -r arch release edition <<< "$choice"; '
-	launcher+="$quoted_qget --arch \"\$arch\" $quoted_os \"\$release\""
-	launcher+=' ${edition:+"$edition"}'
-	# Exec is a desktop-entry command line, not a shell command line.
-	# Quote its single bash argument according to the desktop-entry spec.
-	launcher="${launcher//\\/\\\\\\\\}"
-	launcher="${launcher//\"/\\\\\"}"
-	launcher="${launcher//\$/\\\\$}"
-	launcher="${launcher//\`/\\\\\`}"
-	launcher="${launcher//%/%%}"
-	execmd="bash -c \"${launcher}\""
+	# Keep data and shell logic out of Exec. YAD's icon launcher truncates
+	# commands at percent signs, even escaped desktop field codes (%%).
+	mkdir -p "${DH_CONFIG_DIR}/choices" || return 1
+	choices_file="${DH_CONFIG_DIR}/choices/${VMname}.tsv"
+	choices_tmp=$(mktemp "${choices_file}.XXXXXX") || return 1
+	if ! printf '%s' "$release_edition_options" > "$choices_tmp" || ! mv -f "$choices_tmp" "$choices_file"; then
+		rm -f "$choices_tmp"
+		return 1
+	fi
+	execmd="bash"
+	for argument in "${SCRIPT_DIR}/dh" --download-picker "$get_name" "$choices_file" "$VMS_DIR" "$qget_cmd"; do
+		# Two levels of escaping: desktop key-file strings, then Exec argv.
+		quoted="${argument//\\/\\\\\\\\}"
+		quoted="${quoted//\"/\\\\\"}"
+		quoted="${quoted//\$/\\\\$}"
+		quoted="${quoted//\`/\\\\\`}"
+		execmd+=" \"${quoted}\""
+	done
 	terminal="false"
 
 	icon="${icon_file}"
@@ -623,6 +626,47 @@ function renew_supported_vm() {
 	[ -z "${comment}" ] && comment=$(get_os_description "${get_name}")
 	categories='System;X-Virtualization;'
 	create_desktop_entry
+}
+
+# Choose each dimension separately, filtering the cached tuples after every
+# choice. Never offer a Cartesian product or expose raw semicolon tuples.
+function download_picker_choice() {
+	local label="$1" options="$2" title="$3" choice items
+	[ -n "$options" ] || return 1
+	items=$(printf '%s\n' "$options" | paste -sd '!')
+	choice=$(GDK_BACKEND=x11 yad --form --title="$title" \
+		--separator=$'\t' --item-separator='!' --field="${label}:CB" "$items" \
+		--button='Cancel:1' --button='OK:0') || return 1
+	choice="${choice%$'\t'}"
+	# Reject empty or invalid output rather than passing an empty release or
+	# an unfiltered edition to qget. Names containing spaces remain intact.
+	printf '%s\n' "$options" | grep -Fxq -- "$choice" || return 1
+	printf '%s' "$choice"
+}
+
+function download_supported_vm() {
+	local os="$1" choices_file="$2" vm_dir="$3" qget_cmd="$4"
+	local options arch release edition=""
+	if [ ! -s "$choices_file" ]; then
+		yad --error --text="No cached choices for ${os}. Renew supported VMs first."
+		return 1
+	fi
+	options=$(cut -f1 "$choices_file" | LC_ALL=C sort -u)
+	if [[ "$options" == *$'\n'* ]]; then
+		arch=$(download_picker_choice Architecture "$options" "$os — Select architecture") || return 0
+	else
+		arch="$options"
+	fi
+	options=$(awk -F '\t' -v arch="$arch" '$1 == arch {print $2}' "$choices_file" | LC_ALL=C sort -u)
+	release=$(download_picker_choice Release "$options" "$os — Select release ($arch)") || return 0
+	options=$(awk -F '\t' -v arch="$arch" -v release="$release" '$1 == arch && $2 == release && $3 != "" {print $3}' "$choices_file" | LC_ALL=C sort -u)
+	if [ -n "$options" ]; then
+		edition=$(download_picker_choice Edition "$options" "$os — Select edition ($arch / $release)") || return 0
+	fi
+	mkdir -p "$vm_dir" && cd "$vm_dir" || return 1
+	local -a args=(--arch "$arch" "$os" "$release")
+	[ -z "$edition" ] || args+=("$edition")
+	"$qget_cmd" "${args[@]}"
 }
 
 function distrohopper_about() {
@@ -651,9 +695,10 @@ Arguments:
   l  language         Switch language
 
 Architecture:
-  Multi-architecture systems offer compatible architecture and edition
-  combinations in the download selector. The selected architecture is
-  passed to qget when the VM is created.
+  Select an architecture (when more than one is available), then a
+  release, then an edition if required. Each step only offers choices
+  compatible with the previous selection. The chosen architecture,
+  release and edition are passed to qget when the VM is created.
 
 Metadata source:
   Releases and editions come from the generated public/ files, so they
@@ -780,6 +825,17 @@ function distrohopper_gui() {
 		--window-icon="${DH_ICON_DIR}/hop.png" --width=900 --height=900 \
 		--title="${progname}" --tab="run VM" --tab="download VM" --tab="Options"
 }
+
+# Desktop entries invoke this directly, without opening the main notebook or
+# relying on functions exported by an already-running GUI.
+if [ "${1:-}" = --download-picker ]; then
+	shift
+	[ "$#" -eq 4 ] || exit 1
+	DH_NULL=/dev/null
+	set_variables
+	download_supported_vm "$@"
+	exit $?
+fi
 
 run_in_terminal
 if [ "${interminal}" = "yes" ]; then

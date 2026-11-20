@@ -70,7 +70,8 @@ The same switch is in the GUI under *Options → Metadata source*.
 ### What does “Renew supported” refresh?
 
 * **Options → Renew supported** rebuilds the supported `.desktop` launchers
-  from the selected metadata source and refreshes the ready-VM launchers from
+  and their cached architecture/release/edition choices from the selected
+  metadata source and refreshes the ready-VM launchers from
   the `.conf` files in your VM directory. It does **not** run `generate`,
   download ISO images, or upgrade existing VMs.
 * With the default **public/** source, the available releases are only as new
@@ -84,7 +85,11 @@ The same switch is in the GUI under *Options → Metadata source*.
 
 Desktop regeneration uses four distro workers by default. Set
 `DH_RENEW_JOBS=8 ./dh` to change the limit, or `DH_RENEW_JOBS=1 ./dh` for serial
-regeneration. A top-right percentage bar shows the completed/total distro
+regeneration. Opening a supported system uses separate architecture (when
+needed), release, and edition pickers; each step is filtered by the previous
+selection. The same picker works from YAD and directly from a `.desktop` file.
+
+A top-right percentage bar shows the completed/total distro
 count, updating as parallel workers finish, followed by the ready-VM refresh.
 The ready refresh counts as one final work unit, so the bar reaches 100% only
 after it finishes. Failed workers count as processed; failures are reported
