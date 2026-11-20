@@ -503,7 +503,7 @@ function renew_progress_reader() {
 function renew_supported_vms_gui() (
 	local lock="${DH_CONFIG_DIR}/renew.lock" progress_pid progress_reader_pid progress_fd status=0
 	if ! mkdir "$lock" 2>/dev/null; then
-		command -v notify-send >/dev/null && notify-send DistroHopper 'Regeneration is already running.'
+		echo 'Regeneration is already running.' >&2
 		return 1
 	fi
 	trap 'for pid in "${progress_reader_pid:-}" "${progress_pid:-}"; do [ -n "$pid" ] && { kill "$pid" 2>/dev/null || true; wait "$pid" 2>/dev/null || true; }; done; rm -rf "$lock"' EXIT
@@ -522,9 +522,6 @@ function renew_supported_vms_gui() (
 	renew_progress_reader < "$lock/events" > "$lock/progress" &
 	progress_reader_pid=$!
 	exec {progress_fd}> "$lock/events"
-	if command -v notify-send >/dev/null; then
-		notify-send -i "${DH_ICON_DIR}/hop.png" DistroHopper 'Regenerating supported and ready VMs…' || true
-	fi
 	renew_supported_vms || status=$?
 	renew_progress "finished $status"
 	exec {progress_fd}>&-
@@ -532,13 +529,6 @@ function renew_supported_vms_gui() (
 	progress_reader_pid=""
 	wait "$progress_pid" || true
 	progress_pid=""
-	if command -v notify-send >/dev/null; then
-		if [ "$status" -eq 0 ]; then
-			notify-send DistroHopper 'VM regeneration complete.' || true
-		else
-			notify-send -u critical DistroHopper 'VM regeneration failed. See terminal output for details.' || true
-		fi
-	fi
 	return "$status"
 )
 

@@ -110,10 +110,10 @@ done
 EOF
 cat > "$WORK/bin/notify-send" <<'EOF'
 #!/usr/bin/env bash
-printf '%s\n' "$*" >> "$GUI_LOG"
+printf '%s\n' "$*" >> "$GUI_NOTIFICATIONS_LOG"
 EOF
 chmod +x "$WORK/bin/yad" "$WORK/bin/notify-send"
-export PATH="$WORK/bin:$PATH" GUI_LOG="$WORK/gui.log" GUI_PROGRESS_LOG="$WORK/progress.log"
+export PATH="$WORK/bin:$PATH" GUI_LOG="$WORK/gui.log" GUI_PROGRESS_LOG="$WORK/progress.log" GUI_NOTIFICATIONS_LOG="$WORK/notifications.log"
 # Use the real parallel regeneration and event relay, not just a UI mock.
 export DH_RENEW_JOBS=2
 if renew_supported_vms_gui; then exit 1; fi
@@ -137,13 +137,14 @@ grep -qx '100' "$WORK/empty-progress"
 renew_supported_vms() { return "${RENEW_STATUS:-0}"; }
 renew_supported_vms_gui
 test ! -e "$DH_CONFIG_DIR/renew.lock"
-grep -q 'regeneration complete' "$GUI_LOG"
+grep -q 'Regeneration complete' "$GUI_PROGRESS_LOG"
 export RENEW_STATUS=1
 if renew_supported_vms_gui; then exit 1; fi
 test ! -e "$DH_CONFIG_DIR/renew.lock"
-grep -q 'regeneration failed' "$GUI_LOG"
+grep -q 'finished with errors' "$GUI_PROGRESS_LOG"
 mkdir "$DH_CONFIG_DIR/renew.lock"
-if renew_supported_vms_gui; then exit 1; fi
+if renew_supported_vms_gui 2> "$WORK/duplicate-click.log"; then exit 1; fi
 rmdir "$DH_CONFIG_DIR/renew.lock"
-grep -q 'already running' "$GUI_LOG"
+grep -q 'already running' "$WORK/duplicate-click.log"
+test ! -e "$GUI_NOTIFICATIONS_LOG"
 echo 'OK: desktop regeneration regression tests'

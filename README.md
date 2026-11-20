@@ -89,8 +89,8 @@ count, updating as parallel workers finish, followed by the ready-VM refresh.
 The ready refresh counts as one final work unit, so the bar reaches 100% only
 after it finishes. Failed workers count as processed; failures are reported
 separately rather than silently treated as successful regeneration.
-Desktop notifications indicate when regeneration starts and finishes. Notifications are optional
-and require `notify-send` and a running desktop notification service.
+Regeneration status is shown in the progress window only; no desktop
+notifications or notification service are needed.
 
 and
 
