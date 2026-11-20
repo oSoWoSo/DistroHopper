@@ -40,7 +40,14 @@ EOF
 chmod +x "$SCRIPT_DIR/qget"
 # Launcher functions also use optional, unset desktop-entry fields.
 set +u
+# A VM created after opening the GUI must appear during regeneration.
+touch "$VMS_DIR/single-new.conf"
 renew_supported_vms
+test -x "$DH_CONFIG_DIR/ready/single-new.desktop"
+# Refresh must also remove entries for configs which no longer exist.
+rm "$VMS_DIR/single-new.conf"
+renew_supported_vms
+test ! -e "$DH_CONFIG_DIR/ready/single-new.desktop"
 for os in multi single; do
  test -x "$DH_CONFIG_DIR/supported/$os.desktop"
  grep -q 'Brazilian' "$DH_CONFIG_DIR/supported/$os.desktop"

@@ -433,6 +433,9 @@ function renew_supported_vms() {
 		wait "$pid" || status=1
 	done
 	find "${DH_CONFIG_DIR}/supported" -type f -name '*.desktop' -exec chmod +x {} + 2>/dev/null || true
+	# Update both monitored views in the same action. Existing VM configs
+	# may have appeared since the GUI was opened.
+	renew_ready_vms || status=1
 	echo "[dh] Renew supported complete"
 	return "$status"
 }
@@ -649,6 +652,9 @@ function distrohopper_gui() {
 	export -f installation_process renew_ready_vms renew_supported_vms renew_supported_vm root_check save_config
 	export -f set_iso_dir set_ramdisk set_vms_directory set_use_templates
 
+	# YAD can only monitor directories that already exist when it starts.
+	mkdir -p "${DH_CONFIG_DIR}/ready" "${DH_CONFIG_DIR}/supported"
+	renew_ready_vms
 	local key=$((RANDOM % 9000 + 1000))
 	yad --plug="${key}" --tabnum=1 --monitor --icons --listen \
 		--read-dir="${DH_CONFIG_DIR}/ready" --sort-by-name --borders=0 \
