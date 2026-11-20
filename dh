@@ -116,6 +116,11 @@ function set_variables() {
 		export DH_USE_TEMPLATES="yes"
 	fi
 	# shellcheck disable=SC2090
+	# Keep the per-user icon cache in sync with the shipped icons.
+	mkdir -p "${DH_ICON_DIR}" 2>/dev/null || true
+	if [ -d "${SCRIPT_DIR}/icons" ]; then
+		cp -f "${SCRIPT_DIR}/icons"/* "${DH_ICON_DIR}/" 2>/dev/null || true
+	fi
 	export DH_CONFIG_DIR DH_CONFIG replace DH_ICON_DIR PATH_PREFIX TMP_DIR terminal VMS_DIR RAMDISK RAMDISK_DIR ISO_DIR USE_TEMPLATES
 	#check_and_set_mode
 	# Set traps to catch the signals and exit gracefully
@@ -466,10 +471,10 @@ function renew_supported_vms() {
 						# offer the (arch, release) combination.
 						release_edition_options+="${selected_arch};${selected_release}; "
 					else
-						while IFS= read -r selected_edition; do
+						for selected_edition in ${release_editions_list}; do
 							[ -n "$selected_edition" ] || continue
 							release_edition_options+="${selected_arch};${selected_release};${selected_edition} "
-						done <<< "${release_editions_list}"
+						done
 					fi
 				done
 			done
