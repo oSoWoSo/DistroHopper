@@ -24,6 +24,13 @@ function arch_() {
 	echo "amd64 arm64 i686"
 }
 
+function config_() {
+	# The i686 image needs legacy BIOS, not the launcher's default x86_64 UEFI.
+	if [ "${ARCH:-amd64}" == "i686" ]; then
+		echo 'boot="legacy"' >> "${CONF_FILE}"
+	fi
+}
+
 function get_() {
 	local DATE="" HASH="" ISO="" VARIANT="" QEMU_ARCH=""
 	local URL="https://repo-default.voidlinux.org/live/current"
