@@ -127,6 +127,9 @@ interfaces for quickemu...</a></li>
 id="toc-how-the-release-and-edition-lists-are-built">How the release and
 edition lists are built</a>
 <ul>
+<li><a href="#what-does-renew-supported-refresh"
+id="toc-what-does-renew-supported-refresh">What does “Renew supported”
+refresh?</a></li>
 <li><a
 href="#open-source-version-without-removed-proprietary-oses-macwindows"
 id="toc-open-source-version-without-removed-proprietary-oses-macwindows">open
@@ -226,6 +229,57 @@ example right after a new release was announced — use
 qget --templates --list</code></pre>
 <p>The same switch is in the GUI under <em>Options → Metadata
 source</em>.</p>
+<h3 id="what-does-renew-supported-refresh">What does “Renew supported”
+refresh?</h3>
+<ul>
+<li><strong>Options → Renew supported</strong> rebuilds the supported
+<code>.desktop</code> launchers and their embedded
+architecture/release/edition choices from the selected metadata source
+and refreshes the ready-VM launchers from the <code>.conf</code> files
+in your VM directory. It does <strong>not</strong> run
+<code>generate</code>, download ISO images, or upgrade existing
+VMs.</li>
+<li>With the default <strong>public/</strong> source, the available
+releases are only as new as the last metadata generation. Run
+<code>./dh-refresh</code> (or <code>./generate --parallel</code>) first,
+then click <strong>Renew supported</strong> to show newly discovered
+releases.</li>
+<li>With the <strong>templates/</strong> source, renewal queries
+upstream live. It still does not download installation images; those are
+downloaded by <code>qget</code> when you select a supported system and
+confirm a release/edition.</li>
+<li>Metadata generation discovers releases and image URLs; it is not an
+ISO download/update operation.</li>
+</ul>
+<p>Desktop regeneration uses four distro workers by default, refilling
+each slot as soon as any worker finishes (without waiting for an older
+slow worker). Set <code>DH_RENEW_JOBS=8 ./dh</code> to change the limit,
+or <code>DH_RENEW_JOBS=1 ./dh</code> for serial regeneration. Opening a
+supported system always shows a confirmation form. Single available
+values appear read-only; multiple values use dropdowns. The Edition
+field is omitted when there are no editions. For example, AgarimOS shows
+its fixed architecture/release read-only and an edition dropdown. Even
+when every value is fixed, Cancel/OK is required before downloading. All
+values remain embedded in the entry, which works from YAD or directly as
+a <code>.desktop</code> file.</p>
+<p>Supported entries contain the inline YAD command and all
+architecture, release and edition values directly in
+<code>.desktop</code>. The selection calls normal
+<code>qget --arch &lt;arch&gt; &lt;distro&gt; &lt;release&gt; [edition]</code>.
+There is no picker script, custom qget mode, DistroHopper helper or
+external choice cache. Ready entries use
+<code>Exec=quickemu --vm ...</code> with the absolute VM config path.
+Neither entry type needs DistroHopper running. <code>qget</code> and YAD
+(supported entries) or <code>quickemu</code> (ready entries) must be
+installed. Invalid combinations are rejected before starting a
+download.</p>
+<p>A top-right percentage bar shows the completed/total distro count,
+updating as parallel workers finish, followed by the ready-VM refresh.
+The ready refresh counts as one final work unit, so the bar reaches 100%
+only after it finishes. Failed workers count as processed; failures are
+reported separately rather than silently treated as successful
+regeneration. Regeneration status is shown in the progress window only;
+no desktop notifications or notification service are needed.</p>
 <p>and</p>
 <h3
 id="open-source-version-without-removed-proprietary-oses-macwindows">open
