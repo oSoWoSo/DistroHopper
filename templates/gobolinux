@@ -23,3 +23,7 @@ function get_() {
 	HASH=$(web_pipe "https://gobolinux.org/downloads.html" | grep -oP 'SHA256: \K[a-f0-9]+')
 	echo "${URL}/${ISO} ${HASH}"
 }
+
+function config_() {
+	echo "boot=\"legacy\"" >> "${CONF_FILE}"
+}
